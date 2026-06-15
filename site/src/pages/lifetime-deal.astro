@@ -1,0 +1,286 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Navbar from '../components/Navbar.astro'
+import Footer from '../components/Footer.astro'
+import { siteUrl, winflowzCheckoutUrl } from '../config/site'
+
+const offerId = 'socialglowz/lifetime_deal'
+const checkoutUrl = winflowzCheckoutUrl(offerId, {
+  source: 'direct',
+  sourceRef: 'socialglowz-site-lifetime-deal',
+  successUrl: siteUrl(`/purchase/success?offerId=${encodeURIComponent(offerId)}`),
+  cancelUrl: siteUrl(`/purchase/cancel?offerId=${encodeURIComponent(offerId)}`),
+})
+
+const workflow = [
+  {
+    step: '01',
+    title: 'Open every account without tab chaos',
+    text: 'Keep your main social networks and profiles in one focused workspace instead of juggling browser windows.',
+  },
+  {
+    step: '02',
+    title: 'Protect context by profile',
+    text: 'Use profile-aware sessions and local workspace state so personal, client, and brand workflows stay easier to separate.',
+  },
+  {
+    step: '03',
+    title: 'Turn attention into follow-up',
+    text: 'Move from browsing to content ideas, replies, campaign notes, and lightweight execution without leaving the system.',
+  },
+]
+
+const includes = [
+  'SocialGlowz Pro access under the published Lifetime Deal terms',
+  'Multi-profile social workspace for creators and operators',
+  'Anti-distraction controls, custom links, Kanban workflow, backup and restore',
+  'Desktop and mobile-oriented product direction as released builds mature',
+  'Access fulfilled through the WinFlowz suite commerce and entitlement bridge',
+  'Support path for account verification, checkout issues, refunds, and replayed events',
+]
+
+const boundaries = [
+  'Social networks can change their web interfaces and policies; compatibility work is ongoing.',
+  'Future platform availability follows released builds and public product notes.',
+  'Cloud-heavy features may receive fair-use or plan limits if operating costs require them.',
+  'Checkout requires Lemon Squeezy configuration through the central WinFlowz commerce route.',
+]
+
+const faq = [
+  {
+    q: 'Is this the real SocialGlowz checkout?',
+    a: 'Yes. The CTA uses the existing suite checkout route with the internal offer id socialglowz/lifetime_deal.',
+  },
+  {
+    q: 'Why does checkout go through WinFlowz?',
+    a: 'SocialGlowz access is fulfilled through the WinFlowz suite commerce bridge so payment events and entitlements stay centralized.',
+  },
+  {
+    q: 'Is this AppSumo pricing?',
+    a: 'No. This is the direct founder window. AppSumo terms can be negotiated separately later and should stay consistent with public pricing rules.',
+  },
+  {
+    q: 'Can the offer change?',
+    a: 'Yes. This page is ready as a direct sales surface, while final public price, limits, and legal copy can still be refined.',
+  },
+]
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'SocialGlowz Lifetime Deal',
+    description: 'Founder Lifetime Deal for SocialGlowz, a profile-aware social workspace for creators and operators.',
+    brand: { '@type': 'Brand', name: 'SocialGlowz' },
+    offers: {
+      '@type': 'Offer',
+      availability: 'https://schema.org/InStock',
+      priceCurrency: 'USD',
+      url: siteUrl('/lifetime-deal'),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+]
+---
+
+<Layout
+  title="SocialGlowz Lifetime Deal - Founder Access"
+  description="Get founder Lifetime Deal access to SocialGlowz, the focused social workspace for creators, operators, and small teams managing multiple social accounts."
+  path="/lifetime-deal"
+  jsonLd={jsonLd}
+>
+  <main id="main-content" class="min-h-screen bg-background text-foreground">
+    <Navbar />
+
+    <section class="relative overflow-hidden border-b border-border pt-32 pb-20">
+      <div class="absolute inset-0 bg-gradient-to-b from-card to-background" aria-hidden="true"></div>
+      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2">
+        <div>
+          <p class="inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Founder Lifetime Deal
+          </p>
+          <h1 class="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
+            Own the social workspace before the price climbs.
+          </h1>
+          <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            SocialGlowz brings your social accounts, profiles, focus controls, and lightweight execution workflow into one app so you can operate without tab sprawl.
+          </p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a
+              href={checkoutUrl}
+              class="shimmer-btn inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
+            >
+              Get Lifetime Access
+            </a>
+            <a
+              href="#offer"
+              class="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+            >
+              Review the offer
+            </a>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-border bg-card p-4 shadow-2xl">
+          <div class="rounded-xl border border-border bg-background p-5">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SocialGlowz</p>
+                <p class="mt-1 text-lg font-semibold text-foreground">Founder workspace</p>
+              </div>
+              <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">Direct LTD</span>
+            </div>
+            <div class="mt-6 grid gap-3 sm:grid-cols-3">
+              <div class="rounded-xl bg-card p-4">
+                <p class="text-xs font-medium text-muted-foreground">Profiles</p>
+                <p class="mt-2 text-3xl font-bold text-foreground">∞</p>
+              </div>
+              <div class="rounded-xl bg-card p-4">
+                <p class="text-xs font-medium text-muted-foreground">Networks</p>
+                <p class="mt-2 text-3xl font-bold text-foreground">18+</p>
+              </div>
+              <div class="rounded-xl bg-card p-4">
+                <p class="text-xs font-medium text-muted-foreground">Plan</p>
+                <p class="mt-2 text-3xl font-bold text-foreground">Pro</p>
+              </div>
+            </div>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-xl border border-border p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Next action</p>
+                <p class="mt-2 text-sm text-foreground">Warm reply queue and launch notes</p>
+              </div>
+              <div class="rounded-xl border border-border p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Access route</p>
+                <p class="mt-2 break-words text-sm text-foreground">{offerId}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16">
+      <div class="grid gap-8 lg:grid-cols-2">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Why this exists</p>
+          <h2 class="mt-3 text-3xl font-bold text-foreground">A direct founder window for the product you can sell first.</h2>
+        </div>
+        <p class="text-lg leading-relaxed text-muted-foreground">
+          The Lifetime Deal gives early buyers a clear path into SocialGlowz while the product is still priced for founder adoption. It keeps the commercial story simple: one product, one direct offer, one checkout, and server-side access fulfillment.
+        </p>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16">
+      <div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Workflow</p>
+          <h2 class="mt-3 text-3xl font-bold text-foreground">From social noise to an operating rhythm.</h2>
+        </div>
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          {workflow.map((item) => (
+            <div class="rounded-xl border border-border bg-background p-5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Step {item.step}</p>
+              <h3 class="mt-3 text-xl font-semibold text-foreground">{item.title}</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="offer" class="mx-auto grid max-w-6xl gap-8 px-4 py-16 lg:grid-cols-5">
+      <div class="lg:col-span-2">
+        <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">The offer</p>
+        <h2 class="mt-3 text-3xl font-bold text-foreground">SocialGlowz Lifetime Deal</h2>
+        <p class="mt-4 text-muted-foreground">
+          The exact public price can still be refined, but the page architecture and checkout path are ready for direct early-bird sales.
+        </p>
+      </div>
+
+      <div class="rounded-2xl border border-foreground/30 bg-card p-6 shadow-2xl lg:col-span-3 sm:p-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Founder early-bird</p>
+            <h3 class="mt-3 text-4xl font-bold text-foreground">Lifetime access</h3>
+            <p class="mt-3 max-w-2xl text-sm text-muted-foreground">
+              Pay once through the central checkout. Access is fulfilled from signed provider events into the suite entitlement layer.
+            </p>
+          </div>
+          <span class="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {offerId}
+          </span>
+        </div>
+
+        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          {includes.map((item) => (
+            <div class="rounded-xl bg-background p-4 text-sm leading-relaxed text-muted-foreground">
+              {item}
+            </div>
+          ))}
+        </div>
+
+        <a
+          href={checkoutUrl}
+          class="shimmer-btn mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
+        >
+          Continue to checkout
+        </a>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16">
+      <div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        <h2 class="text-3xl font-bold text-foreground">Clear launch boundaries</h2>
+        <div class="mt-6 grid gap-3 md:grid-cols-2">
+          {boundaries.map((item) => (
+            <div class="rounded-xl border border-border bg-background p-4 text-sm leading-relaxed text-muted-foreground">
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16">
+      <div class="grid gap-4">
+        <h2 class="text-3xl font-bold text-foreground">Founder FAQ</h2>
+        {faq.map((item) => (
+          <div class="rounded-xl border border-border bg-card p-5">
+            <h3 class="text-base font-semibold text-foreground">{item.q}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16">
+      <div class="rounded-2xl border border-foreground/20 bg-white p-8 text-zinc-950 sm:p-10">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="max-w-2xl">
+            <h2 class="text-3xl font-bold">Open the SocialGlowz founder window.</h2>
+            <p class="mt-4 text-zinc-600">
+              Use this page as the direct sales surface while final price, legal details, and Lemon Squeezy product setup are finalized.
+            </p>
+          </div>
+          <a
+            href={checkoutUrl}
+            class="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+          >
+            Get Lifetime Access
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <Footer />
+  </main>
+</Layout>

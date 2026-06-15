@@ -516,7 +516,7 @@ private val DARK_MODE_DOC_START_SCRIPT = """
 (function() {
   try {
     function isFacebook() {
-      return /(^|\.)facebook\.com$/i.test(location.hostname) && !/\/messages|\/reels?(\/|$)/.test(location.pathname);
+      return /(^|\.)facebook\.com$/i.test(location.hostname) && !/\/reels?(\/|$)/.test(location.pathname);
     }
     function isLinkedIn() {
       return /(^|\.)linkedin\.com$/i.test(location.hostname);
@@ -2500,7 +2500,7 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
               try {
                 var dark = ${if (isDarkMode) "true" else "false"};
                 function isFacebook() {
-                  return /(^|\.)facebook\.com$/i.test(location.hostname) && !/\/messages|\/reels?(\/|$)/.test(location.pathname);
+                  return /(^|\.)facebook\.com$/i.test(location.hostname) && !/\/reels?(\/|$)/.test(location.pathname);
                 }
                 function isLinkedIn() {
                   return /(^|\.)linkedin\.com$/i.test(location.hostname);
@@ -2622,7 +2622,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     private fun logFacebookDarkState(view: WebView?, phase: String) {
         if (view == null) return
         val url = view.url ?: ""
-        if (!url.contains("facebook.com", ignoreCase = true) || url.contains("/messages")) return
+        if (!url.contains("facebook.com", ignoreCase = true)) return
 
         dbg("[fb-dark] phase=$phase nativeWanted=${if (isDarkMode) "dark" else "light"} url=$url")
 

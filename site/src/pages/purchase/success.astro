@@ -3,6 +3,10 @@ import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { appUrl } from '../../config/site'
+
+const offerId = Astro.url.searchParams.get('offerId')
+const isLifetimeDeal = offerId === 'socialglowz/lifetime_deal'
+const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
 ---
 
 <Layout
@@ -12,7 +16,7 @@ import { appUrl } from '../../config/site'
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
     <Navbar />
-    <section class="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
+    <section class="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
       <h1 class="text-3xl font-bold text-foreground">Thanks for your order</h1>
       <p class="mt-4 text-muted-foreground">
         If the payment is completed, your order status is now being synced to your SocialGlowz account.
@@ -28,14 +32,13 @@ import { appUrl } from '../../config/site'
           Open SocialGlowz
         </a>
         <a
-          href="/pricing"
+          href={returnUrl}
           class="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground hover:bg-card"
         >
-          Return to pricing
+          {isLifetimeDeal ? 'Return to Lifetime Deal' : 'Return to pricing'}
         </a>
       </div>
     </section>
     <Footer />
   </main>
 </Layout>
-

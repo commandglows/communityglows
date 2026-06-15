@@ -15,3 +15,4 @@
 | 2026-04-28 | Full project | C+ | — | — | — | — | — | — | — | C+ | 0 critical + 2 high + 3 medium found — 1 high + 1 medium fixed |
 | 2026-04-30 | Dependencies | — | — | — | — | — | — | B- | — | B- | 0 critical, 0 high, 1 moderate dev/build advisory; 10 patch, 14 minor, 28 major outdated; 3 unknown licenses; 31 overrides undocumented |
 | 2026-05-11 | Documentation layout | — | — | — | — | — | — | — | — | Pass | Root ShipFlow docs migrated or removed; workflow specs, bug, research, audit log, and competitor registry moved under `shipflow_data/`; metadata lint passed |
+| 2026-06-12 | design-system authority baseline (app+site) | — | — | — | — | — | — | — | — | C | 69(app) / 72(site) visual drift candidates found (warn-only baseline baseline captured) |

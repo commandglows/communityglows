@@ -3,6 +3,10 @@ import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { appUrl } from '../../config/site'
+
+const offerId = Astro.url.searchParams.get('offerId')
+const isLifetimeDeal = offerId === 'socialglowz/lifetime_deal'
+const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
 ---
 
 <Layout
@@ -12,20 +16,20 @@ import { appUrl } from '../../config/site'
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
     <Navbar />
-    <section class="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
+    <section class="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
       <h1 class="text-3xl font-bold text-foreground">Checkout canceled</h1>
       <p class="mt-4 text-muted-foreground">
-        Your payment was not completed. You can return to pricing and start again.
+        Your payment was not completed. You can return to {isLifetimeDeal ? 'the Lifetime Deal' : 'pricing'} and start again.
       </p>
       <p class="mt-2 text-muted-foreground">
         You can also open the app to review your current access status.
       </p>
       <div class="mt-8 flex flex-col gap-3">
         <a
-          href="/pricing"
+          href={returnUrl}
           class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-200"
         >
-          Back to pricing
+          {isLifetimeDeal ? 'Back to Lifetime Deal' : 'Back to pricing'}
         </a>
         <a
           href={appUrl()}
@@ -38,4 +42,3 @@ import { appUrl } from '../../config/site'
     <Footer />
   </main>
 </Layout>
-

@@ -16,6 +16,7 @@
 
 ### 🟠 P1 - High Priority
 
+🟠 [socialglowz] task: Audit WebView DOM-injection and third-party platform compliance before public traction: banner hiding, auto-click scripts, network terms, consent, session/cookie handling, and safer native-only alternatives | status: todo | area: legal-platform-risk | id: sg-webview-platform-compliance-audit | impact: high | effort: medium | unblocks: public-launch-risk-review | risk: third-party-terms-or-legal-exposure
 🟠 [socialglowz] task: Document remaining dependency overrides and plan major-line migrations for Vue Router, Vite, PrimeVue, Pinia, Tailwind, ESLint, and TypeScript | status: in_progress | area: deps | id: sg-extension-deps-major-migration-plan | impact: high | effort: high | unblocks: dependency-maintenance | risk: stale-framework-upgrade-plan
 
 ### 🟡 P2 - Medium Priority

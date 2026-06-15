@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro'
 import Navbar from '../components/Navbar.astro'
 import Newsletter from '../components/Newsletter.astro'
 import Footer from '../components/Footer.astro'
-import { appUrl, siteUrl, winflowzCheckoutUrl } from '../config/site'
+import { appUrl, siteUrl } from '../config/site'
 
 const plans = [
   {
@@ -89,12 +89,7 @@ const lifetime = [
   'No subscription',
 ]
 
-const lifetimeCheckoutUrl = winflowzCheckoutUrl('socialglowz/lifetime_deal', {
-  source: 'direct',
-  sourceRef: 'socialglowz-site-pricing',
-  successUrl: siteUrl('/purchase/success'),
-  cancelUrl: siteUrl('/purchase/cancel'),
-})
+const lifetimeDealUrl = '/lifetime-deal'
 
 const competitorColumns = ['SocialGlowz Pro', 'Hootsuite', 'Buffer', 'SessionBox', 'GoLogin']
 const compareRows = [
@@ -213,10 +208,10 @@ const jsonLd = [
           ))}
         </ul>
         <a
-          href={lifetimeCheckoutUrl}
+          href={lifetimeDealUrl}
           class="mt-6 block w-full text-center rounded-full py-3 text-sm font-medium shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200"
         >
-          Get Lifetime Access
+          View Lifetime Deal
         </a>
       </div>
     </section>
