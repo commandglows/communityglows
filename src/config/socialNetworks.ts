@@ -316,6 +316,17 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     defaultSelected: false,
   },
   {
+    id: 'kick',
+    label: 'Kick',
+    route: '/kick',
+    url: 'https://kick.com',
+    icon: 'pi pi-play',
+    color: '#53FC18',
+    tileColor: '#53FC18',
+    onboarding: true,
+    defaultSelected: false,
+  },
+  {
     id: 'medium',
     label: 'Medium',
     route: '/medium',
@@ -366,6 +377,9 @@ const NETWORK_ISOLATION_OVERRIDES: Readonly<Record<string, NetworkIsolationPolic
   cinderreels: {
     authStorage: ['cookies', 'localStorage'],
     storageOrigins: ['https://cinderreels.com'],
+  },
+  kick: {
+    authStorage: ['cookies', 'localStorage'],
   },
 }
 

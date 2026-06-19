@@ -84,7 +84,7 @@
             </div>
 
             <!-- Filtre Amis -->
-            <div class="friends-section">
+            <div class="friends-section friends-section--hidden">
               <div
                 v-if="!iconsOnly"
                 class="section-header"
@@ -615,6 +615,10 @@ onMounted(() => {
   margin-bottom: 0.5rem;
   border-top: 1px solid var(--surface-border);
   padding-top: 0.5rem;
+}
+
+.friends-section--hidden {
+  display: none;
 }
 
 .friends-toggle {

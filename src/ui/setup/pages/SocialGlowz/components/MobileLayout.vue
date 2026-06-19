@@ -41,7 +41,7 @@
     <div class="quick-actions">
       <!-- Notifications -->
       <button
-        class="quick-action-btn"
+        class="quick-action-btn quick-action-btn--hidden"
         @click="notificationsVisible = !notificationsVisible"
       >
         <span class="quick-action-icon">
@@ -56,7 +56,7 @@
       </button>
 
       <!-- Friends filter toggle -->
-      <div class="friends-filter-row">
+      <div class="friends-filter-row friends-filter-row--hidden">
         <span class="friends-filter-label">
           <i class="pi pi-users" />
           {{ $t('friends_filter.friends_only') }}
@@ -74,7 +74,7 @@
     <!-- Notifications panel -->
     <div
       v-if="notificationsVisible"
-      class="notif-panel"
+      class="notif-panel notif-panel--hidden"
     >
       <div class="notif-header">
         <span class="notif-title">{{ $t('common.notifications') }}</span>
@@ -732,6 +732,10 @@ const navigateToNetwork = (network: MenuItem) => {
   background: var(--surface-hover);
 }
 
+.quick-action-btn--hidden {
+  display: none;
+}
+
 .quick-action-icon {
   position: relative;
   width: 2rem;
@@ -784,6 +788,10 @@ const navigateToNetwork = (network: MenuItem) => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.85rem 1rem;
+}
+
+.friends-filter-row--hidden {
+  display: none;
 }
 
 .friends-filter-label {
@@ -850,6 +858,10 @@ const navigateToNetwork = (network: MenuItem) => {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--card-shadow);
+}
+
+.notif-panel--hidden {
+  display: none;
 }
 
 .notif-header {

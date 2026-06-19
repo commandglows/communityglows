@@ -2,6 +2,24 @@
 
 Dashboard unifié pour gérer tous vos réseaux sociaux depuis une seule interface. Disponible en extension Chrome/Firefox, application desktop et application mobile.
 
+## Product Registry
+
+SocialGlowz is a declared product and should always be documented as such in this repo.
+
+- Product name: `SocialGlowz`
+- Role: unified social dashboard for browser, desktop, and mobile surfaces
+- Canonical product documentation: this repository README plus the product-facing docs in `shipflow_data/`
+- Delivery: digital product access through the app and related entitlement flows
+
+If the product is being marketed or sold, the repo docs should keep the following explicit:
+
+- what the product does
+- who it is for
+- how it is delivered
+- which public surface verifies the claim
+
+Any product claim in the repo should be backed by the product registry, a live route, or a proof asset. If not, treat it as pending final copy rather than validated copy.
+
 ## Plateformes
 
 | Plateforme | Technologie | Build | Statut |

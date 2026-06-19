@@ -37,4 +37,13 @@ describe('social network isolation policy', () => {
       cinderreels: ['https://cinderreels.com'],
     })
   })
+
+  it('includes kick with normalized https origin', () => {
+    const policy = getNetworkIsolationPolicy('kick')
+    const origins = getNetworkIsolationOrigins('kick')
+
+    expect(policy.authStorage).toEqual(['cookies', 'localStorage'])
+    expect(policy.storageOrigins).toEqual([])
+    expect(origins).toEqual(['https://kick.com'])
+  })
 })

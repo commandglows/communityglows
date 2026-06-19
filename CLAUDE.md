@@ -41,6 +41,8 @@ Primary goals for any agent:
 - Prefer incremental edits; avoid broad refactors.
 - Keep environment-dependent behavior guarded (offline modes and optional integrations must not crash the app).
 - Never change runtime behavior of navigation or webview persistence without explicit intent.
+- Treat `SocialGlowz` as a declared product that must stay documented in repo-level product surfaces when marketing, checkout, or entitlement behavior changes.
+- Treat product claims as evidence-backed: if the claim cannot be tied to the registry, a live surface, or proof, do not consider it validated copy.
 
 ## Runtime structure
 

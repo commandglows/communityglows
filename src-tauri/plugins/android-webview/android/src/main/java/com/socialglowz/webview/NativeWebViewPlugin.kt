@@ -242,6 +242,7 @@ private val NETWORKS = listOf(
     NetworkInfo("folloverse", "\ue9ab", Color.parseColor("#7C3AED"), "https://folloverse.com/?ref=betalist"),
     NetworkInfo("industrysocial-waitlist", "\uea18", Color.parseColor("#1D4ED8"), "https://industrysocial.net/waitlist"),
     NetworkInfo("koru", "\ue9cb", Color.parseColor("#16A34A"), "https://koru.now"),
+    NetworkInfo("kick", "\ue939", Color.parseColor("#53FC18"), "https://kick.com"),
     NetworkInfo("medium", "\uea18", Color.parseColor("#000000"), "https://medium.com"),
 )
 
