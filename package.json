@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@auth/core": "^0.37.4",
-    "@convex-dev/auth": "^0.0.92",
+    "@auth/core": "^0.41.1",
+    "@convex-dev/auth": "^0.0.94",
     "@tauri-apps/api": "2.10.1",
     "@tauri-apps/plugin-dialog": "2.6.0",
     "@tauri-apps/plugin-fs": "2.4.5",
     "@vueuse/core": "^12.8.2",
-    "convex": "^1.39.1",
+    "convex": "^1.42.1",
     "notivue": "^2.4.5",
     "pinia": "^2.3.1",
     "pinia-plugin-persistedstate": "4.2.0",
@@ -21,7 +21,7 @@
   },
   "description": "Un projet Vue 3 + Vite pour la construction d'extensions Chrome",
   "devDependencies": {
-    "@crxjs/vite-plugin": "^2.4.0",
+    "@crxjs/vite-plugin": "^2.7.1",
     "@edge-runtime/vm": "^5.0.0",
     "@eslint/compat": "^1.4.1",
     "@eslint/js": "^9.39.4",
@@ -38,8 +38,8 @@
     "chalk": "^5.6.2",
     "chrome-types": "^0.1.429",
     "commander": "^13.1.0",
-    "concurrently": "^9.2.1",
-    "convex-test": "^0.0.53",
+    "concurrently": "^10.0.3",
+    "convex-test": "^0.0.54",
     "cross-env": "^7.0.3",
     "daisyui": "^5.5.20",
     "dotenv": "^16.6.1",
@@ -57,16 +57,16 @@
     "typescript-eslint": "^8.60.0",
     "unplugin-auto-import": "^19.3.0",
     "unplugin-icons": "^22.5.0",
-    "unplugin-turbo-console": "^1.11.3",
+    "unplugin-turbo-console": "^2.3.3",
     "unplugin-vue-components": "^28.8.0",
     "unplugin-vue-router": "^0.10.9",
-    "vite": "^6.4.2",
+    "vite": "^6.4.3",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-vue-devtools": "^7.7.9",
     "vite-plugin-zip-pack": "^1.2.4",
     "vitest": "^4.1.7",
     "vue-tsc": "^2.2.12",
-    "web-ext": "^10.3.0"
+    "web-ext": "^10.5.0"
   },
   "displayName": "Vite Vue 3 Chrome Extension",
   "engines": {
@@ -76,52 +76,6 @@
   "name": "vite-vue3-browser-extension-v3",
   "overrides": {
     "@crxjs/vite-plugin": "$@crxjs/vite-plugin"
-  },
-  "pnpm": {
-    "overrides": {
-      "fast-uri": "3.1.2",
-      "@babel/helpers": "^7.29.2",
-      "@babel/runtime": "^7.29.2",
-      "@eslint/plugin-kit": "^0.3.4",
-      "@nuxt/kit": "^3.21.2",
-      "ajv@6": "6.15.0",
-      "ajv@8": "8.20.0",
-      "brace-expansion@1": "1.1.13",
-      "brace-expansion@2": "2.0.3",
-      "defu": "^6.1.7",
-      "flatted": "^3.4.2",
-      "glob@10": "^10.5.0",
-      "h3": "^1.15.9",
-      "image-size": "^1.2.1",
-      "immutable": "^5.1.5",
-      "js-yaml": "^4.1.1",
-      "lodash": "^4.18.0",
-      "minimatch@3": "3.1.4",
-      "minimatch@5": "5.1.8",
-      "minimatch@9": "9.0.9",
-      "node-forge": "^1.4.0",
-      "picomatch@2": "2.3.2",
-      "picomatch@4": "4.0.4",
-      "postcss": "^8.5.12",
-      "rollup@2": "2.80.0",
-      "rollup@4": "^4.60.2",
-      "serialize-javascript": "^7.0.5",
-      "svgo": "^3.3.3",
-      "tmp": "^0.2.6",
-      "undici": "^6.25.0",
-      "yaml": "^2.8.3",
-      "ws": "8.20.1"
-    },
-    "peerDependencyRules": {
-      "allowAny": [],
-      "allowedDeprecatedVersions": {
-        "sourcemap-codec": "1.4.8"
-      },
-      "allowedVersions": {
-        "node-fetch": "*"
-      },
-      "ignoreMissing": []
-    }
   },
   "private": true,
   "repository": {

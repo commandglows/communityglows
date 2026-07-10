@@ -10,7 +10,6 @@
 ### 🔴 P0 - Critical
 
 🔴 [socialglowz] task: Fix Android WebView pooling reloads so same-profile network returns reuse a warm host instead of visibly reloading | status: todo | area: android-webview | id: BUG-2026-05-24-001 | impact: high | effort: medium | unblocks: mobile-release-proof | risk: high-user-facing-regression
-🔴 [socialglowz] task: Retest and close fast-uri security advisory fix after lockfile regeneration | status: todo | area: security-deps | id: BUG-2026-05-10-001 | impact: high | effort: low | unblocks: dependency-ship-readiness | risk: unresolved-security-advisory
 🔴 [socialglowz] task: Run sf-verify for extension parity: Chrome popup/side panel/options/install/update, Firefox popup/options, web-ext innerHTML warnings, and targeted Tauri regression proof | status: todo | area: extension-qa | id: sg-extension-parity-verify | impact: high | effort: medium | unblocks: dependency-migration-ship | risk: unverified-cross-surface-release
 🔴 [socialglowz] task: Run Lemon Squeezy test-mode buyer smoke for the direct Lifetime Deal path: checkout, success return, activation/status path, and no public AppSumo fallback | status: blocked | area: commerce | id: sg-commerce-lemonsqueezy-testmode-smoke | impact: high | effort: medium | unblocks: paid-ltd-launch | risk: money-access-regression
 
@@ -28,6 +27,7 @@
 ### 🟢 Completed
 
 🟢 [socialglowz] task: Compact mobile network list into four-column square tiles | status: done | area: mobile-ui | id: sg-mobile-network-grid-compact
+🟢 [socialglowz] task: Retest and close fast-uri security advisory fix after lockfile regeneration | status: done | area: security-deps | id: BUG-2026-05-10-001
 🟢 [socialglowz] task: Remove stale web/Vercel target references from project docs and scripts | status: done | area: docs | id: sg-docs-remove-stale-web-target
 🟢 [socialglowz] task: Fix extension dependency audit findings: remove unused vite-plugin-pwa path or patch its transitive Babel/brace-expansion advisories, upgrade Convex/ws safely, and re-run extension builds | status: done | area: deps | id: sg-extension-deps-audit-fixes
 🟢 [socialglowz] task: Clean unused extension/dev dependencies and package metadata gaps: remove stale direct deps and add license/engines metadata | status: done | area: deps | id: sg-extension-deps-hygiene
@@ -39,7 +39,7 @@
 
 - Priority last updated: 2026-07-10
 - Prioritization criteria: balanced impact, blockers, security/money risk, and bounded effort.
-- Immediate start recommendation: finish a bounded validation pass on `sg-android-deeplink-shared-link-flow` first because the work is already in the tree and currently untracked; once that branch is either validated or parked cleanly, retest `BUG-2026-05-10-001` as the next highest-ROI P0, then run extension parity verification.
+- Immediate start recommendation: run extension parity verification next; `BUG-2026-05-10-001` is now closed locally, and the remaining security pressure sits in the broader dependency migration/hardening backlog (`shell-quote`, `vite`, `undici`, `ws`).
 
 ---
 

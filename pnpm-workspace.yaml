@@ -1,0 +1,52 @@
+packages:
+  - "."
+
+overrides:
+  "@crxjs/vite-plugin": "$@crxjs/vite-plugin"
+  "@babel/helpers": "^7.29.2"
+  "@babel/runtime": "^7.29.2"
+  "@eslint/plugin-kit": "^0.3.4"
+  "@eslint/eslintrc>js-yaml": "^4.2.0"
+  "@nuxt/kit": "^3.21.2"
+  "ajv@6": "6.15.0"
+  "ajv@8": "8.20.0"
+  "brace-expansion@1": "1.1.13"
+  "brace-expansion@2": "2.0.3"
+  defu: "^6.1.7"
+  esbuild: "^0.28.1"
+  fast-uri: "3.1.2"
+  flatted: "^3.4.2"
+  "glob@10": "^10.5.0"
+  h3: "^1.15.9"
+  image-size: "^1.2.1"
+  immutable: "^5.1.5"
+  js-yaml: "^4.2.0"
+  launch-editor: "^2.14.1"
+  lodash: "^4.18.0"
+  "minimatch@3": "3.1.4"
+  "minimatch@5": "5.1.8"
+  "minimatch@9": "9.0.9"
+  node-forge: "^1.4.0"
+  "picomatch@2": "2.3.2"
+  "picomatch@4": "4.0.4"
+  postcss: "^8.5.12"
+  "rollup@2": "2.80.0"
+  "rollup@4": "^4.60.2"
+  serialize-javascript: "^7.0.5"
+  shell-quote: "1.8.4"
+  svgo: "^3.3.3"
+  tmp: "^0.2.7"
+  tsx>esbuild: "^0.28.1"
+  undici: "^6.27.0"
+  unplugin-turbo-console>launch-editor: "^2.14.1"
+  vite: "^6.4.3"
+  ws: "8.21.0"
+  yaml: "^2.8.3"
+
+peerDependencyRules:
+  allowAny: []
+  allowedDeprecatedVersions:
+    sourcemap-codec: "1.4.8"
+  allowedVersions:
+    node-fetch: "*"
+  ignoreMissing: []
