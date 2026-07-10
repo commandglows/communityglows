@@ -57,6 +57,8 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
   - Entrée page paramètres navigateur.
 - `src-tauri/src/lib.rs`
   - Exécuteur Rust/Tauri et expose les commandes IPC.
+- `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
+  - Reçoit les intents Android (barre native, partage texte/URL, commandes webview) et relaie les événements vers Vue.
 - `src-tauri/src/main.rs`
   - Point d'entrée Rust.
 - `convex/http.ts`
@@ -84,6 +86,8 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
   - Construction du client Convex singleton.
 - `src/lib/convexAuth.ts`
   - Wrapper d'auth, token storage, signIn/signOut.
+- `src/lib/socialGlowzDeepLinks.ts`
+  - Parse les deeplinks applicatifs SocialGlowz et met en file les actions d'ouverture de réseau/profil.
 - `src/lib/cloudSync*.ts`
   - Sync settings, queue de sync, feedback post-auth.
 - `src/lib/disableCopyProtection.ts`

@@ -2,6 +2,7 @@ package com.socialglowz.webview
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -11,6 +12,7 @@ import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.util.Patterns
 import android.view.Gravity
 import android.media.AudioAttributes
 import android.media.SoundPool
@@ -963,6 +965,52 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
     private var pickBackupLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>? = null
     private var pendingFilePathCallback: android.webkit.ValueCallback<Array<android.net.Uri>>? = null
     private var pickFileLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>? = null
+    private var pendingSharedUrl: String? = null
+
+    private fun findFirstSharedHttpUrl(rawText: String?): String? {
+        if (rawText.isNullOrBlank()) return null
+        val matcher = Patterns.WEB_URL.matcher(rawText)
+        while (matcher.find()) {
+            val candidate = matcher.group()?.trim()?.trimEnd('.', ',', ';', '!', '?', ')', ']', '}')
+            if (candidate != null && (candidate.startsWith("https://") || candidate.startsWith("http://"))) {
+                return candidate
+            }
+        }
+        return null
+    }
+
+    private fun extractSharedUrl(intent: Intent?): String? {
+        if (intent?.action != Intent.ACTION_SEND) return null
+        val mimeType = intent.type ?: return null
+        if (!mimeType.startsWith("text/")) return null
+
+        val fromExtraText = findFirstSharedHttpUrl(intent.getStringExtra(Intent.EXTRA_TEXT))
+        if (fromExtraText != null) return fromExtraText
+
+        val clipData = intent.clipData
+        if (clipData != null) {
+            for (index in 0 until clipData.itemCount) {
+                val item = clipData.getItemAt(index)
+                val fromClipText = findFirstSharedHttpUrl(item.text?.toString())
+                if (fromClipText != null) return fromClipText
+            }
+        }
+
+        return findFirstSharedHttpUrl(intent.getStringExtra(Intent.EXTRA_SUBJECT))
+    }
+
+    private fun dispatchSharedUrlToVue(url: String) {
+        val detailJson = """{"url": ${JSONObject.quote(url)}}"""
+        dispatchToVue("socialglowz:shared-link", detailJson)
+    }
+
+    private fun captureSharedUrl(intent: Intent?) {
+        val url = extractSharedUrl(intent) ?: return
+        pendingSharedUrl = url
+        if (mainWebView != null) {
+            dispatchSharedUrlToVue(url)
+        }
+    }
 
     private fun haptic(view: View, type: Int = HapticFeedbackConstants.KEYBOARD_TAP) {
         if (hapticEnabled) view.performHapticFeedback(type)
@@ -2173,6 +2221,7 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
     override fun load(webView: WebView) {
         mainWebView = webView
         Log.i(TAG, "load() called — mainWebView captured: ${webView.hashCode()}")
+        captureSharedUrl(activity.intent)
         ensureMultiProfileModeInitialized()
         // Init SoundPool for tap sound (uses bundled asset, independent of system "Touch sounds" setting)
         initSoundPool()
@@ -2264,6 +2313,11 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
         } catch (e: Exception) {
             Log.w(TAG, "Could not register file pickers: ${e.message}")
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        captureSharedUrl(intent)
     }
 
     /**
@@ -2964,6 +3018,13 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val args = invoke.parseArgs(SetLocaleArgs::class.java)
         Strings.locale = args.locale
         invoke.resolve(JSObject())
+    }
+
+    @Command
+    fun getCurrentSharedLink(invoke: Invoke) {
+        val result = JSObject()
+        result.put("url", pendingSharedUrl)
+        invoke.resolve(result)
     }
 
     // ── Set haptic feedback preference ────────────────────────────────────────

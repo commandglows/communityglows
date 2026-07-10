@@ -49,6 +49,14 @@ import { isAuthenticated } from '@/lib/convexAuth'
 import { hydrateCloudState, resetCloudSyncState } from '@/lib/cloudSync'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
 import { restorePostAuthReadyFeedback } from '@/lib/postAuthSyncFeedback'
+import {
+  consumePendingSocialGlowzDeepLinkAction,
+  SOCIALGLOWZ_DEEP_LINK_EVENT,
+  SOCIALGLOWZ_PROFILE_PICKED_EVENT,
+  SOCIALGLOWZ_SHARED_LINK_EVENT,
+  resolveSocialGlowzSharedUrl,
+  type SocialGlowzDeepLinkAction,
+} from '@/lib/socialGlowzDeepLinks'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { useFriendsFilter } from './composables/useFriendsFilter'
 import {
@@ -85,6 +93,10 @@ const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
 restorePostAuthReadyFeedback()
 useFriendsFilter() // Activates watchers: injects filter into webviews when settings change
+
+const queuedDeepLinkAction = ref<SocialGlowzDeepLinkAction | null>(consumePendingSocialGlowzDeepLinkAction())
+const pendingProfileChoiceAction = ref<SocialGlowzDeepLinkAction | null>(null)
+const lastHandledSharedUrl = ref<string | null>(null)
 
 // Mobile detection — reactive on window resize
 const isMobile = ref(window.innerWidth <= 768)
@@ -131,12 +143,27 @@ const onSwitchProfile = ((e: CustomEvent) => {
     profilesStore.setActive(profileId)
     const networkId = webviewStore.activeNetworkId
     if (networkId) {
+      const currentUrl = webviewStore.activeUrl
+      const urlOverride = currentUrl && currentUrl !== WEBVIEW_URLS[networkId]
+        ? currentUrl
+        : undefined
       webviewStore.clearNetwork()
-      setTimeout(() => webviewStore.selectNetwork(networkId), 100)
+      setTimeout(() => webviewStore.selectNetwork(networkId, urlOverride), 100)
     }
   }
 }) as unknown as (e: Event) => void
 const onToggleDarkMode = () => { themeStore.toggleTheme() }
+const onProfilePicked = ((e: CustomEvent<{ profileId?: string }>) => {
+  const pendingAction = pendingProfileChoiceAction.value
+  if (!pendingAction || pendingAction.type !== 'open-network') return
+
+  const selectedProfileId = typeof e.detail?.profileId === 'string' && e.detail.profileId
+    ? e.detail.profileId
+    : profilesStore.activeProfileId
+
+  pendingProfileChoiceAction.value = null
+  openNetworkFromDeepLink(pendingAction.networkId, selectedProfileId, pendingAction.urlOverride)
+}) as unknown as (e: Event) => void
 const onNativeTextZoomChanged = ((e: CustomEvent) => {
   const level = normalizeTextZoomLevel(Number(e.detail?.level))
   if (!Number.isFinite(level)) return
@@ -147,6 +174,10 @@ const onNativeTapSoundChanged = ((e: CustomEvent) => {
   if (typeof enabled !== 'boolean') return
   localStorage.setItem('sfz_tap_sound', String(enabled))
   syncSettingsPatch({ tapSoundEnabled: enabled }).catch(() => {})
+}) as unknown as (e: Event) => void
+const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
+  const rawUrl = typeof e.detail?.url === 'string' ? e.detail.url : ''
+  handleSharedUrl(rawUrl)
 }) as unknown as (e: Event) => void
 
 // Global tap feedback — delegated to the native plugin so it honors
@@ -166,6 +197,58 @@ const onGlobalTap = (e: Event) => {
   if (now - lastTapAt < 50) return
   lastTapAt = now
   triggerNativeTapFeedback()
+}
+
+function openNetworkFromDeepLink(networkId: string, profileId?: string, urlOverride?: string) {
+  profilesStore.ensureDefault()
+
+  const targetProfileId = profileId && profilesStore.profiles.some((profile) => profile.id === profileId)
+    ? profileId
+    : profilesStore.activeProfileId
+
+  if (targetProfileId && targetProfileId !== profilesStore.activeProfileId) {
+    profilesStore.setActive(targetProfileId)
+  }
+
+  webviewStore.selectNetwork(networkId, urlOverride)
+}
+
+function openProfileChooserFromDeepLink() {
+  webviewStore.clearNetwork()
+  window.dispatchEvent(new CustomEvent('sfz-show-profile-sheet'))
+}
+
+function applyDeepLinkAction(action: SocialGlowzDeepLinkAction) {
+  if (!onboardingStore.completed) {
+    queuedDeepLinkAction.value = action
+    return
+  }
+
+  if (action.type !== 'open-network') return
+
+  profilesStore.ensureDefault()
+
+  if (action.chooseProfile && profilesStore.profiles.length > 1) {
+    pendingProfileChoiceAction.value = action
+    openProfileChooserFromDeepLink()
+    return
+  }
+
+  openNetworkFromDeepLink(action.networkId, action.profileId, action.urlOverride)
+}
+
+const onDeepLinkAction = ((e: CustomEvent<SocialGlowzDeepLinkAction>) => {
+  if (!e.detail) return
+  applyDeepLinkAction(e.detail)
+}) as unknown as (e: Event) => void
+
+function handleSharedUrl(rawUrl: string) {
+  const action = resolveSocialGlowzSharedUrl(rawUrl)
+  if (!action) return
+  const dedupeKey = `${action.networkId}:${action.urlOverride ?? ''}`
+  if (lastHandledSharedUrl.value === dedupeKey) return
+  lastHandledSharedUrl.value = dedupeKey
+  applyDeepLinkAction(action)
 }
 
 // Sync locale to Android plugin for native UI translations
@@ -188,6 +271,16 @@ watch(
     }
   },
   { immediate: true },
+)
+
+watch(
+  () => onboardingStore.completed,
+  (completed) => {
+    if (!completed || !queuedDeepLinkAction.value) return
+    const action = queuedDeepLinkAction.value
+    queuedDeepLinkAction.value = null
+    applyDeepLinkAction(action)
+  },
 )
 
 // When the settings toggle changes, sync the native webview on Android
@@ -263,6 +356,12 @@ onMounted(async () => {
     await hydrateCloudState()
   }
 
+  if (queuedDeepLinkAction.value) {
+    const action = queuedDeepLinkAction.value
+    queuedDeepLinkAction.value = null
+    applyDeepLinkAction(action)
+  }
+
   // Preload top networks off-screen so first click is instant (non-blocking)
   preloadWebviews()
 
@@ -312,6 +411,15 @@ onMounted(async () => {
         profilesStore.ensureDefault()
         webviewStore.selectNetwork(networkId)
       })
+
+      try {
+        const sharedLink = await invoke('plugin:android-webview|get_current_shared_link') as { url?: string | null }
+        if (typeof sharedLink?.url === 'string') {
+          handleSharedUrl(sharedLink.url)
+        }
+      } catch {
+        // Command unavailable outside Android mobile runtime.
+      }
     }
   }
 
@@ -325,6 +433,9 @@ onMounted(async () => {
   window.addEventListener('sfz-toggle-dark-mode', onToggleDarkMode)
   window.addEventListener('sfz-text-zoom-changed', onNativeTextZoomChanged)
   window.addEventListener('sfz-tap-sound-changed', onNativeTapSoundChanged)
+  window.addEventListener(SOCIALGLOWZ_DEEP_LINK_EVENT, onDeepLinkAction)
+  window.addEventListener(SOCIALGLOWZ_PROFILE_PICKED_EVENT, onProfilePicked)
+  window.addEventListener(SOCIALGLOWZ_SHARED_LINK_EVENT, onSharedLink)
 
   // Global haptic/sound feedback for Vue-side buttons.
   // Delegated pointerdown → native plugin respects user's haptic + tap_sound prefs.
@@ -343,6 +454,9 @@ onUnmounted(() => {
   window.removeEventListener('sfz-toggle-dark-mode', onToggleDarkMode)
   window.removeEventListener('sfz-text-zoom-changed', onNativeTextZoomChanged)
   window.removeEventListener('sfz-tap-sound-changed', onNativeTapSoundChanged)
+  window.removeEventListener(SOCIALGLOWZ_DEEP_LINK_EVENT, onDeepLinkAction)
+  window.removeEventListener(SOCIALGLOWZ_PROFILE_PICKED_EVENT, onProfilePicked)
+  window.removeEventListener(SOCIALGLOWZ_SHARED_LINK_EVENT, onSharedLink)
   document.removeEventListener('pointerdown', onGlobalTap, true)
   unlistenTray?.()
 })

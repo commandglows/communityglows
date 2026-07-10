@@ -237,6 +237,7 @@
 
 <script setup lang="ts">
 import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
+import { SOCIALGLOWZ_PROFILE_PICKED_EVENT } from '@/lib/socialGlowzDeepLinks'
 import { useProfilesStore } from '@/stores/profiles'
 import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
@@ -436,6 +437,7 @@ function onWindowDragCancel(event: PointerEvent) {
 }
 
 function selectProfile(profileId: string) {
+  window.dispatchEvent(new CustomEvent(SOCIALGLOWZ_PROFILE_PICKED_EVENT, { detail: { profileId } }))
   profilesStore.setActive(profileId)
   closeSheet()
 }

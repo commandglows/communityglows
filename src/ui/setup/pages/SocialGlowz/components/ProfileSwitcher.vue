@@ -115,6 +115,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { SOCIALGLOWZ_PROFILE_PICKED_EVENT } from '@/lib/socialGlowzDeepLinks'
 import { useProfilesStore } from '@/stores/profiles'
 import type { Profile } from '@/stores/profiles'
 
@@ -138,6 +139,7 @@ function toggleMenu() {
 }
 
 function selectProfile(profileId: string) {
+  window.dispatchEvent(new CustomEvent(SOCIALGLOWZ_PROFILE_PICKED_EVENT, { detail: { profileId } }))
   if (profileId === profilesStore.activeProfileId) {
     menuVisible.value = false
     return
@@ -189,8 +191,19 @@ function handleOutsideClick(e: MouseEvent) {
   if (!el) menuVisible.value = false
 }
 
-onMounted(() => document.addEventListener('click', handleOutsideClick))
-onUnmounted(() => document.removeEventListener('click', handleOutsideClick))
+function openProfileMenu() {
+  menuVisible.value = true
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleOutsideClick)
+  window.addEventListener('sfz-show-profile-sheet', openProfileMenu)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick)
+  window.removeEventListener('sfz-show-profile-sheet', openProfileMenu)
+})
 </script>
 
 <style scoped>

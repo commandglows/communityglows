@@ -46,6 +46,15 @@
           "pathPrefix": [
             "/auth/callback"
           ]
+        },
+        {
+          "scheme": [
+            "socialglowz"
+          ],
+          "host": "app",
+          "pathPrefix": [
+            "/open"
+          ]
         }
       ]
     }

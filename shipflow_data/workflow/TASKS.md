@@ -16,6 +16,7 @@
 
 ### 🟠 P1 - High Priority
 
+🟠 [socialglowz] task: Finish and validate Android app deeplink plus shared-link intake flow so `socialglowz://app/open` and Android `ACTION_SEND` reopen the right network/profile session without breaking OAuth callback hardening | status: in_progress | area: mobile-ingress | id: sg-android-deeplink-shared-link-flow | impact: high | effort: medium | unblocks: mobile-growth-entrypoints | risk: untracked-mobile-regression
 🟠 [socialglowz] task: Audit WebView DOM-injection and third-party platform compliance before public traction: banner hiding, auto-click scripts, network terms, consent, session/cookie handling, and safer native-only alternatives | status: todo | area: legal-platform-risk | id: sg-webview-platform-compliance-audit | impact: high | effort: medium | unblocks: public-launch-risk-review | risk: third-party-terms-or-legal-exposure
 🟠 [socialglowz] task: Document remaining dependency overrides and plan major-line migrations for Vue Router, Vite, PrimeVue, Pinia, Tailwind, ESLint, and TypeScript | status: in_progress | area: deps | id: sg-extension-deps-major-migration-plan | impact: high | effort: high | unblocks: dependency-maintenance | risk: stale-framework-upgrade-plan
 
@@ -36,9 +37,9 @@
 
 ## Priority Notes
 
-- Priority last updated: 2026-05-30
+- Priority last updated: 2026-07-10
 - Prioritization criteria: balanced impact, blockers, security/money risk, and bounded effort.
-- Immediate start recommendation: retest `BUG-2026-05-10-001` first because it is high-impact, low-effort, and clears a security readiness blocker; then verify extension parity before continuing major dependency stages.
+- Immediate start recommendation: finish a bounded validation pass on `sg-android-deeplink-shared-link-flow` first because the work is already in the tree and currently untracked; once that branch is either validated or parked cleanly, retest `BUG-2026-05-10-001` as the next highest-ROI P0, then run extension parity verification.
 
 ---
 

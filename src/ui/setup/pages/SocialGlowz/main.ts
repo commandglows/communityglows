@@ -19,6 +19,10 @@ import {
   markAuthBootstrapError,
   setupConvexAuth
 } from '@/lib/convexAuth'
+import {
+  parseSocialGlowzDeepLink,
+  queueSocialGlowzDeepLinkAction,
+} from '@/lib/socialGlowzDeepLinks'
 import { startCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
 import '@/assets/base.css'
@@ -161,7 +165,14 @@ async function validateAndroidOAuthDeepLink(rawUrl: string) {
 
 async function processAndroidDeepLinks(payload: DeepLinkPayload) {
   if (!Array.isArray(payload) || payload.length === 0) return
-  await Promise.all(payload.map((url) => validateAndroidOAuthDeepLink(url)))
+  await Promise.all(payload.map(async (url) => {
+    const appDeepLinkAction = parseSocialGlowzDeepLink(url)
+    if (appDeepLinkAction) {
+      queueSocialGlowzDeepLinkAction(appDeepLinkAction)
+      return
+    }
+    await validateAndroidOAuthDeepLink(url)
+  }))
 }
 
 async function setupAndroidOAuthDeepLinkValidation() {
