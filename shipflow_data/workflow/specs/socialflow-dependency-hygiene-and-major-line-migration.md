@@ -208,7 +208,7 @@ The implementation should prefer removing stale packages over adding new abstrac
 # Constraints
 
 - Use `pnpm` and the pinned `packageManager: pnpm@8.11.0`.
-- Preserve the Node 20 major line because `.nvmrc` and GitHub Actions use Node 20, but allow raising the patch floor to `20.19.0` or later when Vite 7+/8 or ESLint 10 requires it.
+- Preserve the Node 24 major line because `.nvmrc` and GitHub Actions use Node 24, but allow raising the patch floor to `24.0.0` or later when Vite 7+/8 or ESLint 10 requires it.
 - Keep `.npmrc` compatibility flags unless the migration proves installs pass without them.
 - Keep `VITE_CONVEX_URL` optional and auth startup fail-soft.
 - Preserve hash routing where it supports Tauri Android and extension behavior.
@@ -382,11 +382,11 @@ No user-facing marketing, pricing, onboarding, or FAQ copy change is required un
 
 - [ ] Task 10: Add major-stage preflight and Node floor documentation
   - File: `docs/dependency-risk-register.md`
-  - Action: Add a reusable preflight checklist for every major migration stage: print `node --version`, confirm Node `20.19.0` or later for Vite 7+/8 and ESLint 10, record official docs source and package versions, and define the stage's rollback boundary before editing packages.
+  - Action: Add a reusable preflight checklist for every major migration stage: print `node --version`, confirm Node `24.0.0` or later for Vite 7+/8 and ESLint 10, record official docs source and package versions, and define the stage's rollback boundary before editing packages.
   - User story link: Keeps staged migrations predictable and prevents implementation from relying on stale docs or an underspecified Node 20 pin.
   - Depends on: Tasks 1-9.
   - Validate with: the risk register contains the preflight checklist and names Vite, Tauri, ESLint, TypeScript, Pinia, Vue Router, Convex/Auth, web-ext, VueUse, and Marked official docs.
-  - Notes: Updating `.nvmrc` from `20` to `20.19.0` or a later Node 20 patch is allowed in the relevant major stage if the docs require it.
+  - Notes: Updating `.nvmrc` from `24` to `24.0.0` or a later Node 24 patch is allowed in the relevant major stage if the docs require it.
 
 - [ ] Task 11: PrimeVue 3 to 4 migration stage
   - File: `src/ui/setup/pages/SocialGlowz/main.ts`
@@ -456,7 +456,7 @@ No user-facing marketing, pricing, onboarding, or FAQ copy change is required un
 - [ ] CA 8: Given Tailwind 4 changes Vite/PostCSS integration, when the Tailwind stage completes, then generated CSS covers the same HTML/Vue source surfaces and key UI screens remain visually usable.
 - [ ] CA 9: Given routing is split between generated extension routes and manual SocialGlowz routes, when router tooling changes, then both route systems still typecheck and use hash history where required.
 - [ ] CA 10: Given Vite/build tooling changes, when build validation runs, then Chrome, Firefox, web, Tauri frontend output, and at least one native Tauri packaging path still succeed or the stage is blocked.
-- [ ] CA 11: Given Vite 7+/8 or ESLint 10 is adopted, when local and CI checks run, then `node --version` proves Node `20.19.0` or later without jumping to a new Node major unless separately approved.
+- [ ] CA 11: Given Vite 7+/8 or ESLint 10 is adopted, when local and CI checks run, then `node --version` proves Node `24.0.0` or later without jumping to a new Node major unless separately approved.
 - [ ] CA 12: Given TypeScript/ESLint majors are changed, when static checks run, then they fail only for real code issues and no temporary bypasses are committed.
 - [ ] CA 13: Given runtime libraries change, when manual smoke runs, then auth startup remains optional, cloud sync remains fail-soft, and profile/webview state is not reset unexpectedly.
 - [ ] CA 14: Given Convex/Auth packages change, when auth and cloud-sync paths are tested, then anonymous sign-in, password sign-up/sign-in, token refresh, sign-out clearing, and server-side authorization assumptions remain valid.
@@ -587,7 +587,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-04-30 16:20:48 | sf-ready | GPT-5 Codex | Ran strict readiness gate against the updated dependency migration spec, local package/workflow evidence, and current official docs/package metadata for named migration stages | Ready: structure, metadata, task ordering, fresh-docs gate, adversarial review, and proportional security review pass for staged implementation | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
 | 2026-05-30 06:58:27 | sf-migrate | GPT-5 Codex | Reviewed current major upgrade targets for Vite 8, PrimeVue 4, Pinia 3, Vue Router 5, Tailwind 4, ESLint 10, TypeScript 6, and unplugin-vue-router deprecation | Confirmed the work remains a staged migration chantier; produced a migration order and affected-pattern matrix without applying package changes | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
 | 2026-05-30 07:12:01 | sf-verify | GPT-5 Codex | Verified the migration-planning run with fresh official docs, local checks, cross-target builds, and GPT 5.3 Codex Spark review | Partial: plan is coherent and current repo checks pass, but no migration implementation has started and native Tauri packaging/device proof is not run | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
-| 2026-05-30 07:33:16 | sf-start | GPT-5.3 Codex Spark | Added bounded Node-floor prep: explicit `Node 20.19.0` in `package.json`, `.nvmrc`, and CI Node setup steps; recorded the decision in dependency risk register | partial | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
+| 2026-05-30 07:33:16 | sf-start | GPT-5.3 Codex Spark | Added bounded Node-floor prep: explicit `Node 24.0.0` in `package.json`, `.nvmrc`, and CI Node setup steps; recorded the decision in dependency risk register | partial | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
 | 2026-05-30 20:21:18 | sf-verify | GPT-5 Codex | Verified the Node-floor prep from the `sf-start` micro-step with local checks, cross-target frontend builds, and targeted config inspection | partial: Node-floor prep is verified, but ship-readiness remains partial because unrelated dirty billing/site/spec changes and open high bugs are present in the worktree | /sf-start SocialGlowz Dependency Hygiene and Major-Line Migration |
 | 2026-05-30 20:31:37 | sf-verify | GPT-5 Codex | Checked verification readiness while the delegated GPT-5.3 Codex Spark `sf-start` run was still active | blocked: no completed implementation result from the active sub-agent is available to verify yet; current worktree remains dirty with unrelated billing/site changes | Wait for active `sf-start` sub-agent result, then rerun `/sf-verify` |
 | 2026-05-30 21:38:22 | sf-start | GPT-5 Codex | Completed Stage 11/12 implementation slices: PrimeVue 4 + Tailwind 4 migration changes in `src/ui/setup/pages/SocialGlowz/main.ts`, `package.json`, `pnpm-lock.yaml`, `postcss.config.cjs`, `src/assets/base.scss`, `vite.config.ts`, and `vite.tauri.config.ts` | partial: `typecheck`, `lint:check`, `test:once`, `build:chrome`, `build:firefox`, `tauri:build`, and `lint:manifest` pass; `corepack pnpm build:web` is not defined; existing Sass `@import` deprecation warnings remain from `src/assets/base.scss` | /sf-verify SocialGlowz Dependency Hygiene and Major-Line Migration |

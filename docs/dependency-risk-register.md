@@ -81,7 +81,7 @@ Proof gap:
 
 | Decision | Result | Validation target |
 | --- | --- | --- |
-| Node floor flooring for staged Vite/ESLint upgrades | Explicit Node floor is now pinned to `20.19.0` in `engines.node`, `.nvmrc`, and Node setup steps of `.github/workflows/build.yml` + `.github/workflows/dev-builds.yml` | `node --version` must show 20.19.x+ locally, CI `node-version` now pins 20.19.0 explicitly |
+| Node floor flooring for staged Vite/ESLint upgrades | Explicit Node floor is now pinned to `24.0.0` in `engines.node`, `.nvmrc`, and Node setup steps of `.github/workflows/build.yml` + `.github/workflows/dev-builds.yml` | `node --version` must show 24.0.x+ locally, CI `node-version` now pins 24.0.0 explicitly |
 | Unused direct dependencies | Removed unused stale direct dev packages while keeping `@iconify-json/ph` because `<i-ph-*>` components are used | Frozen install, typecheck, tests, lint, web/Chrome/Firefox builds |
 | `scripts/vue-tsc-fixed.cjs` hidden `semver` dependency | Removed the dead script instead of adding `semver`; package scripts and source no longer reference it | `rg "vue-tsc-fixed|semver"` outside lockfiles should not find runtime package usage |
 | npm package license posture | Added `license: UNLICENSED` to match private product posture | `node -e "console.log(require('./package.json').license)"` |
@@ -91,7 +91,7 @@ Proof gap:
 
 Before each major-line migration stage, record these items in the implementation notes or this register:
 
-1. Print `node --version`; Vite 7+/8 and ESLint 10 require Node `20.19.0` or later while staying on the Node 20 major line unless a separate runtime decision approves another major.
+1. Print `node --version`; Vite 7+/8 and ESLint 10 require Node `24.0.0` or later while staying on the Node 20 major line unless a separate runtime decision approves another major.
 2. Record local package versions before editing and the exact official docs source checked for the stage.
 3. Define the rollback boundary before changing package files.
 4. Run the stage-specific install, audit, typecheck, lint, test, build, extension, Convex, Tauri frontend, and native packaging checks named in the spec.
