@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.1.1"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-05-29"
+updated: "2026-07-15"
 status: reviewed
 source_skill: sf-docs
 scope: context
@@ -36,6 +36,7 @@ linked_systems:
   - "AGENT.md"
   - "shipflow_data/technical/context-function-tree.md"
   - "shipflow_data/technical/android-webview-session-isolation.md"
+  - "shipflow_data/technical/public-webview-platform-boundary.md"
   - "shipflow_data/technical/architecture.md"
   - "package.json"
   - "vite.config.ts"
@@ -113,6 +114,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 - Mode dégradé explicite si `DOCUMENT_START_SCRIPT` ou `WEB_MESSAGE_LISTENER` ne sont pas disponibles.
 - Mode dégradé explicite aussi si `MULTI_PROFILE` est indisponible : le multi-WebView chaud est désactivé pour éviter un partage du `CookieManager` global. Les snapshots fallback ne couvrent pas IndexedDB, CacheStorage, service workers, HTTP cache WebView global, credential stores système. `sessionStorage` n'est pas une garantie durable.
 - Détail du contrat : `shipflow_data/technical/android-webview-session-isolation.md`.
+- La frontière publique des WebViews tierces est distincte de l'isolation de session : aucun consentement, contournement d'identité, automatisation d'interface ou filtrage de contenu tiers ne doit être réintroduit. Les préférences visuelles restantes sont conditionnelles à la compatibilité par réseau. Détail : `shipflow_data/technical/public-webview-platform-boundary.md`.
 
 ### 4) Extension surfaces
 

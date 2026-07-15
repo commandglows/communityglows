@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-05-14"
-updated: "2026-05-30"
+updated: "2026-07-15"
 status: active
 source_skill: sf-docs
 scope: code_docs_map
@@ -138,3 +138,18 @@ next_step: "/sf-docs maintain shipflow_data/technical/code-docs-map.md"
 - Docs:
   - `shipflow_data/technical/context.md`
   - `shipflow_data/workflow/specs/android-webview-storage-isolation.md`
+
+## Public WebView platform boundary
+
+- Code:
+  - `src-tauri/src/lib.rs`
+  - `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
+  - `src/ui/setup/pages/SocialGlowz/App.vue`
+- Behavior:
+  - The public build leaves third-party consent dialogs under user control and uses the actual WebView user agent.
+  - It does not include anti-detection, consent/app-banner automation, desktop identity or viewport forcing, arbitrary desktop script injection, or friends-only feed filtering.
+  - Dark/light appearance, grayscale, mute, and native text zoom are retained only as user visual preferences and remain subject to per-platform compatibility testing.
+- Docs:
+  - `shipflow_data/technical/public-webview-platform-boundary.md`
+  - `shipflow_data/technical/android-webview-session-isolation.md`
+  - `shipflow_data/workflow/audits/2026-07-15-google-play-android-compliance.md`

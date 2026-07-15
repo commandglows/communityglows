@@ -62,7 +62,7 @@ src/ui/setup/pages/SocialGlowz/    # App principale (Vue 3 + PrimeVue)
 
 ### Contexte
 
-SocialGlowz affiche des réseaux sociaux dans des WebViews natives et injecte des scripts dans ces WebViews (grayscale, protection copie, session par profil). L'UI est écrite en Vue.js car le projet a démarré comme une extension Chrome.
+SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préférences visuelles limitées (thème, niveaux de gris, muet, zoom texte) peuvent s'appliquer au rendu, sans automatiser les consentements ni les interfaces tierces. L'UI est écrite en Vue.js car le projet a démarré comme une extension Chrome.
 
 ### Décision : Tauri 2
 
@@ -97,7 +97,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives et injecte de
 | Support desktop | Natif | Natif | Limité | Natif |
 | Contrôle cookies WebView | Natif (Kotlin/Swift) | Non | Non | Oui |
 
-**En résumé** : Tauri est le framework qui permet de garder une codebase Vue.js unique pour les cibles desktop et mobile, avec un accès bas-niveau au WebView natif pour l'injection de scripts et la gestion des cookies — ce qui est le coeur fonctionnel de SocialGlowz.
+**En résumé** : Tauri permet de garder une codebase Vue.js unique pour les cibles desktop et mobile, avec un accès bas niveau au WebView natif pour les préférences visuelles limitées et la gestion de session par profil. Il ne doit pas servir à contourner les règles ou les interfaces des plateformes tierces.
 
 ## Stack technique
 

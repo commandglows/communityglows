@@ -7,10 +7,10 @@
       Need assistance? We are here to help! For any issues or questions, you can
       contact our support team at:
       <a
-        href="mailto:support@example.com"
+        href="mailto:support@socialglowz.com"
         class="btn-link"
       >
-        support@example.com
+        support@socialglowz.com
       </a>
     </p>
 

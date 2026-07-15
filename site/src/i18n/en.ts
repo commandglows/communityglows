@@ -31,7 +31,7 @@ export default {
     items: [
       { icon: '\u2728', title: 'Isolated Profiles', desc: 'Create separate spaces for personal, work, clients, and projects. Cookies and sessions stay tied to the right profile.' },
       { icon: '\uD83C\uDFDB\uFE0F', title: 'Unified Network Access', desc: 'Open 18+ social networks and custom links from one app shell instead of juggling browser windows.' },
-      { icon: '\uD83D\uDEAB', title: 'Anti-Distraction Controls', desc: 'Use grayscale, friends-only filtering, and custom scripts to make social work calmer and more intentional.' },
+      { icon: '\uD83D\uDEAB', title: 'Focus Controls', desc: 'Use grayscale, dark or light appearance, media mute, and text sizing to make supported social work calmer and more intentional.' },
     ],
   },
   benefits: {
@@ -39,7 +39,7 @@ export default {
     title: 'Why Choose SocialGlowz',
     items: [
       { icon: '\uD83D\uDD12', title: 'Profile Isolation', desc: 'Keep each account context separate so client, personal, and team sessions do not leak into each other.' },
-      { icon: '\u2601\uFE0F', title: 'Useful Cloud Sync', desc: 'Profiles, accounts, filters, links, and key preferences follow your account while live login cookies remain local.' },
+      { icon: '\u2601\uFE0F', title: 'Useful Cloud Sync', desc: 'Profiles, accounts, links, hidden networks, and key preferences follow your account while live login cookies remain local.' },
       { icon: '\uD83D\uDCC5', title: 'Built-In Planning', desc: 'Use the Kanban board and custom links to keep publishing tasks close to the networks where they happen.' },
       { icon: '\uD83D\uDCF1', title: 'Desktop, Mobile, Extension', desc: 'Run the same workflow across web, browser extensions, desktop, and Android with one shared codebase.' },
     ],
@@ -51,8 +51,8 @@ export default {
       { title: 'Profile-Aware Sessions', desc: 'Switch between personal, work, and client profiles without logging in and out of the same network all day.', tag: 'Context stays where it belongs', wide: true },
       { title: '18+ Social Networks', desc: 'Access X, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram, Snapchat and more.', tag: 'One command center' },
       { title: 'Fast Network Switching', desc: 'Move between networks, profiles, and custom links from one focused interface built for repeated daily use.', tag: 'Fewer tabs, faster work', kbd: true },
-      { title: 'Anti-Distraction Mode', desc: 'Reduce visual noise with grayscale, friends-only filters, and optional custom script injection.', tag: 'Reclaim focus' },
-      { title: 'Cross-Device Setup Sync', desc: 'Sync profiles, active account state, custom links, hidden networks, filters, theme, language, and text zoom.', tag: 'Pick up anywhere', chart: true },
+      { title: 'Focus Controls', desc: 'Reduce visual noise with grayscale, dark or light appearance, media mute, and adjustable text size where supported.', tag: 'Reclaim focus' },
+      { title: 'Cross-Device Setup Sync', desc: 'Sync profiles, active account state, custom links, hidden networks, theme, language, and text zoom.', tag: 'Pick up anywhere', chart: true },
       { title: 'Privacy-First Sessions', desc: 'Live cookies and connected sessions stay local unless you explicitly move them with encrypted backup export.', tag: 'Sessions stay local', badges: ['Local', 'Encrypted backup', 'Profile scoped'] },
     ],
   },
@@ -75,7 +75,7 @@ export default {
     mostPopular: 'Most Popular',
     plans: [
       { name: 'Free', desc: 'Perfect for getting started', monthly: 0, yearly: 0, features: ['2 isolated profiles', '5 social networks', 'Grayscale mode', '3 custom links', 'Local session storage', 'Community support'], cta: 'Get Started' },
-      { name: 'Pro', desc: 'For serious social operators', monthly: 9, yearly: 72, features: ['Unlimited profiles', '18+ social networks', 'Full anti-distraction suite', 'Unlimited custom links', 'Kanban board', 'Backup and restore', 'Priority email support'], cta: 'Start Free Trial', highlighted: true },
+      { name: 'Pro', desc: 'For serious social operators', monthly: 9, yearly: 72, features: ['Unlimited profiles', '18+ social networks', 'Focus controls', 'Unlimited custom links', 'Kanban board', 'Backup and restore', 'Priority email support'], cta: 'Start Free Trial', highlighted: true },
       { name: 'Team', desc: 'For small teams and client work', monthly: 19, yearly: 180, features: ['Everything in Pro', 'Profile sharing', 'Team management', 'Priority support', 'Future cloud features'], cta: 'Contact Sales' },
     ],
   },

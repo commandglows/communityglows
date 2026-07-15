@@ -255,113 +255,6 @@ private val SVG_ICONS = mapOf(
     "quora" to "M7.3799.9483A11.9628 11.9628 0 0 1 21.248 19.5397l2.4096 2.4225c.7322.7362.21 1.9905-.8272 1.9905l-10.7105.01a12.52 12.52 0 0 1-.304 0h-.02A11.9628 11.9628 0 0 1 7.3818.9503Zm7.3217 4.428a7.1717 7.1717 0 1 0-5.4873 13.2512 7.1717 7.1717 0 0 0 5.4883-13.2511Z",
 )
 
-// Anti-fingerprint JS — patches WebView detection vectors used by Akamai, PerimeterX, etc.
-private val STEALTH_SCRIPT = """
-(function(){
-  if (window.__sfzStealth) return;
-  window.__sfzStealth = true;
-  // navigator.webdriver — automation/WebView flag
-  Object.defineProperty(navigator, 'webdriver', { get: () => false });
-  // window.chrome — real Chrome exposes this, WebViews don't
-  if (!window.chrome) {
-    window.chrome = { runtime: {}, loadTimes: function(){}, csi: function(){}, app: { isInstalled: false } };
-  }
-  // navigator.plugins — WebViews report empty
-  Object.defineProperty(navigator, 'plugins', {
-    get: () => {
-      var arr = [
-        { name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'Portable Document Format' },
-        { name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '' },
-        { name: 'Native Client', filename: 'internal-nacl-plugin', description: '' }
-      ];
-      arr.item = function(i) { return arr[i] || null; };
-      arr.namedItem = function(n) { return arr.find(function(p) { return p.name === n; }) || null; };
-      arr.refresh = function() {};
-      return arr;
-    }
-  });
-  // navigator.languages
-  Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
-  // permissions.query — Notification permission detection
-  var origQuery = window.Permissions && Permissions.prototype.query;
-  if (origQuery) {
-    Permissions.prototype.query = function(params) {
-      return params.name === 'notifications'
-        ? Promise.resolve({ state: Notification.permission })
-        : origQuery.call(this, params);
-    };
-  }
-
-  // ── Desktop device spoofing (Snapchat, etc.) ──────────────────────────────
-  // Sites like Snapchat Web check multiple JS signals beyond UA to detect mobile.
-  // Only spoof when we're already sending a desktop UA (DESKTOP_UA_NETWORKS).
-  if (/Windows NT 10\.0.*Chrome\/136/.test(navigator.userAgent)) {
-    // Touch — desktop has no touchscreen
-    Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 0 });
-    delete window.ontouchstart;
-    // Platform
-    Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
-    // Screen dimensions — report standard desktop
-    Object.defineProperty(window.screen, 'width', { get: () => 1920 });
-    Object.defineProperty(window.screen, 'height', { get: () => 1080 });
-    Object.defineProperty(window.screen, 'availWidth', { get: () => 1920 });
-    Object.defineProperty(window.screen, 'availHeight', { get: () => 1040 });
-    // User-Agent Client Hints JS API
-    if (navigator.userAgentData) {
-      Object.defineProperty(navigator, 'userAgentData', {
-        get: () => ({
-          brands: [
-            { brand: 'Chromium', version: '136' },
-            { brand: 'Google Chrome', version: '136' },
-            { brand: 'Not-A.Brand', version: '99' }
-          ],
-          mobile: false,
-          platform: 'Windows',
-          getHighEntropyValues: function() {
-            return Promise.resolve({
-              architecture: 'x86', bitness: '64', mobile: false,
-              model: '', platform: 'Windows', platformVersion: '15.0.0',
-              uaFullVersion: '136.0.0.0',
-              brands: [{ brand: 'Chromium', version: '136.0.0.0' }, { brand: 'Google Chrome', version: '136.0.0.0' }],
-              fullVersionList: [{ brand: 'Chromium', version: '136.0.0.0' }, { brand: 'Google Chrome', version: '136.0.0.0' }]
-            });
-          },
-          toJSON: function() {
-            return { brands: this.brands, mobile: false, platform: 'Windows' };
-          }
-        })
-      });
-    }
-    // Media queries — pointer: fine (mouse), hover: hover
-    var origMatchMedia = window.matchMedia;
-    window.matchMedia = function(q) {
-      if (q === '(pointer: coarse)') return Object.assign(origMatchMedia.call(this, q), { matches: false });
-      if (q === '(pointer: fine)') return Object.assign(origMatchMedia.call(this, q), { matches: true });
-      if (q === '(hover: hover)') return Object.assign(origMatchMedia.call(this, q), { matches: true });
-      if (q === '(hover: none)') return Object.assign(origMatchMedia.call(this, q), { matches: false });
-      return origMatchMedia.call(this, q);
-    };
-  }
-})();
-""".trimIndent()
-
-// For desktop-UA networks: force a wide viewport so the desktop layout fits on a mobile screen.
-// Without this, sites with <meta viewport width=device-width> render desktop CSS at phone width
-// (~360px), making everything appear 3-4x zoomed in. Setting width=980 lets loadWithOverviewMode
-// zoom out the page to fit.
-private val DESKTOP_VIEWPORT_SCRIPT = """
-(function(){
-  if (!/Windows NT 10\.0.*Chrome\/136/.test(navigator.userAgent)) return;
-  var meta = document.querySelector('meta[name="viewport"]');
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.name = 'viewport';
-    (document.head || document.documentElement).appendChild(meta);
-  }
-  meta.setAttribute('content', 'width=980, shrink-to-fit=yes');
-})();
-""".trimIndent()
-
 // Shared helper for LinkedIn's native dark-mode preference bridge.
 // LinkedIn's public help says the preference is saved locally in the browser/device.
 // We therefore patch both storage and cookie access so the site sees a consistent
@@ -601,303 +494,6 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
       if (attempts >= 12) clearInterval(timer);
     }, 250);
   } catch (e) {}
-})();
-""".trimIndent()
-
-// JavaScript injected after every page load to dismiss "open in app" / "get the app" prompts.
-// Strategy: inject persistent CSS to hide known banner elements, then click "Not now" buttons.
-private val DISMISS_APP_BANNERS_SCRIPT = """
-(function() {
-  'use strict';
-  if (window.__sfzAppBannerWatcher) return;
-  window.__sfzAppBannerWatcher = true;
-  window.__sfzAppBannerLog = window.__sfzAppBannerLog || [];
-
-  function L(msg) {
-    try {
-      window.__sfzAppBannerLog.push(msg);
-      if (window.__sfzAppBannerLog.length > 80) window.__sfzAppBannerLog.shift();
-    } catch (e) {}
-  }
-
-  // Persistent CSS — hides known app-banner elements even if re-inserted into the DOM
-  var style = document.createElement('style');
-  style.textContent =
-    '#smart-banner, .smartbanner, .smart-banner, #smartbanner, .smartbanner-container,' +
-    '[data-testid="BottomBar"],' +
-    '#xpromo-banner, .xpromo, [data-testid="xpromo-interstitial"], #AppPromo, .AppPromo,' +
-    '.IgCMI,' +
-    '#app-download-guide,' +
-    '[id*="app-banner" i], [id*="app-download" i], [id*="install-banner" i],' +
-    '[class*="AppBanner"], [class*="app-install-prompt"],' +
-    // Facebook / Instagram / Threads (Meta) — "Download" & "Open in app" banners
-    '[data-sigil="mbasic_inline_feed_promo"], [data-sigil="app_banner"],' +
-    '[id*="download-app" i], [class*="download-app" i],' +
-    '[class*="MobileAppPromoBanner"], [class*="appBanner"],' +
-    '#mobile-install-banner, [data-testid="mobile_app_banner"],' +
-    '[class*="open-in-app" i], [class*="openInApp" i],' +
-    '[data-testid*="open-in-app" i], [data-testid*="app_upsell" i]' +
-    '{ display: none !important; }';
-  (document.head || document.documentElement).appendChild(style);
-
-  // Remove HTML smart-app-banner meta tags (prevents browser-native banners)
-  function removeSmartBannerMeta() {
-    document.querySelectorAll('meta[name="apple-itunes-app"], meta[name="google-play-app"]')
-      .forEach(function(el) { el.parentNode && el.parentNode.removeChild(el); });
-  }
-
-  // Text patterns for "stay in browser / not now" dismiss buttons
-  var DISMISS_RE = /^(not now|pas maintenant|no thanks|non merci|continue in browser|continuer dans le navigateur|stay in browser|rester sur le site|use web|utiliser le web|continue to site|maybe later|peut-être plus tard|dismiss|ignorer|skip|passer|×|✕|close|fermer|log in|se connecter)$/i;
-
-  // Hide banners by text content (e.g. "Download Facebook for Android")
-  var DOWNLOAD_RE = /t(é|e)l(é|e)charger.*(facebook|instagram|threads|android)|download.*(facebook|instagram|threads|android)|naviguer plus vite|browse faster|open in app|ouvrir.*(l.application|l.app)|get the app|installer l.app/i;
-  function hideDownloadBanners() {
-    var els = document.querySelectorAll('div, section, aside, header, [role="banner"]');
-    for (var i = 0; i < els.length; i++) {
-      var el = els[i];
-      if (el.children.length > 10 || el.offsetHeight > 120) continue;
-      var txt = (el.textContent || '').trim();
-      if (txt.length < 200 && DOWNLOAD_RE.test(txt)) {
-        L('HIDE banner: ' + txt.substring(0, 120));
-        el.style.display = 'none';
-      }
-    }
-  }
-
-  function dismissAppPrompts() {
-    removeSmartBannerMeta();
-    hideDownloadBanners();
-
-    var btns = document.querySelectorAll('button, a[role="button"], [role="button"], a');
-    for (var i = 0; i < btns.length; i++) {
-      var el = btns[i];
-      if (!el.offsetParent) continue;
-      var label = (el.textContent || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();
-      if (!DISMISS_RE.test(label)) continue;
-      // Only click if the button lives inside an app-promotion container
-      var parent = el.closest(
-        '[id*="app" i], [class*="app" i], [id*="banner" i], [class*="banner" i],' +
-        '[id*="install" i], [class*="install" i], [id*="promo" i], [class*="promo" i]'
-      );
-      if (parent) { L('DISMISS CTA: ' + label); el.click(); return; }
-    }
-  }
-
-  // Trace likely content-creation clicks so Kotlin logs can show what happened
-  // right before an app-promo banner appears or the flow stalls.
-  var STORY_RE = /(story|stories|create story|créer une story|ajouter à la story|your story|reel|camera|photo|create post|composer)/i;
-  document.addEventListener('click', function(ev) {
-    var el = ev.target && ev.target.closest ? ev.target.closest('button, a, [role="button"], div, span') : null;
-    if (!el) return;
-    var label = (el.textContent || el.getAttribute('aria-label') || el.getAttribute('title') || '').trim();
-    if (!label || !STORY_RE.test(label)) return;
-    L('CLICK candidate: ' + label.substring(0, 140));
-  }, true);
-
-  dismissAppPrompts();
-  setTimeout(dismissAppPrompts, 800);
-  setTimeout(dismissAppPrompts, 2500);
-
-  var observer = new MutationObserver(function(mutations) {
-    for (var i = 0; i < mutations.length; i++) {
-      if (mutations[i].addedNodes.length) { setTimeout(dismissAppPrompts, 300); break; }
-    }
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-})();
-""".trimIndent()
-
-// Lightweight cookie-accept script injected via addDocumentStartJavaScript into ALL frames.
-// Only runs inside iframes (skips main frame) — handles cross-origin CMP dialogs
-// like Google Funding Choices (Quora) that render consent UI in an iframe.
-private val COOKIE_IFRAME_SCRIPT = """
-(function() {
-  'use strict';
-  if (window === window.top) return;
-  if (window.__sfzCookieIframe) return;
-  window.__sfzCookieIframe = true;
-
-  var RE = /^(accept( all( cookies?)?)?|i accept|allow( all( cookies?)?)?|i agree|agree|tout accepter|accepter( tout(es)?)?|autoriser( tous?( les cookies?)?)?|j'accepte|confirm all)$/i;
-
-  function clickEl(el) {
-    var r = el.getBoundingClientRect();
-    if (r.width === 0 && r.height === 0 && !el.offsetParent) return false;
-    var x = r.left + r.width / 2, y = r.top + r.height / 2;
-    try {
-      var opts = {bubbles:true, cancelable:true, clientX:x, clientY:y, pointerId:1, pointerType:'touch'};
-      el.dispatchEvent(new PointerEvent('pointerdown', opts));
-      el.dispatchEvent(new PointerEvent('pointerup', opts));
-    } catch(e) {}
-    el.click();
-    return true;
-  }
-  function tryClick() {
-    // Buttons first, then divs/spans as fallback
-    var selectors = ['button, a, [role="button"]', 'div, span, p'];
-    for (var s = 0; s < selectors.length; s++) {
-      var els = document.querySelectorAll(selectors[s]);
-      for (var i = 0; i < els.length; i++) {
-        var label = (els[i].textContent || els[i].getAttribute('aria-label') || '').trim();
-        if (RE.test(label) && clickEl(els[i])) return;
-      }
-    }
-  }
-
-  var attempts = 0;
-  var interval = setInterval(function() {
-    tryClick();
-    if (++attempts >= 100) clearInterval(interval);
-  }, 50);
-  tryClick();
-})();
-""".trimIndent()
-
-// JavaScript injected after every page load to auto-accept cookie consent dialogs.
-// Uses MutationObserver so it also catches dialogs that appear after initial load.
-private val COOKIE_ACCEPT_SCRIPT = """
-(function() {
-  'use strict';
-  if (window.__sfzCookieWatcher) return; // already installed
-  window.__sfzCookieWatcher = true;
-
-  // Specific CMP selectors (OneTrust, CookieBot, Didomi, Axeptio, Quantcast, Meta/Instagram…)
-  var SELECTORS = [
-    '#onetrust-accept-btn-handler',
-    '#accept-recommended-btn-handler',
-    '.onetrust-accept-btn-handler',
-    '#CybotCookiebotDialogBodyButtonAccept',
-    '#CybotCookiebotDialogBodyLevelButtonAccept',
-    '#didomi-notice-agree-button',
-    '#didomi-notice-learn-more-button ~ button',
-    '[data-consent="accept"]',
-    '[id="axeptio_btn_acceptAll"]',
-    '.qc-cmp2-summary-buttons button[mode="primary"]',
-    '.qc-cmp2-summary-buttons button:first-child',
-    '.sp_choice_type_11',
-    '[data-testid="GDPR-accept"]',
-    '[data-testid="cookie-policy-manage-dialog-accept-button"]',
-    '[data-cookiebanner="accept_button"]',
-    '#L2AGLb',
-    '.tOjcNe',
-    '[aria-label="Accept all"]',
-    '[aria-label="Tout accepter"]',
-    '[aria-label="Allow all cookies"]',
-    '[aria-label="Autoriser tous les cookies"]',
-    // TikTok
-    '[data-e2e="cookie-banner-accept"]',
-    '.tiktok-cookie-banner button:last-child',
-    '[class*="CookieBanner"] button:last-child',
-    '[class*="cookie-banner"] button:last-child'
-  ];
-
-  // Text patterns matched case-insensitively against button innerText / aria-label
-  var ACCEPT_RE = /^(accept( all( cookies?)?)?|accept cookies on this browser|accepter( tout(es)?( les cookies?)?)?|tout accepter|tout autoriser|autoriser( tous?( les cookies?)?)?|autoriser les cookies.*|allow( all( cookies?)?)?|allow.*cookies|i agree|j'accepte|ok|got it|i accept|confirm all|agree)$/i;
-
-  // Robust click: dispatch pointer events (for React/Vue onPointerDown handlers)
-  // then native click. Covers all frameworks.
-  function robustClick(el) {
-    if (!el) return false;
-    var r = el.getBoundingClientRect();
-    if (r.width === 0 && r.height === 0 && !el.offsetParent) return false;
-    var x = r.left + r.width / 2, y = r.top + r.height / 2;
-    try {
-      var opts = {bubbles:true, cancelable:true, clientX:x, clientY:y, pointerId:1, pointerType:'touch'};
-      el.dispatchEvent(new PointerEvent('pointerdown', opts));
-      el.dispatchEvent(new PointerEvent('pointerup', opts));
-    } catch(e) {}
-    el.click();
-    return true;
-  }
-
-  // TikTok uses <tiktok-cookie-banner> custom element with Shadow DOM.
-  // Normal selectors can't reach inside — we must access shadowRoot directly.
-  function tryTikTokShadowBanner() {
-    try {
-      var banner = document.querySelector('tiktok-cookie-banner');
-      if (!banner || !banner.shadowRoot) return false;
-      var btns = banner.shadowRoot.querySelectorAll('button');
-      for (var i = 0; i < btns.length; i++) {
-        var label = (btns[i].textContent || '').trim();
-        if (ACCEPT_RE.test(label)) { robustClick(btns[i]); return true; }
-      }
-      // Fallback: click the last button (typically "Allow all" / "Accept")
-      if (btns.length > 0) { robustClick(btns[btns.length - 1]); return true; }
-    } catch(e) {}
-    return false;
-  }
-
-  // Diagnostic log — collected and sent to Kotlin debug logs after 6s
-  var log = [];
-  function L(msg) { log.push(msg); }
-
-  function tryAccept() {
-    // 0. TikTok shadow DOM banner (must be checked before normal selectors)
-    if (tryTikTokShadowBanner()) { L('CLICKED via TikTok shadow DOM'); return true; }
-
-    // 1. Try known CMP selectors — only click interactive elements
-    //    (aria-label selectors can match container divs, not buttons)
-    for (var i = 0; i < SELECTORS.length; i++) {
-      try {
-        var el = document.querySelector(SELECTORS[i]);
-        if (!el) continue;
-        var tag = el.tagName;
-        if (tag !== 'BUTTON' && tag !== 'A' && !el.getAttribute('role')) {
-          L('CMP skip non-interactive: ' + SELECTORS[i] + ' → <' + tag + '> "' + (el.textContent||'').trim().substring(0,40) + '"');
-          continue;
-        }
-        if (robustClick(el)) { L('CLICKED via CMP selector: ' + SELECTORS[i]); return true; }
-      } catch(e) {}
-    }
-
-    // 2. Scan elements in two passes: interactive first (button/a), then any element.
-    //    This prevents clicking a parent <div> when the real <button> is inside it.
-    function scanDoc(doc) {
-      // Pass 1: buttons and links only (the actual clickable elements)
-      var btns = doc.querySelectorAll('button, a, [role="button"]');
-      for (var b = 0; b < btns.length; b++) {
-        var label = (btns[b].textContent || btns[b].getAttribute('aria-label') || '').trim();
-        if (ACCEPT_RE.test(label) && robustClick(btns[b])) {
-          L('CLICKED via btn scan: <' + btns[b].tagName + '> "' + label + '"');
-          return true;
-        }
-      }
-      // Pass 2: any element (div, span, p) — fallback for non-standard CMPs
-      var els = doc.querySelectorAll('div, span, p');
-      for (var b = 0; b < els.length; b++) {
-        var label = (els[b].textContent || els[b].getAttribute('aria-label') || '').trim();
-        if (ACCEPT_RE.test(label) && robustClick(els[b])) {
-          L('CLICKED via div scan: <' + els[b].tagName + '> "' + label + '"');
-          return true;
-        }
-      }
-      return false;
-    }
-    if (scanDoc(document)) return true;
-
-    // 3. Scan same-origin iframes (some CMPs like Quantcast render in an iframe)
-    var iframes = document.querySelectorAll('iframe');
-    for (var f = 0; f < iframes.length; f++) {
-      try {
-        var doc = iframes[f].contentDocument;
-        if (doc && scanDoc(doc)) { L('CLICKED via iframe #' + f); return true; }
-      } catch(e) { L('iframe #' + f + ' cross-origin (skipped)'); }
-    }
-    return false;
-  }
-
-  // Retry every 50ms for 5 seconds, then stop.
-  var clicked = false;
-  var attempts = 0;
-  var interval = setInterval(function() {
-    if (!clicked) clicked = tryAccept();
-    if (clicked || ++attempts >= 100) clearInterval(interval);
-  }, 50);
-  clicked = tryAccept();
-
-  // After 6s, expose diagnostic log for Kotlin to retrieve
-  setTimeout(function() {
-    window.__sfzCookieLog = (clicked ? 'OK' : 'FAIL') + ' (' + attempts + ' attempts)\\n' + log.join('\\n');
-  }, 6000);
 })();
 """.trimIndent()
 
@@ -4002,54 +3598,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
     private fun applyTextZoomToWebView(view: WebView?) {
         val wv = view ?: return
-        val level = normalizeTextZoomLevel(textZoomLevel)
-        wv.settings.textZoom = level
-        val js = """
-            (function() {
-              var level = $level;
-              var percent = level + '%';
-              var isFacebook = /facebook\.com/.test(location.host);
-              var textAdjustPercent = isFacebook ? '100%' : percent;
-              document.documentElement.style.setProperty('-webkit-text-size-adjust', textAdjustPercent);
-              if (document.body) {
-                document.body.style.setProperty('-webkit-text-size-adjust', textAdjustPercent);
-              }
-              if (isFacebook) {
-                var nodes = document.querySelectorAll('body, div, span, a, p, h1, h2, h3, h4, h5, h6');
-                for (var i = 0; i < nodes.length; i++) {
-                  var el = nodes[i];
-                  if (el.dataset.sfzZoomInlineFontSize === undefined) {
-                    el.dataset.sfzZoomInlineFontSize = el.style.getPropertyValue('font-size') || '';
-                    el.dataset.sfzZoomInlineFontPriority = el.style.getPropertyPriority('font-size') || '';
-                  }
-                  var inlineFontSize = el.dataset.sfzZoomInlineFontSize || '';
-                  var inlinePriority = el.dataset.sfzZoomInlineFontPriority || '';
-                  if (inlineFontSize) {
-                    el.style.setProperty('font-size', inlineFontSize, inlinePriority);
-                  } else {
-                    el.style.removeProperty('font-size');
-                  }
-                }
-                for (var j = 0; j < nodes.length; j++) {
-                  var baseNode = nodes[j];
-                  var baseStyle = window.getComputedStyle(baseNode);
-                  var baseSize = parseFloat(baseStyle.fontSize || '0');
-                  if (!baseSize || baseSize < 10 || baseSize > 40) continue;
-                  baseNode.dataset.sfzZoomBase = String(baseSize);
-                }
-                if (level === 100) {
-                  return;
-                }
-                for (var k = 0; k < nodes.length; k++) {
-                  var node = nodes[k];
-                  var base = parseFloat(node.dataset.sfzZoomBase || '0');
-                  if (!base) continue;
-                  node.style.fontSize = (base * level / 100) + 'px';
-                }
-              }
-            })();
-        """.trimIndent()
-        wv.evaluateJavascript(js, null)
+        wv.settings.textZoom = normalizeTextZoomLevel(textZoomLevel)
     }
 
     private fun normalizeTextZoomLevel(level: Int): Int {
@@ -4495,9 +4044,6 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         "pinterest" to "https://www.pinterest.com/login/",
     )
 
-    // Networks that require a desktop UA (their web app blocks mobile browsers).
-    private val DESKTOP_UA_NETWORKS = setOf("whatsapp", "telegram", "discord", "snapchat")
-    private val DESKTOP_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
     private lateinit var mobileUa: String
 
     private fun isFacebookDesktopFlow(url: String?): Boolean {
@@ -4509,31 +4055,10 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             value.contains("story_bucket")
     }
 
-    private fun shouldUseDesktopUa(networkId: String?, url: String? = null): Boolean {
-        if (networkId in DESKTOP_UA_NETWORKS) return true
-        if (networkId == "facebook") {
-            return facebookDesktopOverride || isFacebookDesktopFlow(url)
-        }
-        return false
-    }
-
-    /** Set the appropriate UA before loading a URL — desktop only where required. */
-    private fun applyUaForNetwork(networkId: String?, url: String? = null) {
+    /** Keep the platform-provided WebView identity for every network. */
+    private fun applyUaForNetwork(_networkId: String?, _url: String? = null) {
         val wv = socialWebView ?: return
-        wv.settings.userAgentString = if (shouldUseDesktopUa(networkId, url)) DESKTOP_UA else mobileUa
-    }
-
-    private fun maybeHandleFacebookUaSwitch(view: WebView, url: String): Boolean {
-        if (currentNetworkId != "facebook") return false
-
-        val targetDesktop = isFacebookDesktopFlow(url)
-        if (targetDesktop == facebookDesktopOverride) return false
-
-        facebookDesktopOverride = targetDesktop
-        applyUaForNetwork("facebook", url)
-        dbg("[ua] facebook -> ${if (targetDesktop) "desktop" else "mobile"} for $url")
-        view.loadUrl(url)
-        return true
+        wv.settings.userAgentString = mobileUa
     }
 
     // ── WebView factory ───────────────────────────────────────────────────────
@@ -4564,10 +4089,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         settings.builtInZoomControls = true
         settings.displayZoomControls = false
         settings.textZoom = textZoomLevel
-        // Use the real WebView UA but strip the "; wv" token that flags us as a WebView.
-        // This keeps the Chrome version in sync with the actual engine (no fingerprint mismatch).
-        val defaultUa = WebSettings.getDefaultUserAgent(activity)
-        mobileUa = defaultUa.replace("; wv", "")
+        mobileUa = WebSettings.getDefaultUserAgent(activity)
         settings.userAgentString = mobileUa
 
         val cookieManager = if (isPoolingEnabled()) {
@@ -4579,18 +4101,10 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         cookieManager.setAcceptCookie(true)
         cookieManager.setAcceptThirdPartyCookies(webView, true)
 
-        // Inject stealth/cookie/banner scripts at document start (before page JS runs).
-        // This is critical for anti-bot bypass — onPageFinished is too late.
+        // The only document-start script retained is the user's cosmetic theme preference.
         val useDocStart = WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
         if (useDocStart) {
-            WebViewCompat.addDocumentStartJavaScript(webView, STEALTH_SCRIPT, setOf("*"))
-            WebViewCompat.addDocumentStartJavaScript(webView, DESKTOP_VIEWPORT_SCRIPT, setOf("*"))
             WebViewCompat.addDocumentStartJavaScript(webView, DARK_MODE_DOC_START_SCRIPT, setOf("*"))
-            // COOKIE_ACCEPT_SCRIPT is injected conditionally in onPageFinished (main frame).
-            // COOKIE_IFRAME_SCRIPT runs in ALL frames but skips main frame — handles
-            // cross-origin CMP iframes (Google Funding Choices, etc.).
-            WebViewCompat.addDocumentStartJavaScript(webView, COOKIE_IFRAME_SCRIPT, setOf("*"))
-            WebViewCompat.addDocumentStartJavaScript(webView, DISMISS_APP_BANNERS_SCRIPT, setOf("*"))
         }
 
         webView.webViewClient = object : WebViewClient() {
@@ -4610,23 +4124,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 }
                 dbg("[nav] net=${currentNetworkId ?: "?"} scheme=$scheme host=$host path=$path url=$url")
 
-                // Allow normal web navigation — but intercept app store redirects
+                // Allow normal web navigation without rewriting platform redirects.
                 if (scheme == "http" || scheme == "https") {
-                    if (maybeHandleFacebookUaSwitch(view, url)) {
-                        return true
-                    }
-                    // Intercept Play Store / App Store redirects → send to web login instead
-                    if (host.contains("play.google.com") || host.contains("apps.apple.com") || host.contains("itunes.apple.com")) {
-                        val loginUrl = NETWORK_LOGIN_URLS[currentNetworkId]
-                        if (loginUrl != null) {
-                            Log.i(TAG, "App store redirect intercepted ($host) → $loginUrl")
-                            dbg("[nav] app-store redirect blocked → $loginUrl")
-                            view.loadUrl(loginUrl)
-                            return true
-                        }
-                        dbg("[nav] app-store redirect blocked with no fallback")
-                        return true  // block even if no login URL known
-                    }
                     return false
                 }
 
@@ -4669,75 +4168,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                     }
                     return
                 }
-                dbg("[page] finished net=${currentNetworkId ?: "?"} ua=${if (shouldUseDesktopUa(currentNetworkId, url)) "desktop" else "mobile"} url=$url")
+                dbg("[page] finished net=${currentNetworkId ?: "?"} url=$url")
                 applyTextZoomToWebView(view)
-                // Fallback: inject scripts here only if addDocumentStartJavaScript wasn't available
-                if (!useDocStart) {
-                    view.evaluateJavascript(STEALTH_SCRIPT, null)
-                    view.evaluateJavascript(DISMISS_APP_BANNERS_SCRIPT, null)
-                }
-                // Cookie consent: always inject for the first 3 pages after opening
-                // a network (consent can appear after redirects). After that, check
-                // auth cookies and stop injecting once logged in.
-                if (!isLoggedIn) {
-                    pagesSinceOpen++
-                    view.evaluateJavascript(COOKIE_ACCEPT_SCRIPT, null)
-                    // Retrieve cookie consent diagnostic log after 7s
-                    val netId = currentNetworkId ?: "?"
-                    view.postDelayed({
-                        view.evaluateJavascript("window.__sfzCookieLog || ''") { result ->
-                            val log = result?.trim('"') ?: ""
-                            if (log.isNotEmpty()) {
-                                for (line in log.split("\\n")) {
-                                    dbg("[cookie:$netId] $line")
-                                }
-                            }
-                        }
-                    }, 7000)
-                    if (pagesSinceOpen > 3 && checkLoggedIn()) {
-                        isLoggedIn = true
-                        dbg("[cookie:$netId] Auth cookies detected — disabled")
-                    }
-                }
-                if (currentNetworkId == "facebook") {
-                    view.postDelayed({
-                        view.evaluateJavascript("(window.__sfzAppBannerLog || []).join('\\n')") { result ->
-                            val raw = result?.trim()
-                            if (raw.isNullOrEmpty() || raw == "null" || raw == "\"\"") return@evaluateJavascript
-                            val decoded = try {
-                                org.json.JSONTokener(raw).nextValue()?.toString() ?: ""
-                            } catch (_: Exception) {
-                                raw.trim('"')
-                            }
-                            if (decoded.isBlank()) return@evaluateJavascript
-
-                            var sawStoryClick = false
-                            var sawOpenAppBanner = false
-                            decoded.split("\n").forEach { line ->
-                                val entry = line.trim()
-                                if (entry.isBlank()) return@forEach
-                                dbg("[fb-ui] $entry")
-                                if (entry.contains("CLICK candidate:", ignoreCase = true) &&
-                                    entry.contains("story", ignoreCase = true)) {
-                                    sawStoryClick = true
-                                }
-                                if (entry.contains("HIDE banner:", ignoreCase = true) &&
-                                    entry.contains("ouvrir l’application", ignoreCase = true)) {
-                                    sawOpenAppBanner = true
-                                }
-                            }
-                            if (sawStoryClick && sawOpenAppBanner && !shouldUseDesktopUa(currentNetworkId, url)) {
-                                showFacebookStoryUnavailableNotice()
-                            }
-                            view.evaluateJavascript("window.__sfzAppBannerLog = []", null)
-                        }
-                    }, 1200)
-                }
-                // Always re-inject desktop viewport override in onPageFinished (backup —
-                // the page may have set its own viewport meta after our document-start script)
-                if (shouldUseDesktopUa(currentNetworkId, url)) {
-                    view.evaluateJavascript(DESKTOP_VIEWPORT_SCRIPT, null)
-                }
                 applyDarkModeToWebView(view)
                 logFacebookDarkState(view, "page-finished")
                 logLinkedInDarkState(view, "page-finished")

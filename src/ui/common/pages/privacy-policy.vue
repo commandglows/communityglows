@@ -24,6 +24,13 @@
       services.
     </p>
 
+    <h2>Embedded Social Services</h2>
+    <p>
+      When you open a supported social service, its cookies and session-related
+      local storage can remain on your device for that profile and network. You
+      make any consent choices presented by that service directly.
+    </p>
+
     <h2>Sharing Your Information</h2>
     <p>
       We do not sell, trade, or rent your personal information to others. We may
@@ -39,12 +46,16 @@
       that we delete your personal information.
     </p>
     <p>
+      Self-service account deletion is not currently available in the app. You
+      can submit a deletion request using the contact address below.
+    </p>
+    <p>
       For more information or to exercise these rights, please contact us at:
       <a
-        href="mailto:support@example.com"
+        href="mailto:privacy@socialglowz.com"
         class="text-primary"
       >
-        support@example.com
+        privacy@socialglowz.com
       </a>
     </p>
   </div>

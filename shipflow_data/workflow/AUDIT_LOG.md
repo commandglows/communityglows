@@ -2,6 +2,7 @@
 
 > Project-local audit history. Append-only.
 
+🔴 [socialglowz] audit: Google Play Android compliance | date: 2026-07-15 | overall: NO-GO | issues: 4 release blockers; 5 high or conditional risks; Android artifact proof missing | id: sg-google-play-compliance-2026-07-15 | scope: android-webview-privacy-platform-policy
 🟡 [socialglowz] audit: extension dependencies | date: 2026-05-26 | overall: B | issues: prod audit clean; full audit keeps 1 moderate dev-only uuid via web-ext; vite-plugin-pwa advisory path removed; ws via Convex mitigated with ws@8.20.1 override
 🟢 [socialglowz] audit: dependency hygiene | date: 2026-05-29 | overall: B+ | issues: npm audit clean; unused direct deps removed; patch/minor updates applied; remaining work is major-line migration and override docs
 

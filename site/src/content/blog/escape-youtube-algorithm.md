@@ -34,7 +34,7 @@ Open social platforms as first-class panels in one app shell so you can move fas
 
 ### Enable Anti-Distraction Controls
 
-Use grayscale and content filtering where you want a quieter session.  
+Use grayscale and other available focus controls where you want a quieter session.
 Your job is to execute, not be re-optimised by feed mechanics.
 
 ## Build an Execution Rhythm

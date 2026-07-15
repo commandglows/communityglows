@@ -39,7 +39,7 @@ Use the Kanban board to turn recurring daily actions into a repeatable system. I
 - Create 3 base profiles
 - Add social networks per profile
 - Add at least 2 custom links per workflow
-- Enable grayscale/friends-only filters where you need focus
+- Enable grayscale or other available focus controls where you need them
 - Verify local session isolation before login-sensitive actions
 
 ## Ready to Standardize Your Workflow

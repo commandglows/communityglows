@@ -58,7 +58,6 @@ import {
   type SocialGlowzDeepLinkAction,
 } from '@/lib/socialGlowzDeepLinks'
 import { useOnboardingStore } from '@/stores/onboarding'
-import { useFriendsFilter } from './composables/useFriendsFilter'
 import {
   DEFAULT_TAP_SOUND_VARIANT,
   TAP_SOUND_STORAGE_KEY,
@@ -92,7 +91,6 @@ const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
 restorePostAuthReadyFeedback()
-useFriendsFilter() // Activates watchers: injects filter into webviews when settings change
 
 const queuedDeepLinkAction = ref<SocialGlowzDeepLinkAction | null>(consumePendingSocialGlowzDeepLinkAction())
 const pendingProfileChoiceAction = ref<SocialGlowzDeepLinkAction | null>(null)

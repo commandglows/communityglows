@@ -31,7 +31,7 @@ export default {
     items: [
       { icon: '\u2728', title: 'Profils isoles', desc: 'Creez des espaces separes pour perso, pro, clients et projets. Cookies et sessions restent rattaches au bon profil.' },
       { icon: '\uD83C\uDFDB\uFE0F', title: 'Acces reseaux unifie', desc: 'Ouvrez 18+ reseaux sociaux et vos liens personnalises depuis une seule interface.' },
-      { icon: '\uD83D\uDEAB', title: 'Controles anti-distraction', desc: 'Utilisez niveaux de gris, filtre amis et scripts personnalises pour rendre le travail social plus intentionnel.' },
+      { icon: '\uD83D\uDEAB', title: 'Controles de concentration', desc: 'Utilisez niveaux de gris, apparence sombre ou claire, muet et taille de texte pour un travail social plus intentionnel sur les reseaux compatibles.' },
     ],
   },
   benefits: {
@@ -51,8 +51,8 @@ export default {
       { title: 'Sessions par profil', desc: 'Passez de vos profils perso, pro et client sans vous connecter et deconnecter toute la journee.', tag: 'Le contexte reste a sa place', wide: true },
       { title: '18+ reseaux sociaux', desc: 'Accedez a X, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram, Snapchat et plus.', tag: 'Un poste de commande' },
       { title: 'Switch rapide', desc: 'Passez entre reseaux, profils et liens personnalises depuis une interface faite pour un usage quotidien.', tag: "Moins d onglets, plus vite", kbd: true },
-      { title: 'Mode anti-distraction', desc: 'Reduisez le bruit visuel avec niveaux de gris, filtres amis et injection optionnelle de scripts.', tag: 'Reprenez le focus' },
-      { title: 'Sync multi-appareils', desc: 'Synchronisez profils, compte actif, liens, reseaux caches, filtres, theme, langue et zoom texte.', tag: 'Reprenez partout', chart: true },
+      { title: 'Controles de concentration', desc: 'Reduisez le bruit visuel avec niveaux de gris, apparence sombre ou claire, muet et taille de texte sur les reseaux compatibles.', tag: 'Reprenez le focus' },
+      { title: 'Sync multi-appareils', desc: 'Synchronisez profils, compte actif, liens, reseaux caches, theme, langue et zoom texte.', tag: 'Reprenez partout', chart: true },
       { title: 'Sessions locales', desc: 'Les cookies et sessions connectees restent sur l appareil, sauf export chiffre explicite.', tag: 'Sessions locales', badges: ['Local', 'Export chiffre', 'Profil scope'] },
     ],
   },

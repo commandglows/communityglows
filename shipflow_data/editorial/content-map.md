@@ -1,10 +1,10 @@
 ---
 artifact: content_map
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-05-23"
+updated: "2026-07-15"
 status: reviewed
 source_skill: manual
 scope: content_map
@@ -87,3 +87,5 @@ content_surfaces:
 - For public blog/article content, target `site/src/content/blog/` and respect the schema in `site/src/content.config.ts`.
 - For technical summaries and workflow explanations, target `README.md` and `shipflow_data/workflow/TASKS.md`.
 - For product truth updates, update linked artifact files in tandem (`shipflow_data/business/product.md`, `shipflow_data/business/gtm.md`) before publication-facing copy changes.
+- Public claims about embedded platforms must follow `shipflow_data/technical/public-webview-platform-boundary.md`: do not advertise consent automation, anti-detection, arbitrary third-party scripts, friends-only feed filtering, forced desktop rendering, or guaranteed third-party availability.
+- Privacy, terms, and account-deletion copy must describe only implemented user paths. A copy update cannot stand in for Data Safety, legal review, or backend deletion work.

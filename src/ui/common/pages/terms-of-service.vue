@@ -26,6 +26,14 @@
       password.
     </p>
 
+    <h2>Third-Party Services</h2>
+    <p>
+      SocialGlowz may load supported social platforms as websites. Their terms
+      and policies continue to apply. SocialGlowz is not affiliated with those
+      providers, does not guarantee their availability, and does not make
+      consent choices or automate their interface actions for you.
+    </p>
+
     <h2>Limitation of Liability</h2>
     <p>
       We will not be liable for any direct, indirect, incidental, special,
@@ -44,10 +52,10 @@
     <p>
       If you have any questions about these terms, please contact us at:
       <a
-        href="mailto:support@example.com"
+        href="mailto:legal@socialglowz.com"
         class="text-primary"
       >
-        support@example.com
+        legal@socialglowz.com
       </a>
     </p>
   </div>

@@ -1,10 +1,10 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-05-23"
-updated: "2026-05-23"
+updated: "2026-07-15"
 status: reviewed
 source_skill: sf-docs
 scope: android-webview-session-isolation
@@ -19,6 +19,7 @@ linked_systems:
   - "shipflow_data/workflow/tauri-mobile.md"
   - "shipflow_data/workflow/specs/android-webview-storage-isolation.md"
   - "shipflow_data/workflow/specs/android-webview-pooling-fast-switching.md"
+  - "shipflow_data/technical/public-webview-platform-boundary.md"
   - "src/config/socialNetworks.ts"
   - "src/ui/setup/pages/SocialGlowz/composables/useNetworkWebview.ts"
   - "src/ui/setup/pages/SocialGlowz/composables/useWebviewPreload.ts"
@@ -41,6 +42,8 @@ next_step: "/sf-docs audit shipflow_data/technical/android-webview-session-isola
 ## Purpose
 
 Ce document décrit le contrat actif d'isolation et de pooling des sessions WebView Android pour SocialGlowz. Il couvre les sessions de réseaux intégrés affichés dans le plugin Android WebView, pas l'auth Convex de l'application hôte.
+
+L'isolation de session n'autorise pas une automatisation ou une modification des pages tierces. Le contrat public de plateforme est documenté séparément dans `shipflow_data/technical/public-webview-platform-boundary.md`.
 
 ## Owned Files
 
@@ -134,4 +137,4 @@ Le fallback par snapshots ne couvre pas:
 
 ## Maintenance Rule
 
-Mettre à jour ce document avec `shipflow_data/technical/context.md` quand le contrat Android WebView change, notamment pour les origins, la clé de session, les modes dégradés, backup/restore, ou les limites d'isolation.
+Mettre à jour ce document avec `shipflow_data/technical/context.md` quand le contrat Android WebView change, notamment pour les origins, la clé de session, les modes dégradés, backup/restore, ou les limites d'isolation. Mettre aussi à jour `public-webview-platform-boundary.md` quand un script, un user agent, une navigation ou une personnalisation de page tierce change.

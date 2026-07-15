@@ -9,6 +9,7 @@
 
 ### 🔴 P0 - Critical
 
+🔴 [socialglowz] task: Remediate Google Play Android compliance blockers before public submission: remove automated consent and anti-bot behavior, implement account deletion, align privacy and Data Safety, and define an authorized third-party WebView and UGC architecture | status: in_progress | area: google-play-compliance | id: sg-google-play-compliance-remediation | impact: critical | effort: high | unblocks: android-public-release | risk: rejection-policy-legal-security | evidence: shipflow_data/workflow/audits/2026-07-15-google-play-android-compliance.md | note: public WebView automation removal and copy alignment implemented; device/CI proof and remaining release blockers still open
 🔴 [socialglowz] task: Fix Android WebView pooling reloads so same-profile network returns reuse a warm host instead of visibly reloading | status: todo | area: android-webview | id: BUG-2026-05-24-001 | impact: high | effort: medium | unblocks: mobile-release-proof | risk: high-user-facing-regression
 🔴 [socialglowz] task: Run sf-verify for extension parity: Chrome popup/side panel/options/install/update, Firefox popup/options, web-ext innerHTML warnings, and targeted Tauri regression proof | status: todo | area: extension-qa | id: sg-extension-parity-verify | impact: high | effort: medium | unblocks: dependency-migration-ship | risk: unverified-cross-surface-release
 🔴 [socialglowz] task: Run Lemon Squeezy test-mode buyer smoke for the direct Lifetime Deal path: checkout, success return, activation/status path, and no public AppSumo fallback | status: blocked | area: commerce | id: sg-commerce-lemonsqueezy-testmode-smoke | impact: high | effort: medium | unblocks: paid-ltd-launch | risk: money-access-regression
@@ -16,7 +17,6 @@
 ### 🟠 P1 - High Priority
 
 🟠 [socialglowz] task: Finish and validate Android app deeplink plus shared-link intake flow so `socialglowz://app/open` and Android `ACTION_SEND` reopen the right network/profile session without breaking OAuth callback hardening | status: in_progress | area: mobile-ingress | id: sg-android-deeplink-shared-link-flow | impact: high | effort: medium | unblocks: mobile-growth-entrypoints | risk: untracked-mobile-regression
-🟠 [socialglowz] task: Audit WebView DOM-injection and third-party platform compliance before public traction: banner hiding, auto-click scripts, network terms, consent, session/cookie handling, and safer native-only alternatives | status: todo | area: legal-platform-risk | id: sg-webview-platform-compliance-audit | impact: high | effort: medium | unblocks: public-launch-risk-review | risk: third-party-terms-or-legal-exposure
 🟠 [socialglowz] task: Document remaining dependency overrides and plan major-line migrations for Vue Router, Vite, PrimeVue, Pinia, Tailwind, ESLint, and TypeScript | status: in_progress | area: deps | id: sg-extension-deps-major-migration-plan | impact: high | effort: high | unblocks: dependency-maintenance | risk: stale-framework-upgrade-plan
 
 ### 🟡 P2 - Medium Priority
@@ -26,6 +26,7 @@
 
 ### 🟢 Completed
 
+🟢 [socialglowz] task: Audit WebView DOM-injection and third-party platform compliance before public traction: banner hiding, auto-click scripts, network terms, consent, session/cookie handling, and safer native-only alternatives | status: done | area: legal-platform-risk | id: sg-webview-platform-compliance-audit | impact: high | effort: medium | unblocks: public-launch-risk-review | risk: third-party-terms-or-legal-exposure | evidence: shipflow_data/workflow/audits/2026-07-15-google-play-android-compliance.md
 🟢 [socialglowz] task: Compact mobile network list into four-column square tiles | status: done | area: mobile-ui | id: sg-mobile-network-grid-compact
 🟢 [socialglowz] task: Retest and close fast-uri security advisory fix after lockfile regeneration | status: done | area: security-deps | id: BUG-2026-05-10-001
 🟢 [socialglowz] task: Remove stale web/Vercel target references from project docs and scripts | status: done | area: docs | id: sg-docs-remove-stale-web-target
