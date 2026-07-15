@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.4.0"
+artifact_version: "1.5.0"
 project: socialglowz
 created: "2026-07-15"
 created_at: "2026-07-15 15:58:00 UTC"
 updated: "2026-07-15"
-updated_at: "2026-07-15 16:05:00 UTC"
+updated_at: "2026-07-15 16:12:00 UTC"
 status: reviewed
 source_skill: 001-sg-build
 source_model: GPT-5 Codex
@@ -31,7 +31,7 @@ supersedes: []
 evidence:
   - "Static removal scan completed on 2026-07-15"
   - "Google Play compliance audit: shipflow_data/workflow/audits/2026-07-15-google-play-android-compliance.md"
-next_step: "push the scoped changes, run the existing CI Android jobs, and collect APK/build proof without local Gradle"
+next_step: "rerun CI Android checks on the remediated dependency lockfile"
 ---
 
 # Public WebView Script Removal
@@ -106,3 +106,5 @@ Out of scope:
 | 2026-07-15 | 104-sg-end | GPT-5 Codex | Closed the work session with a partial/deferred outcome; source remediation and public copy alignment are complete, but device/CI proof and Play release blockers remain | deferred | device/CI verification, then remaining Play compliance remediation |
 | 2026-07-15 | 706-continue | GPT-5 Codex | Resolved the next proof boundary: Astro build remains blocked by missing site dependencies and Node 24; no new chantier or code change needed in this continuation | partial | use Node 24, install site dependencies, rerun the Astro build |
 | 2026-07-15 | 706-continue | GPT-5 Codex | Ran the available site build after dependency installation; Astro reached bundling but failed because the shared PostCSS config requires undeclared site dependency autoprefixer; confirmed Android proof belongs to existing CI workflows and no local Gradle run is authorized | partial | scoped commit/push, then CI Android verification |
+| 2026-07-15 | 405-sg-prod | GPT-5 Codex | Verified GitHub run 29430926858: Android checks stopped at cargo audit on two high quick-xml advisories; APK/Windows jobs were skipped and no deploy/runtime URL was produced | partial | dependency remediation for quick-xml, then rerun CI Android checks |
+| 2026-07-15 | 402-sg-deps | GPT-5 Codex | Updated the locked plist dependency to 1.10.0, resolving quick-xml to 0.41.0, and aligned the crate MSRV to Rust 1.88.0; local metadata and dependency graph checks pass | implemented | rerun CI Android checks |
