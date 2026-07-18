@@ -48,6 +48,7 @@ declare global {
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getSafeAccessCheckError: typeof import('../composables/useBillingAccess')['getSafeAccessCheckError']
   const getSafeBillingError: typeof import('../composables/useBillingAccess')['getSafeBillingError']
   const h: typeof import('vue')['h']
   const i18n: typeof import('../utils/i18n')['i18n']
@@ -422,6 +423,7 @@ declare module 'vue' {
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getSafeAccessCheckError: UnwrapRef<typeof import('../composables/useBillingAccess')['getSafeAccessCheckError']>
     readonly getSafeBillingError: UnwrapRef<typeof import('../composables/useBillingAccess')['getSafeBillingError']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly i18n: UnwrapRef<typeof import('../utils/i18n')['i18n']>

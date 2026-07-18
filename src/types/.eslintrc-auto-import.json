@@ -68,6 +68,7 @@
     "getActivePinia": true,
     "getCurrentInstance": true,
     "getCurrentScope": true,
+    "getSafeAccessCheckError": true,
     "getSafeBillingError": true,
     "h": true,
     "i18n": true,
