@@ -3,7 +3,7 @@ module.exports = {
     name: "socialglowz",
     cwd: "/home/claude/socialglowz",
     script: "bash",
-    args: ["-lc", "export PORT=3022 && flox activate -- bash -lc 'pnpm dev -- --port 3022 --host'"],
+    args: ["-lc", "export PORT=3022 && flox activate -- bash -lc 'pnpm dev --port 3022 --host'"],
     env: {
       PORT: 3022
     },
