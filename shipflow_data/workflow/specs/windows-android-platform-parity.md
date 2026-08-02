@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-08-02"
 created_at: "2026-08-02 19:17:45 UTC"
 updated: "2026-08-02"
-updated_at: "2026-08-02 19:45:00 UTC"
+updated_at: "2026-08-02 19:50:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -391,12 +391,14 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 19:17:45 UTC | 100-sg-spec | GPT-5 Codex | Formalized the Windows/Android parity audit into an implementation contract with P1/P2 priorities, native-host boundaries, design-token authority, and installer/APK proof gates. | drafted | 101-sg-ready |
 | 2026-08-02 19:24:00 UTC | 101-sg-ready | GPT-5 Codex | Reviewed structure, user-story fit, scope, security/session boundaries, design authority, task ordering, scenarios, and platform proof contract; added explicit scenario IDs and token authority. | ready | 102-sg-start |
 | 2026-08-02 19:45:00 UTC | 102-sg-start | GPT-5 Codex | Implemented measured Windows child-WebView bounds, bounded hidden-host eviction, profile/session cleanup, embedded preference propagation, desktop deep-link registration, and native back cleanup without changing the panel layout or token styling. | partial-implemented | 103-sg-verify |
+| 2026-08-02 19:50:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `a61c366` to `master`; Windows installer and Android debug APK workflows completed successfully. Manual installer/device proof remains pending. | partial | 103-sg-verify |
 
 ## Current Chantier Flow
 
 - `100-sg-spec`: complete — durable parity contract created from the platform audit and user-selected formalisation.
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
 - `102-sg-start`: partial implemented — P1 native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, and back cleanup are coded; installer/device proof remains.
+- `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
 - `103-sg-verify`: pending implementation.
 - `104-sg-end`: pending verified outcome.
 - `005-sg-ship`: pending bounded ship after platform proof.

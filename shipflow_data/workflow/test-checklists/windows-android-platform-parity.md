@@ -23,12 +23,15 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: pending
-- Android artifact commit: pending
+- Windows artifact commit: `a61c3666b0787d959b80039af02db6de511f1621`
+- Android artifact commit: `a61c3666b0787d959b80039af02db6de511f1621`
+- Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
+- Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764462603
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30764462542
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending
-- Date UTC: pending
+- Date UTC: 2026-08-02
 - Automated local checks: `useNetworkWebview` tests passed (2/2), `pnpm typecheck:core` passed, `pnpm tauri:build` frontend build passed, `git diff --check` passed.
 - Native Rust check: not-run locally because the environment lacks GTK/pkg-config dependencies; Windows and Android CI builds remain authoritative.
 
