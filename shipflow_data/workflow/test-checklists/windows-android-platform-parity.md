@@ -23,11 +23,11 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: `6abcfd53d4267a4b301552132e9d3806120eb514`
+- Windows artifact commit: `51527bf573a1175fe718ee3b817a7a37b934cd1e`
 - Android artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
 - Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
 - Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764933664
-- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30769836214
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30770131523
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending
@@ -43,7 +43,7 @@ Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
 | --- | --- | --- | --- | --- |
 | WIN-LAUNCH-001 | Open every canonical WebView network from a fresh installer | Each opens visibly in the central area with no zero-size/orphan host | passed | Operator, 2026-08-02: network opening is instantaneous on the `2148da3` Windows installer. |
 | WIN-SESSION-002 | Profile A/B same-network isolation | Each profile returns to its own cookies/localStorage/session after switch and restart | not-run | pending |
-| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | not-run | Previous `2148da3` build failed: the native WebView obscured settings. The `9b66e64` installer includes a suspend/restore repair and awaits manual retest. |
+| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | not-run | Previous `2148da3` build failed: the native WebView obscured settings. The `51527bf` installer adds both suspend/restore and a dark native initial background; manual retest remains pending. |
 | WIN-LIFECYCLE-004 | Resize, switch, back, close, eviction, profile deletion | No wrong session, orphan host, or unbounded hidden-host growth | not-run | Operator, 2026-08-02: rapid network switching and sidebar resize passed; back, close, eviction, and deletion remain untested. |
 | WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | not-run | Previous `2148da3` build lacked a discoverable creation action. The `9b66e64` installer adds `Ajouter un profil` and awaits manual isolation proof. |
 | WIN-SHARE-006 | Supported Windows link intake/fallback | Cold and warm app select the correct network or show explicit fallback | not-run | pending |

@@ -403,6 +403,7 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 22:13:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `9b66e64` and built Windows only. The manual workflow passed and the stable `.exe` now targets exactly that commit; Android was not built. | partial | One combined Windows manual test session for settings and profiles. |
 | 2026-08-03 00:20:00 CEST | 006-sg-design | GPT-5 Codex | Replaced Aura's default emerald primary preset with its blue semantic token family and bridged the legacy Vue primary variable to PrimeVue's generated primary token. This removes the fluorescent green Windows controls without changing layout. | implemented-pending-manual | Build Windows only, then compare primary text, buttons, focus, and active states in light and dark themes. |
 | 2026-08-03 00:24:00 CEST | 004-sg-deploy | GPT-5 Codex | Pushed `6abcfd5` and built Windows only. GitHub Actions passed and the stable `.exe` targets that exact token-alignment commit; Android was not built. | partial | Manually confirm blue primary controls in light and dark themes alongside the pending settings/profile checks. |
+| 2026-08-03 00:32:00 CEST | 003-sg-bug / 106-sg-fix / 004-sg-deploy | GPT-5 Codex | Added the dark/light initial background to native Windows WebView2 creation and to hidden preloads, then published `51527bf` with the Windows workflow only. | implemented-pending-manual | Confirm no white flash on the first dark-mode opening of a network. |
 
 ## Current Chantier Flow
 
