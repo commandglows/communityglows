@@ -23,16 +23,16 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: `2148da378fad63c81c6c47a057cba56dbf4d2146`
+- Windows artifact commit: `9b66e64bb6367a6d2d972ce1ed14de700fd66953`
 - Android artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
 - Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
 - Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764933664
-- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30768120711
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30769426148
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending
 - Date UTC: 2026-08-02
-- Automated local checks: `useNetworkWebview` tests passed (2/2), `pnpm typecheck:core` passed, `pnpm tauri:build` frontend build passed, `git diff --check` passed.
+- Automated local checks: `useNetworkWebview` tests passed (3/3), targeted ESLint passed, `pnpm tauri:build` frontend build passed, `git diff --check` passed.
 - Native Rust check: not-run locally because the environment lacks GTK/pkg-config dependencies; Windows and Android CI builds remain authoritative.
 
 Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
@@ -43,9 +43,9 @@ Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
 | --- | --- | --- | --- | --- |
 | WIN-LAUNCH-001 | Open every canonical WebView network from a fresh installer | Each opens visibly in the central area with no zero-size/orphan host | passed | Operator, 2026-08-02: network opening is instantaneous on the `2148da3` Windows installer. |
 | WIN-SESSION-002 | Profile A/B same-network isolation | Each profile returns to its own cookies/localStorage/session after switch and restart | not-run | pending |
-| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | failed | Operator, 2026-08-02: after opening a network, the native WebView stays above the desktop settings sheet. The next Windows build contains a suspend/restore repair. |
+| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | not-run | Previous `2148da3` build failed: the native WebView obscured settings. The `9b66e64` installer includes a suspend/restore repair and awaits manual retest. |
 | WIN-LIFECYCLE-004 | Resize, switch, back, close, eviction, profile deletion | No wrong session, orphan host, or unbounded hidden-host growth | not-run | Operator, 2026-08-02: rapid network switching and sidebar resize passed; back, close, eviction, and deletion remain untested. |
-| WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | failed | Operator, 2026-08-02: no discoverable desktop action to create a second profile, so isolation cannot be tested. |
+| WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | not-run | Previous `2148da3` build lacked a discoverable creation action. The `9b66e64` installer adds `Ajouter un profil` and awaits manual isolation proof. |
 | WIN-SHARE-006 | Supported Windows link intake/fallback | Cold and warm app select the correct network or show explicit fallback | not-run | pending |
 | WIN-BACKUP-007 | Export, valid restore, invalid/password/version restore | Covered data restores; failures preserve existing state | not-run | pending |
 | WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | pending |
