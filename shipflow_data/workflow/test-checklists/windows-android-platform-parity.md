@@ -23,11 +23,11 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: `a61c3666b0787d959b80039af02db6de511f1621`
-- Android artifact commit: `a61c3666b0787d959b80039af02db6de511f1621`
+- Windows artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
+- Android artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
 - Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
-- Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764462603
-- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30764462542
+- Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764933664
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30764933644
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending

@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-08-02"
 created_at: "2026-08-02 19:17:45 UTC"
 updated: "2026-08-02"
-updated_at: "2026-08-02 20:10:00 UTC"
+updated_at: "2026-08-02 20:20:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -393,6 +393,7 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 19:45:00 UTC | 102-sg-start | GPT-5 Codex | Implemented measured Windows child-WebView bounds, bounded hidden-host eviction, profile/session cleanup, embedded preference propagation, desktop deep-link registration, and native back cleanup without changing the panel layout or token styling. | partial-implemented | 103-sg-verify |
 | 2026-08-02 19:50:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `a61c366` to `master`; Windows installer and Android debug APK workflows completed successfully. Manual installer/device proof remains pending. | partial | 103-sg-verify |
 | 2026-08-02 20:10:00 UTC | 102-sg-start | GPT-5 Codex | Added explicit Windows/Android capability detection, single-instance warm deep-link routing, atomic backup restore with archive path validation, and targeted regression coverage; no visual layout or token changes. | partial-implemented | 103-sg-verify |
+| 2026-08-02 20:20:00 UTC | 102-sg-start | GPT-5 Codex | Rebuilt Windows installer and Android debug APK from `98b6dae`; both platform workflows passed after adding the desktop single-instance bridge and atomic restore changes. | partial-implemented | 107-sg-test |
 
 ## Current Chantier Flow
 
