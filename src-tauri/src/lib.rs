@@ -559,7 +559,7 @@ fn toggle_window(app: &AppHandle) {
 
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
-fn open_webview(
+async fn open_webview(
     app: AppHandle,
     url: String,
     profile_id: String,
@@ -601,8 +601,7 @@ fn open_webview(
 
     window
         .add_child(
-            WebviewBuilder::new(&label, WebviewUrl::External(parsed))
-                .data_directory(data_dir),
+            WebviewBuilder::new(&label, WebviewUrl::External(parsed)).data_directory(data_dir),
             tauri::LogicalPosition::new(x, y),
             tauri::LogicalSize::new(width, height),
         )

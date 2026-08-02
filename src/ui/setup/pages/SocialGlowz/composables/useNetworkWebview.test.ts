@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-import { measureWebviewHost } from './useNetworkWebview'
+import { createSerialTaskQueue, measureWebviewHost } from './useNetworkWebview'
 
 const createHost = (width: number, height: number) => ({
   getBoundingClientRect: () => ({
@@ -32,5 +32,26 @@ describe('measureWebviewHost', () => {
     await expect(measureWebviewHost(hostEl)).rejects.toThrow(
       'Network WebView host is not visible',
     )
+  })
+})
+
+describe('createSerialTaskQueue', () => {
+  it('keeps rapid native transitions in click order after a failure', async () => {
+    const enqueue = createSerialTaskQueue()
+    const events: string[] = []
+
+    const first = enqueue(async () => {
+      events.push('first:start')
+      throw new Error('native creation failed')
+    })
+    const second = enqueue(async () => {
+      events.push('second:start')
+      events.push('second:done')
+    })
+
+    await expect(first).rejects.toThrow('native creation failed')
+    await second
+
+    expect(events).toEqual(['first:start', 'second:start', 'second:done'])
   })
 })

@@ -4,6 +4,30 @@
     ref="hostEl"
     class="webview-host"
   >
+    <div
+      v-if="launchError"
+      class="launch-error"
+      role="alert"
+    >
+      <i class="pi pi-exclamation-triangle" />
+      <p>Impossible d'ouvrir {{ webviewStore.activeNetworkId }}.</p>
+      <div class="launch-error-actions">
+        <Button
+          label="Réessayer"
+          icon="pi pi-refresh"
+          size="small"
+          @click="launchActiveNetwork"
+        />
+        <Button
+          :label="diagnosticsCopied ? 'Copié' : 'Copier le diagnostic'"
+          :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-copy'"
+          size="small"
+          severity="secondary"
+          outlined
+          @click="copyDiagnostics"
+        />
+      </div>
+    </div>
     <!-- Dev-mode placeholder (running in browser, not Tauri) -->
     <div
       v-if="!isTauri"
@@ -24,17 +48,29 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import Button from 'primevue/button'
+import { buildIdentityHeader } from '@/lib/buildDiagnostics'
 import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
 import { getNetworkIsolationOriginsByNetwork } from '@/config/socialNetworks'
-import { useNetworkWebview } from '../composables/useNetworkWebview'
+import {
+  useNetworkWebview,
+  createSerialTaskQueue,
+  type NetworkWebviewDiagnostic,
+} from '../composables/useNetworkWebview'
 
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const hostEl = ref<HTMLElement | null>(null)
 const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
+const launchError = ref<string | null>(null)
+const diagnosticsCopied = ref(false)
+const diagnostics = ref<NetworkWebviewDiagnostic[]>([])
+const enqueueTransition = createSerialTaskQueue()
 
-const { open, switchTo, close } = useNetworkWebview(hostEl)
+const { open, switchTo, close } = useNetworkWebview(hostEl, entry => {
+  diagnostics.value = [...diagnostics.value.slice(-19), entry]
+})
 
 // Kotlin bottom bar events are handled in App.vue via CustomEvents (evaluateJavascript).
 // Network switching is handled entirely in Kotlin (direct loadUrl) — no Vue IPC needed.
@@ -43,6 +79,58 @@ const { open, switchTo, close } = useNetworkWebview(hostEl)
 const activeUrl = computed(() => webviewStore.activeUrl)
 const activeNetworkId = computed(() => webviewStore.activeNetworkId)
 const activeProfileId = computed(() => profilesStore.activeProfileId)
+
+function diagnosticsReport(): string {
+  const lines = [
+    'SocialGlowz Windows WebView diagnostic',
+    ...buildIdentityHeader(),
+    `captured_at: ${new Date().toISOString()}`,
+    `tauri: ${isTauri ? 'yes' : 'no'}`,
+    `platform: ${navigator.platform || 'unknown'}`,
+    `user_agent: ${navigator.userAgent || 'unknown'}`,
+    `network: ${activeNetworkId.value ?? 'none'}`,
+    `profile_selected: ${activeProfileId.value ? 'yes' : 'no'}`,
+    `error: ${launchError.value ?? 'none'}`,
+    'events:',
+    ...diagnostics.value.map(entry =>
+      `- ${entry.at} ${entry.stage} ${entry.status}${entry.detail ? ` | ${entry.detail}` : ''}`,
+    ),
+  ]
+  return lines.join('\n')
+}
+
+async function copyDiagnostics() {
+  const report = diagnosticsReport()
+  try {
+    await navigator.clipboard.writeText(report)
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = report
+    document.body.appendChild(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+  }
+  diagnosticsCopied.value = true
+  window.setTimeout(() => {
+    diagnosticsCopied.value = false
+  }, 2000)
+}
+
+async function launchActiveNetwork() {
+  const url = activeUrl.value
+  const networkId = activeNetworkId.value
+  const profileId = activeProfileId.value
+  if (!url || !networkId || !profileId) return
+
+  launchError.value = null
+  try {
+    await enqueueTransition(() => open(url, profileId, networkId))
+  } catch (error) {
+    launchError.value = error instanceof Error ? error.message : String(error)
+    console.error('[SocialGlowz] Failed to open network WebView:', launchError.value)
+  }
+}
 
 /** Send the list of visible webview network IDs to the Android bottom bar. */
 async function syncBarNetworks() {
@@ -65,15 +153,24 @@ watch(
   [activeUrl, activeNetworkId, activeProfileId],
   async ([url, networkId, profileId], [prevUrl, prevNetworkId, prevProfileId]) => {
     if (!url || !networkId || !profileId) {
-      await close()
+      launchError.value = null
+      await enqueueTransition(close).catch(error => {
+        console.error('[SocialGlowz] Failed to close network WebView:', error)
+      })
       return
     }
-    const keyChanged =
-      networkId !== prevNetworkId || profileId !== prevProfileId || url !== prevUrl
-    if (keyChanged && (prevNetworkId || prevProfileId)) {
-      await switchTo(url, profileId, networkId)
-    } else if (!prevNetworkId && !prevProfileId) {
-      await open(url, profileId, networkId)
+    launchError.value = null
+    try {
+      const keyChanged =
+        networkId !== prevNetworkId || profileId !== prevProfileId || url !== prevUrl
+      if (keyChanged && (prevNetworkId || prevProfileId)) {
+        await enqueueTransition(() => switchTo(url, profileId, networkId))
+      } else if (!prevNetworkId && !prevProfileId) {
+        await enqueueTransition(() => open(url, profileId, networkId))
+      }
+    } catch (error) {
+      launchError.value = error instanceof Error ? error.message : String(error)
+      console.error('[SocialGlowz] Failed to switch network WebView:', launchError.value)
     }
   },
   { immediate: true },
@@ -91,6 +188,29 @@ watch(
   min-height: 0;
   background: transparent;
   position: relative;
+}
+
+.launch-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  color: var(--text-color-secondary);
+  background: var(--surface-ground);
+}
+
+.launch-error p {
+  margin: 0;
+}
+
+.launch-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
 }
 
 .dev-placeholder {

@@ -35,13 +35,21 @@
             v-show="!iconsOnly"
             class="profile-section"
           >
-            <Avatar 
-              image="https://api.dicebear.com/7.x/avataaars/svg?seed=John"
+            <Avatar
+              v-if="profilesStore.activeProfile?.avatar"
+              :image="profilesStore.activeProfile.avatar"
               size="xlarge"
               shape="circle"
             />
-            <h3>John Doe</h3>
-            <p>847 amis</p>
+            <Avatar
+              v-else
+              :label="profilesStore.activeProfile?.emoji ?? '👤'"
+              size="xlarge"
+              shape="circle"
+            />
+            <h3>{{ profilesStore.activeProfile?.name ?? 'Profil' }}</h3>
+            <p>{{ profilesStore.profiles.length }} {{ profilesStore.profiles.length > 1 ? 'profils' : 'profil' }}</p>
+            <ProfileSwitcher :icons-only="false" />
           </div>
 
           <!-- Menu principal -->
@@ -97,6 +105,8 @@
 import { ref, computed } from 'vue'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
+import { useProfilesStore } from '@/stores/profiles'
+import ProfileSwitcher from './ProfileSwitcher.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -108,6 +118,7 @@ const emit = defineEmits<{
 
 const splitterRef = ref()
 const iconsOnly = ref(false)
+const profilesStore = useProfilesStore()
 const COMPACT_THRESHOLD = 10
 
 const panelSize = computed(() => {

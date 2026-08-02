@@ -267,14 +267,14 @@ Update after implementation and verification:
   - Depends on: none.
   - Validate with: capability unit tests for Windows Tauri, Android Tauri, Chrome, Firefox, and plain Vue runtime.
 
-- [x] Task 2: Finish Windows network launch and native WebView lifecycle.
+- [ ] Task 2: Finish Windows network launch and native WebView lifecycle.
   - Files: `src/ui/setup/pages/SocialGlowz/composables/useNetworkWebview.ts`, `src/ui/setup/pages/SocialGlowz/components/NetworkWebviewHost.vue`, `src-tauri/src/lib.rs`
   - Action: preserve positive-bounds measurement, make resize/switch/close/back failure states observable, add bounded hidden-child lifecycle/eviction, and ensure profile deletion closes affected hosts before deleting data directories.
   - User story link: every network click and switch must remain visible, isolated, and recoverable.
   - Depends on: Task 1.
   - Validate with: composable regression tests, Rust build, Windows installer manual checklist, repeated network/profile switching.
 
-- [ ] Task 3: Replace desktop placeholder profile behavior.
+- [x] Task 3: Replace desktop placeholder profile behavior.
   - Files: `src/ui/setup/pages/SocialGlowz/components/AppSidebar.vue`, `src/ui/setup/pages/SocialGlowz/components/AppRightSidebar.vue`, shared profile components/stores as needed.
   - Action: render the active profile from `profilesStore`, expose the required profile switch/manage actions, and keep hidden-network state consistent with the active profile.
   - User story link: profile context must be the same on both platforms.
@@ -394,12 +394,16 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 19:50:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `a61c366` to `master`; Windows installer and Android debug APK workflows completed successfully. Manual installer/device proof remains pending. | partial | 103-sg-verify |
 | 2026-08-02 20:10:00 UTC | 102-sg-start | GPT-5 Codex | Added explicit Windows/Android capability detection, single-instance warm deep-link routing, atomic backup restore with archive path validation, and targeted regression coverage; no visual layout or token changes. | partial-implemented | 103-sg-verify |
 | 2026-08-02 20:20:00 UTC | 102-sg-start | GPT-5 Codex | Rebuilt Windows installer and Android debug APK from `98b6dae`; both platform workflows passed after adding the desktop single-instance bridge and atomic restore changes. | partial-implemented | 107-sg-test |
+| 2026-08-02 20:23:00 UTC | 003-sg-bug / 106-sg-fix | GPT-5 Codex | Reopened Windows network launch after the installed `98b6dae` build still showed no WebView. Identified Tauri's documented Windows deadlock for synchronous `WebviewBuilder` commands, made desktop creation asynchronous, and added a visible retry state. Android was intentionally excluded from this cycle. | fix-attempted | Windows-only CI build and installer retest |
+| 2026-08-02 21:08:46 UTC | 602-sg-platform-parity | GPT-5 Codex | Re-audited Windows against Android after the failed installer retest and new diagnostics work. Confirmed Windows launch, session, preferences and backup remain proof-gated; identified the `AppRightSidebar` placeholder profile as an implementation gap; recorded a Windows-only continuation matrix. | partial | `001-sg-build` for desktop profile completion, then `107-sg-test` for Windows installer proof |
+| 2026-08-02 21:30:00 UTC | 001-sg-build / 102-sg-start | GPT-5 Codex | Replaced the desktop right-panel placeholder identity with the active profile data and reused the profile switch/manage control. Kept the Windows panel structure and existing component/token authority. | implemented | Windows-only installer build and manual parity checklist |
+| 2026-08-02 21:32:00 UTC | 001-sg-build / 102-sg-start | GPT-5 Codex | Serialized desktop WebView transitions and made resize/hide failures observable through the safe diagnostic report, covering rapid switching before the next Windows installer test. | implemented | Windows-only installer build and combined manual test session |
 
 ## Current Chantier Flow
 
 - `100-sg-spec`: complete — durable parity contract created from the platform audit and user-selected formalisation.
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
-- `102-sg-start`: partial implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, and atomic restore are coded; installer/device proof remains.
+- `102-sg-start`: implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, atomic restore, safe diagnostics, and desktop profile surface are coded; installer/device proof remains.
 - `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
 - `103-sg-verify`: pending implementation.
 - `104-sg-end`: pending verified outcome.

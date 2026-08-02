@@ -31,6 +31,13 @@
 
     <div class="header-end">
       <Button
+        v-tooltip.bottom="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+        :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
+        text
+        :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+        @click="copyDiagnostics"
+      />
+      <Button
         v-tooltip.bottom="$t('common.settings')"
         icon="pi pi-cog"
         text
@@ -49,12 +56,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import DashboardFilters from './DashboardFilters.vue'
 import type { MenuItem } from '../types'
+import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
+import { getPlatformCapabilities } from '@/platform/capabilities'
+import { useProfilesStore } from '@/stores/profiles'
+import { useWebviewStore } from '@/stores/webviewState'
 
 const props = defineProps<{
   sidebarVisible: boolean
@@ -76,6 +87,9 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
+const profilesStore = useProfilesStore()
+const webviewStore = useWebviewStore()
+const diagnosticsCopied = ref(false)
 const currentNetwork = computed<MenuItem | null>(() => {
   if (route.path === '/' || route.path === '/login') return null
 
@@ -102,6 +116,35 @@ const handleFilterChange = (filters: DashboardFiltersPayload) => {
 
 const openSettings = () => {
   emit('open-settings')
+}
+
+async function copyDiagnostics() {
+  const capabilities = getPlatformCapabilities()
+  const report = buildDiagnosticsReport({
+    surface: 'desktop-header',
+    active_network: webviewStore.activeNetworkId ?? 'none',
+    profile_selected: profilesStore.activeProfileId ? 'yes' : 'no',
+    profile_count: String(profilesStore.profiles.length),
+    desktop_tauri: String(capabilities.isDesktopTauri),
+    native_webview: String(capabilities.supportsNativeWebview),
+    native_session_isolation: String(capabilities.supportsNativeSessionIsolation),
+  })
+
+  try {
+    await navigator.clipboard.writeText(report)
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = report
+    document.body.appendChild(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+  }
+
+  diagnosticsCopied.value = true
+  window.setTimeout(() => {
+    diagnosticsCopied.value = false
+  }, 2000)
 }
 </script>
 
