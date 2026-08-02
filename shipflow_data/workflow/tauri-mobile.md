@@ -66,8 +66,9 @@ To test on Windows without building locally:
 
 1. Push your branch to GitHub.
 2. Run the workflow `SocialGlowz - Manual Build - Windows`.
-3. Download the artifact whose name starts with `socialglowz-windows-`.
-4. Install `.msi` or run `.exe` on your Windows machine.
+3. Download the stable test installer directly from:
+   `https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe`
+4. Install the `.exe` on your Windows machine. The URL always points to the latest successful manual build.
 
 ## NPM scripts (already added)
 
