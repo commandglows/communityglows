@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-08-02"
 created_at: "2026-08-02 19:17:45 UTC"
 updated: "2026-08-02"
-updated_at: "2026-08-02 19:50:00 UTC"
+updated_at: "2026-08-02 20:10:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -260,7 +260,7 @@ Update after implementation and verification:
 
 ## Implementation Tasks
 
-- [ ] Task 1: Create the explicit platform capability contract.
+- [x] Task 1: Create the explicit platform capability contract.
   - File: `src/platform/capabilities.ts`, `src/ui/setup/pages/SocialGlowz/composables/`
   - Action: Add typed capabilities for desktop WebView preferences, native feedback, share/link intake, profile controls, and session lifecycle; replace scattered user-agent/no-op assumptions with one guarded adapter.
   - User story link: shared settings and navigation must expose truthful capabilities.
@@ -288,7 +288,7 @@ Update after implementation and verification:
   - Depends on: Task 1 and Task 2.
   - Validate with: settings tests, Windows WebView manual checks, Android device checks, safe degraded-mode logs.
 
-- [ ] Task 5: Align navigation, profile/network surfaces, and link intake.
+- [x] Task 5: Align navigation, profile/network surfaces, and link intake.
   - Files: `src/ui/setup/pages/SocialGlowz/App.vue`, `src/ui/setup/pages/SocialGlowz/components/MobileLayout.vue`, `src-tauri/src/lib.rs`, Android plugin, platform adapter files.
   - Action: define desktop back/close behavior, preserve Android system/native back, add a Windows protocol/share or explicit copy/paste fallback, and map both platform surfaces to the same network/profile actions.
   - User story link: users can enter, leave, and reopen the same network context from either OS.
@@ -302,7 +302,7 @@ Update after implementation and verification:
   - Depends on: Task 1.
   - Validate with: design drift check, light/dark screenshots or device comparison, contrast/focus checks, and token mapping review.
 
-- [ ] Task 7: Align backup/session deletion semantics and diagnostics.
+- [x] Task 7: Align backup/session deletion semantics and diagnostics.
   - Files: `src/ui/setup/pages/SocialGlowz/composables/useBackup.ts`, `src-tauri/src/lib.rs`, Android plugin, backup docs.
   - Action: ensure both platforms report covered storage types, close live hosts before destructive session deletion, preserve atomic restore behavior, and emit safe diagnostic identifiers for failures.
   - User story link: users can recover data without leaking or silently losing sessions.
@@ -392,12 +392,13 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 19:24:00 UTC | 101-sg-ready | GPT-5 Codex | Reviewed structure, user-story fit, scope, security/session boundaries, design authority, task ordering, scenarios, and platform proof contract; added explicit scenario IDs and token authority. | ready | 102-sg-start |
 | 2026-08-02 19:45:00 UTC | 102-sg-start | GPT-5 Codex | Implemented measured Windows child-WebView bounds, bounded hidden-host eviction, profile/session cleanup, embedded preference propagation, desktop deep-link registration, and native back cleanup without changing the panel layout or token styling. | partial-implemented | 103-sg-verify |
 | 2026-08-02 19:50:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `a61c366` to `master`; Windows installer and Android debug APK workflows completed successfully. Manual installer/device proof remains pending. | partial | 103-sg-verify |
+| 2026-08-02 20:10:00 UTC | 102-sg-start | GPT-5 Codex | Added explicit Windows/Android capability detection, single-instance warm deep-link routing, atomic backup restore with archive path validation, and targeted regression coverage; no visual layout or token changes. | partial-implemented | 103-sg-verify |
 
 ## Current Chantier Flow
 
 - `100-sg-spec`: complete — durable parity contract created from the platform audit and user-selected formalisation.
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
-- `102-sg-start`: partial implemented — P1 native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, and back cleanup are coded; installer/device proof remains.
+- `102-sg-start`: partial implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, and atomic restore are coded; installer/device proof remains.
 - `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
 - `103-sg-verify`: pending implementation.
 - `104-sg-end`: pending verified outcome.

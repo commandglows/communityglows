@@ -2,6 +2,8 @@ import {
   getPlatformCapabilities,
   isChromeExtension,
   isExtension,
+  isAndroidTauri,
+  isDesktopTauri,
   isFirefoxExtension,
   isTauri,
   supportsSidePanel,
@@ -64,6 +66,8 @@ describe("platform capabilities", () => {
 
   it("returns false for all extension and tauri capabilities in plain node runtime", () => {
     expect(isTauri()).toBe(false)
+    expect(isAndroidTauri()).toBe(false)
+    expect(isDesktopTauri()).toBe(false)
     expect(isExtension()).toBe(false)
     expect(isChromeExtension()).toBe(false)
     expect(isFirefoxExtension()).toBe(false)
@@ -71,12 +75,18 @@ describe("platform capabilities", () => {
 
     expect(getPlatformCapabilities()).toMatchObject({
       isTauri: false,
+      isAndroidTauri: false,
+      isDesktopTauri: false,
       isExtension: false,
       isChromeExtension: false,
       isFirefoxExtension: false,
       supportsSidePanel: false,
       supportsNativeWebview: false,
       supportsNativeSessionIsolation: false,
+      supportsNativeWebviewPreferences: false,
+      supportsNativeLinkIntake: false,
+      supportsNativeProfileControls: false,
+      supportsSessionLifecycle: false,
       supportsHaptics: false,
       supportsNativeBackup: false,
     })
@@ -85,7 +95,25 @@ describe("platform capabilities", () => {
   it("detects tauri when __TAURI_INTERNALS__ is present on window", () => {
     ;(globalThis as { window?: Record<string, unknown> }).window = { __TAURI_INTERNALS__: {} }
     expect(isTauri()).toBe(true)
+    expect(isAndroidTauri()).toBe(false)
+    expect(isDesktopTauri()).toBe(true)
     expect(getPlatformCapabilities().supportsNativeWebview).toBe(true)
+  })
+
+  it("distinguishes Android Tauri from desktop Tauri", () => {
+    setUserAgent("Mozilla/5.0 Android 14")
+    ;(globalThis as { window?: Record<string, unknown> }).window = { __TAURI_INTERNALS__: {} }
+
+    expect(isAndroidTauri()).toBe(true)
+    expect(isDesktopTauri()).toBe(false)
+    expect(getPlatformCapabilities()).toMatchObject({
+      isAndroidTauri: true,
+      isDesktopTauri: false,
+      supportsHaptics: true,
+      supportsNativeWebviewPreferences: true,
+      supportsNativeLinkIntake: true,
+      supportsSessionLifecycle: true,
+    })
   })
 
   it("detects chrome extension and side panel support", () => {

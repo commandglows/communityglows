@@ -105,6 +105,24 @@ fn close_desktop_profile_webviews(app: &AppHandle, profile_id: &str) -> Result<(
     Ok(())
 }
 
+#[cfg(not(target_os = "android"))]
+fn close_all_desktop_webviews(app: &AppHandle) -> Result<(), String> {
+    let state = app.state::<DesktopWebviewPoolState>();
+    let labels: Vec<String> = {
+        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        entries.keys().cloned().collect()
+    };
+
+    for label in labels {
+        if let Some(wv) = app.get_webview(&label) {
+            wv.close().map_err(|e| e.to_string())?;
+        }
+        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        entries.remove(&label);
+    }
+    Ok(())
+}
+
 // ── Desktop-only imports ─────────────────────────────────────────────────────
 #[cfg(not(target_os = "android"))]
 use tauri::{
@@ -1096,6 +1114,8 @@ fn restore_backup(
     };
 
     let zip_bytes = backup::decrypt_archive(&blob, &password)?;
+    #[cfg(not(target_os = "android"))]
+    close_all_desktop_webviews(&app)?;
     let store_data = backup::extract_backup_archive(&zip_bytes, &sessions_dir)?;
 
     Ok(store_data)
@@ -1105,7 +1125,22 @@ fn restore_backup(
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default();
+
+    // Windows delivers protocol links through a new process. The single-instance
+    // bridge forwards that event to the already running app instead.
+    #[cfg(desktop)]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.show();
+                let _ = window.unminimize();
+                let _ = window.set_focus();
+            }
+        }));
+    }
+
+    builder
         .manage(AndroidOAuthReplayState::default())
         .manage(DesktopWebviewPoolState::default())
         .plugin(tauri_plugin_android_webview::init())

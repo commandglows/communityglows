@@ -5,7 +5,7 @@ use aes_gcm::{
 use argon2::Argon2;
 use rand::RngCore;
 use std::io::{Cursor, Read as IoRead, Write as IoWrite};
-use std::path::Path;
+use std::path::{Component, Path};
 use zip::write::SimpleFileOptions;
 
 /// Magic bytes identifying a .sfbak file
@@ -170,11 +170,18 @@ pub fn extract_backup_archive(zip_bytes: &[u8], sessions_dir: &Path) -> Result<S
             .map_err(|e| format!("read stores/data.json: {e}"))?;
     }
 
-    // Clear existing sessions
-    if sessions_dir.exists() {
-        std::fs::remove_dir_all(sessions_dir)
-            .map_err(|e| format!("clear sessions: {e}"))?;
+    serde_json::from_str::<serde_json::Value>(&store_data)
+        .map_err(|e| format!("invalid stores/data.json: {e}"))?;
+
+    // Extract into a sibling directory first so a bad archive cannot destroy
+    // the currently usable sessions.
+    let staging_dir = sessions_dir.with_extension("restore-tmp");
+    if staging_dir.exists() {
+        std::fs::remove_dir_all(&staging_dir)
+            .map_err(|e| format!("clear restore staging directory: {e}"))?;
     }
+    std::fs::create_dir_all(&staging_dir)
+        .map_err(|e| format!("create restore staging directory: {e}"))?;
 
     // Second pass: extract session files
     for i in 0..archive.len() {
@@ -187,7 +194,14 @@ pub fn extract_backup_archive(zip_bytes: &[u8], sessions_dir: &Path) -> Result<S
 
         // Strip "sessions/" prefix → write relative to sessions_dir
         let rel = &name["sessions/".len()..];
-        let target = sessions_dir.join(rel);
+        let rel_path = Path::new(rel);
+        if rel_path.components().any(|component| {
+            matches!(component, Component::Prefix(_) | Component::RootDir | Component::ParentDir)
+        }) {
+            let _ = std::fs::remove_dir_all(&staging_dir);
+            return Err("Backup contains an unsafe session path".to_string());
+        }
+        let target = staging_dir.join(rel_path);
 
         if let Some(parent) = target.parent() {
             std::fs::create_dir_all(parent)
@@ -197,9 +211,92 @@ pub fn extract_backup_archive(zip_bytes: &[u8], sessions_dir: &Path) -> Result<S
         let mut data = Vec::new();
         file.read_to_end(&mut data)
             .map_err(|e| format!("read zip entry: {e}"))?;
-        std::fs::write(&target, &data)
-            .map_err(|e| format!("write {}: {e}", target.display()))?;
+        if let Err(error) = std::fs::write(&target, &data) {
+            let _ = std::fs::remove_dir_all(&staging_dir);
+            return Err(format!("write {}: {error}", target.display()));
+        }
+    }
+
+    let previous_dir = sessions_dir.with_extension("restore-old");
+    if previous_dir.exists() {
+        std::fs::remove_dir_all(&previous_dir)
+            .map_err(|e| format!("clear previous restore directory: {e}"))?;
+    }
+    if sessions_dir.exists() {
+        std::fs::rename(sessions_dir, &previous_dir)
+            .map_err(|e| format!("stage existing sessions: {e}"))?;
+    }
+    if let Err(error) = std::fs::rename(&staging_dir, sessions_dir) {
+        if previous_dir.exists() {
+            let _ = std::fs::rename(&previous_dir, sessions_dir);
+        }
+        return Err(format!("activate restored sessions: {error}"));
+    }
+    if previous_dir.exists() {
+        std::fs::remove_dir_all(&previous_dir)
+            .map_err(|e| format!("remove previous sessions: {e}"))?;
     }
 
     Ok(store_data)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn test_directory(name: &str) -> std::path::PathBuf {
+        let nonce = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock before epoch")
+            .as_nanos();
+        std::env::temp_dir().join(format!("socialglowz-backup-{name}-{nonce}"))
+    }
+
+    fn archive_with_entries(entries: &[(&str, &[u8])]) -> Vec<u8> {
+        let mut writer = zip::ZipWriter::new(Cursor::new(Vec::new()));
+        let options = SimpleFileOptions::default();
+        for (name, data) in entries {
+            writer.start_file(*name, options).expect("start zip entry");
+            writer.write_all(data).expect("write zip entry");
+        }
+        writer.finish().expect("finish zip").into_inner()
+    }
+
+    #[test]
+    fn invalid_store_data_preserves_existing_sessions() {
+        let sessions_dir = test_directory("invalid-json");
+        std::fs::create_dir_all(&sessions_dir).expect("create sessions directory");
+        let existing = sessions_dir.join("profile/network/state.txt");
+        std::fs::create_dir_all(existing.parent().expect("state parent")).expect("create state parent");
+        std::fs::write(&existing, b"existing").expect("write existing state");
+
+        let archive = archive_with_entries(&[("stores/data.json", b"not-json")]);
+        let error = extract_backup_archive(&archive, &sessions_dir).expect_err("archive must fail");
+
+        assert!(error.contains("invalid stores/data.json"));
+        assert_eq!(std::fs::read(&existing).expect("read existing state"), b"existing");
+        assert!(!sessions_dir.with_extension("restore-tmp").exists());
+        let _ = std::fs::remove_dir_all(sessions_dir);
+    }
+
+    #[test]
+    fn unsafe_session_path_is_rejected_without_replacing_sessions() {
+        let sessions_dir = test_directory("unsafe-path");
+        std::fs::create_dir_all(&sessions_dir).expect("create sessions directory");
+        let existing = sessions_dir.join("keep.txt");
+        std::fs::write(&existing, b"keep").expect("write existing state");
+
+        let archive = archive_with_entries(&[
+            ("stores/data.json", br#"{"profiles":{}}"#),
+            ("sessions/../escaped.txt", b"escape"),
+        ]);
+        let error = extract_backup_archive(&archive, &sessions_dir).expect_err("archive must fail");
+
+        assert!(error.contains("unsafe session path"));
+        assert_eq!(std::fs::read(&existing).expect("read existing state"), b"keep");
+        assert!(!sessions_dir.with_extension("restore-tmp").exists());
+        assert!(!sessions_dir.parent().expect("sessions parent").join("escaped.txt").exists());
+        let _ = std::fs::remove_dir_all(sessions_dir);
+    }
 }

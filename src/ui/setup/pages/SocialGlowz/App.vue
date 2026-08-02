@@ -66,6 +66,7 @@ import {
 import { preloadWebviews } from './composables/useWebviewPreload'
 import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from './utils/textZoom'
 import { useSignupNudge } from '@/composables/useSignupNudge'
+import { isDesktopTauri, supportsHaptics } from '@/platform/capabilities'
 import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppRightSidebar from './components/AppRightSidebar.vue'
@@ -118,6 +119,7 @@ const ensureTauriInvoke = async () => {
 }
 
 const triggerNativeTapFeedback = () => {
+  if (!supportsHaptics()) return
   const invoke = tauriInvoke
   if (invoke) {
     invoke('plugin:android-webview|trigger_haptic').catch(() => {})
@@ -132,7 +134,7 @@ const triggerNativeTapFeedback = () => {
 const onWebviewBack = () => {
   const profileId = profilesStore.activeProfileId
   const networkId = webviewStore.activeNetworkId
-  if (isTauri && !/android/i.test(navigator.userAgent) && profileId && networkId) {
+  if (isDesktopTauri() && profileId && networkId) {
     ensureTauriInvoke().then((invoke) => {
       invoke?.('close_webview', { profileId, networkId }).catch(() => {})
     }).catch(() => {})
@@ -313,7 +315,7 @@ watch(() => themeStore.isDarkMode, async (enabled) => {
 // Desktop child WebViews do not inherit Vue shell preferences automatically.
 // Apply the current settings to the active native child without changing shell CSS.
 const syncDesktopWebviewPreferences = async () => {
-  if (!isTauri || /android/i.test(navigator.userAgent)) return
+  if (!isDesktopTauri()) return
   const { invoke } = await import('@tauri-apps/api/core')
   invoke('set_webview_preferences', {
     profileId: profilesStore.activeProfileId,

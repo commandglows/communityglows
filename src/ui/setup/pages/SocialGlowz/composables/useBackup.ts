@@ -9,9 +9,10 @@ import { syncSettingsPatch } from '@/lib/cloudSettings'
 import { setLocale } from '@/utils/i18n'
 import type { ThemeMode } from '@/utils/themeAuto'
 import { normalizeTapSoundVariant } from '../utils/tapSound'
+import { isAndroidTauri as detectAndroidTauri, isTauri as detectTauri } from '@/platform/capabilities'
 
-const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
-const isAndroidTauri = () => isTauri && navigator.userAgent.includes('Android')
+const isTauri = detectTauri()
+const isAndroidTauri = detectAndroidTauri
 
 /** Gather all persisted store + localStorage data into a single JSON string. */
 async function collectStoreData(): Promise<string> {

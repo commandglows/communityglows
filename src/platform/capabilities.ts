@@ -1,11 +1,17 @@
 export type PlatformCapabilities = {
   isTauri: boolean
+  isAndroidTauri: boolean
+  isDesktopTauri: boolean
   isExtension: boolean
   isChromeExtension: boolean
   isFirefoxExtension: boolean
   supportsSidePanel: boolean
   supportsNativeWebview: boolean
   supportsNativeSessionIsolation: boolean
+  supportsNativeWebviewPreferences: boolean
+  supportsNativeLinkIntake: boolean
+  supportsNativeProfileControls: boolean
+  supportsSessionLifecycle: boolean
   supportsHaptics: boolean
   supportsNativeBackup: boolean
 }
@@ -20,6 +26,14 @@ function getUserAgent(): string {
 export function isTauri(): boolean {
   if (typeof window === "undefined") return false
   return "__TAURI_INTERNALS__" in window
+}
+
+export function isAndroidTauri(): boolean {
+  return isTauri() && /android/i.test(getUserAgent())
+}
+
+export function isDesktopTauri(): boolean {
+  return isTauri() && !isAndroidTauri()
 }
 
 export function isExtension(): boolean {
@@ -51,8 +65,24 @@ export function supportsNativeSessionIsolation(): boolean {
   return isTauri()
 }
 
-export function supportsHaptics(): boolean {
+export function supportsNativeWebviewPreferences(): boolean {
   return isTauri()
+}
+
+export function supportsNativeLinkIntake(): boolean {
+  return isTauri()
+}
+
+export function supportsNativeProfileControls(): boolean {
+  return isTauri()
+}
+
+export function supportsSessionLifecycle(): boolean {
+  return isTauri()
+}
+
+export function supportsHaptics(): boolean {
+  return isAndroidTauri()
 }
 
 export function supportsNativeBackup(): boolean {
@@ -67,13 +97,19 @@ export function getPlatformCapabilities(): PlatformCapabilities {
 
   return {
     isTauri: tauri,
+    isAndroidTauri: tauri && isAndroidTauri(),
+    isDesktopTauri: tauri && isDesktopTauri(),
     isExtension: extension,
     isChromeExtension: chrome,
     isFirefoxExtension: firefox,
     supportsSidePanel: chrome && supportsSidePanel(),
     supportsNativeWebview: tauri,
     supportsNativeSessionIsolation: tauri,
-    supportsHaptics: tauri,
+    supportsNativeWebviewPreferences: tauri,
+    supportsNativeLinkIntake: tauri,
+    supportsNativeProfileControls: tauri,
+    supportsSessionLifecycle: tauri,
+    supportsHaptics: tauri && isAndroidTauri(),
     supportsNativeBackup: tauri,
   }
 }

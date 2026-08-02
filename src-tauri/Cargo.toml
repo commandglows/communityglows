@@ -37,6 +37,9 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 [target.'cfg(not(target_os = "android"))'.dependencies]
 tauri = { version = "2.10.0", features = ["unstable", "tray-icon", "image-png"] }
 
+[target.'cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))'.dependencies]
+tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
+
 # Android: minimal build without desktop-only features
 [target.'cfg(target_os = "android")'.dependencies]
 tauri = { version = "2.10.0", features = ["unstable", "tray-icon", "image-png"] }
