@@ -1,4 +1,4 @@
-import { ref, watch, onUnmounted, type Ref } from 'vue'
+import { nextTick, ref, watch, onUnmounted, type Ref } from 'vue'
 import { useElementBounding } from '@vueuse/core'
 import { getNetworkIsolationOrigins } from '@/config/socialNetworks'
 
@@ -9,6 +9,37 @@ async function invoke(cmd: string, args?: Record<string, unknown>) {
   if (!isTauri()) return
   const { invoke: tauriInvoke } = await import('@tauri-apps/api/core')
   return tauriInvoke(cmd, args)
+}
+
+function notifyWebviewReady(profileId: string, networkId: string) {
+  window.dispatchEvent(new CustomEvent('sfz-network-webview-ready', {
+    detail: { profileId, networkId },
+  }))
+}
+
+type WebviewHostBounds = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export async function measureWebviewHost(
+  hostEl: Ref<HTMLElement | null>,
+): Promise<WebviewHostBounds> {
+  await nextTick()
+
+  const bounds = hostEl.value?.getBoundingClientRect()
+  if (!bounds || bounds.width <= 0 || bounds.height <= 0) {
+    throw new Error('Network WebView host is not visible')
+  }
+
+  return {
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height,
+  }
 }
 
 /**
@@ -40,19 +71,18 @@ export function useNetworkWebview(hostEl: Ref<HTMLElement | null>) {
   })
 
   async function open(url: string, profileId: string, networkId: string) {
+    const bounds = await measureWebviewHost(hostEl)
     const storageOrigins = getNetworkIsolationOrigins(networkId)
     await invoke('open_webview', {
       url,
       profileId,
       networkId,
       storageOrigins,
-      x: x.value,
-      y: y.value,
-      width: width.value,
-      height: height.value,
+      ...bounds,
     })
     activeKey.value = `${profileId}:${networkId}`
     isOpen.value = true
+    notifyWebviewReady(profileId, networkId)
   }
 
   /**
@@ -61,6 +91,8 @@ export function useNetworkWebview(hostEl: Ref<HTMLElement | null>) {
    * scroll position, and cookies across switches.
    */
   async function switchTo(url: string, profileId: string, networkId: string) {
+    const bounds = await measureWebviewHost(hostEl)
+
     // Hide the currently visible webview (stays alive off-screen)
     if (isOpen.value && activeKey.value) {
       const [oldProfileId, oldNetworkId] = activeKey.value.split(':')
@@ -71,10 +103,7 @@ export function useNetworkWebview(hostEl: Ref<HTMLElement | null>) {
     const shown = await invoke('show_webview', {
       profileId,
       networkId,
-      x: x.value,
-      y: y.value,
-      width: width.value,
-      height: height.value,
+      ...bounds,
     })
 
     if (!shown) {
@@ -85,15 +114,13 @@ export function useNetworkWebview(hostEl: Ref<HTMLElement | null>) {
         profileId,
         networkId,
         storageOrigins,
-        x: x.value,
-        y: y.value,
-        width: width.value,
-        height: height.value,
+        ...bounds,
       })
     }
 
     activeKey.value = `${profileId}:${networkId}`
     isOpen.value = true
+    notifyWebviewReady(profileId, networkId)
   }
 
   /** Hide the active webview (pooled — stays alive for instant re-show). */

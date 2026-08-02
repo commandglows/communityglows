@@ -197,6 +197,9 @@ function onTextZoomChange() {
   textZoomLevel.value = normalizeTextZoomLevel(textZoomLevel.value)
   localStorage.setItem('sfz_text_zoom', String(textZoomLevel.value))
   syncSettingsPatch({ textZoom: textZoomLevel.value })
+  window.dispatchEvent(new CustomEvent('sfz-text-zoom-changed', {
+    detail: { level: textZoomLevel.value },
+  }))
   if (isTauri) {
     import('@tauri-apps/api/core').then(({ invoke }) => {
       invoke('set_text_zoom', { level: textZoomLevel.value }).catch(() => {})

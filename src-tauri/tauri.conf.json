@@ -56,7 +56,10 @@
             "/open"
           ]
         }
-      ]
+      ],
+      "desktop": {
+        "schemes": ["socialglowz"]
+      }
     }
   },
   "bundle": {

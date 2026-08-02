@@ -90,6 +90,10 @@ const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
+const textZoomLevel = ref(normalizeTextZoomLevel(
+  Number(localStorage.getItem('sfz_text_zoom') ?? String(TEXT_ZOOM_DEFAULT)),
+))
+const webviewReadyVersion = ref(0)
 restorePostAuthReadyFeedback()
 
 const queuedDeepLinkAction = ref<SocialGlowzDeepLinkAction | null>(consumePendingSocialGlowzDeepLinkAction())
@@ -125,7 +129,16 @@ const triggerNativeTapFeedback = () => {
 }
 
 // Event handlers declared at module scope so onUnmounted can remove them
-const onWebviewBack = () => { webviewStore.clearNetwork() }
+const onWebviewBack = () => {
+  const profileId = profilesStore.activeProfileId
+  const networkId = webviewStore.activeNetworkId
+  if (isTauri && !/android/i.test(navigator.userAgent) && profileId && networkId) {
+    ensureTauriInvoke().then((invoke) => {
+      invoke?.('close_webview', { profileId, networkId }).catch(() => {})
+    }).catch(() => {})
+  }
+  webviewStore.clearNetwork()
+}
 const onGrayscaleChanged = ((e: CustomEvent) => {
   themeStore.setGrayscale(e.detail.enabled)
 }) as unknown as (e: Event) => void
@@ -165,6 +178,7 @@ const onProfilePicked = ((e: CustomEvent<{ profileId?: string }>) => {
 const onNativeTextZoomChanged = ((e: CustomEvent) => {
   const level = normalizeTextZoomLevel(Number(e.detail?.level))
   if (!Number.isFinite(level)) return
+  textZoomLevel.value = level
   localStorage.setItem('sfz_text_zoom', String(level))
 }) as unknown as (e: Event) => void
 const onNativeTapSoundChanged = ((e: CustomEvent) => {
@@ -177,6 +191,7 @@ const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
   const rawUrl = typeof e.detail?.url === 'string' ? e.detail.url : ''
   handleSharedUrl(rawUrl)
 }) as unknown as (e: Event) => void
+const onWebviewReady = () => { webviewReadyVersion.value += 1 }
 
 // Global tap feedback — delegated to the native plugin so it honors
 // the same hapticEnabled / tapSoundEnabled flags as the Kotlin bottom bar.
@@ -295,6 +310,33 @@ watch(() => themeStore.isDarkMode, async (enabled) => {
   invoke('set_dark_mode', { enabled }).catch(() => {})
 })
 
+// Desktop child WebViews do not inherit Vue shell preferences automatically.
+// Apply the current settings to the active native child without changing shell CSS.
+const syncDesktopWebviewPreferences = async () => {
+  if (!isTauri || /android/i.test(navigator.userAgent)) return
+  const { invoke } = await import('@tauri-apps/api/core')
+  invoke('set_webview_preferences', {
+    profileId: profilesStore.activeProfileId,
+    networkId: webviewStore.activeNetworkId,
+    grayscale: themeStore.grayscaleEnabled,
+    darkMode: themeStore.isDarkMode,
+    textZoom: textZoomLevel.value,
+  }).catch(() => {})
+}
+
+watch(
+  [
+    () => themeStore.grayscaleEnabled,
+    () => themeStore.isDarkMode,
+    () => textZoomLevel.value,
+    () => webviewStore.activeNetworkId,
+    () => profilesStore.activeProfileId,
+    () => webviewReadyVersion.value,
+  ],
+  syncDesktopWebviewPreferences,
+  { immediate: true },
+)
+
 // Sync profile list to Android popup menu whenever profiles or active profile changes.
 // Keep the watcher shallow, but include a small avatar signature so the native menu refreshes after avatar edits.
 const nativeProfilesPayload = computed(() =>
@@ -373,6 +415,7 @@ onMounted(async () => {
   }
 
   window.addEventListener('resize', handleResize)
+  window.addEventListener('sfz-network-webview-ready', onWebviewReady)
 
   if (isTauri) {
     const invoke = await ensureTauriInvoke()
@@ -381,14 +424,12 @@ onMounted(async () => {
       invoke('setup_display').catch(() => {})
       // Sync initial dark mode state to native bar
       invoke('set_dark_mode', { enabled: themeStore.isDarkMode }).catch(() => {})
-      // Sync initial text zoom to native webview
+      // Keep the shared zoom state normalized before the first WebView opens.
       const savedZoom = normalizeTextZoomLevel(
         Number(localStorage.getItem('sfz_text_zoom') ?? String(TEXT_ZOOM_DEFAULT))
       )
       localStorage.setItem('sfz_text_zoom', String(savedZoom))
-      if (savedZoom !== TEXT_ZOOM_DEFAULT) {
-        invoke('set_text_zoom', { level: savedZoom }).catch(() => {})
-      }
+      textZoomLevel.value = savedZoom
       // Sync initial haptic + tap sound preferences to native plugin
       // (Kotlin defaults to haptic=on, tapSound=off — resync if user changed them)
       const savedHaptic = localStorage.getItem('sfz_haptic') !== 'false'
@@ -445,6 +486,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  window.removeEventListener('sfz-network-webview-ready', onWebviewReady)
   window.removeEventListener('sfz-webview-back', onWebviewBack)
   window.removeEventListener('sfz-grayscale-changed', onGrayscaleChanged)
   window.removeEventListener('sfz-open-profile-sheet', onOpenProfileSheet)

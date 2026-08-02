@@ -39,6 +39,13 @@
       aria-label="Profiles"
     >
       <div class="profile-menu-header">Profiles</div>
+      <div
+        v-if="deleteError"
+        class="profile-error"
+        role="alert"
+      >
+        {{ deleteError }}
+      </div>
 
       <div
         v-for="profile in profilesStore.profiles"
@@ -133,6 +140,7 @@ const editInputRef = ref<HTMLInputElement | null>(null)
 const addingNew = ref(false)
 const newProfileName = ref('')
 const addInputRef = ref<HTMLInputElement | null>(null)
+const deleteError = ref<string | null>(null)
 
 function toggleMenu() {
   menuVisible.value = !menuVisible.value
@@ -165,7 +173,17 @@ function cancelEdit() {
   editingId.value = null
 }
 
-function deleteProfile(profileId: string) {
+async function deleteProfile(profileId: string) {
+  deleteError.value = null
+  if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      await invoke('delete_profile_session', { profileId })
+    } catch {
+      deleteError.value = 'Unable to delete this profile session.'
+      return
+    }
+  }
   profilesStore.remove(profileId)
 }
 

@@ -1,10 +1,109 @@
 use std::collections::HashMap;
+#[cfg(not(target_os = "android"))]
+use std::sync::Mutex;
+#[cfg(not(target_os = "android"))]
+use std::time::Instant;
 #[cfg(target_os = "android")]
 use std::collections::HashSet;
 
 use tauri::{AppHandle, Manager};
 
 mod backup;
+
+#[cfg(not(target_os = "android"))]
+const MAX_WARM_DESKTOP_WEBVIEWS: usize = 3;
+
+#[cfg(not(target_os = "android"))]
+#[derive(Default)]
+struct DesktopWebviewPoolState {
+    entries: Mutex<HashMap<String, DesktopWebviewPoolEntry>>,
+}
+
+#[cfg(target_os = "android")]
+#[derive(Default)]
+struct DesktopWebviewPoolState;
+
+#[cfg(not(target_os = "android"))]
+struct DesktopWebviewPoolEntry {
+    hidden: bool,
+    last_used: Instant,
+}
+
+#[cfg(not(target_os = "android"))]
+fn mark_desktop_webview(
+    app: &AppHandle,
+    label: &str,
+    hidden: bool,
+) -> Result<(), String> {
+    let state = app.state::<DesktopWebviewPoolState>();
+    let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+    entries.insert(
+        label.to_string(),
+        DesktopWebviewPoolEntry {
+            hidden,
+            last_used: Instant::now(),
+        },
+    );
+    Ok(())
+}
+
+#[cfg(not(target_os = "android"))]
+fn evict_oldest_hidden_desktop_webviews(
+    app: &AppHandle,
+    keep_label: &str,
+) -> Result<(), String> {
+    let state = app.state::<DesktopWebviewPoolState>();
+    let evicted = {
+        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let hidden_count = entries.values().filter(|entry| entry.hidden).count();
+        if hidden_count < MAX_WARM_DESKTOP_WEBVIEWS {
+            Vec::new()
+        } else {
+            let mut hidden: Vec<_> = entries
+                .iter()
+                .filter(|(label, entry)| entry.hidden && label.as_str() != keep_label)
+                .map(|(label, entry)| (label.clone(), entry.last_used))
+                .collect();
+            hidden.sort_by_key(|(_, last_used)| *last_used);
+            hidden
+                .into_iter()
+                .take(hidden_count - MAX_WARM_DESKTOP_WEBVIEWS + 1)
+                .map(|(label, _)| label)
+                .collect::<Vec<_>>()
+        }
+    };
+
+    for label in evicted {
+        if let Some(wv) = app.get_webview(&label) {
+            wv.close().map_err(|e| e.to_string())?;
+        }
+        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        entries.remove(&label);
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "android"))]
+fn close_desktop_profile_webviews(app: &AppHandle, profile_id: &str) -> Result<(), String> {
+    let state = app.state::<DesktopWebviewPoolState>();
+    let labels: Vec<String> = {
+        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        entries
+            .keys()
+            .filter(|label| label.starts_with(&format!("social-{profile_id}-")))
+            .cloned()
+            .collect()
+    };
+
+    for label in labels {
+        if let Some(wv) = app.get_webview(&label) {
+            wv.close().map_err(|e| e.to_string())?;
+        }
+        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        entries.remove(&label);
+    }
+    Ok(())
+}
 
 // ── Desktop-only imports ─────────────────────────────────────────────────────
 #[cfg(not(target_os = "android"))]
@@ -463,8 +562,11 @@ fn open_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        mark_desktop_webview(&app, &label, false)?;
         return Ok(());
     }
+
+    evict_oldest_hidden_desktop_webviews(&app, &label)?;
 
     // Session data isolated per (profile, network) — cookies/localStorage/IndexedDB
     let data_dir = app
@@ -488,6 +590,8 @@ fn open_webview(
         )
         .map_err(|e| e.to_string())?;
 
+    mark_desktop_webview(&app, &label, false)?;
+
     Ok(())
 }
 
@@ -509,6 +613,7 @@ fn resize_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        mark_desktop_webview(&app, &label, false)?;
     }
     Ok(())
 }
@@ -520,6 +625,12 @@ fn close_webview(app: AppHandle, profile_id: String, network_id: String) -> Resu
     if let Some(wv) = app.get_webview(&label) {
         wv.close().map_err(|e| e.to_string())?;
     }
+    let state = app.state::<DesktopWebviewPoolState>();
+    state
+        .entries
+        .lock()
+        .map_err(|_| "webview pool lock poisoned")?
+        .remove(&label);
     Ok(())
 }
 
@@ -535,6 +646,7 @@ fn hide_webview(app: AppHandle, profile_id: String, network_id: String) -> Resul
             size: tauri::Size::Logical(tauri::LogicalSize::new(0.0, 0.0)),
         })
         .map_err(|e| e.to_string())?;
+        mark_desktop_webview(&app, &label, true)?;
     }
     Ok(())
 }
@@ -559,6 +671,7 @@ fn show_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        mark_desktop_webview(&app, &label, false)?;
         Ok(true)
     } else {
         Ok(false)
@@ -750,6 +863,45 @@ fn set_text_zoom(_app: AppHandle, _level: i32) -> Result<(), String> {
     Ok(()) // no-op on desktop
 }
 
+#[tauri::command]
+#[cfg(not(target_os = "android"))]
+fn set_webview_preferences(
+    app: AppHandle,
+    profile_id: Option<String>,
+    network_id: Option<String>,
+    grayscale: bool,
+    dark_mode: bool,
+    text_zoom: i32,
+) -> Result<(), String> {
+    let (Some(profile_id), Some(network_id)) = (profile_id, network_id) else {
+        return Ok(());
+    };
+    let label = webview_label(&profile_id, &network_id);
+    let Some(wv) = app.get_webview(&label) else {
+        return Ok(());
+    };
+    let zoom = text_zoom.clamp(50, 200);
+    let filter = if grayscale { "grayscale(1)" } else { "none" };
+    let color_scheme = if dark_mode { "dark" } else { "light" };
+    let script = format!(
+        "(() => {{ const root = document.documentElement; root.style.filter = '{filter}'; root.style.colorScheme = '{color_scheme}'; document.body && (document.body.style.zoom = '{zoom}%'); }})()"
+    );
+    wv.eval(script).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+#[cfg(target_os = "android")]
+fn set_webview_preferences(
+    _app: AppHandle,
+    _profile_id: Option<String>,
+    _network_id: Option<String>,
+    _grayscale: bool,
+    _dark_mode: bool,
+    _text_zoom: i32,
+) -> Result<(), String> {
+    Ok(())
+}
+
 /// Sync the bottom bar network icons with the profile's visible networks.
 #[tauri::command]
 #[cfg(target_os = "android")]
@@ -820,6 +972,7 @@ fn delete_profile_session(app: AppHandle, profile_id: String) -> Result<(), Stri
         .join("sessions")
         .join(&profile_id);
 
+    close_desktop_profile_webviews(&app, &profile_id)?;
     if data_dir.exists() {
         std::fs::remove_dir_all(&data_dir).map_err(|e| e.to_string())?;
     }
@@ -852,6 +1005,7 @@ fn delete_network_session(
         .join(&profile_id)
         .join(&network_id);
 
+    close_webview(app.clone(), profile_id.clone(), network_id.clone())?;
     if data_dir.exists() {
         std::fs::remove_dir_all(&data_dir).map_err(|e| e.to_string())?;
     }
@@ -953,6 +1107,7 @@ fn restore_backup(
 pub fn run() {
     tauri::Builder::default()
         .manage(AndroidOAuthReplayState::default())
+        .manage(DesktopWebviewPoolState::default())
         .plugin(tauri_plugin_android_webview::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_dialog::init())
@@ -981,6 +1136,7 @@ pub fn run() {
             set_grayscale,
             set_dark_mode,
             set_text_zoom,
+            set_webview_preferences,
             set_bar_networks,
             set_profiles,
             set_locale,
