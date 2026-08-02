@@ -525,7 +525,7 @@ input, textarea, [contenteditable="true"] {
 
 :root {
   /* Brand */
-  --primary-color: #2196F3;
+  --primary-color: var(--p-primary-color);
 
   /* Light theme surfaces */
   --text-color: #495057;
@@ -549,7 +549,7 @@ input, textarea, [contenteditable="true"] {
 html.dark {
   color-scheme: dark;
 
-  --primary-color: #5BA8F5;
+  --primary-color: var(--p-primary-color);
   --text-color: #e4e4e7;
   --text-color-secondary: #a1a1aa;
   --surface-ground: #09090b;

@@ -48,7 +48,7 @@ Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
 | WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | not-run | Previous `2148da3` build lacked a discoverable creation action. The `9b66e64` installer adds `Ajouter un profil` and awaits manual isolation proof. |
 | WIN-SHARE-006 | Supported Windows link intake/fallback | Cold and warm app select the correct network or show explicit fallback | not-run | pending |
 | WIN-BACKUP-007 | Export, valid restore, invalid/password/version restore | Covered data restores; failures preserve existing state | not-run | pending |
-| WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | pending |
+| WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | `e520778` Windows installer used Aura's default emerald primary controls despite the Vue shell's blue action token. The next Windows build maps Aura primary controls to its blue token family and awaits rendered proof. |
 | WIN-DIAGNOSTICS-009 | Header diagnostic copy after launch/switch/resize | Report identifies commit/build and platform, records lifecycle events, and omits URLs, email, profiles, cookies and sessions | not-run | pending |
 
 ## Efficient Windows Session
