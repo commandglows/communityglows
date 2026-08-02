@@ -60,10 +60,18 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Fetch runtime secrets
+        uses: dopplerhq/secrets-fetch-action@v2.0.0
+        id: doppler
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'SocialGlowz ${{ github.ref_name }}'
@@ -116,10 +124,18 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Fetch runtime secrets
+        uses: dopplerhq/secrets-fetch-action@v2.0.0
+        id: doppler
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'SocialGlowz ${{ github.ref_name }}'

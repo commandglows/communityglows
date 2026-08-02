@@ -34,7 +34,16 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Fetch runtime secrets
+        uses: dopplerhq/secrets-fetch-action@v2.0.0
+        id: doppler
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+          inject-env-vars: true
+
       - name: Build Windows installers
+        env:
+          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
         run: pnpm tauri:bundle
 
       - name: Publish stable Windows test installer
