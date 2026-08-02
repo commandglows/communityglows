@@ -50,6 +50,13 @@
             <h3>{{ profilesStore.activeProfile?.name ?? 'Profil' }}</h3>
             <p>{{ profilesStore.profiles.length }} {{ profilesStore.profiles.length > 1 ? 'profils' : 'profil' }}</p>
             <ProfileSwitcher :icons-only="false" />
+            <Button
+              label="Ajouter un profil"
+              icon="pi pi-plus"
+              text
+              size="small"
+              @click="openProfileCreator"
+            />
           </div>
 
           <!-- Menu principal -->
@@ -127,6 +134,10 @@ const panelSize = computed(() => {
 
 const toggleIconsOnly = () => {
   iconsOnly.value = !iconsOnly.value
+}
+
+const openProfileCreator = () => {
+  window.dispatchEvent(new CustomEvent('sfz-create-profile'))
 }
 
 const handleResize = (e: { sizes?: Array<number> }) => {

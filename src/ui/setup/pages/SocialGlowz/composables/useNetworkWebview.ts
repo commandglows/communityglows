@@ -182,14 +182,13 @@ export function useNetworkWebview(
     }
   }
 
-  /** Hide the active webview (pooled — stays alive for instant re-show). */
-  async function close() {
+  /** Hide the active WebView while keeping its pool key for an instant restore. */
+  async function suspend() {
     if (isOpen.value && activeKey.value) {
       const [profileId, networkId] = activeKey.value.split(':')
       record('hide-webview', 'start', `network=${networkId}`)
       try {
         await invoke('hide_webview', { profileId, networkId })
-        activeKey.value = null
         isOpen.value = false
         record('hide-webview', 'success', `network=${networkId}`)
       } catch (error) {
@@ -199,7 +198,42 @@ export function useNetworkWebview(
     }
   }
 
+  /** Restore the current pool entry after a Vue overlay is dismissed. */
+  async function resume(url: string, profileId: string, networkId: string) {
+    const key = `${profileId}:${networkId}`
+    if (activeKey.value !== key) {
+      await switchTo(url, profileId, networkId)
+      return
+    }
+
+    record('show-webview', 'start', `network=${networkId}`)
+    try {
+      const bounds = await measureWebviewHost(hostEl)
+      const shown = await invoke('show_webview', {
+        profileId,
+        networkId,
+        ...bounds,
+      })
+      if (!shown) {
+        await open(url, profileId, networkId)
+        return
+      }
+      isOpen.value = true
+      notifyWebviewReady(profileId, networkId)
+      record('show-webview', 'success', `network=${networkId}`)
+    } catch (error) {
+      record('show-webview', 'error', error instanceof Error ? error.message : String(error))
+      throw error
+    }
+  }
+
+  /** Hide the active webview and discard the visible-host identity. */
+  async function close() {
+    await suspend()
+    activeKey.value = null
+  }
+
   onUnmounted(close)
 
-  return { open, switchTo, close, isOpen, activeKey }
+  return { open, switchTo, suspend, resume, close, isOpen, activeKey }
 }

@@ -23,11 +23,11 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
+- Windows artifact commit: `2148da378fad63c81c6c47a057cba56dbf4d2146`
 - Android artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
 - Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
 - Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764933664
-- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30764933644
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30768120711
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending
@@ -41,14 +41,26 @@ Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
 
 | ID | Scenario | Expected result | Result | Evidence |
 | --- | --- | --- | --- | --- |
-| WIN-LAUNCH-001 | Open every canonical WebView network from a fresh installer | Each opens visibly in the central area with no zero-size/orphan host | not-run | pending |
+| WIN-LAUNCH-001 | Open every canonical WebView network from a fresh installer | Each opens visibly in the central area with no zero-size/orphan host | passed | Operator, 2026-08-02: network opening is instantaneous on the `2148da3` Windows installer. |
 | WIN-SESSION-002 | Profile A/B same-network isolation | Each profile returns to its own cookies/localStorage/session after switch and restart | not-run | pending |
-| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | not-run | pending |
-| WIN-LIFECYCLE-004 | Resize, switch, back, close, eviction, profile deletion | No wrong session, orphan host, or unbounded hidden-host growth | not-run | pending |
-| WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | not-run | pending |
+| WIN-SETTINGS-003 | Dark mode, grayscale, text zoom | Embedded view follows documented scope; no silent no-op | failed | Operator, 2026-08-02: after opening a network, the native WebView stays above the desktop settings sheet. The next Windows build contains a suspend/restore repair. |
+| WIN-LIFECYCLE-004 | Resize, switch, back, close, eviction, profile deletion | No wrong session, orphan host, or unbounded hidden-host growth | not-run | Operator, 2026-08-02: rapid network switching and sidebar resize passed; back, close, eviction, and deletion remain untested. |
+| WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | failed | Operator, 2026-08-02: no discoverable desktop action to create a second profile, so isolation cannot be tested. |
 | WIN-SHARE-006 | Supported Windows link intake/fallback | Cold and warm app select the correct network or show explicit fallback | not-run | pending |
 | WIN-BACKUP-007 | Export, valid restore, invalid/password/version restore | Covered data restores; failures preserve existing state | not-run | pending |
 | WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | pending |
+| WIN-DIAGNOSTICS-009 | Header diagnostic copy after launch/switch/resize | Report identifies commit/build and platform, records lifecycle events, and omits URLs, email, profiles, cookies and sessions | not-run | pending |
+
+## Efficient Windows Session
+
+Run these checks without restarting the app between them:
+
+1. Open one network, then switch quickly between two others and back to the first.
+2. Resize each desktop sidebar while a network is visible.
+3. Use the right-panel profile control to add or select a second profile, then open the same network.
+4. Click the header diagnostic icon and paste the copied report into the test notes. Confirm that it contains recent WebView events but no URL, email, profile ID, cookie or session content.
+
+This single session covers `WIN-LAUNCH-001`, `WIN-LIFECYCLE-004`, `WIN-PROFILE-005`, and `WIN-DIAGNOSTICS-009`.
 
 ## Android
 

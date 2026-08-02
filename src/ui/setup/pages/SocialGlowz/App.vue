@@ -16,7 +16,10 @@
       <AppSidebar v-model="sidebarVisible">
         <AppRightSidebar v-model="rightSidebarVisible">
           <!-- Native Tauri webview host: shown when a webview-capable network is active -->
-          <NetworkWebviewHost v-if="webviewStore.activeUrl" />
+          <NetworkWebviewHost
+            v-if="webviewStore.activeUrl"
+            :suspended="settingsVisible"
+          />
           <!-- Router-view for Gmail (API), login, and other non-webview pages -->
           <router-view v-else />
         </AppRightSidebar>

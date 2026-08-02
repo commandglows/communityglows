@@ -213,14 +213,21 @@ function openProfileMenu() {
   menuVisible.value = true
 }
 
+function openProfileCreator() {
+  menuVisible.value = true
+  startAdd()
+}
+
 onMounted(() => {
   document.addEventListener('click', handleOutsideClick)
   window.addEventListener('sfz-show-profile-sheet', openProfileMenu)
+  window.addEventListener('sfz-create-profile', openProfileCreator)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleOutsideClick)
   window.removeEventListener('sfz-show-profile-sheet', openProfileMenu)
+  window.removeEventListener('sfz-create-profile', openProfileCreator)
 })
 </script>
 

@@ -68,6 +68,7 @@ jobs:
               --prerelease
           }
 
+          gh release edit windows-latest --target $env:GITHUB_SHA
           gh release upload windows-latest $stableInstaller --clobber
 
           "Stable installer URL: https://github.com/${{ github.repository }}/releases/download/windows-latest/$stableInstaller" >> $env:GITHUB_STEP_SUMMARY

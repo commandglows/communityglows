@@ -18,6 +18,8 @@
 
 🟠 [socialglowz] task: Finish and validate Android app deeplink plus shared-link intake flow so `socialglowz://app/open` and Android `ACTION_SEND` reopen the right network/profile session without breaking OAuth callback hardening | status: in_progress | area: mobile-ingress | id: sg-android-deeplink-shared-link-flow | impact: high | effort: medium | unblocks: mobile-growth-entrypoints | risk: untracked-mobile-regression
 🟠 [socialglowz] task: Document remaining dependency overrides and plan major-line migrations for Vue Router, Vite, PrimeVue, Pinia, Tailwind, ESLint, and TypeScript | status: in_progress | area: deps | id: sg-extension-deps-major-migration-plan | impact: high | effort: high | unblocks: dependency-maintenance | risk: stale-framework-upgrade-plan
+🟠 [socialglowz] task: Hide the active Windows native child WebView while desktop settings are open, then restore the same warm profile/network session when settings close | status: in_progress | area: windows-webview | id: sg-windows-settings-overlay | impact: high | effort: medium | unblocks: windows-settings-qa | risk: native-overlay-blocks-settings | evidence: shipflow_data/workflow/bugs/BUG-2026-08-02-002.md
+🟠 [socialglowz] task: Expose a direct desktop action to create a new profile from the Windows profile panel | status: in_progress | area: windows-profiles | id: sg-windows-profile-create | impact: high | effort: low | unblocks: windows-profile-isolation-qa | risk: profile-qa-blocked
 
 ### 🟡 P2 - Medium Priority
 

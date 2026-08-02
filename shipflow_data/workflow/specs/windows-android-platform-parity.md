@@ -274,16 +274,16 @@ Update after implementation and verification:
   - Depends on: Task 1.
   - Validate with: composable regression tests, Rust build, Windows installer manual checklist, repeated network/profile switching.
 
-- [x] Task 3: Replace desktop placeholder profile behavior.
+- [ ] Task 3: Replace desktop placeholder profile behavior.
   - Files: `src/ui/setup/pages/SocialGlowz/components/AppSidebar.vue`, `src/ui/setup/pages/SocialGlowz/components/AppRightSidebar.vue`, shared profile components/stores as needed.
-  - Action: render the active profile from `profilesStore`, expose the required profile switch/manage actions, and keep hidden-network state consistent with the active profile.
+  - Action: render the active profile from `profilesStore`, expose discoverable profile creation, switch, and manage actions, and keep hidden-network state consistent with the active profile.
   - User story link: profile context must be the same on both platforms.
   - Depends on: Task 1.
   - Validate with: Vue component tests or focused interaction tests plus Windows manual profile switching.
 
-- [x] Task 4: Align settings behavior across shell and embedded WebViews.
+- [ ] Task 4: Align settings behavior across shell and embedded WebViews.
   - Files: `src/ui/setup/pages/SocialGlowz/components/AppSettings.vue`, `src/ui/setup/pages/SocialGlowz/components/MobileSettingsSheet.vue`, `src/ui/setup/pages/SocialGlowz/composables/`, `src-tauri/src/lib.rs`, Android plugin files.
-  - Action: implement Windows WebView2 equivalents for dark mode, grayscale, and text zoom where supported; otherwise scope controls visibly to the shell and record the limitation. Keep Android behavior and fallback diagnostics intact.
+  - Action: hide the active Windows child WebView while a Vue settings overlay is visible and restore the same warm session on close; implement Windows WebView2 equivalents for dark mode, grayscale, and text zoom where supported; otherwise scope controls visibly to the shell and record the limitation. Keep Android behavior and fallback diagnostics intact.
   - User story link: settings must do what their labels promise on each platform.
   - Depends on: Task 1 and Task 2.
   - Validate with: settings tests, Windows WebView manual checks, Android device checks, safe degraded-mode logs.
@@ -398,12 +398,14 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 21:08:46 UTC | 602-sg-platform-parity | GPT-5 Codex | Re-audited Windows against Android after the failed installer retest and new diagnostics work. Confirmed Windows launch, session, preferences and backup remain proof-gated; identified the `AppRightSidebar` placeholder profile as an implementation gap; recorded a Windows-only continuation matrix. | partial | `001-sg-build` for desktop profile completion, then `107-sg-test` for Windows installer proof |
 | 2026-08-02 21:30:00 UTC | 001-sg-build / 102-sg-start | GPT-5 Codex | Replaced the desktop right-panel placeholder identity with the active profile data and reused the profile switch/manage control. Kept the Windows panel structure and existing component/token authority. | implemented | Windows-only installer build and manual parity checklist |
 | 2026-08-02 21:32:00 UTC | 001-sg-build / 102-sg-start | GPT-5 Codex | Serialized desktop WebView transitions and made resize/hide failures observable through the safe diagnostic report, covering rapid switching before the next Windows installer test. | implemented | Windows-only installer build and combined manual test session |
+| 2026-08-02 21:38:00 UTC | 004-sg-deploy | GPT-5 Codex | Pushed `2148da3` and built the Windows installer only. The manual workflow completed successfully and replaced the stable `windows-latest` executable; Android was not built. | partial | One combined Windows manual test session |
+| 2026-08-02 22:07:00 UTC | 309-sg-tasks / 003-sg-bug / 106-sg-fix | GPT-5 Codex | Recorded the passed Windows launch, rapid-switch, and resize retest; reopened desktop profile and settings tasks after the operator found no direct profile-creation action and a native WebView over the settings sheet. Implemented a warm WebView suspend/resume path and direct profile creation action; Android remains excluded. | implemented-pending-manual | Build one Windows-only installer, then manually verify settings visibility/restoration and profile creation/isolation. |
 
 ## Current Chantier Flow
 
 - `100-sg-spec`: complete — durable parity contract created from the platform audit and user-selected formalisation.
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
-- `102-sg-start`: implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, atomic restore, safe diagnostics, and desktop profile surface are coded; installer/device proof remains.
+- `102-sg-start`: implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, atomic restore, safe diagnostics, and desktop profile surface are coded; Windows settings overlay and direct profile creation are pending installer proof.
 - `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
 - `103-sg-verify`: pending implementation.
 - `104-sg-end`: pending verified outcome.

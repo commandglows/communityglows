@@ -61,6 +61,11 @@ import {
 
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
+const props = withDefaults(defineProps<{
+  suspended?: boolean
+}>(), {
+  suspended: false,
+})
 const hostEl = ref<HTMLElement | null>(null)
 const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 const launchError = ref<string | null>(null)
@@ -68,7 +73,7 @@ const diagnosticsCopied = ref(false)
 const diagnostics = ref<NetworkWebviewDiagnostic[]>([])
 const enqueueTransition = createSerialTaskQueue()
 
-const { open, switchTo, close } = useNetworkWebview(hostEl, entry => {
+const { open, switchTo, suspend, resume, close } = useNetworkWebview(hostEl, entry => {
   diagnostics.value = [...diagnostics.value.slice(-19), entry]
 })
 
@@ -150,8 +155,15 @@ async function syncBarNetworks() {
 
 // React to network or profile changes — open or switch the webview
 watch(
-  [activeUrl, activeNetworkId, activeProfileId],
-  async ([url, networkId, profileId], [prevUrl, prevNetworkId, prevProfileId]) => {
+  [activeUrl, activeNetworkId, activeProfileId, () => props.suspended],
+  async ([url, networkId, profileId, isSuspended], previousValues) => {
+    const [prevUrl, prevNetworkId, prevProfileId, wasSuspended] = previousValues ?? []
+    if (isSuspended) {
+      await enqueueTransition(suspend).catch(error => {
+        console.error('[SocialGlowz] Failed to hide network WebView for an overlay:', error)
+      })
+      return
+    }
     if (!url || !networkId || !profileId) {
       launchError.value = null
       await enqueueTransition(close).catch(error => {
@@ -161,6 +173,10 @@ watch(
     }
     launchError.value = null
     try {
+      if (wasSuspended) {
+        await enqueueTransition(() => resume(url, profileId, networkId))
+        return
+      }
       const keyChanged =
         networkId !== prevNetworkId || profileId !== prevProfileId || url !== prevUrl
       if (keyChanged && (prevNetworkId || prevProfileId)) {
