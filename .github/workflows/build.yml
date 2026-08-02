@@ -1,4 +1,4 @@
-name: SocialGlowz Release Builds
+name: SocialGlowz - Tagged Release Builds
 
 on:
   push:

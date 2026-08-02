@@ -1,0 +1,74 @@
+name: SocialGlowz - Quality Checks
+
+on:
+  push:
+    branches: [master, develop, 'release/**']
+    paths:
+      - 'src/**'
+      - 'src-tauri/**'
+      - 'convex/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'vite.tauri.config.ts'
+      - '.github/workflows/quality-checks.yml'
+  pull_request:
+    branches: [master, develop, 'release/**']
+    paths:
+      - 'src/**'
+      - 'src-tauri/**'
+      - 'convex/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'vite.tauri.config.ts'
+      - '.github/workflows/quality-checks.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: quality-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Typecheck, lint and tests
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.0.0
+          cache: pnpm
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --version 0.22.1 --locked
+
+      - name: Run RustSec audit
+        run: cargo audit
+        working-directory: src-tauri
+
+      - name: Run unit tests
+        run: pnpm test:once
+
+      - name: Run TypeScript checks
+        run: pnpm typecheck
+
+      - name: Run Convex typecheck
+        run: pnpm exec tsc -p convex/tsconfig.json --noEmit
+
+      - name: Run lint
+        run: pnpm lint:check

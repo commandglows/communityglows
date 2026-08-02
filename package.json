@@ -86,7 +86,7 @@
     "tauri:info": "pnpm exec tauri info",
     "tauri:dev": "vite -c vite.tauri.config.ts",
     "tauri:build": "vite build -c vite.tauri.config.ts",
-    "tauri:bundle": "pnpm tauri:build && pnpm exec tauri build --no-bundle",
+    "tauri:bundle": "pnpm exec tauri build",
     "tauri:android:init": "pnpm exec tauri android init",
     "tauri:android:dev": "pnpm exec tauri android dev",
     "tauri:android:build": "pnpm exec tauri android build",

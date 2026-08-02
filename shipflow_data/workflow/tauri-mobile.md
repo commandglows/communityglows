@@ -26,8 +26,8 @@ So a Linux server cannot build iOS locally.
 If your code runs on a remote Linux server and your phone is not directly connected to that server:
 
 1. Push your branch to GitHub.
-2. Run the workflow `Dev Builds (Android + Windows)` (manual or any `git push`) on GitHub Actions / Blacksmith.
-3. Download the artifact `socialglowz-android-debug`.
+2. Run the workflow `SocialGlowz - Manual Build - Android` on GitHub Actions / Blacksmith.
+3. Download the artifact whose name starts with `socialglowz-android-`.
 4. Install the APK on your Android phone and test.
 
 This avoids local Android Studio/SDK setup on your server machine.
@@ -37,8 +37,8 @@ This avoids local Android Studio/SDK setup on your server machine.
 For Android session-isolation checks, use the APK built by GitHub Actions on Blacksmith:
 
 1. Push your branch to GitHub.
-2. Run the workflow `Dev Builds (Android + Windows)` if it did not start from the push.
-3. Download the artifact `socialglowz-android-debug`.
+2. Run the workflow `SocialGlowz - Manual Build - Android`.
+3. Download the artifact whose name starts with `socialglowz-android-`.
 4. Install the APK on the Android phone.
 5. Validate that embedded networks keep cookies and localStorage snapshots separated by `${profileId}-${networkId}`.
 
@@ -50,7 +50,7 @@ Known limits for this Android WebView isolation: IndexedDB, CacheStorage, servic
 
 For WebView pooling checks, also use the GitHub Actions / Blacksmith APK. Local browser or desktop tests do not prove the Android WebKit profile behavior.
 
-1. Install a clean `socialglowz-android-debug` artifact.
+1. Install a clean `socialglowz-android-` artifact.
 2. Open Profile A -> Instagram and wait for full load.
 3. Switch to another network, then return to Instagram; if `MULTI_PROFILE` is active, the original host should reappear warm without a visible full reload.
 4. Open Profile B -> Instagram and confirm Profile A's account is not visible.
@@ -65,8 +65,8 @@ If the device logs fallback mode, performance expectations are lower: only the c
 To test on Windows without building locally:
 
 1. Push your branch to GitHub.
-2. Run `Dev Builds (Android + Windows)` workflow.
-3. Download artifact `socialglowz-windows-test`.
+2. Run the workflow `SocialGlowz - Manual Build - Windows`.
+3. Download the artifact whose name starts with `socialglowz-windows-`.
 4. Install `.msi` or run `.exe` on your Windows machine.
 
 ## NPM scripts (already added)
