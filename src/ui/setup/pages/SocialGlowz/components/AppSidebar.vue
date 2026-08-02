@@ -48,7 +48,7 @@
                     :class="{ active: isNetworkActive(item) }"
                   >
                     <Button
-                      :icon="hasCustomIcon(item) ? undefined : item.icon"
+                      :icon="undefined"
                       :label="iconsOnly ? undefined : item.label"
                       :tooltip="iconsOnly ? item.label : undefined"
                       :tooltip-options="{ position: 'right' }"
@@ -60,21 +60,10 @@
                       ]"
                       @click="navigateToNetwork(item)"
                     >
-                      <template
-                        v-if="hasCustomIcon(item)"
-                        #icon
-                      >
-                        <ThreadsIcon
-                          v-if="getCustomIconName(item) === 'threads'"
-                          size="1rem"
-                        />
-                        <SnapchatIcon
-                          v-else-if="getCustomIconName(item) === 'snapchat'"
-                          size="1rem"
-                        />
-                        <NextdoorIcon
-                          v-else-if="getCustomIconName(item) === 'nextdoor'"
-                          size="1rem"
+                      <template #icon>
+                        <NetworkBrandIcon
+                          :network-id="item.route.slice(1)"
+                          :fallback-icon="item.icon"
                         />
                       </template>
                     </Button>
@@ -110,7 +99,7 @@
                   :off-label="iconsOnly ? undefined : $t('friends_filter.see_all')"
                   on-icon="pi pi-filter-fill"
                   off-icon="pi pi-filter"
-                  :pt="{ root: { style: 'width: 100%; border-radius: 0; height: 2.5rem;' } }"
+                  :pt="{ root: { style: 'width: var(--sg-sidebar-fill-size); border-radius: 0; height: var(--sg-sidebar-filter-height);' } }"
                   @change="setFilterEnabled"
                 />
                 <Button
@@ -206,7 +195,7 @@
               v-model:visible="showAddLinkDialog"
               :header="$t('links.add_dialog_title')"
               :modal="true"
-              style="width: 24rem; max-width: 95vw"
+              style="width: var(--sg-sidebar-dialog-width); max-width: var(--sg-sidebar-dialog-max-width)"
             >
               <div class="add-link-form">
                 <InputText
@@ -319,9 +308,7 @@ import Dialog from 'primevue/dialog'
 import ToggleButton from 'primevue/togglebutton'
 import ProfileSwitcher from './ProfileSwitcher.vue'
 import FriendsPanel from './FriendsPanel.vue'
-import ThreadsIcon from './icons/ThreadsIcon.vue'
-import SnapchatIcon from './icons/SnapchatIcon.vue'
-import NextdoorIcon from './icons/NextdoorIcon.vue'
+import NetworkBrandIcon from './NetworkBrandIcon.vue'
 
 const router = useRouter()
 const kanbanStore = useKanbanStore()
@@ -432,10 +419,6 @@ const builtinMenuItems = builtInSocialNetworks.map((network, index) => ({
   route: network.route,
 }))
 
-const customIconByRoute = new Map<string, typeof builtInSocialNetworks[number]['customIcon']>(
-  builtInSocialNetworks.map((network) => [network.route, network.customIcon] as const),
-)
-
 const menuItems = ref<MenuItem[]>([
   ...builtinMenuItems,
   { id: builtinMenuItems.length + 1, label: 'Kanban', icon: 'pi pi-th-large', route: '/kanban' },
@@ -450,13 +433,6 @@ const customLinkItems = computed<MenuItem[]>(() => {
     route: `/${link.id}`,
   }))
 })
-
-const hasCustomIcon = (item: MenuItem) => customIconByRoute.get(item.route) !== undefined
-
-const getCustomIconName = (item: MenuItem) => {
-  const route = item.route
-  return customIconByRoute.get(route)
-}
 
 const isNetworkActive = (item: MenuItem): boolean =>
   webviewStore.activeNetworkId === item.route.slice(1)
@@ -505,22 +481,22 @@ onMounted(() => {
 .sidebar {
   background-color: var(--surface-card);
   border-right: 1px solid var(--surface-border);
-  height: 100vh;
-  margin-top: 4rem;
-  transition: all 0.3s;
+  height: var(--sg-sidebar-viewport-height);
+  margin-top: var(--sg-sidebar-top-offset);
+  transition: var(--sg-sidebar-transition);
 }
 
 .sidebar.icons-only {
-  min-width: 4rem;
-  max-width: 4rem;
+  min-width: var(--sg-sidebar-compact-width);
+  max-width: var(--sg-sidebar-compact-width);
 }
 
 .sidebar:not(.icons-only) {
-  min-width: 15rem;
+  min-width: var(--sg-sidebar-expanded-min-width);
 }
 
 .sidebar-content {
-  height: 100%;
+  height: var(--sg-sidebar-fill-size);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -529,7 +505,7 @@ onMounted(() => {
 .sidebar-main {
   flex: 1;
   min-height: 0;
-  width: 100%;
+  width: var(--sg-sidebar-fill-size);
   overflow-y: auto;
 }
 
@@ -540,11 +516,11 @@ onMounted(() => {
 }
 
 .content-centered .menu-items {
-  width: 100%;
+  width: var(--sg-sidebar-fill-size);
 }
 
 .flex.align-items-center.mb-3 {
-  padding: 1rem;
+  padding: var(--sg-sidebar-control-padding);
 }
 
 .menu-items {
@@ -565,23 +541,23 @@ onMounted(() => {
 
 .network-row.active {
   background-color: var(--surface-hover);
-  border-left: 3px solid var(--primary-color);
+  border-left: var(--sg-sidebar-active-indicator-width) solid var(--primary-color);
 }
 
 .network-btn {
   flex: 1;
   border-radius: 0;
-  height: 3rem;
+  height: var(--sg-sidebar-network-row-height);
 }
 
 .network-btn :deep(.p-button) {
-  width: 100%;
+  width: var(--sg-sidebar-fill-size);
   border-radius: 0;
-  height: 3rem;
+  height: var(--sg-sidebar-network-row-height);
 }
 
 .network-btn.justify-content-start :deep(.p-button) {
-  padding: 0 1rem;
+  padding: 0 var(--sg-sidebar-network-row-padding-inline);
 }
 
 .network-btn.justify-content-center :deep(.p-button) {
@@ -595,11 +571,11 @@ onMounted(() => {
 
 
 .menu-section {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-sidebar-section-spacing);
 }
 
 .section-header {
-  padding: 0.5rem 1rem;
+  padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -607,14 +583,14 @@ onMounted(() => {
 
 .section-header h3 {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--sg-sidebar-section-title-size);
   color: var(--text-color-secondary);
 }
 
 .friends-section {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sg-sidebar-subsection-spacing);
   border-top: 1px solid var(--surface-border);
-  padding-top: 0.5rem;
+  padding-top: var(--sg-sidebar-subsection-spacing);
 }
 
 .friends-section--hidden {
@@ -628,51 +604,51 @@ onMounted(() => {
 
 .friends-toggle--centered {
   align-items: center;
-  padding: 0.25rem 0;
+  padding: var(--sg-sidebar-compact-control-spacing) 0;
 }
 
 .friends-manage-btn {
-  margin-top: 0.25rem;
+  margin-top: var(--sg-sidebar-compact-control-spacing);
 }
 
 .custom-links-section {
   border-top: 1px solid var(--surface-border);
-  padding-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding-top: var(--sg-sidebar-subsection-spacing);
+  margin-bottom: var(--sg-sidebar-subsection-spacing);
 }
 
 .custom-link-delete {
   position: absolute;
-  right: 0.25rem;
+  right: var(--sg-sidebar-compact-control-spacing);
 }
 
 .custom-link-add-icon {
-  margin: 0.25rem auto;
+  margin: var(--sg-sidebar-compact-control-spacing) auto;
   display: block;
 }
 
 .add-link-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sg-sidebar-form-gap);
 }
 
 .add-link-input {
-  width: 100%;
+  width: var(--sg-sidebar-fill-size);
 }
 
 .kanban-columns {
-  padding: 0.5rem;
+  padding: var(--sg-sidebar-kanban-padding);
 }
 
 .kanban-column {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-sidebar-section-spacing);
   background: var(--surface-ground);
-  border-radius: 6px;
+  border-radius: var(--sg-sidebar-kanban-column-radius);
 }
 
 .column-header {
-  padding: 0.5rem;
+  padding: var(--sg-sidebar-kanban-padding);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -681,36 +657,36 @@ onMounted(() => {
 
 .column-title {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: var(--sg-sidebar-kanban-title-size);
 }
 
 .column-count {
   background: var(--surface-hover);
   color: var(--text-color);
-  padding: 0.1rem 0.4rem;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
+  padding: var(--sg-sidebar-kanban-count-padding-block) var(--sg-sidebar-kanban-count-padding-inline);
+  border-radius: var(--sg-sidebar-kanban-count-radius);
+  font-size: var(--sg-sidebar-kanban-count-size);
 }
 
 .column-content {
-  padding: 0.5rem;
-  max-height: 200px;
+  padding: var(--sg-sidebar-kanban-padding);
+  max-height: var(--sg-sidebar-kanban-content-max-height);
   overflow-y: auto;
 }
 
 .kanban-item {
   background: var(--surface-card);
-  border-radius: 4px;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
+  border-radius: var(--sg-sidebar-kanban-item-radius);
+  padding: var(--sg-sidebar-kanban-padding);
+  margin-bottom: var(--sg-sidebar-subsection-spacing);
   cursor: move;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  box-shadow: var(--sg-sidebar-kanban-item-shadow);
+  transition: var(--sg-sidebar-kanban-item-transition);
 }
 
 .kanban-item:hover {
-  transform: translateX(2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateX(var(--sg-sidebar-kanban-item-hover-offset));
+  box-shadow: var(--sg-sidebar-kanban-item-hover-shadow);
 }
 
 .kanban-item.is-dragging {
@@ -720,12 +696,12 @@ onMounted(() => {
 .item-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sg-sidebar-subsection-spacing);
 }
 
 .item-title {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: var(--sg-sidebar-kanban-title-size);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -747,13 +723,13 @@ onMounted(() => {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: var(--sg-sidebar-list-transition);
 }
 
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateX(var(--sg-sidebar-list-enter-offset));
 }
 
 .list-leave-active {
@@ -778,20 +754,13 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    background-color: var(--surface-overlay);
-  }
-}
-
 .p-splitter {
   border: none;
 }
 
 :deep(.p-splitter-gutter) {
   background: var(--surface-border);
-  transition: background-color 0.2s;
+  transition: var(--sg-sidebar-gutter-transition);
 }
 
 :deep(.p-splitter-gutter:hover) {
@@ -799,6 +768,6 @@ onMounted(() => {
 }
 
 :deep(.p-splitter-panel) {
-  transition: flex-basis 0.3s;
+  transition: var(--sg-sidebar-panel-transition);
 }
 </style> 

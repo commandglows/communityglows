@@ -37,6 +37,7 @@ declare module 'vue' {
     MobileProfileSheet: typeof import('./../components/MobileProfileSheet.vue')['default']
     MobileSettingsSheet: typeof import('./../components/MobileSettingsSheet.vue')['default']
     MultiSelect: typeof import('primevue/multiselect')['default']
+    NetworkBrandIcon: typeof import('./../components/NetworkBrandIcon.vue')['default']
     NetworkLogo: typeof import('./../components/common/NetworkLogo.vue')['default']
     NetworkWebviewHost: typeof import('./../components/NetworkWebviewHost.vue')['default']
     NextdoorIcon: typeof import('./../components/icons/NextdoorIcon.vue')['default']

@@ -5,6 +5,44 @@
   --surface-color: #f8f9fa;
   --text-color: #1B2559;
   --border-color: #e9ecef;
+  --sg-sidebar-top-offset: 4rem;
+  --sg-sidebar-viewport-height: 100vh;
+  --sg-sidebar-fill-size: 100%;
+  --sg-sidebar-compact-width: 4rem;
+  --sg-sidebar-expanded-min-width: 15rem;
+  --sg-sidebar-control-padding: 1rem;
+  --sg-sidebar-filter-height: 2.5rem;
+  --sg-sidebar-dialog-width: 24rem;
+  --sg-sidebar-dialog-max-width: 95vw;
+  --sg-sidebar-network-row-height: 3rem;
+  --sg-sidebar-network-row-padding-inline: 1rem;
+  --sg-sidebar-network-icon-size: 1rem;
+  --sg-sidebar-active-indicator-width: 3px;
+  --sg-sidebar-transition: all 0.3s;
+  --sg-sidebar-section-spacing: 1rem;
+  --sg-sidebar-subsection-spacing: 0.5rem;
+  --sg-sidebar-section-padding-block: 0.5rem;
+  --sg-sidebar-section-padding-inline: 1rem;
+  --sg-sidebar-section-title-size: 1rem;
+  --sg-sidebar-compact-control-spacing: 0.25rem;
+  --sg-sidebar-form-gap: 0.75rem;
+  --sg-sidebar-kanban-padding: 0.5rem;
+  --sg-sidebar-kanban-column-radius: 6px;
+  --sg-sidebar-kanban-title-size: 0.9rem;
+  --sg-sidebar-kanban-count-padding-block: 0.1rem;
+  --sg-sidebar-kanban-count-padding-inline: 0.4rem;
+  --sg-sidebar-kanban-count-radius: 0.5rem;
+  --sg-sidebar-kanban-count-size: 0.8rem;
+  --sg-sidebar-kanban-content-max-height: 200px;
+  --sg-sidebar-kanban-item-radius: 4px;
+  --sg-sidebar-kanban-item-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --sg-sidebar-kanban-item-hover-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sg-sidebar-kanban-item-transition: all 0.2s ease;
+  --sg-sidebar-kanban-item-hover-offset: 2px;
+  --sg-sidebar-list-transition: all 0.3s ease;
+  --sg-sidebar-list-enter-offset: -20px;
+  --sg-sidebar-gutter-transition: background-color 0.2s;
+  --sg-sidebar-panel-transition: flex-basis 0.3s;
 }
 
 :root.dark {
@@ -51,4 +89,4 @@ body {
   --text-color-secondary: #f8f9fa;
 }
 
-/* ... existing styles ... */ 
+/* ... existing styles ... */
