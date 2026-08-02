@@ -43,6 +43,7 @@ export async function preloadWebviews() {
         url: WEBVIEW_URLS[networkId],
         profileId,
         networkId,
+        darkMode: document.documentElement.classList.contains('dark'),
         storageOrigins: getNetworkIsolationOrigins(networkId),
         x: -10000,
         y: -10000,

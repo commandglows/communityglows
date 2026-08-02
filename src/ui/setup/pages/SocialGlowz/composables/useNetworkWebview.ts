@@ -6,6 +6,9 @@ import { recordDiagnosticEvent } from '@/lib/buildDiagnostics'
 const isTauri = () =>
   typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 
+const isDarkMode = () =>
+  typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+
 async function invoke(cmd: string, args?: Record<string, unknown>) {
   if (!isTauri()) return
   const { invoke: tauriInvoke } = await import('@tauri-apps/api/core')
@@ -124,6 +127,7 @@ export function useNetworkWebview(
         url,
         profileId,
         networkId,
+        darkMode: isDarkMode(),
         storageOrigins,
         ...bounds,
       })
@@ -167,6 +171,7 @@ export function useNetworkWebview(
           url,
           profileId,
           networkId,
+          darkMode: isDarkMode(),
           storageOrigins,
           ...bounds,
         })

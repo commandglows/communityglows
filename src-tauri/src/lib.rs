@@ -564,6 +564,7 @@ async fn open_webview(
     url: String,
     profile_id: String,
     network_id: String,
+    dark_mode: bool,
     _storage_origins: Option<Vec<String>>,
     x: f64,
     y: f64,
@@ -601,7 +602,14 @@ async fn open_webview(
 
     window
         .add_child(
-            WebviewBuilder::new(&label, WebviewUrl::External(parsed)).data_directory(data_dir),
+            WebviewBuilder::new(&label, WebviewUrl::External(parsed))
+                .data_directory(data_dir)
+                // Paint the native surface before the remote document renders.
+                .background_color(if dark_mode {
+                    tauri::window::Color(9, 9, 11, 255)
+                } else {
+                    tauri::window::Color(248, 249, 250, 255)
+                }),
             tauri::LogicalPosition::new(x, y),
             tauri::LogicalSize::new(width, height),
         )
@@ -704,6 +712,7 @@ fn open_webview(
     url: String,
     profile_id: String,
     network_id: String,
+    _dark_mode: bool,
     storage_origins: Option<Vec<String>>,
     _x: f64,
     _y: f64,
