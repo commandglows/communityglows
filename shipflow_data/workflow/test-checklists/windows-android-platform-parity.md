@@ -23,11 +23,11 @@ linked_systems:
 
 ## Execution Record
 
-- Windows artifact commit: `9b66e64bb6367a6d2d972ce1ed14de700fd66953`
+- Windows artifact commit: `6abcfd53d4267a4b301552132e9d3806120eb514`
 - Android artifact commit: `98b6daedb36a4c4d0a11079d92a6abd97d9e3ba6`
 - Windows installer: https://github.com/diane-defores/socialglowz/releases/download/windows-latest/SocialGlowz-Windows-latest.exe
 - Android debug artifact: https://github.com/diane-defores/socialglowz/actions/runs/30764933664
-- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30769426148
+- Windows workflow run: https://github.com/diane-defores/socialglowz/actions/runs/30769836214
 - Windows environment: pending
 - Android device and WebView provider: pending
 - Operator: pending
@@ -48,7 +48,7 @@ Result values: `passed`, `failed`, `degraded-accepted`, `not-run`.
 | WIN-PROFILE-005 | Active profile and hidden networks | Desktop profile display is real store data and visibility follows active profile | not-run | Previous `2148da3` build lacked a discoverable creation action. The `9b66e64` installer adds `Ajouter un profil` and awaits manual isolation proof. |
 | WIN-SHARE-006 | Supported Windows link intake/fallback | Cold and warm app select the correct network or show explicit fallback | not-run | pending |
 | WIN-BACKUP-007 | Export, valid restore, invalid/password/version restore | Covered data restores; failures preserve existing state | not-run | pending |
-| WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | `e520778` Windows installer used Aura's default emerald primary controls despite the Vue shell's blue action token. The next Windows build maps Aura primary controls to its blue token family and awaits rendered proof. |
+| WIN-DESIGN-008 | Light/dark visual comparison | Semantic token mapping matches documented colors, surfaces, borders, shadows and states | not-run | `e520778` Windows installer used Aura's default emerald primary controls despite the Vue shell's blue action token. The passed `6abcfd5` Windows build maps Aura primary controls to its blue token family and awaits rendered proof. |
 | WIN-DIAGNOSTICS-009 | Header diagnostic copy after launch/switch/resize | Report identifies commit/build and platform, records lifecycle events, and omits URLs, email, profiles, cookies and sessions | not-run | pending |
 
 ## Efficient Windows Session
