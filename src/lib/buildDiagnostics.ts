@@ -51,7 +51,8 @@ export function buildDiagnosticsReport(context: Record<string, string> = {}): st
     `theme: ${localStorage.getItem("sfz_theme_mode") || "unknown"}`,
   ];
 
-  for (const [key, value] of Object.entries(context)) {
+  for (const key of Object.keys(context)) {
+    const value = context[key]
     lines.push(`${key}: ${redactDiagnosticValue(value)}`);
   }
 
