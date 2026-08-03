@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Avatar from 'primevue/avatar'
+import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
 
 const servers = ref([
@@ -78,8 +78,8 @@ const channels = ref([
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 0 1rem;
+  margin-bottom: var(--sg-space-1rem);
+  padding: var(--sg-space-0-1rem);
 }
 
 .header h2 {
@@ -88,17 +88,17 @@ const channels = ref([
 
 .discord-content {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-1rem);
 }
 
 .servers-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-1rem);
   background: var(--surface-card);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .server-item {
@@ -107,48 +107,48 @@ const channels = ref([
 }
 
 .server-avatar {
-  transition: border-radius 0.3s;
+  transition: var(--sg-motion-borderneg-radius-0d3s);
 }
 
-.server-item:hover :deep(.p-avatar),
-.server-item:focus :deep(.p-avatar) {
-  border-radius: 30%;
+.server-item:hover :deep(.sg-avatar),
+.server-item:focus :deep(.sg-avatar) {
+  border-radius: var(--sg-radius-30pct);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .server-avatar {
-    transition: none;
+    transition: var(--sg-motion-none);
   }
 }
 
 .notification-badge {
   position: absolute;
   bottom: 0;
-  right: -5px;
+  right: var(--sg-position-neg-5px);
   background: var(--primary-color);
   color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  border-radius: var(--sg-radius-50pct);
+  width: var(--sg-size-20px);
+  height: var(--sg-size-20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 .channels-section {
   flex: 1;
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
 }
 
 .channel-item {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 0.5rem;
-  border-radius: 4px;
+  gap: var(--sg-space-0d8rem);
+  padding: var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-4px);
   cursor: pointer;
 }
 
@@ -159,6 +159,6 @@ const channels = ref([
 .member-count {
   margin-left: auto;
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 </style> 

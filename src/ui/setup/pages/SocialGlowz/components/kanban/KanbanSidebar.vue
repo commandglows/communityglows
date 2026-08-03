@@ -40,6 +40,7 @@
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
+                  :aria-label="`Supprimer ${item.title}`"
                   text
                   rounded
                   size="small"
@@ -58,7 +59,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useKanbanStore } from '@/stores/kanban'
-import Button from 'primevue/button'
+import Button from '../ui/SgButton.vue'
 import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
 
 const store = useKanbanStore()
@@ -114,14 +115,14 @@ const deleteItem = (itemId: string) => {
 
 <style scoped>
 .kanban-sidebar {
-  height: 100%;
+  height: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
   background: var(--surface-ground);
 }
 
 .kanban-header {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -130,68 +131,68 @@ const deleteItem = (itemId: string) => {
 
 .kanban-header h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .item-count {
   background: var(--primary-color);
   color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 1rem;
-  font-size: 0.8rem;
+  padding: var(--sg-space-0d2rem-0d6rem);
+  border-radius: var(--sg-radius-1rem);
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 .kanban-sections {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: var(--sg-space-0d5rem);
 }
 
 .kanban-section {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding: var(--sg-space-0d5rem);
   background: var(--surface-card);
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
+  border-radius: var(--sg-radius-6px);
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .section-title {
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .section-count {
   background: var(--surface-hover);
   color: var(--text-color);
-  padding: 0.1rem 0.4rem;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
+  padding: var(--sg-space-0d1rem-0d4rem);
+  border-radius: var(--sg-radius-0d5rem);
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 .section-content {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .kanban-item {
   background: var(--surface-card);
-  border-radius: 4px;
-  padding: 0.5rem;
+  border-radius: var(--sg-radius-4px);
+  padding: var(--sg-space-0d5rem);
   cursor: move;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  box-shadow: var(--sg-shadow-0-1px-3px-rgba-0-0-0-0d1);
+  transition: var(--sg-motion-all-0d2s-ease);
 }
 
 .kanban-item:hover {
   transform: translateX(2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--sg-shadow-0-2px-4px-rgba-0-0-0-0d1);
 }
 
 .kanban-item.is-dragging {
@@ -201,12 +202,12 @@ const deleteItem = (itemId: string) => {
 .item-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .item-title {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -228,7 +229,7 @@ const deleteItem = (itemId: string) => {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: var(--sg-motion-all-0d3s-ease);
 }
 
 .list-enter-from,

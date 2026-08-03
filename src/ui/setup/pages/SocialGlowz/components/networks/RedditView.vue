@@ -35,11 +35,13 @@
             <div class="vote-section">
               <Button
                 icon="pi pi-chevron-up"
+                aria-label="Voter pour"
                 text
               />
               <span>{{ Math.floor(Math.random() * 1000) }}</span>
               <Button
                 icon="pi pi-chevron-down"
+                aria-label="Voter contre"
                 text
               />
             </div>
@@ -87,7 +89,7 @@
         <Button 
           icon="pi pi-reddit" 
           :label="$t('reddit.connect_button')"
-          class="p-button-reddit"
+          class="sg-button-reddit"
           @click="connectReddit"
         />
       </div>
@@ -98,8 +100,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
-import Button from 'primevue/button'
-import Avatar from 'primevue/avatar'
+import Button from '../ui/SgButton.vue'
+import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
 
 const store = useSocialNetworksStore()
@@ -134,45 +136,45 @@ const connectReddit = () => {
 
 <style scoped>
 .reddit-view {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .connect-prompt {
-  max-width: 400px;
-  margin: 2rem auto;
+  max-width: var(--sg-size-400px);
+  margin: var(--sg-space-2rem-auto);
   text-align: center;
-  padding: 2rem;
+  padding: var(--sg-space-2rem);
   background: var(--surface-card);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .connect-prompt h3 {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .connect-prompt p {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--sg-space-1d5rem);
   color: var(--text-color-secondary);
 }
 
 .reddit-content {
   display: grid;
   grid-template-columns: 250px 1fr;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .subreddits-sidebar {
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
 }
 
 .subreddit-item {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  padding: 0.5rem;
-  border-radius: 4px;
+  gap: var(--sg-space-0d8rem);
+  padding: var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-4px);
   cursor: pointer;
 }
 
@@ -182,22 +184,22 @@ const connectReddit = () => {
 
 .members {
   margin-left: auto;
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   color: var(--text-color-secondary);
 }
 
 .posts-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .post-card {
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
 }
 
 .vote-section {
@@ -213,9 +215,9 @@ const connectReddit = () => {
 
 .post-header {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .subreddit {
@@ -224,30 +226,30 @@ const connectReddit = () => {
 }
 
 .post-meta {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   color: var(--text-color-secondary);
 }
 
 .post-actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--sg-space-1rem);
+  margin-top: var(--sg-space-1rem);
   border-top: 1px solid var(--surface-border);
-  padding-top: 0.8rem;
+  padding-top: var(--sg-space-0d8rem);
 }
 
-:deep(.p-button-reddit) {
-  background: #ff4500;
+:deep(.sg-button-reddit) {
+  background: var(--sg-color-reddit);
 }
 
-:deep(.p-button-reddit:hover) {
-  background: #ff5722;
+:deep(.sg-button-reddit:hover) {
+  background: var(--sg-color-reddit-hover);
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .header h2 {

@@ -27,7 +27,7 @@
 
       <!-- Quick Date Filters -->
       <div class="quick-filters">
-        <Button 
+        <SgButton
           v-for="filter in quickDateFilters" 
           :key="filter.value"
           :label="filter.label"
@@ -40,27 +40,39 @@
       </div>
 
       <!-- Filters -->
-      <MultiSelect
+      <SgMultiSelect
         v-model="filters.selectedFilters"
         :options="filterOptions"
-        option-label="label"
-        placeholder="Filtres"
-        :max-selected-labels="3"
+        aria-label="Filtres"
         :disabled="!currentNetwork"
       />
 
       <!-- Sort Options -->
-      <Dropdown
+      <select
         v-model="filters.sort"
-        :options="sortOptions"
-        option-label="label"
-        placeholder="Trier par"
+        class="sort-select"
+        aria-label="Trier par"
         :disabled="!currentNetwork"
-      />
+      >
+        <option
+          :value="null"
+          disabled
+        >
+          Trier par
+        </option>
+        <option
+          v-for="option in sortOptions"
+          :key="option.value"
+          :value="option.value"
+        >
+          {{ option.label }}
+        </option>
+      </select>
 
       <!-- Reset Button -->
-      <Button 
-        v-tooltip="$t('filters.reset_tooltip')" 
+      <SgButton
+        v-sg-tooltip="$t('filters.reset_tooltip')"
+        :aria-label="$t('filters.reset_tooltip')"
         icon="pi pi-filter-slash" 
         text
         severity="secondary"
@@ -74,6 +86,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { MenuItem } from '../types'
+import SgButton from './ui/SgButton.vue'
+import SgMultiSelect from './ui/SgMultiSelect.vue'
 
 interface FilterOption {
   label: string
@@ -173,22 +187,22 @@ watch(filters, (newFilters) => {
 .filters-wrapper {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: var(--sg-size-100pct);
 }
 
 .filters-group {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sg-filter-gap);
   flex: 1;
 }
 
 .quick-filters {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-2);
   flex-wrap: nowrap;
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: var(--sg-size-none);
   -ms-overflow-style: none;
 }
 
@@ -196,46 +210,47 @@ watch(filters, (newFilters) => {
   display: none;
 }
 
-:deep(.p-multiselect),
-:deep(.p-dropdown) {
-  min-width: unset;
-  flex-shrink: 1;
-}
-
 .date-range-fields {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--sg-filter-date-gap);
   flex-shrink: 0;
 }
 
 .date-input {
-  width: 8.25rem;
-  min-height: 2.35rem;
-  border: 1px solid var(--p-content-border-color, #d1d5db);
-  border-radius: 6px;
-  background: var(--p-content-background, #fff);
-  color: var(--p-text-color, #111827);
-  padding: 0.45rem 0.55rem;
+  width: var(--sg-filter-date-width);
+  min-height: var(--sg-field-min-height);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  padding: var(--sg-field-padding);
   font: inherit;
 }
 
 .date-input:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: var(--sg-opacity-disabled);
 }
 
 .date-range-separator {
-  color: var(--p-text-muted-color, #6b7280);
+  color: var(--sg-color-text-muted);
 }
 
-:deep(.p-multiselect) {
-  width: 150px;
+.sort-select,
+:deep(.sg-multiselect) {
+  min-height: var(--sg-field-min-height);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  font: inherit;
 }
 
-:deep(.p-dropdown) {
-  width: 120px;
-}
+:deep(.sg-multiselect) { width: var(--sg-filter-multi-width); }
+.sort-select { width: var(--sg-filter-sort-width); padding: var(--sg-field-padding); }
+.date-input:focus-visible, .sort-select:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sort-select:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 
 @media (max-width: 1200px) {
   .filters-wrapper {
@@ -244,11 +259,11 @@ watch(filters, (newFilters) => {
   }
 
   .search-container {
-    min-width: unset;
+    min-width: var(--sg-size-unset);
   }
 
   .filters-group {
     flex-wrap: wrap;
   }
 }
-</style> 
+</style>

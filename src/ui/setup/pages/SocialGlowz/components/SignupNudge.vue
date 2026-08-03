@@ -87,17 +87,12 @@
     </Transition>
   </Teleport>
 
-  <!-- Desktop: PrimeVue Dialog -->
-  <Dialog
+  <!-- Desktop: Reka UI dialog with managed focus and Escape behavior -->
+  <SgDialog
     v-if="!isMobile"
-    v-model:visible="visible"
-    class="nudge-dialog"
-    :class="{ 'nudge-dialog--dark': themeStore.isDarkMode }"
-    modal
-    :closable="true"
-    :header="$t('nudge.title')"
-    :style="{ width: '420px' }"
-    @hide="handleDismiss"
+    v-model="visible"
+    :title="$t('nudge.title')"
+    variant="nudge"
   >
     <div class="nudge-content nudge-desktop">
       <div class="nudge-icon">
@@ -171,18 +166,16 @@
         {{ $t('nudge.dismiss') }}
       </button>
     </div>
-  </Dialog>
+  </SgDialog>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useToast } from 'primevue/usetoast'
 import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/theme'
 import { signIn } from '@/lib/convexAuth'
 import { finalizePasswordSignIn } from '@/lib/cloudSync'
 import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
-import Dialog from 'primevue/dialog'
+import SgDialog from './ui/SgDialog.vue'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
@@ -192,8 +185,6 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const toast = useToast()
-const themeStore = useThemeStore()
 
 const visible = computed({
   get: () => props.modelValue,
@@ -237,20 +228,15 @@ async function handleSignup() {
       password: password.value,
       flow: 'signUp',
     })
-    toast.add({
-      severity: 'success',
-      summary: t('account.created_toast'),
-      life: 3000,
-    })
     visible.value = false
     emit('account-created')
     await finalizePasswordSignIn({
       email: normalizedEmail,
       flow: 'signUp',
     })
-  } catch (error: unknown) {
+  } catch (caughtError: unknown) {
     resetPostAuthSyncFeedback()
-    error.value = error instanceof Error ? error.message : t('account.error_generic')
+    error.value = caughtError instanceof Error ? caughtError.message : t('account.error_generic')
   } finally {
     loading.value = false
   }
@@ -282,27 +268,27 @@ async function copyError() {
 .nudge-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--sg-nudge-layer);
+  background: var(--sg-color-overlay);
   display: flex;
   align-items: flex-end;
 }
 
 .nudge-sheet {
-  width: 100%;
-  background: var(--surface-card, #fff);
-  border-radius: 1.25rem 1.25rem 0 0;
-  padding: 0.5rem 1.5rem 2rem;
-  max-height: 85vh;
+  width: var(--sg-size-full);
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-nudge-sheet-radius);
+  padding: var(--sg-nudge-sheet-padding);
+  max-height: var(--sg-nudge-sheet-max-height);
   overflow-y: auto;
 }
 
 .nudge-handle {
-  width: 2.5rem;
-  height: 0.25rem;
-  background: var(--surface-border, #dee2e6);
-  border-radius: 2px;
-  margin: 0 auto 1rem;
+  width: var(--sg-nudge-handle-width);
+  height: var(--sg-nudge-handle-height);
+  background: var(--sg-color-border);
+  border-radius: var(--sg-nudge-handle-radius);
+  margin: 0 auto var(--sg-space-4);
 }
 
 /* ─── Shared content ─── */
@@ -311,55 +297,55 @@ async function copyError() {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.75rem;
+  gap: var(--sg-nudge-content-gap);
 }
 
 .nudge-desktop {
-  padding: 0.5rem 0 1rem;
+  padding: var(--sg-nudge-desktop-padding);
 }
 
 .nudge-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), #7c3aed);
+  width: var(--sg-nudge-icon-size);
+  height: var(--sg-nudge-icon-size);
+  border-radius: var(--sg-radius-pill);
+  background: var(--sg-color-action);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 1.5rem;
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-nudge-icon-font-size);
 }
 
 .nudge-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--sg-nudge-title-size);
   font-weight: 700;
   color: var(--text-color);
 }
 
 .nudge-promo {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--sg-nudge-copy-size);
   color: var(--text-color-secondary);
-  line-height: 1.4;
+  line-height: var(--sg-nudge-copy-line-height);
 }
 
 .nudge-form {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  width: 100%;
-  margin-top: 0.5rem;
+  gap: var(--sg-nudge-form-gap);
+  width: var(--sg-size-full);
+  margin-top: var(--sg-space-2);
 }
 
 .nudge-input {
-  width: 100%;
-  padding: 0.7rem 0.9rem;
-  border-radius: 10px;
-  border: 1px solid var(--surface-border, #dee2e6);
-  background: var(--surface-ground, #f8f9fa);
+  width: var(--sg-size-full);
+  padding: var(--sg-nudge-input-padding);
+  border-radius: var(--sg-nudge-input-radius);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-muted);
   color: var(--text-color);
-  font-size: 0.95rem;
+  font-size: var(--sg-nudge-input-size);
   outline: none;
   box-sizing: border-box;
 }
@@ -371,18 +357,18 @@ async function copyError() {
 .signup-error-card {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 12px;
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.18);
+  gap: var(--sg-nudge-error-gap);
+  padding: var(--sg-nudge-error-padding);
+  border-radius: var(--sg-nudge-error-radius);
+  background: var(--sg-color-danger-soft);
+  border: 1px solid var(--sg-color-danger-border);
 }
 
 .nudge-error {
   margin: 0;
-  color: #dc2626;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  color: var(--sg-color-danger);
+  font-size: var(--sg-nudge-error-size);
+  line-height: var(--sg-nudge-error-line-height);
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -390,38 +376,38 @@ async function copyError() {
 
 .signup-error-actions {
   display: flex;
-  gap: 0.45rem;
+  gap: var(--sg-nudge-error-action-gap);
   flex-wrap: wrap;
 }
 
 .signup-error-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.6rem;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.6);
-  color: #b91c1c;
-  font-size: 0.76rem;
+  gap: var(--sg-nudge-error-button-gap);
+  padding: var(--sg-nudge-error-button-padding);
+  border: 1px solid var(--sg-color-danger-border);
+  border-radius: var(--sg-radius-pill);
+  background: var(--sg-color-translucent-surface);
+  color: var(--sg-color-danger-text);
+  font-size: var(--sg-nudge-error-button-size);
   font-weight: 600;
   cursor: pointer;
 }
 
 .nudge-cta {
-  width: 100%;
-  padding: 0.75rem;
+  width: var(--sg-size-full);
+  padding: var(--sg-nudge-cta-padding);
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--primary-color), #7c3aed);
-  color: #fff;
-  font-size: 1rem;
+  border-radius: var(--sg-nudge-input-radius);
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-nudge-cta-size);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--sg-space-2);
 }
 
 .nudge-cta:disabled {
@@ -432,84 +418,31 @@ async function copyError() {
   background: none;
   border: none;
   color: var(--text-color-secondary);
-  font-size: 0.85rem;
+  font-size: var(--sg-nudge-dismiss-size);
   cursor: pointer;
-  padding: 0.5rem;
-  margin-top: 0.25rem;
+  padding: var(--sg-space-2);
+  margin-top: var(--sg-space-1);
 }
 
 /* ─── Transitions ─── */
 .nudge-sheet-enter-active,
 .nudge-sheet-leave-active {
-  transition: all 0.3s ease;
+  transition: var(--sg-nudge-motion);
 }
 
 .nudge-sheet-enter-active .nudge-sheet,
 .nudge-sheet-leave-active .nudge-sheet {
-  transition: transform 0.3s ease;
+  transition: var(--sg-nudge-transform-motion);
 }
 
 .nudge-sheet-enter-from,
 .nudge-sheet-leave-to {
-  background: rgba(0, 0, 0, 0);
+  background: var(--sg-color-transparent);
 }
 
 .nudge-sheet-enter-from .nudge-sheet,
 .nudge-sheet-leave-to .nudge-sheet {
-  transform: translateY(100%);
+  transform: translateY(var(--sg-nudge-hidden-offset));
 }
 
-:deep(.nudge-dialog.p-dialog) {
-  --nudge-dialog-bg: var(--surface-card, #fff);
-  --nudge-dialog-border: color-mix(in srgb, var(--surface-border, #dee2e6) 82%, white 18%);
-  --nudge-dialog-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
-  border: 1px solid var(--nudge-dialog-border);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--nudge-dialog-shadow);
-}
-
-:deep(.nudge-dialog .p-dialog-header),
-:deep(.nudge-dialog .p-dialog-content) {
-  background: var(--nudge-dialog-bg);
-  color: var(--text-color);
-}
-
-:deep(.nudge-dialog .p-dialog-header) {
-  padding: 1rem 1.25rem 0.5rem;
-  border-bottom: 1px solid transparent;
-}
-
-:deep(.nudge-dialog .p-dialog-title) {
-  color: var(--text-color);
-  font-weight: 700;
-}
-
-:deep(.nudge-dialog .p-dialog-header-icon),
-:deep(.nudge-dialog .p-dialog-header-close) {
-  color: var(--text-color-secondary);
-}
-
-:deep(.nudge-dialog .p-dialog-content) {
-  padding: 0 1.25rem 1.25rem;
-}
-
-:deep(.nudge-dialog.nudge-dialog--dark.p-dialog) {
-  --nudge-dialog-bg: linear-gradient(
-    180deg,
-    rgba(24, 24, 27, 0.98),
-    rgba(9, 9, 11, 0.96)
-  );
-  --nudge-dialog-border: rgba(82, 82, 91, 0.72);
-  --nudge-dialog-shadow: 0 28px 70px rgba(2, 6, 23, 0.56);
-}
-
-:deep(.nudge-dialog.nudge-dialog--dark .p-dialog-header) {
-  border-bottom-color: rgba(82, 82, 91, 0.42);
-}
-
-:deep(.nudge-dialog.nudge-dialog--dark .p-dialog-header-icon:hover),
-:deep(.nudge-dialog.nudge-dialog--dark .p-dialog-header-close:hover) {
-  background: rgba(255, 255, 255, 0.06);
-}
 </style>

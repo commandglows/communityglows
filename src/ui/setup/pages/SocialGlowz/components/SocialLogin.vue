@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button'
+import Button from './ui/SgButton.vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 
 const store = useSocialNetworksStore()
@@ -56,41 +56,41 @@ const connectWithGoogle = async () => {
 
 <style scoped>
 .social-login {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
+  max-width: var(--sg-size-400px);
+  margin: var(--sg-space-2rem-auto);
+  padding: var(--sg-space-2rem);
   background: var(--surface-card);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
   box-shadow: var(--card-shadow);
 }
 
 .login-buttons {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 :deep(.facebook-button) {
-  background: #1877F2;
+  background: var(--sg-color-facebook);
 }
 
 :deep(.facebook-button:hover) {
-  background: #1666d1;
+  background: var(--sg-color-facebook-hover);
 }
 
 :deep(.twitter-button) {
-  background: #1DA1F2;
+  background: var(--sg-color-twitter);
 }
 
 :deep(.twitter-button:hover) {
-  background: #1a8cd8;
+  background: var(--sg-color-twitter-hover);
 }
 
 :deep(.google-button) {
-  background: #DB4437;
+  background: var(--sg-color-google);
 }
 
 :deep(.google-button:hover) {
-  background: #c13b2f;
+  background: var(--sg-color-google-hover);
 }
 </style> 

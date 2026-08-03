@@ -54,9 +54,10 @@
               shape="circle"
             />
             <div class="compose-input">
-              <Textarea 
+              <SgTextarea
                 v-model="newTweet" 
                 :placeholder="$t('twitter.compose_placeholder')"
+                :aria-label="$t('twitter.compose_placeholder')"
                 :auto-resize="true"
                 rows="2"
               />
@@ -64,21 +65,25 @@
                 <div class="tweet-tools">
                   <Button
                     icon="pi pi-image"
+                    aria-label="Ajouter une image"
                     text
                     rounded
                   />
                   <Button
                     icon="pi pi-video"
+                    aria-label="Ajouter une vidéo"
                     text
                     rounded
                   />
                   <Button
                     icon="pi pi-list"
+                    aria-label="Créer un sondage"
                     text
                     rounded
                   />
                   <Button
                     icon="pi pi-smile"
+                    aria-label="Ajouter un emoji"
                     text
                     rounded
                   />
@@ -86,7 +91,7 @@
                 <Button 
                   label="Tweeter" 
                   :disabled="!newTweet.length"
-                  class="p-button-twitter"
+                  class="sg-button-twitter"
                 />
               </div>
             </div>
@@ -133,6 +138,7 @@
                 </Button>
                 <Button
                   icon="pi pi-share-alt"
+                  aria-label="Partager le tweet"
                   text
                   rounded
                 />
@@ -154,7 +160,7 @@
         <Button 
           icon="pi pi-twitter" 
           :label="$t('twitter.connect_button')"
-          class="p-button-twitter"
+          class="sg-button-twitter"
           @click="connectTwitter"
         />
       </div>
@@ -165,9 +171,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
-import Button from 'primevue/button'
-import Textarea from 'primevue/textarea'
-import Avatar from 'primevue/avatar'
+import Button from '../ui/SgButton.vue'
+import SgTextarea from '../ui/SgTextarea.vue'
+import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
 
 const store = useSocialNetworksStore()
@@ -236,31 +242,31 @@ const connectTwitter = () => {
 
 <style scoped>
 .twitter-view {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .connect-prompt {
-  max-width: 400px;
-  margin: 2rem auto;
+  max-width: var(--sg-size-400px);
+  margin: var(--sg-space-2rem-auto);
   text-align: center;
-  padding: 2rem;
+  padding: var(--sg-space-2rem);
   background: var(--surface-card);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .connect-prompt h3 {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .connect-prompt p {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--sg-space-1d5rem);
   color: var(--text-color-secondary);
 }
 
 .twitter-content {
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 2rem;
+  gap: var(--sg-space-2rem);
 }
 
 @media (max-width: 900px) {
@@ -271,38 +277,38 @@ const connectTwitter = () => {
   .profile-sidebar {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: var(--sg-space-1rem);
   }
 }
 
 .profile-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: var(--sg-space-2rem);
 }
 
 .profile-card {
   background: var(--surface-card);
-  border-radius: 16px;
-  padding: 1.5rem;
+  border-radius: var(--sg-radius-16px);
+  padding: var(--sg-space-1d5rem);
   text-align: center;
 }
 
 .profile-card h4 {
-  margin: 1rem 0 0.25rem;
+  margin: var(--sg-space-1rem-0-0d25rem);
 }
 
 .handle {
   color: var(--text-color-secondary);
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
-  margin-top: 1rem;
+  margin-top: var(--sg-space-1rem);
   border-top: 1px solid var(--surface-border);
-  padding-top: 1rem;
+  padding-top: var(--sg-space-1rem);
 }
 
 .stat-item {
@@ -312,46 +318,46 @@ const connectTwitter = () => {
 }
 
 .stat-item strong {
-  font-size: 1.1rem;
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .stat-item span {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   color: var(--text-color-secondary);
 }
 
 .trends {
   background: var(--surface-card);
-  border-radius: 16px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-16px);
+  padding: var(--sg-space-1rem);
 }
 
 .trend-item {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
   border-bottom: 1px solid var(--surface-border);
 }
 
 .trend-item:last-child {
-  border-bottom: none;
+  border-bottom: var(--sg-position-none);
 }
 
 .category {
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   color: var(--text-color-secondary);
 }
 
 .tweets {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   color: var(--text-color-secondary);
 }
 
 .compose-tweet {
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
   background: var(--surface-card);
-  border-radius: 16px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-radius: var(--sg-radius-16px);
+  padding: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .compose-input {
@@ -362,26 +368,26 @@ const connectTwitter = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: var(--sg-space-0d5rem);
 }
 
 .tweet-tools {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .tweets-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .tweet-card {
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
   background: var(--surface-card);
-  border-radius: 16px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-16px);
+  padding: var(--sg-space-1rem);
 }
 
 .tweet-content {
@@ -391,8 +397,8 @@ const connectTwitter = () => {
 .tweet-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: var(--sg-space-0d5rem);
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .author-name {
@@ -404,41 +410,41 @@ const connectTwitter = () => {
 }
 
 .tweet-text {
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
+  margin-bottom: var(--sg-space-0d5rem);
+  line-height: var(--sg-line-height-1d5);
 }
 
 .tweet-actions {
   display: flex;
   justify-content: space-between;
-  max-width: 400px;
+  max-width: var(--sg-size-400px);
 }
 
-:deep(.p-button-twitter) {
-  background: #1da1f2;
+:deep(.sg-button-twitter) {
+  background: var(--sg-color-twitter);
 }
 
-:deep(.p-button-twitter:hover) {
-  background: #1a8cd8;
+:deep(.sg-button-twitter:hover) {
+  background: var(--sg-color-twitter-hover);
 }
 
-:deep(.p-inputtextarea) {
-  width: 100%;
+:deep(.sg-textarea) {
+  width: var(--sg-size-100pct);
   border: none;
   background: transparent;
   resize: none;
   field-sizing: content;
 }
 
-:deep(.p-inputtextarea:focus) {
-  box-shadow: none;
+:deep(.sg-textarea:focus-visible) {
+  box-shadow: var(--sg-shadow-none);
   border: none;
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .header h2 {

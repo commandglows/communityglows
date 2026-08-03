@@ -52,6 +52,7 @@ declare global {
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const isDefined: typeof import('@vueuse/core')['isDefined']
+  const isEditableShortcutTarget: typeof import('../../../../../stores/shortcuts')['isEditableShortcutTarget']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -169,6 +170,7 @@ declare global {
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
+  const useContextualTasksStore: typeof import('../../../../../stores/contextualTasks')['useContextualTasksStore']
   const useConvexMutation: typeof import('../../../../../composables/useConvex')['useConvexMutation']
   const useConvexQuery: typeof import('../../../../../composables/useConvex')['useConvexQuery']
   const useCountdown: typeof import('@vueuse/core')['useCountdown']
@@ -356,6 +358,9 @@ declare global {
   export type { Account } from '../../../../../stores/accounts'
   import('../../../../../stores/accounts')
   // @ts-ignore
+  export type { ContextualTask, ContextualTaskInput, ContextualTaskStatus } from '../../../../../stores/contextualTasks'
+  import('../../../../../stores/contextualTasks')
+  // @ts-ignore
   export type { CustomLink } from '../../../../../stores/customLinks'
   import('../../../../../stores/customLinks')
   // @ts-ignore
@@ -422,6 +427,7 @@ declare module 'vue' {
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
+    readonly isEditableShortcutTarget: UnwrapRef<typeof import('../../../../../stores/shortcuts')['isEditableShortcutTarget']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -538,6 +544,7 @@ declare module 'vue' {
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
+    readonly useContextualTasksStore: UnwrapRef<typeof import('../../../../../stores/contextualTasks')['useContextualTasksStore']>
     readonly useConvexMutation: UnwrapRef<typeof import('../../../../../composables/useConvex')['useConvexMutation']>
     readonly useConvexQuery: UnwrapRef<typeof import('../../../../../composables/useConvex')['useConvexQuery']>
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>

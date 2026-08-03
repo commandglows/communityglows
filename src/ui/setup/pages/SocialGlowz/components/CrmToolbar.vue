@@ -1,20 +1,21 @@
 <template>
   <div class="crm-toolbar">
     <div class="crm-search">
-      <span class="p-input-icon-left">
+      <label class="crm-search-field">
         <i class="pi pi-search" />
-        <InputText
+        <input
+          type="search"
+          aria-label="Rechercher dans le CRM"
           placeholder="Rechercher dans le CRM..."
           class="search-input"
         />
-      </span>
+      </label>
     </div>
     <DashboardFilters :current-network="crmContext" />
   </div>
 </template>
 
 <script setup lang="ts">
-import InputText from 'primevue/inputtext'
 import DashboardFilters from './DashboardFilters.vue'
 import type { MenuItem } from '../types'
 
@@ -43,18 +44,10 @@ const crmContext: MenuItem = {
   min-width: var(--sg-crm-search-min-width);
 }
 
-.crm-search :deep(.p-input-icon-left),
-.crm-search :deep(.p-inputtext) {
-  width: var(--sg-sidebar-fill-size);
-}
-
-.crm-search :deep(.p-inputtext) {
-  padding-left: var(--sg-crm-search-input-padding-inline-start);
-}
-
-.crm-search :deep(.p-input-icon-left i) {
-  left: var(--sg-crm-search-icon-inset);
-}
+.crm-search-field { position: relative; display: block; width: var(--sg-sidebar-fill-size); }
+.search-input { box-sizing: border-box; width: var(--sg-sidebar-fill-size); padding: var(--sg-settings-control-padding-block) var(--sg-settings-control-padding-inline) var(--sg-settings-control-padding-block) var(--sg-crm-search-input-padding-inline-start); border: 1px solid var(--sg-color-border); border-radius: var(--sg-settings-control-radius); background: var(--sg-color-surface-raised); color: var(--sg-color-text); font: inherit; }
+.search-input:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.crm-search-field i { position: absolute; top: 50%; left: var(--sg-crm-search-icon-inset); transform: translateY(-50%); color: var(--sg-color-text-muted); pointer-events: none; }
 
 .crm-toolbar :deep(.dashboard-filters) {
   flex: 1 1 var(--sg-crm-filters-basis);

@@ -18,7 +18,7 @@
         <div class="comment-actions">
           <Button 
             :label="likeLabel" 
-            :class="{ 'p-button-text-primary': comment.liked }"
+            :class="{ 'sg-button-text-primary': comment.liked }"
             text 
             size="small"
             @click="handleLike"
@@ -44,6 +44,7 @@
       <Button 
         v-if="showMenu"
         icon="pi pi-ellipsis-h" 
+        aria-label="Ouvrir le menu du commentaire"
         text 
         rounded
         size="small"
@@ -85,7 +86,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Button from 'primevue/button'
+import Button from '../ui/SgButton.vue'
 import SocialAvatar from './SocialAvatar.vue'
 
 const { t } = useI18n()
@@ -155,12 +156,12 @@ const handleReply = () => {
 
 <style scoped>
 .social-comment {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .comment-container {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
   align-items: flex-start;
 }
 
@@ -171,32 +172,32 @@ const handleReply = () => {
 
 .comment-bubble {
   background: var(--surface-ground);
-  border-radius: 18px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.25rem;
+  border-radius: var(--sg-radius-18px);
+  padding: var(--sg-space-0d75rem-1rem);
+  margin-bottom: var(--sg-space-0d25rem);
 }
 
 .author-name {
-  margin: 0 0 0.25rem;
-  font-size: 0.9rem;
+  margin: var(--sg-space-0-0-0d25rem);
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .comment-text {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  font-size: var(--sg-font-size-0d95rem);
+  line-height: var(--sg-line-height-1d4);
 }
 
 .comment-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0 0.5rem;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-0-0d5rem);
 }
 
 .comment-time {
   color: var(--text-color-secondary);
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .likes-count {
@@ -205,12 +206,12 @@ const handleReply = () => {
   bottom: 0;
   transform: translateY(50%);
   background: var(--surface-card);
-  border-radius: 1rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.85rem;
+  border-radius: var(--sg-radius-1rem);
+  padding: var(--sg-space-0d25rem-0d5rem);
+  font-size: var(--sg-font-size-0d85rem);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--sg-space-0d25rem);
   box-shadow: var(--card-shadow);
 }
 
@@ -219,22 +220,22 @@ const handleReply = () => {
 }
 
 .is-reply {
-  padding-left: 2.5rem;
+  padding-left: var(--sg-space-2d5rem);
 }
 
 .replies-section {
-  margin-top: 0.5rem;
+  margin-top: var(--sg-space-0d5rem);
 }
 
 .show-replies {
-  padding-left: 3.25rem;
-  margin-bottom: 0.5rem;
+  padding-left: var(--sg-space-3d25rem);
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 /* Animations */
 .reply-enter-active,
 .reply-leave-active {
-  transition: all 0.3s ease;
+  transition: var(--sg-motion-all-0d3s-ease);
 }
 
 .reply-enter-from,

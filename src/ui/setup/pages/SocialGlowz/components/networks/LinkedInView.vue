@@ -118,6 +118,7 @@
               </div>
               <Button
                 icon="pi pi-ellipsis-h"
+                aria-label="Ouvrir le menu de la publication"
                 text
                 rounded
               />
@@ -177,17 +178,16 @@
         <Button 
           icon="pi pi-linkedin" 
           :label="$t('linkedin.connect_button')"
-          class="p-button-linkedin"
+          class="sg-button-linkedin"
           @click="connectLinkedIn"
         />
       </div>
     </template>
 
-    <Dialog 
-      v-model:visible="showPostDialog" 
-      :header="$t('linkedin.create_post_title')"
-      :modal="true"
-      class="post-dialog"
+    <SgDialog
+      v-model="showPostDialog"
+      :title="$t('linkedin.create_post_title')"
+      variant="post-wide"
     >
       <div class="dialog-content">
         <div class="dialog-header">
@@ -207,9 +207,10 @@
           </div>
         </div>
         
-        <Textarea
+        <SgTextarea
           v-model="newPost"
           :placeholder="$t('linkedin.post_placeholder')"
+          :aria-label="$t('linkedin.post_placeholder')"
           :auto-resize="true"
           rows="5"
         />
@@ -218,31 +219,37 @@
           <div class="post-attachments">
             <Button
               icon="pi pi-image"
+              aria-label="Ajouter une image"
               text
               rounded
             />
             <Button
               icon="pi pi-video"
+              aria-label="Ajouter une vidéo"
               text
               rounded
             />
             <Button
               icon="pi pi-file"
+              aria-label="Ajouter un document"
               text
               rounded
             />
             <Button
               icon="pi pi-briefcase"
+              aria-label="Ajouter une offre d’emploi"
               text
               rounded
             />
             <Button
               icon="pi pi-chart-bar"
+              aria-label="Créer un sondage"
               text
               rounded
             />
             <Button
               icon="pi pi-ellipsis-h"
+              aria-label="Afficher plus d’options"
               text
               rounded
             />
@@ -250,21 +257,21 @@
           <Button 
             :label="$t('common.publish')"
             :disabled="!newPost.length"
-            class="p-button-linkedin"
+            class="sg-button-linkedin"
           />
         </div>
       </div>
-    </Dialog>
+    </SgDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
-import Button from 'primevue/button'
-import Textarea from 'primevue/textarea'
-import Avatar from 'primevue/avatar'
-import Dialog from 'primevue/dialog'
+import Button from '../ui/SgButton.vue'
+import SgTextarea from '../ui/SgTextarea.vue'
+import Avatar from '../ui/SgAvatar.vue'
+import SgDialog from '../ui/SgDialog.vue'
 import { SocialNetworkLogo } from '../common'
 
 const store = useSocialNetworksStore()
@@ -329,49 +336,49 @@ const connectLinkedIn = () => {
 
 <style scoped>
 .linkedin-view {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .linkedin-content {
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 2rem;
+  gap: var(--sg-space-2rem);
 }
 
 .connect-prompt {
-  max-width: 400px;
-  margin: 2rem auto;
+  max-width: var(--sg-size-400px);
+  margin: var(--sg-space-2rem-auto);
   text-align: center;
-  padding: 2rem;
+  padding: var(--sg-space-2rem);
   background: var(--surface-card);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .connect-prompt h3 {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .connect-prompt p {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--sg-space-1d5rem);
   color: var(--text-color-secondary);
 }
 
 .profile-card {
   background: var(--surface-card);
-  border-radius: 10px;
+  border-radius: var(--sg-radius-10px);
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .profile-banner {
-  height: 100px;
-  background: linear-gradient(to right, #0077b5, #00a0dc);
+  height: var(--sg-size-100px);
+  background: linear-gradient(to right, var(--sg-color-linkedin), var(--sg-color-linkedin-light));
 }
 
 .profile-info {
-  padding: 0 1.5rem 1.5rem;
+  padding: var(--sg-space-0-1d5rem-1d5rem);
   text-align: center;
-  margin-top: -40px;
+  margin-top: var(--sg-space-neg-40px);
 }
 
 .profile-avatar {
@@ -379,46 +386,46 @@ const connectLinkedIn = () => {
 }
 
 .profile-info h3 {
-  margin: 1rem 0 0.5rem;
+  margin: var(--sg-space-1rem-0-0d5rem);
 }
 
 .headline {
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
+  font-size: var(--sg-font-size-0d9rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .profile-stats {
   border-top: 1px solid var(--surface-border);
-  padding-top: 1rem;
-  margin-top: 1rem;
+  padding-top: var(--sg-space-1rem);
+  margin-top: var(--sg-space-1rem);
 }
 
 .stat-item {
   text-align: left;
-  padding: 0.5rem 0;
+  padding: var(--sg-space-0d5rem-0);
 }
 
 .stat-label {
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .network-card {
   background: var(--surface-card);
-  border-radius: 10px;
-  padding: 1.5rem;
+  border-radius: var(--sg-radius-10px);
+  padding: var(--sg-space-1d5rem);
 }
 
 .network-stats {
-  margin-top: 1rem;
+  margin-top: var(--sg-space-1rem);
 }
 
 .network-stat {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 0;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-0d5rem-0);
 }
 
 .stat-content {
@@ -427,22 +434,22 @@ const connectLinkedIn = () => {
 }
 
 .stat-content span {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   color: var(--text-color-secondary);
 }
 
 .feed-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .post-composer {
   background: var(--surface-card);
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-10px);
+  padding: var(--sg-space-1rem);
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .composer-input {
@@ -450,28 +457,28 @@ const connectLinkedIn = () => {
 }
 
 .start-post {
-  width: 100%;
+  width: var(--sg-size-100pct);
   justify-content: flex-start;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sg-space-0d5rem);
   background: var(--surface-ground);
-  border-radius: 2rem;
+  border-radius: var(--sg-radius-2rem);
 }
 
 .post-types {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .post-card {
   background: var(--surface-card);
-  border-radius: 10px;
-  padding: 1.5rem;
+  border-radius: var(--sg-radius-10px);
+  padding: var(--sg-space-1d5rem);
 }
 
 .post-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .author-info {
@@ -483,94 +490,84 @@ const connectLinkedIn = () => {
 }
 
 .author-headline {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   color: var(--text-color-secondary);
-  margin: 0.25rem 0;
+  margin: var(--sg-space-0d25rem-0);
 }
 
 .post-time {
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   color: var(--text-color-secondary);
 }
 
 .post-content {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-image {
-  width: 100%;
-  border-radius: 8px;
-  margin-top: 1rem;
+  width: var(--sg-size-100pct);
+  border-radius: var(--sg-radius-8px);
+  margin-top: var(--sg-space-1rem);
 }
 
 .post-stats {
   display: flex;
-  gap: 1rem;
-  padding: 0.5rem 0;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-0d5rem-0);
   border-top: 1px solid var(--surface-border);
   border-bottom: 1px solid var(--surface-border);
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .post-actions {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
+  margin-top: var(--sg-space-0d5rem);
 }
 
 .dialog-content {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .dialog-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .visibility-selector {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .dialog-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: var(--sg-space-1rem);
 }
 
 .post-attachments {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
-:deep(.p-button-linkedin) {
-  background: #0077b5;
+:deep(.sg-button-linkedin) {
+  background: var(--sg-color-linkedin);
 }
 
-:deep(.p-button-linkedin:hover) {
-  background: #006097;
+:deep(.sg-button-linkedin:hover) {
+  background: var(--sg-color-linkedin-hover);
 }
 
-:deep(.post-dialog) {
-  max-width: 600px;
-  width: 100%;
-}
-
-:deep(.p-dialog-content) {
-  padding: 0;
-}
-
-:deep(.p-inputtextarea),
-:deep(.p-textarea) {
+:deep(.sg-textarea) {
   field-sizing: content;
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .header h2 {

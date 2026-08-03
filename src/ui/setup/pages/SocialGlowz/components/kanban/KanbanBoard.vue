@@ -6,7 +6,7 @@
     >
       <i
         class="pi pi-spin pi-spinner"
-        style="font-size: 2rem"
+        style="font-size: var(--sg-font-size-2rem)"
       ></i>
       <p>Chargement du Kanban...</p>
     </div>
@@ -49,6 +49,7 @@
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
+                  :aria-label="`Supprimer ${item.title}`"
                   text
                   rounded
                   severity="danger"
@@ -82,7 +83,7 @@
 import { computed, onMounted } from 'vue'
 import { useKanbanStore } from '@/stores/kanban'
 import { formatDate } from '../../utils/dateFormatter'
-import Button from 'primevue/button'
+import Button from '../ui/SgButton.vue'
 import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
 
 const store = useKanbanStore()
@@ -140,8 +141,8 @@ onMounted(() => {
 
 <style scoped>
 .kanban-board {
-  height: 100%;
-  padding: 1rem;
+  height: var(--sg-size-100pct);
+  padding: var(--sg-space-1rem);
   overflow: hidden;
 }
 
@@ -150,30 +151,30 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: var(--sg-size-100pct);
   color: var(--text-color-secondary);
 }
 
 .columns-container {
   display: flex;
-  gap: 1rem;
-  height: 100%;
+  gap: var(--sg-space-1rem);
+  height: var(--sg-size-100pct);
   overflow-x: auto;
 }
 
 .kanban-column {
   flex: 1;
-  min-width: 300px;
+  min-width: var(--sg-size-300px);
   background: var(--surface-ground);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
   display: flex;
   flex-direction: column;
 }
 
 .column-header {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
   background: var(--surface-card);
-  border-radius: 8px 8px 0 0;
+  border-radius: var(--sg-radius-8px-8px-0-0);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -181,36 +182,36 @@ onMounted(() => {
 
 .column-header h3 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .item-count {
   background: var(--primary-color);
   color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: 1rem;
-  font-size: 0.9rem;
+  padding: var(--sg-space-0d2rem-0d6rem);
+  border-radius: var(--sg-radius-1rem);
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .column-content {
   flex: 1;
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
   overflow-y: auto;
 }
 
 .kanban-item {
   background: var(--surface-card);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
+  border-radius: var(--sg-radius-6px);
+  padding: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-0d5rem);
   cursor: move;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  box-shadow: var(--sg-shadow-0-2px-4px-rgba-0-0-0-0d1);
+  transition: var(--sg-motion-all-0d3s-ease);
 }
 
 .kanban-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--sg-shadow-0-4px-6px-rgba-0-0-0-0d1);
 }
 
 .kanban-item.is-dragging {
@@ -220,8 +221,8 @@ onMounted(() => {
 .item-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: var(--sg-space-0d5rem);
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .item-title {
@@ -230,17 +231,17 @@ onMounted(() => {
 }
 
 .item-description {
-  margin: 0.5rem 0;
+  margin: var(--sg-space-0d5rem-0);
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .item-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
+  margin-top: var(--sg-space-0d5rem);
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 .item-date {
@@ -249,15 +250,15 @@ onMounted(() => {
 
 .item-labels {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--sg-space-0d25rem);
 }
 
 .label {
   background: var(--primary-color);
   color: white;
-  padding: 0.2rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  padding: var(--sg-space-0d2rem-0d4rem);
+  border-radius: var(--sg-radius-4px);
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 .type-email {
@@ -276,7 +277,7 @@ onMounted(() => {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.5s ease;
+  transition: var(--sg-motion-all-0d5s-ease);
 }
 
 .list-enter-from,

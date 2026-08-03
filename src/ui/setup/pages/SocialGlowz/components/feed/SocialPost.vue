@@ -23,7 +23,8 @@
         </div>
       </div>
       <Button 
-        icon="pi pi-ellipsis-h" 
+        icon="pi pi-ellipsis-h"
+        aria-label="Ouvrir le menu de la publication"
         text 
         rounded
         @click="$emit('menu-click', $event)"
@@ -163,7 +164,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Button from 'primevue/button'
+import Button from '../ui/SgButton.vue'
 import SocialAvatar from './SocialAvatar.vue'
 
 const { t } = useI18n()
@@ -328,15 +329,15 @@ const toggleComments = () => {
 <style scoped>
 .social-post {
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-header {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-meta {
@@ -345,20 +346,20 @@ const toggleComments = () => {
 
 .author-info h4 {
   margin: 0;
-  line-height: 1.2;
+  line-height: var(--sg-line-height-1d2);
 }
 
 .post-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .content-text {
   white-space: pre-line;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .content-text :deep(a) {
@@ -372,9 +373,9 @@ const toggleComments = () => {
 
 .content-link {
   border: 1px solid var(--surface-border);
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .content-link a {
@@ -383,36 +384,36 @@ const toggleComments = () => {
 }
 
 .content-link img {
-  width: 100%;
-  height: 200px;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-200px);
   object-fit: cover;
 }
 
 .link-info {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .link-info h5 {
-  margin: 0 0 0.5rem;
+  margin: var(--sg-space-0-0-0d5rem);
 }
 
 .link-info p {
   margin: 0;
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .content-images {
   display: grid;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-0d5rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .content-images img {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
   cursor: pointer;
 }
 
@@ -429,61 +430,61 @@ const toggleComments = () => {
 }
 
 .content-video {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .content-video video {
-  width: 100%;
-  border-radius: 8px;
+  width: var(--sg-size-100pct);
+  border-radius: var(--sg-radius-8px);
 }
 
 .post-stats {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
+  padding: var(--sg-space-0d5rem-0);
   border-bottom: 1px solid var(--surface-border);
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .reactions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .reaction-icons {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--sg-space-0d25rem);
 }
 
 .reaction-icons i {
-  font-size: 1.1rem;
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .interaction-stats {
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .post-actions {
   display: flex;
-  padding: 0.5rem 0;
+  padding: var(--sg-space-0d5rem-0);
   border-bottom: 1px solid var(--surface-border);
 }
 
 .post-comments {
-  padding-top: 1rem;
+  padding-top: var(--sg-space-1rem);
 }
 
 /* Styles spécifiques aux réseaux */
-.network-facebook :deep(.reaction-like) { color: #2078f4; }
-.network-facebook :deep(.reaction-love) { color: #f33e58; }
-.network-facebook :deep(.reaction-care) { color: #f33e58; }
-.network-facebook :deep(.reaction-haha) { color: #f7b125; }
-.network-facebook :deep(.reaction-wow) { color: #f7b125; }
-.network-facebook :deep(.reaction-sad) { color: #f7b125; }
-.network-facebook :deep(.reaction-angry) { color: #e9710f; }
+.network-facebook :deep(.reaction-like) { color: var(--sg-color-facebook-action); }
+.network-facebook :deep(.reaction-love) { color: var(--sg-color-reddit-red); }
+.network-facebook :deep(.reaction-care) { color: var(--sg-color-reddit-red); }
+.network-facebook :deep(.reaction-haha) { color: var(--sg-color-reddit-gold); }
+.network-facebook :deep(.reaction-wow) { color: var(--sg-color-reddit-gold); }
+.network-facebook :deep(.reaction-sad) { color: var(--sg-color-reddit-gold); }
+.network-facebook :deep(.reaction-angry) { color: var(--sg-color-reddit-accent); }
 
 .network-twitter {
   /* Styles spécifiques à Twitter */
@@ -499,7 +500,7 @@ const toggleComments = () => {
 
 .interaction-stats .comments-count {
   cursor: pointer;
-  transition: color 0.2s;
+  transition: var(--sg-motion-color-0d2s);
 }
 
 .interaction-stats .comments-count:hover {

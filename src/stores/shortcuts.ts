@@ -73,3 +73,9 @@ export function normalizeShortcutEvent(event: KeyboardEvent): string {
   const key = event.key === ' ' ? 'Space' : event.key.length === 1 ? event.key.toUpperCase() : event.key
   return [...modifiers, key].join('+')
 }
+
+export function isEditableShortcutTarget(target: EventTarget | null): boolean {
+  if (typeof HTMLElement === 'undefined') return false
+  if (!(target instanceof HTMLElement)) return false
+  return target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]') !== null
+}

@@ -5,7 +5,7 @@
   >
     <!-- Trigger button -->
     <div
-      v-tooltip.right="iconsOnly ? (profilesStore.activeProfile?.name ?? 'Profile') : undefined"
+      v-sg-tooltip.right="iconsOnly ? (profilesStore.activeProfile?.name ?? 'Profile') : undefined"
       class="profile-trigger"
       :class="{ active: menuVisible }"
       role="button"
@@ -234,28 +234,28 @@ onUnmounted(() => {
 <style scoped>
 .profile-switcher {
   position: relative;
-  padding: 0.5rem 0.5rem 0.75rem;
+  padding: var(--sg-space-0d5rem-0d5rem-0d75rem);
   border-bottom: 1px solid var(--surface-border);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .profile-switcher.menu-up {
   border-top: 1px solid var(--surface-border);
   border-bottom: 0;
-  margin-top: 0.5rem;
+  margin-top: var(--sg-space-0d5rem);
   margin-bottom: 0;
-  padding: 0.75rem 0.5rem 0.5rem;
+  padding: var(--sg-space-0d75rem-0d5rem-0d5rem);
 }
 
 .profile-trigger {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d5rem-0d75rem);
+  border-radius: var(--sg-radius-8px);
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s;
+  transition: var(--sg-motion-backgroundneg-color-0d15s);
 }
 
 .profile-trigger:hover,
@@ -264,23 +264,23 @@ onUnmounted(() => {
 }
 
 .profile-emoji {
-  font-size: 1.25rem;
-  line-height: 1;
+  font-size: var(--sg-font-size-1d25rem);
+  line-height: var(--sg-line-height-1);
   flex-shrink: 0;
 }
 
 .profile-name {
   flex: 1;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .chevron {
-  font-size: 0.7rem;
-  transition: transform 0.2s;
+  font-size: var(--sg-font-size-0d7rem);
+  transition: var(--sg-motion-transform-0d2s);
   color: var(--text-color-secondary);
 }
 
@@ -291,27 +291,27 @@ onUnmounted(() => {
 /* Dropdown */
 .profile-menu {
   position: absolute;
-  top: calc(100% + 4px);
-  left: 0.5rem;
-  right: 0.5rem;
+  top: var(--sg-position-calc-100pct-4px);
+  left: var(--sg-position-0d5rem);
+  right: var(--sg-position-0d5rem);
   background: var(--surface-overlay);
   border: 1px solid var(--surface-border);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  z-index: 200;
+  border-radius: var(--sg-radius-10px);
+  box-shadow: var(--sg-shadow-0-8px-24px-rgba-0-0-0-0d15);
+  z-index: var(--sg-layer-200);
   overflow: hidden;
 }
 
 .profile-switcher.menu-up .profile-menu {
   top: auto;
-  bottom: calc(100% + 4px);
+  bottom: var(--sg-position-calc-100pct-4px);
 }
 
 .profile-menu-header {
-  padding: 0.5rem 1rem 0.25rem;
-  font-size: 0.7rem;
+  padding: var(--sg-space-0d5rem-1rem-0d25rem);
+  font-size: var(--sg-font-size-0d7rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
   color: var(--text-color-secondary);
 }
@@ -319,10 +319,10 @@ onUnmounted(() => {
 .profile-option {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d6rem-0d75rem);
   cursor: pointer;
-  transition: background-color 0.12s;
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .profile-option:hover {
@@ -339,14 +339,14 @@ onUnmounted(() => {
 }
 
 .profile-option-emoji {
-  font-size: 1.1rem;
-  line-height: 1;
+  font-size: var(--sg-font-size-1d1rem);
+  line-height: var(--sg-line-height-1);
   flex-shrink: 0;
 }
 
 .profile-option-name {
   flex: 1;
-  font-size: 0.88rem;
+  font-size: var(--sg-font-size-0d88rem);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -354,20 +354,20 @@ onUnmounted(() => {
 
 .profile-edit-input {
   flex: 1;
-  font-size: 0.88rem;
+  font-size: var(--sg-font-size-0d88rem);
   background: var(--surface-ground);
   border: 1px solid var(--primary-color);
-  border-radius: 4px;
-  padding: 0.2rem 0.4rem;
+  border-radius: var(--sg-radius-4px);
+  padding: var(--sg-space-0d2rem-0d4rem);
   color: var(--text-color);
   outline: none;
 }
 
 .profile-option-actions {
   display: flex;
-  gap: 0.15rem;
+  gap: var(--sg-space-0d15rem);
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: var(--sg-motion-opacity-0d15s);
 }
 
 .profile-option:hover .profile-option-actions {
@@ -379,12 +379,12 @@ onUnmounted(() => {
   border: none;
   cursor: pointer;
   color: var(--text-color-secondary);
-  padding: 0.2rem;
-  border-radius: 4px;
+  padding: var(--sg-space-0d2rem);
+  border-radius: var(--sg-radius-4px);
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
-  transition: color 0.12s, background-color 0.12s;
+  font-size: var(--sg-font-size-0d75rem);
+  transition: var(--sg-motion-color-0d12s-backgroundneg-color-0d12s);
 }
 
 .action-btn:hover {
@@ -399,22 +399,22 @@ onUnmounted(() => {
 /* Footer */
 .profile-menu-footer {
   border-top: 1px solid var(--surface-border);
-  padding: 0.4rem 0.5rem;
+  padding: var(--sg-space-0d4rem-0d5rem);
 }
 
 .add-profile-btn {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  width: 100%;
+  gap: var(--sg-space-0d4rem);
+  width: var(--sg-size-100pct);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  padding: var(--sg-space-0d5rem-0d75rem);
+  border-radius: var(--sg-radius-6px);
+  font-size: var(--sg-font-size-0d85rem);
   color: var(--text-color-secondary);
-  transition: background-color 0.12s, color 0.12s;
+  transition: var(--sg-motion-backgroundneg-color-0d12s-color-0d12s);
 }
 
 .add-profile-btn:hover {
@@ -423,12 +423,12 @@ onUnmounted(() => {
 }
 
 .add-profile-row {
-  padding: 0.25rem 0.25rem;
+  padding: var(--sg-space-0d25rem-0d25rem);
 }
 
 /* Icons-only mode: center the emoji trigger */
 .profile-switcher.icons-only .profile-trigger {
   justify-content: center;
-  padding: 0.5rem;
+  padding: var(--sg-space-0d5rem);
 }
 </style>

@@ -1,16 +1,17 @@
 <template>
   <template v-if="modelValue">
-    <Splitter 
-      ref="splitterRef" 
-      @resizeend="handleResizeEnd"
-      @resize="handleResize"
+    <SplitterGroup
+      direction="horizontal"
+      @layout="handleResize"
     >
-      <SplitterPanel :size="100 - panelSize">
+      <SplitterPanel :default-size="100 - SIDEBAR_EXPANDED_SIZE">
         <slot></slot>
       </SplitterPanel>
-      <SplitterPanel 
-        :size="panelSize" 
-        :min-size="5" 
+      <SplitterResizeHandle class="sidebar-resize-handle" />
+      <SplitterPanel
+        ref="sidebarPanel"
+        :default-size="SIDEBAR_EXPANDED_SIZE"
+        :min-size="5"
         class="sidebar"
         :class="{ 'icons-only': iconsOnly }"
       >
@@ -24,7 +25,7 @@
           >
             <div class="sidebar-actions">
               <Button
-                v-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+                v-sg-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
                 :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
                 text
                 :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
@@ -32,7 +33,7 @@
               />
               <Button
                 v-if="!iconsOnly"
-                v-tooltip.left="$t('common.settings')"
+                v-sg-tooltip.left="$t('common.settings')"
                 icon="pi pi-cog"
                 text
                 :aria-label="$t('common.settings')"
@@ -40,7 +41,7 @@
               />
             </div>
             <Button
-              v-tooltip.left="'Toggle right sidebar'"
+              v-sg-tooltip.left="'Toggle right sidebar'"
               icon="pi pi-bars"
               text
               aria-label="Toggle right sidebar"
@@ -82,24 +83,28 @@
             <Button
               icon="pi pi-home"
               :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
+              :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
             />
             <Button
               icon="pi pi-user"
               :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
+              :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
             />
             <Button
               icon="pi pi-users"
               :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
+              :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
             />
             <Button
               icon="pi pi-bell"
               :label="iconsOnly ? undefined : $t('common.notifications')"
+              :aria-label="iconsOnly ? $t('common.notifications') : undefined"
               :badge="'3'"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
@@ -107,23 +112,25 @@
             <Button
               icon="pi pi-bookmark"
               :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
+              :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
             />
             <Button
               icon="pi pi-calendar"
               :label="iconsOnly ? undefined : $t('sidebar.events_button')"
+              :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
             />
           </div>
         </div>
       </SplitterPanel>
-    </Splitter>
+    </SplitterGroup>
   </template>
   <template v-else>
     <Button
-      v-tooltip.left="'Ouvrir le panneau droit'"
+      v-sg-tooltip.left="'Ouvrir le panneau droit'"
       icon="pi pi-bars"
       text
       aria-label="Ouvrir le panneau droit"
@@ -135,14 +142,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Button from 'primevue/button'
-import Avatar from 'primevue/avatar'
+import { nextTick, ref, watch } from 'vue'
+import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
+import Button from './ui/SgButton.vue'
+import Avatar from './ui/SgAvatar.vue'
 import { useProfilesStore } from '@/stores/profiles'
 import ProfileSwitcher from './ProfileSwitcher.vue'
 import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
 import { getPlatformCapabilities } from '@/platform/capabilities'
 import { useWebviewStore } from '@/stores/webviewState'
+import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
 
 const props = defineProps<{
   modelValue: boolean
@@ -185,35 +194,26 @@ async function copyDiagnostics() {
   window.setTimeout(() => { diagnosticsCopied.value = false }, 2000)
 }
 
-const splitterRef = ref()
 const iconsOnly = ref(false)
 const profilesStore = useProfilesStore()
-const COMPACT_THRESHOLD = 10
+const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
 
-const panelSize = computed(() => {
-  return iconsOnly.value ? 5 : 20
+watch(iconsOnly, async compact => {
+  await nextTick()
+  sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
-
-const toggleIconsOnly = () => {
-  iconsOnly.value = !iconsOnly.value
-}
 
 const openProfileCreator = () => {
   window.dispatchEvent(new CustomEvent('sfz-create-profile'))
 }
 
-const handleResize = (e: { sizes?: Array<number> }) => {
-  const newSize = e.sizes?.[1]
+const handleResize = (sizes: number[]) => {
+  const newSize = sizes[1]
   if (typeof newSize !== 'number') return
 
-  if (newSize <= COMPACT_THRESHOLD && !iconsOnly.value) {
-    iconsOnly.value = true
-  } else if (newSize > COMPACT_THRESHOLD && iconsOnly.value) {
-    iconsOnly.value = false
-  }
+  iconsOnly.value = isCompactSidebarSize(newSize)
 }
 
-const handleResizeEnd = handleResize
 </script>
 
 <style scoped>
@@ -303,32 +303,32 @@ const handleResizeEnd = handleResize
   gap: var(--sg-right-sidebar-menu-gap);
 }
 
-.menu-section :deep(.p-button) {
+.menu-section :deep(.sg-button) {
   height: var(--sg-right-sidebar-menu-row-height);
   position: relative;
 }
 
-.menu-section :deep(.p-button.justify-content-start) {
+.menu-section :deep(.sg-button.justify-content-start) {
   padding: 0 var(--sg-right-sidebar-menu-padding-inline);
 }
 
-.menu-section :deep(.p-button.justify-content-center) {
+.menu-section :deep(.sg-button.justify-content-center) {
   padding: 0;
   display: flex;
   align-items: center;
 }
 
-.menu-section :deep(.p-button:hover) {
+.menu-section :deep(.sg-button:hover) {
   background-color: var(--surface-hover);
 }
 
-.menu-section :deep(.p-badge) {
+.menu-section :deep(.sg-button__badge) {
   position: absolute;
   top: var(--sg-right-sidebar-badge-inset);
   right: var(--sg-right-sidebar-badge-inset);
 }
 
-.icons-only .menu-section :deep(.p-badge) {
+.icons-only .menu-section :deep(.sg-button__badge) {
   right: var(--sg-right-sidebar-badge-compact-offset);
   top: 0;
   transform: scale(0.8);
@@ -343,28 +343,14 @@ const handleResizeEnd = handleResize
   }
 }
 
-.p-splitter {
-  border: none;
-}
-
-:deep(.p-splitter-gutter) {
-  background: var(--surface-border);
-  transition: var(--sg-right-sidebar-gutter-transition);
-}
-
-:deep(.p-splitter-gutter:hover) {
-  background: var(--primary-color);
-}
-
-:deep(.p-splitter-panel) {
-  transition: var(--sg-right-sidebar-panel-transition);
-}
+.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--surface-border); transition: var(--sg-right-sidebar-gutter-transition); }
+.sidebar-resize-handle:hover { background: var(--primary-color); }
+.sidebar-resize-handle:focus-visible { background: var(--primary-color); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
-  :deep(.p-splitter-panel),
-  :deep(.p-splitter-gutter) {
-    transition: none;
+  .sidebar-resize-handle {
+    transition: var(--sg-motion-none);
   }
 }
 </style> 

@@ -5,7 +5,11 @@
       <div class="main-feed">
         <!-- Stories -->
         <div class="stories-section">
-          <ScrollPanel class="stories-scroll">
+          <div
+            class="stories-scroll"
+            tabindex="0"
+            aria-label="Stories"
+          >
             <div class="stories-container">
               <div
                 v-for="story in store.stories" 
@@ -30,7 +34,7 @@
                 </div>
               </div>
             </div>
-          </ScrollPanel>
+          </div>
         </div>
 
         <!-- Créer un post -->
@@ -74,9 +78,10 @@
                   :user="store.currentUser"
                   size="normal"
                 />
-                <InputText 
+                <SgInput
                   v-model="newComments[post.id]" 
                   :placeholder="$t('facebook.comment_placeholder')"
+                  :aria-label="$t('facebook.comment_placeholder')"
                   class="flex-1"
                   @keyup.enter="handleCommentSubmit(post.id)"
                 />
@@ -110,9 +115,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import ScrollPanel from 'primevue/scrollpanel'
+import SgInput from '../ui/SgInput.vue'
 import { SocialAvatar, SocialPost, SocialComment, CreatePost } from '../feed'
 import { useFacebookMockStore } from '../../stores/mockData/facebookMock'
 import type { FacebookPost } from '../../stores/mockData/facebookMock'
@@ -167,57 +170,61 @@ const togglePostComments = (postId: string) => {
 
 <style scoped>
 .facebook-view {
-  height: 100%;
+  height: var(--sg-size-100pct);
   background: var(--surface-ground);
-  padding-top: 4rem;
+  padding-top: var(--sg-space-4rem);
 }
 
 .facebook-content {
   display: grid;
   grid-template-columns: 1fr 300px;
-  gap: 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  height: calc(100% - 4rem);
+  gap: var(--sg-space-1rem);
+  max-width: var(--sg-size-1200px);
+  margin: var(--sg-space-0-auto);
+  padding: var(--sg-space-1rem);
+  height: var(--sg-size-calc-100pct-neg-4rem);
   overflow-y: auto;
 }
 
 .main-feed {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .stories-section {
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
 }
 
 .stories-scroll {
-  height: 250px;
+  height: var(--sg-size-250px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-gutter: stable;
 }
+.stories-scroll:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 
 .stories-container {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.25rem;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d25rem);
 }
 
 .story-card {
   position: relative;
-  width: 140px;
-  height: 220px;
-  border-radius: 8px;
+  width: var(--sg-size-140px);
+  height: var(--sg-size-220px);
+  border-radius: var(--sg-radius-8px);
   overflow: hidden;
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .story-image {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   object-fit: cover;
 }
 
@@ -227,8 +234,8 @@ const togglePostComments = (postId: string) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
-  padding: 0.75rem;
+  background: linear-gradient(to bottom, var(--sg-color-scrim-30), var(--sg-color-scrim-70));
+  padding: var(--sg-space-0d75rem);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -236,7 +243,7 @@ const togglePostComments = (postId: string) => {
 
 .story-author {
   color: white;
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
 }
 
@@ -247,34 +254,34 @@ const togglePostComments = (postId: string) => {
 .posts-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .right-sidebar {
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
-  height: fit-content;
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
+  height: var(--sg-size-fitneg-content);
 }
 
 .online-friends {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 
 .online-friends h4 {
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.5rem;
+  margin: var(--sg-space-0-0-0d5rem);
+  padding-bottom: var(--sg-space-0d5rem);
   border-bottom: 1px solid var(--surface-border);
 }
 
 .friend-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 8px;
+  gap: var(--sg-space-0d75rem);
+  padding: var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-8px);
   cursor: pointer;
 }
 
@@ -283,17 +290,17 @@ const togglePostComments = (postId: string) => {
 }
 
 .friend-name {
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
 }
 
 .comments-container {
-  padding: 0.5rem 1rem;
+  padding: var(--sg-space-0d5rem-1rem);
 }
 
 .comment-composer {
   display: flex;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: var(--sg-space-0d75rem);
+  padding: var(--sg-space-0d75rem-1rem);
   align-items: center;
 }
 </style> 

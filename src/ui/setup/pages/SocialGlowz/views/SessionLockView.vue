@@ -11,7 +11,7 @@
       </p>
       <p
         v-if="!hasPin"
-        class="p-error"
+        class="sg-error"
       >
         Aucun code PIN n'est configuré pour cette session verrouillée. Pour continuer,
         reconnectez-vous.
@@ -21,10 +21,10 @@
         class="lock-form"
         @submit.prevent="submitPin"
       >
-        <Password
+        <SgPassword
           v-model="pin"
           placeholder="Code PIN"
-          :feedback="false"
+          aria-label="Code PIN"
           inputmode="numeric"
           toggle-mask
           class="w-full"
@@ -32,9 +32,9 @@
         />
         <small
           v-if="error"
-          class="p-error"
+          class="sg-error"
         >{{ error }}</small>
-        <Button
+        <SgButton
           label="Déverrouiller"
           type="submit"
           class="w-full"
@@ -43,7 +43,7 @@
         />
       </form>
 
-      <Button
+      <SgButton
         label="Retour à login"
         text
         class="w-full"
@@ -56,6 +56,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import SgButton from '../components/ui/SgButton.vue'
+import SgPassword from '../components/ui/SgPassword.vue'
 import {
   clearSessionPin,
   hasSessionPin,
@@ -99,27 +101,27 @@ async function returnToLogin() {
 
 <style scoped>
 .lock-screen {
-  min-height: 100vh;
+  min-height: var(--sg-size-100vh);
   display: grid;
   place-items: center;
-  padding: 1.5rem;
+  padding: var(--sg-space-1d5rem);
   background: var(--surface-ground);
 }
 
 .lock-panel {
-  width: min(100%, 420px);
+  width: var(--sg-size-min-100pct-420px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 2rem;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-2rem);
   color: var(--text-color);
 }
 
 .lock-mark {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 999px;
+  width: var(--sg-size-3rem);
+  height: var(--sg-size-3rem);
+  border-radius: var(--sg-radius-999px);
   display: grid;
   place-items: center;
   color: var(--primary-color);
@@ -128,20 +130,20 @@ async function returnToLogin() {
 
 .lock-panel h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--sg-font-size-1d5rem);
 }
 
 .lock-panel p {
   margin: 0;
   text-align: center;
   color: var(--text-color-secondary);
-  line-height: 1.45;
+  line-height: var(--sg-line-height-1d45);
 }
 
 .lock-form {
-  width: 100%;
+  width: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 </style>

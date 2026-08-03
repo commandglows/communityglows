@@ -1,30 +1,25 @@
 <template>
   <div
     class="social-avatar"
-    :class="sizeClass"
+    :style="avatarBorderVariables"
   >
     <Avatar 
       :image="avatarUrl" 
       :size="avatarSize"
       :shape="shape"
-      :pt="{
-        root: { style: borderStyle }
-      }"
       @error="handleAvatarError"
     />
-    <Badge
+    <SgBadge
       v-if="showBadge" 
       :value="badgeContent" 
       :severity="badgeSeverity"
-      :pt="{
-        root: { class: 'avatar-badge' }
-      }"
+      class="avatar-badge"
     >
       <i
         v-if="badgeIcon"
         :class="badgeIcon"
       ></i>
-    </Badge>
+    </SgBadge>
     <div
       v-if="showStatus"
       :class="['status-indicator', user.status]"
@@ -34,8 +29,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Avatar from 'primevue/avatar'
-import Badge from 'primevue/badge'
+import Avatar from '../ui/SgAvatar.vue'
+import SgBadge from '../ui/SgBadge.vue'
 
 interface Props {
   user: {
@@ -64,17 +59,17 @@ const props = withDefaults(defineProps<Props>(), {
   badgeIcon: undefined,
   badgeSeverity: 'secondary',
   showStatus: false,
-  borderColor: 'var(--surface-border)',
+  borderColor: 'var(--sg-color-border)',
   borderWidth: '0px'
 })
 
-const sizeClass = computed(() => `size-${props.size}`)
 const avatarSize = computed<'normal' | 'large' | 'xlarge'>(() => {
   return props.size
 })
 
-const borderStyle = computed(() => ({
-  border: props.borderWidth ? `${props.borderWidth} solid ${props.borderColor || 'var(--surface-border)'}` : 'none'
+const avatarBorderVariables = computed(() => ({
+  '--social-avatar-border-color': props.borderColor,
+  '--social-avatar-border-width': props.borderWidth,
 }))
 
 const fallbackAvatar = ref<string | null>(null)
@@ -103,54 +98,45 @@ const handleAvatarError = () => {
   display: inline-flex;
 }
 
-.size-normal {
-  --avatar-size: 2.5rem;
-}
-
-.size-large {
-  --avatar-size: 3.5rem;
-}
-
-.size-xlarge {
-  --avatar-size: 4.5rem;
+.social-avatar :deep(.sg-avatar) {
+  border: var(--social-avatar-border-width) solid var(--social-avatar-border-color);
 }
 
 :deep(.avatar-badge) {
   position: absolute;
   bottom: 0;
   right: 0;
-  border-radius: 50%;
+  border-radius: var(--sg-radius-pill);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
-  background: var(--primary-color);
-  border: 2px solid var(--surface-card);
+  padding: var(--sg-space-1);
+  border: var(--sg-badge-border) solid var(--sg-color-surface-raised);
 }
 
 .status-indicator {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid var(--surface-card);
+  bottom: var(--sg-avatar-status-inset);
+  right: var(--sg-avatar-status-inset);
+  width: var(--sg-avatar-status-size);
+  height: var(--sg-avatar-status-size);
+  border-radius: var(--sg-radius-pill);
+  border: var(--sg-badge-border) solid var(--sg-color-surface-raised);
 }
 
 .status-indicator.online {
-  background-color: var(--green-500);
+  background-color: var(--sg-color-success);
 }
 
 .status-indicator.offline {
-  background-color: var(--gray-500);
+  background-color: var(--sg-color-text-muted);
 }
 
 .status-indicator.idle {
-  background-color: var(--yellow-500);
+  background-color: var(--sg-color-warning);
 }
 
 .status-indicator.busy {
-  background-color: var(--red-500);
+  background-color: var(--sg-color-danger);
 }
 </style> 

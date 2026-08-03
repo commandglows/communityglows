@@ -2,7 +2,7 @@
   <header class="header">
     <div class="header-start">
       <Button
-        v-tooltip.bottom="'Toggle left sidebar'"
+        v-sg-tooltip.bottom="'Toggle left sidebar'"
         icon="pi pi-bars"
         text
         aria-label="Toggle left sidebar"
@@ -13,10 +13,11 @@
 
     <div class="header-center">
       <div class="search-container">
-        <span class="p-input-icon-left">
+        <span class="search-field">
           <i class="pi pi-search" />
-          <InputText
+          <SgInput
             placeholder="Rechercher..."
+            aria-label="Rechercher"
             class="search-input"
           />
         </span>
@@ -31,21 +32,21 @@
 
     <div class="header-end">
       <Button
-        v-tooltip.bottom="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+        v-sg-tooltip.bottom="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
         :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
         text
         :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
         @click="copyDiagnostics"
       />
       <Button
-        v-tooltip.bottom="$t('common.settings')"
+        v-sg-tooltip.bottom="$t('common.settings')"
         icon="pi pi-cog"
         text
         :aria-label="$t('common.settings')"
         @click="openSettings"
       />
       <Button
-        v-tooltip.bottom="'Toggle right sidebar'"
+        v-sg-tooltip.bottom="'Toggle right sidebar'"
         icon="pi pi-bars"
         text
         aria-label="Toggle right sidebar"
@@ -58,8 +59,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
+import Button from './ui/SgButton.vue'
+import SgInput from './ui/SgInput.vue'
 import DashboardFilters from './DashboardFilters.vue'
 import type { MenuItem } from '../types'
 import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
@@ -155,19 +156,19 @@ async function copyDiagnostics() {
   left: 0;
   right: 0;
   height: auto;
-  min-height: 4rem;
+  min-height: var(--sg-size-4rem);
   background: var(--surface-card);
   border-bottom: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
-  padding: 0 1rem;
-  z-index: 1000;
+  padding: var(--sg-space-0-1rem);
+  z-index: var(--sg-layer-1000);
 }
 
 .header-start {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .header-center {
@@ -177,70 +178,64 @@ async function copyDiagnostics() {
 }
 
 .search-container {
-  max-width: 300px;
-  width: 100%;
+  max-width: var(--sg-size-300px);
+  width: var(--sg-size-100pct);
   position: relative;
-  margin-right: 1rem;
+  margin-right: var(--sg-space-1rem);
 }
 
-.search-container :deep(.p-input-icon-left) {
-  width: 100%;
+.search-container .search-field {
+  width: var(--sg-size-100pct);
   display: flex;
   align-items: center;
 }
 
-.search-container :deep(.p-input-icon-left i) {
-  left: 0.75rem;
-  top: 50%;
+.search-container .search-field i {
+  left: var(--sg-position-0d75rem);
+  top: var(--sg-position-50pct);
   transform: translateY(-50%);
 }
 
-.search-container :deep(.p-inputtext) {
-  padding-left: 2.5rem;
-  width: 100%;
+.search-container :deep(.sg-input) {
+  padding-left: var(--sg-space-2d5rem);
+  width: var(--sg-size-100pct);
 }
 
 .filters-container {
   flex: 1;
-  max-width: 800px;
+  max-width: var(--sg-size-800px);
   display: flex;
   align-items: center;
-}
-
-.filters-container :deep(.p-dropdown),
-.filters-container :deep(.p-multiselect),
-.filters-container :deep(.p-calendar) {
-  min-width: unset;
 }
 
 .header-end {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--sg-font-size-1d5rem);
   color: var(--primary-color);
 }
 
 @media (max-width: 1200px) {
   .header-center {
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--sg-space-1rem);
   }
 
   .search-container,
   .filters-container {
-    max-width: 100%;
+    max-width: var(--sg-size-100pct);
   }
 }
 
 @media (max-width: 768px) {
   .header {
-    height: 4rem;
-    min-height: 4rem;
+    height: var(--sg-size-4rem);
+    min-height: var(--sg-size-4rem);
   }
 
   .header-center {

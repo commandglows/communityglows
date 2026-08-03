@@ -1,5 +1,8 @@
 <template>
   <div class="app-container">
+    <Notivue v-slot="item">
+      <Notification :item="item" />
+    </Notivue>
     <!-- Onboarding (first launch) -->
     <OnboardingFlow v-if="!onboardingStore.completed" />
 
@@ -41,6 +44,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { Notification, Notivue } from 'notivue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
 import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
@@ -59,7 +63,7 @@ import {
   type SocialGlowzDeepLinkAction,
 } from '@/lib/socialGlowzDeepLinks'
 import { useOnboardingStore } from '@/stores/onboarding'
-import { normalizeShortcutEvent, useShortcutsStore } from '@/stores/shortcuts'
+import { isEditableShortcutTarget, normalizeShortcutEvent, useShortcutsStore } from '@/stores/shortcuts'
 import { useRouter } from 'vue-router'
 import {
   DEFAULT_TAP_SOUND_VARIANT,
@@ -200,7 +204,7 @@ const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
 const onWebviewReady = () => { webviewReadyVersion.value += 1 }
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
+  if (isEditableShortcutTarget(event.target)) return
   const pressed = normalizeShortcutEvent(event)
   const shortcut = shortcutsStore.enabledShortcuts.find(item => item.keys === pressed)
   if (!shortcut) return
@@ -545,17 +549,15 @@ input, textarea, [contenteditable="true"] {
 }
 
 :root {
-  /* Brand */
-  --primary-color: var(--p-primary-color);
-
-  /* Light theme surfaces */
-  --text-color: #495057;
-  --text-color-secondary: #6c757d;
-  --surface-ground: #f8f9fa;
-  --surface-card: #ffffff;
-  --surface-border: #dee2e6;
-  --surface-hover: #e9ecef;
-  --card-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+  /* Compatibility aliases for views that have not adopted the sg-* names yet. */
+  --primary-color: var(--sg-color-action);
+  --text-color: var(--sg-color-text);
+  --text-color-secondary: var(--sg-color-text-muted);
+  --surface-ground: var(--sg-color-surface-muted);
+  --surface-card: var(--sg-color-surface-raised);
+  --surface-border: var(--sg-color-border);
+  --surface-hover: var(--sg-color-surface-hover);
+  --card-shadow: var(--sg-shadow-control);
 
   /* Spacing scale */
   --space-1: 0.25rem;
@@ -566,43 +568,8 @@ input, textarea, [contenteditable="true"] {
   --space-8: 2rem;
 }
 
-/* Dark theme — html.dark beats PrimeVue's :root (specificity 0,1,1 > 0,1,0) */
 html.dark {
   color-scheme: dark;
-
-  --primary-color: var(--p-primary-color);
-  --text-color: #e4e4e7;
-  --text-color-secondary: #a1a1aa;
-  --surface-ground: #09090b;
-  --surface-card: #18181b;
-  --surface-border: #27272a;
-  --surface-hover: #27272a;
-  --card-shadow: 0 2px 4px rgba(0,0,0,.6);
-
-  /* Override PrimeVue surface scale */
-  --surface-a: #18181b;
-  --surface-b: #18181b;
-  --surface-c: #27272a;
-  --surface-d: #3f3f46;
-  --surface-e: #18181b;
-  --surface-f: #18181b;
-  --surface-section: #09090b;
-  --surface-overlay: #18181b;
-  --surface-0: #09090b;
-  --surface-50: #18181b;
-  --surface-100: #27272a;
-  --surface-200: #3f3f46;
-  --surface-300: #52525b;
-  --surface-400: #71717a;
-  --surface-500: #a1a1aa;
-  --surface-600: #d4d4d8;
-  --surface-700: #e4e4e7;
-  --surface-800: #f4f4f5;
-  --surface-900: #fafafa;
-  --focus-ring: 0 0 0 0.2rem rgba(91,168,245,0.4);
-  --highlight-bg: rgba(91,168,245,0.16);
-  --highlight-text-color: #93c5fd;
-  --maskbg: rgba(0, 0, 0, 0.6);
 }
 
 body {
@@ -612,9 +579,12 @@ body {
   background: var(--surface-ground);
 }
 
-/* Ensure body dark bg beats any PrimeVue body rules */
 html.dark body {
   background: var(--surface-ground);
   color: var(--text-color);
+}
+
+.sg-error {
+  color: var(--sg-color-danger-text);
 }
 </style>

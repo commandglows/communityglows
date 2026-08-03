@@ -1,10 +1,8 @@
 <template>
-  <Dialog
-    v-model:visible="visible"
-    modal
-    :header="$t('common.settings')"
-    :style="{ width: '50vw' }"
-    :breakpoints="{ '960px': '75vw', '641px': '90vw' }"
+  <SgDialog
+    v-model="visible"
+    :title="$t('common.settings')"
+    variant="settings"
   >
     <div class="settings-container">
       <!-- Language -->
@@ -23,7 +21,7 @@
         </select>
       </div>
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Theme Toggle -->
       <div class="setting-item">
@@ -52,7 +50,7 @@
         {{ autoThemeHint }}
       </div>
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Grayscale / focus mode -->
       <div class="setting-item">
@@ -60,13 +58,14 @@
           <i class="pi pi-palette mr-2"></i>
           <span>{{ $t('theme.focus_mode') }}</span>
         </div>
-        <InputSwitch
+        <SgSwitch
           :model-value="themeStore.grayscaleEnabled"
-          @change="themeStore.setGrayscale(!themeStore.grayscaleEnabled)"
+          :label="$t('theme.focus_mode')"
+          @update:model-value="themeStore.setGrayscale"
         />
       </div>
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Other settings -->
       <div class="setting-item">
@@ -74,10 +73,13 @@
           <i class="pi pi-bell mr-2"></i>
           <span>{{ $t('common.notifications') }}</span>
         </div>
-        <InputSwitch v-model="notifications" />
+        <SgSwitch
+          v-model="notifications"
+          :label="$t('common.notifications')"
+        />
       </div>
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Replay onboarding -->
       <div class="setting-item">
@@ -93,7 +95,7 @@
         </button>
       </div>
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Text zoom -->
       <div class="setting-item">
@@ -113,15 +115,15 @@
         @change="onTextZoomChange"
       />
 
-      <Divider />
+      <hr class="settings-divider">
 
       <KeyboardShortcuts />
 
-      <Divider />
+      <hr class="settings-divider">
 
       <BillingAccessPanel />
 
-      <Divider />
+      <hr class="settings-divider">
 
       <!-- Backup / Restore -->
       <div class="setting-item">
@@ -132,7 +134,7 @@
       </div>
       <BackupRestore />
     </div>
-  </Dialog>
+  </SgDialog>
 </template>
 
 <script setup lang="ts">
@@ -149,11 +151,11 @@ import {
 } from '../utils/textZoom'
 import { useThemeStore } from '@/stores/theme'
 import { useOnboardingStore } from '@/stores/onboarding'
-import Dialog from 'primevue/dialog'
-import Divider from 'primevue/divider'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
 import KeyboardShortcuts from './KeyboardShortcuts.vue'
+import SgDialog from './ui/SgDialog.vue'
+import SgSwitch from './ui/SgSwitch.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
 
 const { locale, t } = useI18n()
@@ -223,9 +225,11 @@ defineExpose({
   max-height: var(--sg-settings-max-height);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-color, #6366f1) transparent;
+  scrollbar-color: var(--sg-color-action) transparent;
   scrollbar-gutter: stable;
 }
+
+.settings-divider { border: 0; border-top: 1px solid var(--surface-border); margin: var(--sg-settings-item-spacing) 0; }
 
 .settings-container::-webkit-scrollbar {
   width: var(--sg-settings-scrollbar-width);
@@ -237,7 +241,7 @@ defineExpose({
 }
 
 .settings-container::-webkit-scrollbar-thumb {
-  background: var(--primary-color, #6366f1);
+  background: var(--sg-color-action);
   border-radius: var(--sg-settings-scrollbar-radius);
 }
 
@@ -261,9 +265,9 @@ defineExpose({
 .locale-select {
   padding: var(--sg-settings-control-padding-block) var(--sg-settings-control-padding-inline);
   border-radius: var(--sg-settings-control-radius);
-  border: 1px solid var(--surface-border, #ddd);
-  background: var(--surface-card, #fff);
-  color: var(--text-color, #333);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
   font-size: var(--sg-settings-control-copy-size);
   cursor: pointer;
 }
@@ -273,15 +277,15 @@ defineExpose({
   gap: var(--sg-settings-theme-gap);
   padding: var(--sg-settings-theme-group-padding);
   border-radius: var(--sg-settings-theme-group-radius);
-  border: 1px solid var(--surface-border, #ddd);
-  background: var(--surface-ground, #f6f6f6);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-muted);
 }
 
 .theme-mode-btn {
   border: none;
   border-radius: var(--sg-settings-theme-button-radius);
   background: transparent;
-  color: var(--text-color-secondary, #666);
+  color: var(--sg-color-text-muted);
   padding: var(--sg-settings-theme-button-padding-block) var(--sg-settings-theme-button-padding-inline);
   font-size: var(--sg-settings-theme-button-size);
   font-weight: 600;
@@ -290,15 +294,15 @@ defineExpose({
 }
 
 .theme-mode-btn.active {
-  background: var(--surface-card, #fff);
-  color: var(--primary-color, #6366f1);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-action);
 }
 
 .theme-mode-hint {
   margin: var(--sg-settings-hint-margin-block-start) 0 var(--sg-settings-hint-margin-block-end);
   font-size: var(--sg-settings-hint-size);
   line-height: var(--sg-settings-hint-line-height);
-  color: var(--text-color-secondary, #666);
+  color: var(--sg-color-text-muted);
 }
 
 .text-zoom-value {

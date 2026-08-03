@@ -5,13 +5,17 @@
         <h3><i class="pi pi-keyboard" /> Raccourcis clavier</h3>
         <p>Personnalisez les commandes rapides de l'application.</p>
       </div>
-      <Button
-        label="Réinitialiser"
-        icon="pi pi-refresh"
-        text
-        size="small"
+      <button
+        type="button"
+        class="shortcuts-reset"
         @click="shortcutsStore.reset"
-      />
+      >
+        <i
+          class="pi pi-refresh"
+          aria-hidden="true"
+        />
+        Réinitialiser
+      </button>
     </div>
 
     <div class="shortcut-list">
@@ -33,9 +37,9 @@
           >
             {{ recordingId === shortcut.id ? 'Appuyez sur les touches...' : shortcut.keys || 'Non défini' }}
           </button>
-          <InputSwitch
+          <SgSwitch
             :model-value="shortcut.enabled"
-            :aria-label="`Activer ${shortcut.label}`"
+            :label="`Activer ${shortcut.label}`"
             @update:model-value="shortcutsStore.setEnabled(shortcut.id, $event)"
           />
         </div>
@@ -46,9 +50,8 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from 'vue'
-import Button from 'primevue/button'
-import InputSwitch from 'primevue/inputswitch'
 import { normalizeShortcutEvent, useShortcutsStore } from '@/stores/shortcuts'
+import SgSwitch from './ui/SgSwitch.vue'
 
 const shortcutsStore = useShortcutsStore()
 const recordingId = ref<string | null>(null)
@@ -86,4 +89,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown, true))
 .shortcut-controls { gap: var(--sg-shortcuts-controls-gap); }
 .shortcut-capture { min-width: var(--sg-shortcuts-capture-min-width); padding: var(--sg-shortcuts-capture-padding-block) var(--sg-shortcuts-capture-padding-inline); border: 1px solid var(--surface-border); border-radius: var(--border-radius); background: var(--surface-ground); color: var(--text-color); cursor: pointer; }
 .shortcut-capture.recording { border-color: var(--primary-color); color: var(--primary-color); }
+.shortcuts-reset { display: inline-flex; align-items: center; gap: var(--sg-shortcuts-icon-gap); border: 0; border-radius: var(--sg-radius-sm); background: transparent; color: var(--sg-color-action); cursor: pointer; font: inherit; }
+.shortcuts-reset:hover { background: var(--sg-color-surface-hover); }
+.shortcuts-reset:focus-visible, .shortcut-capture:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 </style>

@@ -35,8 +35,7 @@
     >
       <div class="placeholder-content">
         <i
-          class="pi pi-desktop"
-          style="font-size: 3rem; opacity: 0.3"
+          class="pi pi-desktop placeholder-icon"
         />
         <p><strong>{{ webviewStore.activeNetworkId }}</strong></p>
         <p>{{ profilesStore.activeProfile?.emoji }} {{ profilesStore.activeProfile?.name ?? 'No profile' }}</p>
@@ -48,7 +47,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import Button from 'primevue/button'
+import Button from './ui/SgButton.vue'
 import { buildIdentityHeader } from '@/lib/buildDiagnostics'
 import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
@@ -199,8 +198,8 @@ watch(
 <style scoped>
 .webview-host {
   flex: 1;
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   min-height: 0;
   background: transparent;
   position: relative;
@@ -233,21 +232,23 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: var(--sg-size-100pct);
   color: var(--text-color-secondary);
 }
 
 .placeholder-content {
   text-align: center;
-  padding: 2rem;
+  padding: var(--sg-webview-placeholder-padding);
 }
 
+.placeholder-icon { font-size: var(--sg-webview-placeholder-icon-size); opacity: var(--sg-friends-empty-icon-opacity); }
+
 .placeholder-content p {
-  margin: 0.5rem 0;
+  margin: var(--sg-space-2) 0;
 }
 
 .hint {
-  font-size: 0.85rem;
-  opacity: 0.6;
+  font-size: var(--sg-webview-placeholder-copy-size);
+  opacity: var(--sg-opacity-muted);
 }
 </style>

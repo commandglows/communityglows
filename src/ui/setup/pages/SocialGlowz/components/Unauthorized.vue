@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
+import Button from './ui/SgButton.vue'
 
 const router = useRouter()
 </script>
@@ -24,27 +24,27 @@ const router = useRouter()
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
-  gap: 1rem;
+  min-height: var(--sg-size-60vh);
+  gap: var(--sg-space-1rem);
   text-align: center;
-  padding: 2rem;
+  padding: var(--sg-space-2rem);
 }
 
 .unauthorized-icon {
-  font-size: 3rem;
+  font-size: var(--sg-font-size-3rem);
   color: var(--text-color-secondary);
   opacity: 0.5;
 }
 
 .unauthorized h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: var(--sg-font-size-1d5rem);
   color: var(--text-color);
 }
 
 .unauthorized p {
   margin: 0;
   color: var(--text-color-secondary);
-  max-width: 400px;
+  max-width: var(--sg-size-400px);
 }
 </style>

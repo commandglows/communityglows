@@ -1,13 +1,13 @@
 <template>
   <template v-if="modelValue">
-    <Splitter 
-      ref="splitterRef" 
-      @resizeend="handleResizeEnd"
-      @resize="handleResize"
+    <SplitterGroup
+      direction="horizontal"
+      @layout="handleResize"
     >
-      <SplitterPanel 
-        :size="panelSize" 
-        :min-size="5" 
+      <SplitterPanel
+        ref="sidebarPanel"
+        :default-size="SIDEBAR_EXPANDED_SIZE"
+        :min-size="5"
         class="sidebar"
         :class="{ 'icons-only': iconsOnly }"
       >
@@ -21,13 +21,18 @@
               :class="{ 'justify-content-center': iconsOnly, 'justify-content-between': !iconsOnly }"
             >
               <Button
-                v-tooltip.right="'Toggle left sidebar'"
+                v-sg-tooltip.right="'Toggle left sidebar'"
                 icon="pi pi-bars"
                 text
                 aria-label="Toggle left sidebar"
                 @click="toggleSidebar"
               />
-              <h1 v-if="!iconsOnly" class="app-title">SocialGlowz</h1>
+              <h1
+                v-if="!iconsOnly"
+                class="app-title"
+              >
+                SocialGlowz
+              </h1>
             </div>
 
             <!-- Réseaux sociaux -->
@@ -81,7 +86,7 @@
               >
                 <h3>{{ $t('sidebar.friends_section') }}</h3>
                 <Button
-                  v-tooltip.right="$t('friends_filter.manage_tooltip')"
+                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
                   icon="pi pi-users"
                   text
                   size="small"
@@ -93,19 +98,18 @@
                 class="friends-toggle"
                 :class="{ 'friends-toggle--centered': iconsOnly }"
               >
-                <ToggleButton
-                  v-tooltip.right="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
-                  :model-value="filterEnabled"
-                  :on-label="iconsOnly ? undefined : $t('friends_filter.friends_only')"
-                  :off-label="iconsOnly ? undefined : $t('friends_filter.see_all')"
-                  on-icon="pi pi-filter-fill"
-                  off-icon="pi pi-filter"
-                  :pt="{ root: { style: 'width: var(--sg-sidebar-fill-size); border-radius: 0; height: var(--sg-sidebar-filter-height);' } }"
-                  @change="setFilterEnabled"
+                <Button
+                  v-sg-tooltip.right="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
+                  :label="iconsOnly ? undefined : (filterEnabled ? $t('friends_filter.friends_only') : $t('friends_filter.see_all'))"
+                  :aria-label="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
+                  :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
+                  :aria-pressed="filterEnabled"
+                  class="friends-filter-button"
+                  @click="setFilterEnabled"
                 />
                 <Button
                   v-if="iconsOnly"
-                  v-tooltip.right="$t('friends_filter.manage_tooltip')"
+                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
                   icon="pi pi-users"
                   text
                   size="small"
@@ -132,7 +136,7 @@
               >
                 <h3>{{ $t('sidebar.custom_links_section') }}</h3>
                 <Button
-                  v-tooltip.right="$t('links.add_tooltip')"
+                  v-sg-tooltip.right="$t('links.add_tooltip')"
                   icon="pi pi-plus"
                   text
                   size="small"
@@ -182,7 +186,7 @@
               </div>
               <Button
                 v-if="iconsOnly"
-                v-tooltip.right="$t('links.add_tooltip')"
+                v-sg-tooltip.right="$t('links.add_tooltip')"
                 icon="pi pi-plus"
                 text
                 size="small"
@@ -192,25 +196,25 @@
               />
             </div>
 
-            <Dialog
-              v-model:visible="showAddLinkDialog"
-              :header="$t('links.add_dialog_title')"
-              :modal="true"
-              style="width: var(--sg-sidebar-dialog-width); max-width: var(--sg-sidebar-dialog-max-width)"
+            <SgDialog
+              v-model="showAddLinkDialog"
+              :title="$t('links.add_dialog_title')"
+              variant="sidebar"
             >
               <div class="add-link-form">
-                <InputText
+                <input
                   v-model="newLinkLabel"
                   :placeholder="$t('links.name_placeholder')"
                   class="add-link-input"
                   @keydown.enter="addCustomLink"
-                />
-                <InputText
+                >
+                <input
                   v-model="newLinkUrl"
+                  type="url"
                   :placeholder="$t('links.url_placeholder')"
                   class="add-link-input"
                   @keydown.enter="addCustomLink"
-                />
+                >
                 <Button
                   :label="$t('common.add')"
                   icon="pi pi-plus"
@@ -218,7 +222,7 @@
                   @click="addCustomLink"
                 />
               </div>
-            </Dialog>
+            </SgDialog>
 
             <!-- Kanban Columns -->
             <div
@@ -259,6 +263,7 @@
                           <span class="item-title">{{ item.title }}</span>
                           <Button
                             icon="pi pi-times"
+                            :aria-label="`Supprimer ${item.title}`"
                             text
                             rounded
                             size="small"
@@ -282,14 +287,15 @@
           />
         </div>
       </SplitterPanel>
-      <SplitterPanel :size="100 - panelSize">
+      <SplitterResizeHandle class="sidebar-resize-handle" />
+      <SplitterPanel :default-size="100 - SIDEBAR_EXPANDED_SIZE">
         <slot></slot>
       </SplitterPanel>
-    </Splitter>
+    </SplitterGroup>
   </template>
   <template v-else>
     <Button
-      v-tooltip.right="'Ouvrir le panneau gauche'"
+      v-sg-tooltip.right="'Ouvrir le panneau gauche'"
       icon="pi pi-bars"
       text
       aria-label="Ouvrir le panneau gauche"
@@ -301,7 +307,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, nextTick, onMounted, watch } from 'vue'
+import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
 import { useRouter, useRoute } from 'vue-router'
 import { useKanbanStore } from '@/stores/kanban'
 import { useWebviewStore } from '@/stores/webviewState'
@@ -311,13 +318,12 @@ import { useCustomLinksStore } from '@/stores/customLinks'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 import type { MenuItem } from '../types'
 import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Dialog from 'primevue/dialog'
-import ToggleButton from 'primevue/togglebutton'
+import Button from './ui/SgButton.vue'
+import SgDialog from './ui/SgDialog.vue'
 import ProfileSwitcher from './ProfileSwitcher.vue'
 import FriendsPanel from './FriendsPanel.vue'
 import NetworkBrandIcon from './NetworkBrandIcon.vue'
+import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
 
 const router = useRouter()
 const route = useRoute()
@@ -326,7 +332,6 @@ const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const filterStore = useFriendsFilterStore()
 const customLinksStore = useCustomLinksStore()
-const splitterRef = ref()
 
 const showFriendsPanel = ref(false)
 const showAddLinkDialog = ref(false)
@@ -347,10 +352,11 @@ const emit = defineEmits<{
 }>()
 
 const iconsOnly = ref(false)
-const COMPACT_THRESHOLD = 10
+const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
 
-const panelSize = computed(() => {
-  return iconsOnly.value ? 5 : 20
+watch(iconsOnly, async compact => {
+  await nextTick()
+  sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
 const totalKanbanItems = computed(() => {
@@ -401,28 +407,14 @@ const deleteKanbanItem = (itemId: string) => {
   kanbanStore.deleteItem(itemId)
 }
 
-const toggleIconsOnly = () => {
-  iconsOnly.value = !iconsOnly.value
-}
-
 const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
 
-interface ResizeEventPayload {
-  sizes?: number[]
-}
-
-const handleResize = (e: ResizeEventPayload) => {
-  const newSize = e.sizes?.[0]
+const handleResize = (sizes: number[]) => {
+  const newSize = sizes[0]
   if (typeof newSize !== 'number') return
 
-  if (newSize <= COMPACT_THRESHOLD && !iconsOnly.value) {
-    iconsOnly.value = true
-  } else if (newSize > COMPACT_THRESHOLD && iconsOnly.value) {
-    iconsOnly.value = false
-  }
+  iconsOnly.value = isCompactSidebarSize(newSize)
 }
-
-const handleResizeEnd = handleResize
 
 const builtinMenuItems = builtInSocialNetworks.map((network, index) => ({
   id: index + 1,
@@ -598,21 +590,21 @@ onMounted(() => {
   height: var(--sg-sidebar-network-row-height);
 }
 
-.network-btn :deep(.p-button) {
+.network-btn {
   width: var(--sg-sidebar-fill-size);
   border-radius: 0;
   height: var(--sg-sidebar-network-row-height);
 }
 
-.network-btn.justify-content-start :deep(.p-button) {
+.network-btn.justify-content-start {
   padding: 0 var(--sg-sidebar-network-row-padding-inline);
 }
 
-.network-btn.justify-content-center :deep(.p-button) {
+.network-btn.justify-content-center {
   padding: 0;
 }
 
-.network-btn :deep(.p-button:hover),
+.network-btn:hover,
 .network-row:hover {
   background-color: var(--surface-hover);
 }
@@ -680,6 +672,8 @@ onMounted(() => {
   flex-direction: column;
   gap: var(--sg-sidebar-form-gap);
 }
+
+.friends-filter-button { width: var(--sg-sidebar-fill-size); min-height: var(--sg-sidebar-filter-height); border-radius: 0; }
 
 .add-link-input {
   width: var(--sg-sidebar-fill-size);
@@ -756,15 +750,15 @@ onMounted(() => {
 }
 
 .type-email {
-  border-left: 3px solid var(--blue-500);
+  border-left: var(--sg-sidebar-active-indicator-width) solid var(--blue-500);
 }
 
 .type-task {
-  border-left: 3px solid var(--green-500);
+  border-left: var(--sg-sidebar-active-indicator-width) solid var(--green-500);
 }
 
 .type-note {
-  border-left: 3px solid var(--yellow-500);
+  border-left: var(--sg-sidebar-active-indicator-width) solid var(--yellow-500);
 }
 
 /* Animations */
@@ -796,26 +790,12 @@ onMounted(() => {
     transition: none;
   }
 
-  :deep(.p-splitter-panel),
-  :deep(.p-splitter-gutter) {
+  .sidebar-resize-handle {
     transition: none;
   }
 }
 
-.p-splitter {
-  border: none;
-}
-
-:deep(.p-splitter-gutter) {
-  background: var(--surface-border);
-  transition: var(--sg-sidebar-gutter-transition);
-}
-
-:deep(.p-splitter-gutter:hover) {
-  background: var(--primary-color);
-}
-
-:deep(.p-splitter-panel) {
-  transition: var(--sg-sidebar-panel-transition);
-}
+.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--surface-border); transition: var(--sg-sidebar-gutter-transition); }
+.sidebar-resize-handle:hover { background: var(--primary-color); }
+.sidebar-resize-handle:focus-visible { background: var(--primary-color); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 </style> 

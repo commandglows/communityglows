@@ -9,7 +9,7 @@
           class="thread-card"
         >
           <div class="thread-header">
-            <Avatar 
+            <SgAvatar
               :image="`https://api.dicebear.com/7.x/avataaars/svg?seed=user${i}`"
               shape="circle"
               size="normal"
@@ -23,15 +23,18 @@
             <p>This is a thread post #{{ i }}. Engaging with the community! 🚀</p>
           </div>
           <div class="thread-actions">
-            <Button
+            <SgButton
+              aria-label="Aimer"
               icon="pi pi-heart"
               text
             />
-            <Button
+            <SgButton
+              aria-label="Commenter"
               icon="pi pi-comment"
               text
             />
-            <Button
+            <SgButton
+              aria-label="Partager"
               icon="pi pi-share-alt"
               text
             />
@@ -42,30 +45,35 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import SgAvatar from '../ui/SgAvatar.vue'
+import SgButton from '../ui/SgButton.vue'
+</script>
+
 <style scoped>
 .threads-content {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .thread-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
+  gap: var(--sg-space-1rem);
+  max-width: var(--sg-size-600px);
+  margin: var(--sg-space-0-auto);
 }
 
 .thread-card {
   background: var(--surface-card);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: var(--sg-radius-12px);
+  padding: var(--sg-space-1rem);
 }
 
 .thread-header {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-0d8rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .thread-user {
@@ -78,18 +86,18 @@
 }
 
 .timestamp {
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   color: var(--text-color-secondary);
 }
 
 .thread-body {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .thread-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   border-top: 1px solid var(--surface-border);
-  padding-top: 0.8rem;
+  padding-top: var(--sg-space-0d8rem);
 }
-</style> 
+</style>

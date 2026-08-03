@@ -316,6 +316,8 @@
               @change="onTextZoomChange"
             />
 
+            <KeyboardShortcuts />
+
             <!-- Replay onboarding -->
             <button
               class="settings-replay-btn"
@@ -344,7 +346,7 @@ import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/post
 import { buildDiagnosticsReport, buildIdentityHeader } from '@/lib/buildDiagnostics'
 import { getConvexClient } from '@/lib/convex'
 import { api } from '../../../../../../convex/_generated/api'
-import { useToast } from 'primevue/usetoast'
+import { push } from 'notivue'
 import {
   DEFAULT_TAP_SOUND_VARIANT,
   TAP_SOUND_STORAGE_KEY,
@@ -361,6 +363,7 @@ import {
 } from '../utils/textZoom'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
+import KeyboardShortcuts from './KeyboardShortcuts.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
 
 const props = defineProps<{ modelValue: boolean }>()
@@ -369,7 +372,6 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 const { t } = useI18n()
 const themeStore = useThemeStore()
 const onboardingStore = useOnboardingStore()
-const toast = useToast()
 const nudge = useSignupNudge()
 const isSignedIn = isAuthenticated
 const themeModes: Array<{ value: ThemeMode; labelKey: string }> = [
@@ -454,10 +456,9 @@ async function handleAccountAuth(flow: 'signIn' | 'signUp') {
     })
     settingsEmail.value = normalizedEmail
     nudge.onAccountCreated()
-    toast.add({
-      severity: 'success',
-      summary: flow === 'signIn' ? t('account.signed_in_toast') : t('account.created_toast'),
-      life: 1800,
+    push.success({
+      message: flow === 'signIn' ? t('account.signed_in_toast') : t('account.created_toast'),
+      duration: 1800,
     })
     signupPassword.value = ''
     await finalizePasswordSignIn({
@@ -487,7 +488,7 @@ let dragResetTimer: number | null = null
 
 const sheetStyle = computed(() => ({
   '--sheet-drag-offset': `${dragOffset.value}px`,
-  transition: isDragging.value ? 'none' : 'transform 250ms ease',
+  transition: isDragging.value ? 'none' : 'var(--sg-mobile-sheet-drag-motion)',
 }))
 
 function clearDragResetTimer() {
@@ -624,7 +625,7 @@ async function handleSignOut() {
   settingsEmail.value = ''
   signupPassword.value = ''
   authAction.value = 'signIn'
-  toast.add({ severity: 'success', summary: t('account.signed_out_toast'), life: 3000 })
+  push.success({ message: t('account.signed_out_toast'), duration: 3000 })
 }
 
 // ─── Haptic & tap sound ─────────────────────────────────────
@@ -735,18 +736,18 @@ onUnmounted(() => {
 .sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1000;
+  background: var(--sg-color-scrim-45);
+  z-index: var(--sg-layer-1000);
   display: flex;
   align-items: flex-end;
 }
 
 .profile-sheet {
-  width: 100%;
+  width: var(--sg-size-100pct);
   background: var(--surface-card);
-  border-radius: 20px 20px 0 0;
-  padding-bottom: env(safe-area-inset-bottom, 16px);
-  max-height: 85vh;
+  border-radius: var(--sg-radius-20px-20px-0-0);
+  padding-bottom: var(--sg-space-env-safeneg-areaneg-insetneg-bottom-16px);
+  max-height: var(--sg-size-85vh);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -761,11 +762,11 @@ onUnmounted(() => {
   );
   --settings-account-card-border:
     color-mix(in srgb, var(--surface-border) 68%, var(--primary-color) 32%);
-  --settings-account-card-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
-  --settings-account-status-bg: rgba(148, 163, 184, 0.18);
+  --settings-account-card-shadow: 0 18px 38px var(--sg-color-slate-alpha-08);
+  --settings-account-status-bg: var(--sg-color-slate-alpha-18);
   --settings-account-status-color: var(--text-color-secondary);
   --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--primary-color) 14%, rgba(255, 255, 255, 0) 86%);
+    color-mix(in srgb, var(--primary-color) 14%, var(--sg-color-white-transparent) 86%);
   --settings-account-status-connected-color: var(--primary-color);
   --settings-sync-info-bg: linear-gradient(
     180deg,
@@ -775,27 +776,27 @@ onUnmounted(() => {
   --settings-sync-info-border:
     color-mix(in srgb, var(--surface-border) 80%, var(--primary-color) 20%);
   --settings-sync-warning-icon:
-    color-mix(in srgb, var(--primary-color) 55%, #f59e0b 45%);
+    color-mix(in srgb, var(--primary-color) 55%, var(--sg-palette-amber-500) 45%);
   --settings-cta-gradient-start:
-    color-mix(in srgb, var(--primary-color) 88%, #ffffff 12%);
+    color-mix(in srgb, var(--primary-color) 88%, var(--sg-color-white) 12%);
   --settings-cta-gradient-end:
-    color-mix(in srgb, #2563eb 72%, var(--primary-color) 28%);
-  --settings-cta-shadow: 0 14px 28px rgba(59, 130, 246, 0.2);
+    color-mix(in srgb, var(--sg-palette-blue-600) 72%, var(--primary-color) 28%);
+  --settings-cta-shadow: 0 14px 28px var(--sg-color-blue-alpha-20);
   --settings-secondary-auth-bg:
     color-mix(in srgb, var(--primary-color) 10%, var(--surface-card) 90%);
   --settings-secondary-auth-border:
     color-mix(in srgb, var(--primary-color) 22%, var(--surface-border) 78%);
-  --settings-danger-bg: rgba(239, 68, 68, 0.04);
-  --settings-danger-border: rgba(239, 68, 68, 0.36);
-  --settings-danger-color: #dc2626;
-  --settings-error-bg: rgba(239, 68, 68, 0.08);
-  --settings-error-border: rgba(239, 68, 68, 0.18);
-  --settings-error-text: #dc2626;
+  --settings-danger-bg: var(--sg-color-danger-alpha-04);
+  --settings-danger-border: var(--sg-color-danger-alpha-36);
+  --settings-danger-color: var(--sg-palette-red-600);
+  --settings-error-bg: var(--sg-color-danger-alpha-08);
+  --settings-error-border: var(--sg-color-danger-alpha-108);
+  --settings-error-text: var(--sg-palette-red-600);
   --settings-error-btn-bg:
-    color-mix(in srgb, var(--surface-card) 92%, rgba(255, 255, 255, 0.08) 8%);
-  --settings-error-btn-border: rgba(239, 68, 68, 0.2);
-  --settings-error-btn-text: #b91c1c;
-  --settings-backup-divider: rgba(148, 163, 184, 0.18);
+    color-mix(in srgb, var(--surface-card) 92%, var(--sg-color-white-alpha-08) 8%);
+  --settings-error-btn-border: var(--sg-color-danger-alpha-20);
+  --settings-error-btn-text: var(--sg-palette-red-700);
+  --settings-backup-divider: var(--sg-color-slate-alpha-18);
 }
 
 .settings-sheet.is-dark,
@@ -804,54 +805,54 @@ onUnmounted(() => {
   --settings-account-card-bg: linear-gradient(
     180deg,
     color-mix(in srgb, var(--surface-card) 92%, var(--primary-color) 8%),
-    color-mix(in srgb, var(--surface-card) 96%, #020617 4%)
+    color-mix(in srgb, var(--surface-card) 96%, var(--sg-palette-slate-950) 4%)
   );
   --settings-account-card-border:
     color-mix(in srgb, var(--surface-border) 76%, var(--primary-color) 24%);
-  --settings-account-card-shadow: 0 24px 48px rgba(2, 6, 23, 0.38);
-  --settings-account-status-bg: rgba(255, 255, 255, 0.06);
+  --settings-account-card-shadow: 0 24px 48px var(--sg-color-slate-scrim-38);
+  --settings-account-status-bg: var(--sg-color-white-alpha-06);
   --settings-account-status-color:
     color-mix(in srgb, var(--text-color-secondary) 88%, white 12%);
   --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--primary-color) 20%, rgba(30, 41, 59, 0.6) 80%);
-  --settings-account-status-connected-color: #93c5fd;
+    color-mix(in srgb, var(--primary-color) 20%, var(--sg-color-slate-overlay-60) 80%);
+  --settings-account-status-connected-color: var(--sg-palette-blue-300);
   --settings-sync-info-bg: linear-gradient(
     180deg,
     color-mix(in srgb, var(--surface-ground) 64%, var(--surface-card) 36%),
-    color-mix(in srgb, var(--surface-card) 90%, #020617 10%)
+    color-mix(in srgb, var(--surface-card) 90%, var(--sg-palette-slate-950) 10%)
   );
   --settings-sync-info-border:
     color-mix(in srgb, var(--surface-border) 78%, var(--primary-color) 22%);
   --settings-sync-warning-icon:
-    color-mix(in srgb, #f59e0b 74%, var(--primary-color) 26%);
+    color-mix(in srgb, var(--sg-palette-amber-500) 74%, var(--primary-color) 26%);
   --settings-cta-gradient-start:
     color-mix(in srgb, var(--primary-color) 92%, white 8%);
   --settings-cta-gradient-end:
-    color-mix(in srgb, #0ea5e9 72%, var(--primary-color) 28%);
-  --settings-cta-shadow: 0 18px 32px rgba(2, 6, 23, 0.42);
+    color-mix(in srgb, var(--sg-palette-sky-500) 72%, var(--primary-color) 28%);
+  --settings-cta-shadow: 0 18px 32px var(--sg-color-slate-scrim-42);
   --settings-secondary-auth-bg:
     color-mix(in srgb, var(--surface-card) 86%, var(--primary-color) 14%);
   --settings-secondary-auth-border:
     color-mix(in srgb, var(--surface-border) 72%, var(--primary-color) 28%);
-  --settings-danger-bg: rgba(239, 68, 68, 0.1);
-  --settings-danger-border: rgba(248, 113, 113, 0.32);
-  --settings-danger-color: #fca5a5;
-  --settings-error-bg: rgba(127, 29, 29, 0.26);
-  --settings-error-border: rgba(248, 113, 113, 0.22);
-  --settings-error-text: #fecaca;
+  --settings-danger-bg: var(--sg-color-danger-alpha-10);
+  --settings-danger-border: var(--sg-color-danger-light-alpha-32);
+  --settings-danger-color: var(--sg-palette-red-300);
+  --settings-error-bg: var(--sg-color-danger-dark-alpha-26);
+  --settings-error-border: var(--sg-color-danger-light-alpha-22);
+  --settings-error-text: var(--sg-palette-red-200);
   --settings-error-btn-bg:
-    color-mix(in srgb, var(--surface-card) 86%, rgba(248, 113, 113, 0.12) 14%);
-  --settings-error-btn-border: rgba(248, 113, 113, 0.22);
-  --settings-error-btn-text: #fca5a5;
-  --settings-backup-divider: rgba(161, 161, 170, 0.16);
+    color-mix(in srgb, var(--surface-card) 86%, var(--sg-color-danger-light-alpha-12) 14%);
+  --settings-error-btn-border: var(--sg-color-danger-light-alpha-22);
+  --settings-error-btn-text: var(--sg-palette-red-300);
+  --settings-backup-divider: var(--sg-color-neutral-alpha-16);
 }
 
 .sheet-handle {
-  width: 2.5rem;
-  height: 4px;
+  width: var(--sg-size-2d5rem);
+  height: var(--sg-size-4px);
   background: var(--surface-border);
-  border-radius: 2px;
-  margin: 0.75rem auto 0;
+  border-radius: var(--sg-radius-2px);
+  margin: var(--sg-space-0d75rem-auto-0);
   flex-shrink: 0;
 }
 
@@ -865,12 +866,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem 0.5rem;
+  padding: var(--sg-space-0d75rem-1d25rem-0d5rem);
   flex-shrink: 0;
 }
 
 .sheet-title {
-  font-size: 1rem;
+  font-size: var(--sg-font-size-1rem);
   font-weight: 700;
   color: var(--text-color);
 }
@@ -878,16 +879,16 @@ onUnmounted(() => {
 .sheet-close-btn {
   background: var(--surface-ground);
   border: none;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  border-radius: var(--sg-radius-50pct);
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--text-color-secondary);
-  font-size: 0.75rem;
-  transition: background-color 0.12s;
+  font-size: var(--sg-font-size-0d75rem);
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .sheet-close-btn:active {
@@ -902,15 +903,15 @@ onUnmounted(() => {
 /* ─── Settings content ───────────────────────────────────────── */
 
 .settings-content {
-  padding: 0 1.25rem 1.5rem;
+  padding: var(--sg-space-0-1d25rem-1d5rem);
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-color, #6366f1) transparent;
+  scrollbar-width: var(--sg-size-thin);
+  scrollbar-color: var(--primary-color, var(--sg-palette-indigo-500)) transparent;
   scrollbar-gutter: stable;
 }
 
 .settings-content::-webkit-scrollbar {
-  width: 6px;
+  width: var(--sg-size-6px);
   -webkit-appearance: none;
 }
 
@@ -919,16 +920,16 @@ onUnmounted(() => {
 }
 
 .settings-content::-webkit-scrollbar-thumb {
-  background: var(--primary-color, #6366f1);
-  border-radius: 3px;
+  background: var(--primary-color, var(--sg-palette-indigo-500));
+  border-radius: var(--sg-radius-3px);
   opacity: 0.6;
 }
 
 .settings-section-label {
-  margin: 1rem 0 0.5rem;
-  font-size: 0.72rem;
+  margin: var(--sg-space-1rem-0-0d5rem);
+  font-size: var(--sg-font-size-0d72rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
   color: var(--text-color-secondary);
 }
@@ -936,8 +937,8 @@ onUnmounted(() => {
 .settings-sound-variant-row {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin: -0.2rem 0 0.8rem;
+  gap: var(--sg-space-0d55rem);
+  margin: var(--sg-space-neg-0d2rem-0-0d8rem);
 }
 
 .settings-sound-variant-label {
@@ -947,19 +948,19 @@ onUnmounted(() => {
 .settings-sound-variant-options {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
 }
 
 .settings-sound-variant-btn {
-  min-height: 2.4rem;
-  padding: 0.55rem 0.6rem;
-  border-radius: 12px;
+  min-height: var(--sg-size-2d4rem);
+  padding: var(--sg-space-0d55rem-0d6rem);
+  border-radius: var(--sg-radius-12px);
   border: 1px solid var(--surface-border);
   background: var(--surface-ground);
   color: var(--text-color);
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 600;
-  transition: border-color 0.15s, background-color 0.15s, color 0.15s, opacity 0.15s;
+  transition: var(--sg-motion-borderneg-color-0d15s-backgroundneg-color-0d15s-color-0d15s-opacity-0d15s);
 }
 
 .settings-sound-variant-btn.active {
@@ -973,33 +974,33 @@ onUnmounted(() => {
 }
 
 .settings-field {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--sg-space-0d75rem);
 }
 
 .settings-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
+  gap: var(--sg-space-0d5rem);
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 500;
   color: var(--text-color-secondary);
-  margin-bottom: 0.35rem;
+  margin-bottom: var(--sg-space-0d35rem);
 }
 
 .settings-label i {
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .settings-input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  font-size: 0.9rem;
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d6rem-0d75rem);
+  font-size: var(--sg-font-size-0d9rem);
   background: var(--surface-ground);
   border: 1px solid var(--surface-border);
-  border-radius: 10px;
+  border-radius: var(--sg-radius-10px);
   color: var(--text-color);
   outline: none;
-  transition: border-color 0.15s;
+  transition: var(--sg-motion-borderneg-color-0d15s);
   box-sizing: border-box;
 }
 
@@ -1008,19 +1009,19 @@ onUnmounted(() => {
 }
 
 .settings-account-hint {
-  font-size: 0.82rem;
+  font-size: var(--sg-font-size-0d82rem);
   color: var(--text-color-secondary);
-  line-height: 1.45;
+  line-height: var(--sg-line-height-1d45);
   margin: 0;
 }
 
 .settings-account-card {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  padding: 0.9rem;
-  margin-bottom: 1rem;
-  border-radius: 16px;
+  gap: var(--sg-space-0d9rem);
+  padding: var(--sg-space-0d9rem);
+  margin-bottom: var(--sg-space-1rem);
+  border-radius: var(--sg-radius-16px);
   background: var(--settings-account-card-bg);
   border: 1px solid var(--settings-account-card-border);
   box-shadow: var(--settings-account-card-shadow);
@@ -1034,11 +1035,11 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
+  padding: var(--sg-space-0d3rem-0d55rem);
+  border-radius: var(--sg-radius-999px);
   background: var(--settings-account-status-bg);
   color: var(--settings-account-status-color);
-  font-size: 0.72rem;
+  font-size: var(--sg-font-size-0d72rem);
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1047,7 +1048,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 
 .settings-account-status.connected {
@@ -1059,13 +1060,13 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: var(--sg-space-0d35rem);
   padding: 0;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--sg-radius-999px);
   background: transparent;
   color: var(--primary-color);
-  font-size: 0.78rem;
+  font-size: var(--sg-font-size-0d78rem);
   font-weight: 700;
   cursor: pointer;
 }
@@ -1073,9 +1074,9 @@ onUnmounted(() => {
 .settings-sync-info-box {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 14px;
+  gap: var(--sg-space-0d55rem);
+  padding: var(--sg-space-0d7rem-0d8rem);
+  border-radius: var(--sg-radius-14px);
   background: var(--settings-sync-info-bg);
   border: 1px solid var(--settings-sync-info-border);
 }
@@ -1084,62 +1085,62 @@ onUnmounted(() => {
 .settings-sync-warning-row {
   display: flex;
   align-items: flex-start;
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
 }
 
 .settings-sync-info-row i {
   color: var(--primary-color);
-  font-size: 0.95rem;
-  margin-top: 0.15rem;
+  font-size: var(--sg-font-size-0d95rem);
+  margin-top: var(--sg-space-0d15rem);
 }
 
 .settings-sync-warning-row i {
   color: var(--settings-sync-warning-icon);
-  font-size: 0.95rem;
-  margin-top: 0.15rem;
+  font-size: var(--sg-font-size-0d95rem);
+  margin-top: var(--sg-space-0d15rem);
 }
 
 .settings-sync-info-row p,
 .settings-sync-warning-row p {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d45);
   color: var(--text-color-secondary);
 }
 
 .settings-signup-form {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
 }
 
 .settings-auth-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
+  gap: var(--sg-space-0d6rem);
 }
 
 .settings-signup-form .nudge-cta,
 .sign-out-btn {
-  width: 100%;
-  padding: 0.7rem;
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d7rem);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--sg-radius-10px);
   background: linear-gradient(
     135deg,
     var(--settings-cta-gradient-start),
     var(--settings-cta-gradient-end)
   );
-  color: #fff;
-  font-size: 0.9rem;
+  color: var(--sg-color-white);
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   margin-top: 0;
-  min-height: 2.7rem;
+  min-height: var(--sg-size-2d7rem);
   box-shadow: var(--settings-cta-shadow);
 }
 
@@ -1151,7 +1152,7 @@ onUnmounted(() => {
   background: var(--settings-secondary-auth-bg);
   color: var(--primary-color);
   border: 1px solid var(--settings-secondary-auth-border);
-  box-shadow: none;
+  box-shadow: var(--sg-shadow-none);
 }
 
 .sign-out-btn {
@@ -1159,15 +1160,15 @@ onUnmounted(() => {
   color: var(--settings-danger-color);
   border: 1px solid var(--settings-danger-border);
   margin-top: 0;
-  box-shadow: none;
+  box-shadow: var(--sg-shadow-none);
 }
 
 .signup-error-card {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  padding: 0.7rem 0.8rem;
-  border-radius: 12px;
+  gap: var(--sg-space-0d55rem);
+  padding: var(--sg-space-0d7rem-0d8rem);
+  border-radius: var(--sg-radius-12px);
   background: var(--settings-error-bg);
   border: 1px solid var(--settings-error-border);
 }
@@ -1175,34 +1176,34 @@ onUnmounted(() => {
 .nudge-error {
   margin: 0;
   color: var(--settings-error-text);
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d45);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 
 .signup-error-actions {
   display: flex;
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
   flex-wrap: wrap;
 }
 
 .signup-error-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.3rem 0.6rem;
+  gap: var(--sg-space-0d35rem);
+  padding: var(--sg-space-0d3rem-0d6rem);
   border: 1px solid var(--settings-error-btn-border);
-  border-radius: 999px;
+  border-radius: var(--sg-radius-999px);
   background: var(--settings-error-btn-bg);
   color: var(--settings-error-btn-text);
-  font-size: 0.76rem;
+  font-size: var(--sg-font-size-0d76rem);
   font-weight: 600;
   cursor: pointer;
 }
 
 .settings-email-display {
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   color: var(--text-color);
   font-weight: 500;
 }
@@ -1210,15 +1211,15 @@ onUnmounted(() => {
 .settings-backup-section {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding-top: 0.05rem;
+  gap: var(--sg-space-0d6rem);
+  padding-top: var(--sg-space-0d05rem);
   border-top: 1px solid var(--settings-backup-divider);
 }
 
 .settings-backup-hint {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d45);
   color: var(--text-color-secondary);
 }
 
@@ -1226,31 +1227,31 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 0;
+  padding: var(--sg-space-0d65rem-0);
   border-bottom: 1px solid var(--surface-border);
 }
 
 .settings-toggle-row:last-child {
-  border-bottom: none;
+  border-bottom: var(--sg-position-none);
 }
 
 .settings-theme-mode-group {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-  margin: -0.15rem 0 0.8rem;
+  gap: var(--sg-space-0d55rem);
+  margin: var(--sg-space-neg-0d15rem-0-0d8rem);
 }
 
 .settings-theme-mode-btn {
-  min-height: 2.45rem;
-  padding: 0.55rem 0.6rem;
-  border-radius: 12px;
+  min-height: var(--sg-size-2d45rem);
+  padding: var(--sg-space-0d55rem-0d6rem);
+  border-radius: var(--sg-radius-12px);
   border: 1px solid var(--surface-border);
   background: var(--surface-ground);
   color: var(--text-color-secondary);
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 700;
-  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+  transition: var(--sg-motion-borderneg-color-0d15s-backgroundneg-color-0d15s-color-0d15s);
 }
 
 .settings-theme-mode-btn.active {
@@ -1260,36 +1261,36 @@ onUnmounted(() => {
 }
 
 .settings-theme-hint {
-  margin: -0.3rem 0 0.8rem;
-  font-size: 0.78rem;
-  line-height: 1.4;
+  margin: var(--sg-space-neg-0d3rem-0-0d8rem);
+  font-size: var(--sg-font-size-0d78rem);
+  line-height: var(--sg-line-height-1d4);
   color: var(--text-color-secondary);
 }
 
 .settings-toggle-label {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.9rem;
+  gap: var(--sg-space-0d6rem);
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
   color: var(--text-color);
 }
 
 .settings-toggle-label i {
-  font-size: 1rem;
-  width: 2rem;
+  font-size: var(--sg-font-size-1rem);
+  width: var(--sg-size-2rem);
   text-align: center;
 }
 
 .friends-toggle-pill {
   position: relative;
-  width: 2.8rem;
-  height: 1.6rem;
-  border-radius: 1rem;
+  width: var(--sg-size-2d8rem);
+  height: var(--sg-size-1d6rem);
+  border-radius: var(--sg-radius-1rem);
   border: none;
   background: var(--surface-border);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: var(--sg-motion-backgroundneg-color-0d2s);
   flex-shrink: 0;
   padding: 0;
 }
@@ -1300,14 +1301,14 @@ onUnmounted(() => {
 
 .toggle-thumb {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  top: var(--sg-position-3px);
+  left: var(--sg-position-3px);
+  width: var(--sg-size-1d1rem);
+  height: var(--sg-size-1d1rem);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-white);
+  box-shadow: var(--sg-shadow-0-1px-3px-rgba-0-0-0-0d2);
+  transition: var(--sg-motion-transform-0d2s);
 }
 
 .friends-toggle-pill.enabled .toggle-thumb {
@@ -1315,31 +1316,31 @@ onUnmounted(() => {
 }
 
 .text-zoom-value {
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   color: var(--primary-color);
   font-weight: 600;
-  min-width: 3rem;
+  min-width: var(--sg-size-3rem);
   text-align: right;
 }
 
 .text-zoom-slider {
-  width: 100%;
-  margin: 0 0 0.75rem;
+  width: var(--sg-size-100pct);
+  margin: var(--sg-space-0-0-0d75rem);
   accent-color: var(--primary-color);
 }
 
 .settings-replay-btn {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 0.5rem;
-  border-radius: 10px;
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d75rem-1rem);
+  margin-top: var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-10px);
   border: 1px solid var(--surface-border);
   background: var(--surface-card);
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: var(--sg-space-0d6rem);
   cursor: pointer;
 }
 
@@ -1351,12 +1352,12 @@ onUnmounted(() => {
 
 .sheet-enter-active,
 .sheet-leave-active {
-  transition: opacity 0.25s ease;
+  transition: var(--sg-motion-opacity-0d25s-ease);
 }
 
 .sheet-enter-active .profile-sheet,
 .sheet-leave-active .profile-sheet {
-  transition: transform 0.25s ease;
+  transition: var(--sg-motion-transform-0d25s-ease);
 }
 
 .sheet-enter-from,
@@ -1376,23 +1377,23 @@ onUnmounted(() => {
   .sheet-leave-active .profile-sheet,
   .friends-toggle-pill,
   .toggle-thumb {
-    transition: none;
+    transition: var(--sg-motion-none);
   }
 }
 
 @media (max-width: 420px) {
   .settings-account-card {
-    gap: 0.75rem;
-    padding: 0.8rem;
+    gap: var(--sg-space-0d75rem);
+    padding: var(--sg-space-0d8rem);
   }
 
   .settings-account-actions-row {
-    gap: 0.5rem;
+    gap: var(--sg-space-0d5rem);
   }
 
   .settings-account-status,
   .settings-sync-toggle {
-    font-size: 0.72rem;
+    font-size: var(--sg-font-size-0d72rem);
   }
 }
 </style>

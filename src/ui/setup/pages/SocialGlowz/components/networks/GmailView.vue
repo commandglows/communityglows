@@ -56,8 +56,9 @@
               />
               <span class="sender">{{ email.sender.name }}</span>
               <Button
-                v-tooltip.left="$t('gmail.add_to_kanban')"
+                v-sg-tooltip.left="$t('gmail.add_to_kanban')"
                 icon="pi pi-plus"
+                :aria-label="$t('gmail.add_to_kanban')"
                 text
                 rounded
                 @click.stop="addToKanban(email)"
@@ -98,7 +99,7 @@ import CrmToolbar from '../CrmToolbar.vue'
 import { formatDate } from '../../utils/dateFormatter'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 import { useKanbanStore } from '@/stores/kanban'
-import Button from 'primevue/button'
+import Button from '../ui/SgButton.vue'
 import type { Email } from '../../types'
 
 const store = useSocialNetworksStore()

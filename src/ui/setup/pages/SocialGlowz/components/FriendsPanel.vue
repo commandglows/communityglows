@@ -1,11 +1,8 @@
 <template>
-  <Dialog
-    v-model:visible="visible"
-    :header="$t('friends_filter.dialog_title', { network: networkLabel })"
-    :modal="true"
-    :closable="true"
-    :draggable="false"
-    style="width: 28rem; max-width: 95vw"
+  <SgDialog
+    v-model="visible"
+    :title="$t('friends_filter.dialog_title', { network: networkLabel })"
+    variant="friends"
   >
     <p class="hint">
       {{ $t('friends_filter.hint_text', { network: networkLabel }) }}
@@ -13,13 +10,13 @@
 
     <!-- Add friend input -->
     <div class="add-row">
-      <InputText
+      <input
         v-model="newFriend"
         placeholder="Nom ou @pseudo"
         class="add-input"
         autofocus
         @keydown.enter="addFriend"
-      />
+      >
       <Button
         icon="pi pi-plus"
         :disabled="!newFriend.trim()"
@@ -56,28 +53,22 @@
       v-else
       class="empty-state"
     >
-      <i
-        class="pi pi-users"
-        style="font-size: 2rem; opacity: 0.3"
-      />
+      <i class="pi pi-users empty-state-icon" />
       <p>{{ $t('friends_filter.empty_state') }}</p>
       <p class="hint">{{ $t('friends_filter.empty_hint') }}</p>
     </div>
 
-    <template #footer>
-      <div class="footer-note">
-        <i class="pi pi-info-circle" />
-        {{ $t('friends_filter.footer_note') }}
-      </div>
-    </template>
-  </Dialog>
+    <div class="footer-note">
+      <i class="pi pi-info-circle" />
+      {{ $t('friends_filter.footer_note') }}
+    </div>
+  </SgDialog>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Dialog from 'primevue/dialog'
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
+import Button from './ui/SgButton.vue'
+import SgDialog from './ui/SgDialog.vue'
 import { useFriendsFilterStore } from '@/stores/friendsFilter'
 
 const props = defineProps<{
@@ -144,16 +135,16 @@ const removeFriend = (name: string) => {
 
 <style scoped>
 .hint {
-  font-size: 0.85rem;
+  font-size: var(--sg-friends-hint-size);
   color: var(--text-color-secondary);
-  margin: 0 0 1rem;
-  line-height: 1.4;
+  margin: 0 0 var(--sg-space-4);
+  line-height: var(--sg-friends-hint-line-height);
 }
 
 .add-row {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--sg-space-2);
+  margin-bottom: var(--sg-space-4);
 }
 
 .add-input {
@@ -163,18 +154,18 @@ const removeFriend = (name: string) => {
 .friends-list {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  max-height: 18rem;
+  gap: var(--sg-space-1);
+  max-height: var(--sg-friends-list-max-height);
   overflow-y: auto;
 }
 
 .friend-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.4rem 0.5rem;
-  border-radius: 6px;
-  transition: background-color 0.15s;
+  gap: var(--sg-space-3);
+  padding: var(--sg-friends-row-padding);
+  border-radius: var(--sg-friends-row-radius);
+  transition: var(--sg-motion-colors);
 }
 
 .friend-row:hover {
@@ -183,21 +174,21 @@ const removeFriend = (name: string) => {
 
 .friend-icon {
   color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  font-size: var(--sg-friends-icon-size);
 }
 
 .friend-name {
   flex: 1;
-  font-size: 0.95rem;
+  font-size: var(--sg-friends-name-size);
 }
 
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: var(--sg-friends-empty-padding);
   color: var(--text-color-secondary);
-  gap: 0.5rem;
+  gap: var(--sg-space-2);
   text-align: center;
 }
 
@@ -205,11 +196,13 @@ const removeFriend = (name: string) => {
   margin: 0;
 }
 
+.empty-state-icon { font-size: var(--sg-friends-empty-icon-size); opacity: var(--sg-friends-empty-icon-opacity); }
+
 .footer-note {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
+  gap: var(--sg-space-2);
+  font-size: var(--sg-friends-footer-size);
   color: var(--text-color-secondary);
 }
 </style>

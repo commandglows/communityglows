@@ -3,7 +3,6 @@ import { dirname, resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
-import { PrimeVueResolver } from 'unplugin-vue-components/resolvers'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
@@ -82,7 +81,7 @@ export default defineConfig({
       // Prefer SocialGlowz-local component variants when names overlap.
       dirs: [resolve(PROJECT_ROOT, 'src/components'), resolve(APP_ROOT_ABS, 'components')],
       dts: resolve(APP_ROOT_ABS, 'types/components.d.ts'),
-      resolvers: [IconsResolver(), PrimeVueResolver()],
+      resolvers: [IconsResolver()],
       allowOverrides: true,
     }),
 
@@ -104,7 +103,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (/\/(vue|vue-router|pinia|@vueuse)\//.test(id)) return 'vendor-vue'
-            if (/\/(primevue|primeicons|primeflex)\//.test(id)) return 'vendor-ui'
+            if (/\/(primeicons|primeflex)\//.test(id)) return 'vendor-ui'
           }
         },
       },

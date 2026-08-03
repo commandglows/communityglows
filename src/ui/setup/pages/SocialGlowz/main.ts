@@ -2,17 +2,12 @@ import { createApp } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import App from './App.vue'
-import PrimeVue from 'primevue/config'
-import Aura from '@primeuix/themes/aura'
-import { definePreset } from '@primeuix/themes'
 import { router } from './router'
 import { createPinia } from 'pinia'
-import Ripple from 'primevue/ripple'
-import Tooltip from 'primevue/tooltip'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { i18n } from '@/utils/i18n'
-import ConfirmationService from 'primevue/confirmationservice'
-import ToastService from 'primevue/toastservice'
+import { notivue } from '@/utils/notifications'
+import { sgTooltip } from './directives/tooltip'
 import { getConvexClient } from '@/lib/convex'
 import {
   authBootstrapError,
@@ -27,30 +22,9 @@ import {
 import { startCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
 import '@/assets/base.css'
+import './assets/main.css'
 import 'primeflex/primeflex.css'
 import 'primeicons/primeicons.css'
-
-// PrimeVue components are auto-imported by unplugin-vue-components + PrimeVueResolver
-
-// Aura defaults to emerald. Use its shared blue token family for all PrimeVue
-// v4 controls so it matches the SocialGlowz action-color direction.
-const SocialGlowzPreset = definePreset(Aura, {
-  semantic: {
-    primary: {
-      50: '{blue.50}',
-      100: '{blue.100}',
-      200: '{blue.200}',
-      300: '{blue.300}',
-      400: '{blue.400}',
-      500: '{blue.500}',
-      600: '{blue.600}',
-      700: '{blue.700}',
-      800: '{blue.800}',
-      900: '{blue.900}',
-      950: '{blue.950}',
-    },
-  },
-})
 
 function renderAuthBootstrapError(message: string) {
   const root = document.getElementById('app')
@@ -64,13 +38,13 @@ function renderAuthBootstrapError(message: string) {
   const retryButton = document.createElement('button')
   const loginButton = document.createElement('button')
 
-  main.style.cssText = 'font-family:system-ui,-apple-system,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px;background:#f8fafc;color:#0f172a;'
-  panel.style.cssText = 'max-width:520px;width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;box-shadow:0 8px 20px rgba(15,23,42,.08);'
-  title.style.cssText = 'margin:0 0 8px;font-size:20px;'
-  description.style.cssText = 'margin:0 0 16px;line-height:1.45;'
-  actions.style.cssText = 'display:flex;gap:12px;flex-wrap:wrap;'
-  retryButton.style.cssText = 'padding:10px 14px;border:none;border-radius:8px;background:#0f172a;color:#fff;cursor:pointer;'
-  loginButton.style.cssText = 'padding:10px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#0f172a;cursor:pointer;'
+  main.style.cssText = 'font-family:system-ui,-apple-system,sans-serif;min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-palette-slate-50);color:var(--sg-palette-slate-900);'
+  panel.style.cssText = 'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-white);border:1px solid var(--sg-palette-slate-200);border-radius: var(--sg-radius-12px);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-0-8px-20px-rgba-15-23-42-d08);'
+  title.style.cssText = 'margin: var(--sg-space-0-0-8px);font-size: var(--sg-font-size-20px);'
+  description.style.cssText = 'margin: var(--sg-space-0-0-16px);line-height: var(--sg-line-height-1d45);'
+  actions.style.cssText = 'display:flex;gap: var(--sg-space-12px);flex-wrap:wrap;'
+  retryButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-8px);background:var(--sg-palette-slate-900);color:var(--sg-color-white);cursor:pointer;'
+  loginButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-palette-slate-300);border-radius: var(--sg-radius-8px);background:var(--sg-color-white);color:var(--sg-palette-slate-900);cursor:pointer;'
 
   title.textContent = 'Connexion indisponible'
   description.textContent = message
@@ -250,24 +224,12 @@ async function bootstrap() {
 
   pinia.use(piniaPluginPersistedstate)
 
-  app.use(PrimeVue, {
-    theme: {
-      preset: SocialGlowzPreset,
-      options: {
-        darkModeSelector: '.dark',
-        cssLayer: false,
-      },
-    },
-    ripple: true,
-  })
-  app.use(ConfirmationService)
-  app.use(ToastService)
+  app.use(notivue)
   app.use(i18n)
   app.use(router)
   app.use(pinia)
 
-  app.directive('ripple', Ripple)
-  app.directive('tooltip', Tooltip)
+  app.directive('sg-tooltip', sgTooltip)
 
   app.mount('#app')
 }
