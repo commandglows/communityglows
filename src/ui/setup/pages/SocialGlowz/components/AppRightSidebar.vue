@@ -129,15 +129,17 @@
     </SplitterGroup>
   </template>
   <template v-else>
-    <Button
-      v-sg-tooltip.left="'Ouvrir le panneau droit'"
-      icon="pi pi-bars"
-      text
-      aria-label="Ouvrir le panneau droit"
-      class="sidebar-reopen sidebar-reopen--right"
-      @click="toggleSidebar"
-    />
-    <slot></slot>
+    <div class="sidebar-collapsed-layout sidebar-collapsed-layout--right">
+      <Button
+        v-sg-tooltip.left="'Ouvrir le panneau droit'"
+        icon="pi pi-bars"
+        text
+        aria-label="Ouvrir le panneau droit"
+        class="sidebar-reopen sidebar-reopen--right"
+        @click="toggleSidebar"
+      />
+      <slot></slot>
+    </div>
   </template>
 </template>
 
@@ -239,6 +241,17 @@ const handleResize = (sizes: number[]) => {
 
 .sidebar-reopen:hover {
   background: var(--surface-hover);
+}
+
+.sidebar-collapsed-layout {
+  box-sizing: border-box;
+  width: var(--sg-size-full);
+  min-width: 0;
+  min-height: var(--sg-sidebar-viewport-height);
+}
+
+.sidebar-collapsed-layout--right {
+  padding-right: var(--sg-sidebar-collapsed-rail-width);
 }
 
 .sidebar.icons-only {
