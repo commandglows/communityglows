@@ -46,4 +46,13 @@ describe('social network isolation policy', () => {
     expect(policy.storageOrigins).toEqual([])
     expect(origins).toEqual(['https://kick.com'])
   })
+
+  it('includes gmail with normalized https origin', () => {
+    const policy = getNetworkIsolationPolicy('gmail')
+    const origins = getNetworkIsolationOrigins('gmail')
+
+    expect(policy.authStorage).toEqual(['cookies', 'localStorage'])
+    expect(policy.storageOrigins).toEqual([])
+    expect(origins).toEqual(['https://mail.google.com'])
+  })
 })

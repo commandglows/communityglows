@@ -327,6 +327,17 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     defaultSelected: false,
   },
   {
+    id: 'gmail',
+    label: 'Gmail',
+    route: '/gmail',
+    url: 'https://mail.google.com',
+    icon: 'pi pi-envelope',
+    color: '#EA4335',
+    tileColor: '#EA4335',
+    onboarding: true,
+    defaultSelected: false,
+  },
+  {
     id: 'medium',
     label: 'Medium',
     route: '/medium',
@@ -379,6 +390,9 @@ const NETWORK_ISOLATION_OVERRIDES: Readonly<Record<string, NetworkIsolationPolic
     storageOrigins: ['https://cinderreels.com'],
   },
   kick: {
+    authStorage: ['cookies', 'localStorage'],
+  },
+  gmail: {
     authStorage: ['cookies', 'localStorage'],
   },
 }
