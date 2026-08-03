@@ -15,8 +15,8 @@ security_impact: none
 docs_impact: yes
 linked_systems:
   - "README.md"
-  - "shipflow_data/technical/context.md"
-  - "shipflow_data/technical/context-function-tree.md"
+  - "shipglows_data/technical/context.md"
+  - "shipglows_data/technical/context-function-tree.md"
   - "src/ui/setup/pages/SocialGlowz/main.ts"
   - "src/ui/setup/pages/SocialGlowz/App.vue"
   - "src-tauri/src/lib.rs"
@@ -52,18 +52,18 @@ Il permet de lire les bons documents avant de parcourir le code.
 ## Read Order
 
 1. Lire `README.md` pour la vue d'ensemble des plateformes.
-2. Lire `shipflow_data/technical/context.md` pour la carte opérationnelle et les flux.
-3. Lire `shipflow_data/technical/context-function-tree.md` avant toute tâche sur modules principaux.
-4. Lire `shipflow_data/technical/context.md` quand la question touche aux frontières techniques.
-5. Lire `shipflow_data/technical/context.md` encore une fois avant une tâche de maintenance transversale.
-6. Considérer `archive/` comme matière historique uniquement; ne pas l'utiliser comme source de vérité d'implémentation.
+2. Lire `shipglows_data/technical/context.md` pour la carte opérationnelle et les flux.
+3. Lire `shipglows_data/technical/context-function-tree.md` avant toute tâche sur modules principaux.
+4. Lire `shipglows_data/technical/context.md` quand la question touche aux frontières techniques.
+5. Lire `shipglows_data/technical/context.md` encore une fois avant une tâche de maintenance transversale.
+6. Considérer `shipglows_data/workflow/archives/` comme matière historique uniquement; ne pas l'utiliser comme source de vérité d'implémentation.
 
 ## Archive Policy
 
-- `archive/` est une zone de preuve historique (snapshots, expérimentations, backups de contenu).
-- Les traces `socialflow` présentes dans `archive/` sont conservées tel quel.
-- Le périmètre actif du projet est hors `archive/` (code, config, données, docs courantes).
-- Avant un tri de contenu ou migration de marque, traiter `archive/` séparément si nécessaire.
+- `shipglows_data/workflow/archives/` est la zone canonique de preuve historique (snapshots, expérimentations, backups de contenu).
+- Les traces `socialflow` présentes dans `shipglows_data/workflow/archives/` sont conservées telles quelles.
+- Le périmètre actif du projet exclut `shipglows_data/workflow/archives/`; les archives ne sont jamais une source de vérité d'implémentation.
+- Avant un tri de contenu ou une migration de marque, traiter `shipglows_data/workflow/archives/` séparément si nécessaire.
 
 ## What This Repo Is
 
@@ -80,13 +80,13 @@ Il permet de lire les bons documents avant de parcourir le code.
   - `manifest.config.ts`
   - `manifest.chrome.config.ts`
   - `manifest.firefox.config.ts`
-  - `shipflow_data/technical/extension-parity-map.md`
+  - `shipglows_data/technical/extension-parity-map.md`
   - `src/platform/capabilities.ts`
   - `src/platform/extensionNetworkLauncher.ts`
   - `src/background/index.ts`
   - `src/content-script/index.ts`
   - `src/ui/*/index.ts`
-  - puis `shipflow_data/technical/context-function-tree.md`
+  - puis `shipglows_data/technical/context-function-tree.md`
 - Si la tâche concerne la logique métier principale SocialGlowz :
   - `src/ui/setup/pages/SocialGlowz/main.ts`
   - `src/ui/setup/pages/SocialGlowz/App.vue`
@@ -97,12 +97,12 @@ Il permet de lire les bons documents avant de parcourir le code.
   - `src-tauri/src/lib.rs`
   - `src-tauri/tauri.conf.json`
   - `src-tauri/plugins/android-webview`
-  - puis `shipflow_data/technical/context.md`
+  - puis `shipglows_data/technical/context.md`
 - Si la tâche concerne le backend sync :
   - `convex/*`
   - `src/lib/convex*.ts`
   - `src/lib/cloudSync*`
-  - puis `shipflow_data/technical/context.md`
+  - puis `shipglows_data/technical/context.md`
 - Si la tâche concerne build/déploiement :
   - `vite.config.ts`
   - `vite.chrome.config.ts`

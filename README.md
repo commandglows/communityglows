@@ -8,7 +8,7 @@ SocialGlowz is a declared product and should always be documented as such in thi
 
 - Product name: `SocialGlowz`
 - Role: unified social dashboard for browser, desktop, and mobile surfaces
-- Canonical product documentation: this repository README plus the product-facing docs in `shipflow_data/`
+- Canonical product documentation: this repository README plus the product-facing docs in `shipglows_data/`
 - Delivery: digital product access through the app and related entitlement flows
 
 If the product is being marketed or sold, the repo docs should keep the following explicit:
@@ -155,7 +155,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
   - les origins additionnelles servent aux réseaux dont l'auth ou l'app passe par plusieurs domaines.
 - Fallback Android: si `MULTI_PROFILE` n'est pas supporté par le WebView du device, l'app revient au mode single-WebView avec snapshots cookies/localStorage; le multi-WebView chaud n'est pas activé.
 - Limites connues du fallback: IndexedDB, CacheStorage, service workers, cache HTTP global WebView et credential store système ne sont pas isolés par les snapshots.
-- Détails: [shipflow_data/technical/android-webview-session-isolation.md](shipflow_data/technical/android-webview-session-isolation.md).
+- Détails: [shipglows_data/technical/android-webview-session-isolation.md](shipglows_data/technical/android-webview-session-isolation.md).
 
 ## Variables d'environnement
 
@@ -194,7 +194,7 @@ pnpm exec tsc -p convex/tsconfig.json --noEmit  # Typecheck Convex
 ## Déploiement
 
 ### Mobile (CI)
-Voir [shipflow_data/workflow/tauri-mobile.md](shipflow_data/workflow/tauri-mobile.md) pour le workflow GitHub Actions.
+Voir [shipglows_data/workflow/tauri-mobile.md](shipglows_data/workflow/tauri-mobile.md) pour le workflow GitHub Actions.
 
 ### Extensions
 Les fichiers `.zip` sont générés dans `dist/` pour upload sur le Chrome Web Store et Firefox Add-ons.

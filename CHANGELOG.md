@@ -78,6 +78,6 @@ All notable changes to this project will be documented in this file.
 ## [2026-05-11]
 
 ### Changed
-- Recentrage de la structure projet : migration des artefacts racine (documentation, specs, bugs, recherches, audit log) vers `shipflow_data/`.
+- Recentrage de la structure projet : migration des artefacts racine (documentation, specs, bugs, recherches, audit log) vers `shipglows_data/`.
 - Suppression des fichiers marketing racine non pertinents pour le nouveau dépôt du site, désormais dans `site/`.
 - Nettoyage de la config web Vercel racine au profit de la build site basée sur `site/`.
