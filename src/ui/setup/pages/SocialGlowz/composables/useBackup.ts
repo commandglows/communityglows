@@ -75,6 +75,7 @@ async function collectStoreData(): Promise<string> {
       sfz_tap_sound_variant: localStorage.getItem('sfz_tap_sound_variant') ?? 'classic',
       sfz_text_zoom: localStorage.getItem('sfz_text_zoom') ?? '100',
       'kanban-state': localStorage.getItem('kanban-state') ?? '',
+      'contextual-tasks-v1': localStorage.getItem('contextual-tasks-v1') ?? '',
     },
     android: {
       cookieSnapshot: androidCookieSnapshot,
@@ -164,6 +165,8 @@ async function applyStoreData(json: string) {
       localStorage.setItem('sfz_text_zoom', data.localStorage.sfz_text_zoom)
     if (data.localStorage['kanban-state'])
       localStorage.setItem('kanban-state', data.localStorage['kanban-state'])
+    if (data.localStorage['contextual-tasks-v1'])
+      localStorage.setItem('contextual-tasks-v1', data.localStorage['contextual-tasks-v1'])
   }
 
   if (isAndroidTauri()) {

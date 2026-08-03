@@ -255,6 +255,12 @@ function applyDeepLinkAction(action: SocialGlowzDeepLinkAction) {
     return
   }
 
+  if (action.type === 'create-task') {
+    webviewStore.clearNetwork()
+    router.push({ path: '/tasks', query: { url: action.urlOverride ?? '' } })
+    return
+  }
+
   if (action.type !== 'open-network') return
 
   profilesStore.ensureDefault()

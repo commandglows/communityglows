@@ -69,6 +69,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeShortcutEvent: typeof import('../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../utils/notifications')['notivue']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
@@ -174,6 +175,7 @@ declare global {
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
+  const useContextualTasksStore: typeof import('../stores/contextualTasks')['useContextualTasksStore']
   const useConvexMutation: typeof import('../composables/useConvex')['useConvexMutation']
   const useConvexQuery: typeof import('../composables/useConvex')['useConvexQuery']
   const useCountdown: typeof import('@vueuse/core')['useCountdown']
@@ -282,6 +284,7 @@ declare global {
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
   const useShare: typeof import('@vueuse/core')['useShare']
+  const useShortcutsStore: typeof import('../stores/shortcuts')['useShortcutsStore']
   const useSignupNudge: typeof import('../composables/useSignupNudge')['useSignupNudge']
   const useSlots: typeof import('vue')['useSlots']
   const useSocialNetworksStore: typeof import('../stores/socialNetworks')['useSocialNetworksStore']
@@ -360,6 +363,9 @@ declare global {
   export type { Account } from '../stores/accounts'
   import('../stores/accounts')
   // @ts-ignore
+  export type { ContextualTask, ContextualTaskInput, ContextualTaskStatus } from '../stores/contextualTasks'
+  import('../stores/contextualTasks')
+  // @ts-ignore
   export type { CustomLink } from '../stores/customLinks'
   import('../stores/customLinks')
   // @ts-ignore
@@ -371,6 +377,9 @@ declare global {
   // @ts-ignore
   export type { Profile } from '../stores/profiles'
   import('../stores/profiles')
+  // @ts-ignore
+  export type { ShortcutAction, AppShortcut } from '../stores/shortcuts'
+  import('../stores/shortcuts')
   // @ts-ignore
   export type { ThemeMode, AutoThemeSource, AutoThemeResolution } from '../utils/themeAuto'
   import('../utils/themeAuto')
@@ -444,6 +453,7 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly mockPosts: UnwrapRef<typeof import('../stores/mockData/facebookMock')['mockPosts']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeShortcutEvent: UnwrapRef<typeof import('../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../utils/notifications')['notivue']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -549,6 +559,7 @@ declare module 'vue' {
     readonly useCloned: UnwrapRef<typeof import('@vueuse/core')['useCloned']>
     readonly useColorMode: UnwrapRef<typeof import('@vueuse/core')['useColorMode']>
     readonly useConfirmDialog: UnwrapRef<typeof import('@vueuse/core')['useConfirmDialog']>
+    readonly useContextualTasksStore: UnwrapRef<typeof import('../stores/contextualTasks')['useContextualTasksStore']>
     readonly useConvexMutation: UnwrapRef<typeof import('../composables/useConvex')['useConvexMutation']>
     readonly useConvexQuery: UnwrapRef<typeof import('../composables/useConvex')['useConvexQuery']>
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>
@@ -657,6 +668,7 @@ declare module 'vue' {
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
+    readonly useShortcutsStore: UnwrapRef<typeof import('../stores/shortcuts')['useShortcutsStore']>
     readonly useSignupNudge: UnwrapRef<typeof import('../composables/useSignupNudge')['useSignupNudge']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSocialNetworksStore: UnwrapRef<typeof import('../stores/socialNetworks')['useSocialNetworksStore']>

@@ -119,6 +119,15 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/tasks',
+    name: 'Tasks',
+    component: () => import('../views/TasksView.vue'),
+    meta: {
+      auth: true,
+      requiresAuth: true,
+    }
+  },
+  {
     path: '/gmail',
     alias: '/crm',
     name: 'Gmail',

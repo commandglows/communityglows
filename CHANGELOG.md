@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added a shared desktop/mobile settings panel for SocialGlowz Lifetime Deal and early-bird code activation, backed by the internal processor-agnostic billing entitlement layer.
 - Added an operator import script and runbook for direct Lifetime Deal and early-bird activation-code batches through the suite entitlement bridge.
+- Added local contextual tasks with HTTPS URL capture, notes, tags, priority, due date, status columns, and backup/restore support.
 
 ### Removed
 - Removed public WebView automation for consent, app-install prompts, stealth markers, desktop identity/viewport spoofing, arbitrary third-party scripts, and friends-only content filtering.
@@ -23,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Enforced strict extension custom-link validation (`https://` only, blocked dangerous schemes, blocked embedded credentials).
 - Removed default global content-script injection and removed devtools surface exposure from baseline manifest.
 - Split side panel behavior by browser: Chrome-only side panel, Firefox fallback without side panel promise.
+- Added the `/tasks` desktop/mobile route, an extension popup capture form, and Android shared-link intake into the task form. V1 remains local per runtime and does not read third-party page content.
 
 ## [2026-05-23]
 

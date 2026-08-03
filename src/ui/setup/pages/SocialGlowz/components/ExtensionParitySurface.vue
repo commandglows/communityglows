@@ -6,6 +6,7 @@ import { useProfilesStore } from "@/stores/profiles"
 import { useCustomLinksStore } from "@/stores/customLinks"
 import { useThemeStore } from "@/stores/theme"
 import { getPlatformCapabilities } from "@/platform/capabilities"
+import ExtensionTaskCapture from './tasks/ExtensionTaskCapture.vue'
 import {
   launchExternalUrl,
   normalizeHttpsUrl,
@@ -192,6 +193,8 @@ onMounted(() => {
         {{ $t(descriptionKey) }}
       </p>
     </header>
+
+    <ExtensionTaskCapture v-if="props.surface === 'popup'" />
 
     <div class="grid gap-3 md:grid-cols-3">
       <label class="form-control">

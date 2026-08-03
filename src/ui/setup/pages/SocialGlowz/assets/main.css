@@ -128,6 +128,10 @@
   --sg-crm-card-hover-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --sg-crm-item-gap: 0.5rem;
   --sg-crm-heading-size: 1.1em;
+  --sg-tasks-title-size: 1.4rem;
+  --sg-tasks-description-max-width: 42rem;
+  --sg-tasks-form-column-min-width: 12rem;
+  --sg-tasks-column-min-height: 18rem;
   --sg-crm-label-padding-block: 0.2rem;
   --sg-crm-label-padding-inline: 0.5rem;
   --sg-crm-label-radius: 4px;

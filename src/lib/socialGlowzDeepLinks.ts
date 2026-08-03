@@ -1,7 +1,7 @@
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 
 export type SocialGlowzDeepLinkAction = {
-  type: 'open-network'
+  type: 'open-network' | 'create-task'
   networkId: string
   profileId?: string
   chooseProfile: boolean
@@ -153,9 +153,9 @@ export function resolveSocialGlowzSharedUrl(rawUrl: string): SocialGlowzDeepLink
   if (!networkEntry) return null
 
   return {
-    type: 'open-network',
+    type: 'create-task',
     networkId: networkEntry[0],
-    chooseProfile: true,
+    chooseProfile: false,
     urlOverride: parsedUrl.toString(),
   }
 }

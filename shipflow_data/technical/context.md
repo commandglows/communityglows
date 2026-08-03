@@ -90,7 +90,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 2. Les deeplinks applicatifs `socialglowz://app/open?network=<id>` ouvrent un réseau dans SocialGlowz avec le profil courant par défaut.
 3. Le même deeplink accepte `profile=choose` ou `chooseProfile=1` pour ouvrir le sélecteur de profil puis lancer le réseau choisi après sélection.
 4. Sur Android, SocialGlowz apparaît aussi dans la feuille de partage système pour les contenus texte/URL (`ACTION_SEND` avec `text/*`).
-5. Quand une URL partagée correspond à un domaine social supporté, l'app rouvre SocialGlowz, propose le choix du profil actif si plusieurs profils existent, puis charge l'URL exacte dans la session du réseau correspondant, sans devenir handler par défaut de ces liens web.
+5. Quand une URL est partagée depuis Android, l'app ouvre le formulaire `/tasks` avec l'URL HTTPS préremplie; elle ne lit pas la page et ne navigue pas automatiquement vers le réseau. Les deep links applicatifs `socialglowz://app/open` conservent leur comportement d'ouverture de réseau/profil.
 6. Lorsqu'une requête OAuth démarre, l'app enregistre un `state`/`nonce` pending local via `socialglowz:android-oauth-request-started`.
 7. Chaque URL candidate OAuth est validée côté Rust via `validate_android_oauth_callback` contre cette requête pending (host/schéma allowlist, `state`, `nonce`, TTL 5 min, anti-rejeu).
 8. Un callback rejeté ne doit pas muter l'état auth/session et déclenche un signal Sentry anonymisé si le SDK est disponible.
@@ -106,6 +106,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 ### 3) Sync et persistance
 
 - État local : Pinia + localStorage via stores.
+- Tâches contextuelles : `src/stores/contextualTasks.ts` et `src/services/contextualTasksService.ts`, stockage local versionné `contextual-tasks-v1`, sans sync Convex en V1.
 - Sync cloud : `src/lib/cloudSyncQueue.ts`, `src/lib/cloudSettings.ts`, `src/lib/cloudSync.ts`.
 - Backend : tables Convex (`users`, `socialAccounts`, `activeAccounts`, `settings`, `profiles`, `customLinks`, `friendsFilters`, `entitlements`, `redemptionCodes`, `billingEvents`, `subscriptions`). Les tables `entitlements`/`redemptionCodes`/`billingEvents` sont des surfaces de compatibilité locale en transition pendant la migration vers le ledger canonique de suite.
 - Accès produit : `convex/billing.ts` agit comme adaptateur `server -> suite bridge`, avec un point de vérité durable côté WinFlowz (`globalUsers`/`identityAccounts`/`productEntitlements`/`productAccessEvents`). La couche locale ne sert pas d'autorité durable pour SocialGlowz ; elle reste utilisée uniquement pour audit/migration manuelle non destructive.
@@ -123,6 +124,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 - `src/ui/action-popup`, `src/ui/options-page`, `src/ui/side-panel` exposent des pages dédiées au navigateur.
 - `src/platform/capabilities.ts` centralise la détection extension/Tauri.
 - `src/platform/extensionNetworkLauncher.ts` ouvre les réseaux en onglets navigateur avec validation stricte HTTPS.
+- `src/platform/extensionTaskCapture.ts` lit uniquement `tab.url` après un clic explicite sur « Utiliser l’onglet actif »; aucun content script ni host permission n’est requis.
 - Le side panel est activé uniquement sur Chrome via `manifest.chrome.config.ts`; Firefox conserve un fallback popup/options/setup.
 - Le détail de parité est dans `shipflow_data/technical/extension-parity-map.md`.
 

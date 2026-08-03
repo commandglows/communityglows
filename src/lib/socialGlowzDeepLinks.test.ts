@@ -41,9 +41,9 @@ describe('parseSocialGlowzDeepLink', () => {
 describe('resolveSocialGlowzSharedUrl', () => {
   it('maps a supported shared URL to its network session', () => {
     expect(resolveSocialGlowzSharedUrl('https://www.tiktok.com/@socialglowz/video/123')).toEqual({
-      type: 'open-network',
+      type: 'create-task',
       networkId: 'tiktok',
-      chooseProfile: true,
+      chooseProfile: false,
       urlOverride: 'https://www.tiktok.com/@socialglowz/video/123',
     })
   })

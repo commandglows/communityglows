@@ -272,7 +272,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useWebviewStore } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
 import { useFriendsFilterStore } from '@/stores/friendsFilter'
@@ -292,6 +292,7 @@ import QuoraIcon from './icons/QuoraIcon.vue'
 import logoUrl from '@/assets/logo.png'
 
 const router = useRouter()
+const route = useRoute()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const filterStore = useFriendsFilterStore()
@@ -427,7 +428,7 @@ const builtinMenuItems = computed<MenuItem[]>(() =>
 // ─── Network list ─────────────────────────────────────────────
 const menuItems = computed<MenuItem[]>(() => [
   ...builtinMenuItems.value,
-  { id: builtinMenuItems.value.length + 1, label: 'Kanban', icon: 'pi pi-th-large', route: '/kanban' },
+  { id: builtinMenuItems.value.length + 1, label: 'Tâches', icon: 'pi pi-check-square', route: '/tasks' },
 ])
 
 const networkColors: Record<string, string> = builtInSocialNetworks.reduce((acc, network) => {
@@ -437,7 +438,7 @@ const networkColors: Record<string, string> = builtInSocialNetworks.reduce((acc,
   return acc
 }, {} as Record<string, string>)
 
-const KANBAN_COLOR = '#6366F1'
+const KANBAN_COLOR = 'var(--primary-color)'
 
 const getNetworkColor = (item: MenuItem) => {
   if (item.route.startsWith('/custom-')) return null
@@ -446,7 +447,7 @@ const getNetworkColor = (item: MenuItem) => {
 }
 
 const isNetworkActive = (item: MenuItem) =>
-  webviewStore.activeNetworkId === item.route.slice(1)
+  item.route === '/tasks' ? route.path === '/tasks' : webviewStore.activeNetworkId === item.route.slice(1)
 
 const pillColor = (item: MenuItem) => {
   const c = getNetworkColor(item)

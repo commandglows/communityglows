@@ -87,7 +87,7 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 - `src/lib/convexAuth.ts`
   - Wrapper d'auth, token storage, signIn/signOut.
 - `src/lib/socialGlowzDeepLinks.ts`
-  - Parse les deeplinks applicatifs SocialGlowz et met en file les actions d'ouverture de réseau/profil.
+  - Parse les deeplinks applicatifs SocialGlowz, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
 - `src/lib/cloudSync*.ts`
   - Sync settings, queue de sync, feedback post-auth.
 - `src/lib/disableCopyProtection.ts`
@@ -95,9 +95,9 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 - `src/composables/*`
   - Hooks transverses (auth, locales, webviews, settings, signup nudge).
 - `src/stores/*`
-  - État applicatif global (theme, socialNetworks, settings, onboarding, kanban, etc.).
+  - État applicatif global (theme, socialNetworks, settings, onboarding, kanban, contextualTasks, etc.).
 - `src/services/*`
-  - Appels API externes (Gmail, Kanban, autres intégrations).
+  - Appels API externes (Gmail, autres intégrations) et service local des tâches contextuelles.
 
 ## Tauri IPC Surface
 
@@ -145,6 +145,7 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 - `manifest.chrome.config.ts` / `manifest.firefox.config.ts` -> variantes manifeste.
 - `src/platform/capabilities.ts` -> détection de capacité extension/Tauri (side panel, native webview, backup natif).
 - `src/platform/extensionNetworkLauncher.ts` -> launcher onglets + validation URL HTTPS.
+- `src/platform/extensionTaskCapture.ts` -> capture explicite de l’URL de l’onglet actif pour le popup, sans lecture de page.
 - `src/background/index.ts`
   - hooks install/update et redirection setup.
 - `src/content-script/index.ts`

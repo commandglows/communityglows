@@ -48,6 +48,10 @@ src/ui/setup/pages/SocialGlowz/    # App principale (Vue 3 + PrimeVue)
 └── services/                      # Services API (Gmail, etc.)
 ```
 
+### Tâches contextuelles
+
+Le gestionnaire de tâches `/tasks` permet de noter une intention humaine avec une URL HTTPS de contexte, une note, des tags, une priorité, une échéance et un état. Dans le popup extension, l’URL de l’onglet actif est capturée uniquement après clic explicite; aucun titre, DOM, message ou contenu de page n’est lu. Les liens partagés Android ouvrent le même formulaire. Les tâches sont locales à chaque installation en V1 et incluses dans le backup local; elles ne sont pas synchronisées entre appareils.
+
 ### Configs Vite par plateforme
 
 | Fichier | Cible | Sortie |

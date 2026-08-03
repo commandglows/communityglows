@@ -25,6 +25,11 @@
 
 🟡 [socialglowz] task: Validate compact mobile network grid on narrow and standard device widths | status: todo | area: mobile-ui | id: sg-mobile-network-grid-qa | impact: medium | effort: low | unblocks: mobile-ui-polish | risk: layout-regression
 🟡 [socialglowz] task: Benchmarker les fonctions createur Android 17 pour WisprFlow/SocialFlowz: Screen Reactions, qualite Instagram, Edits IA on-device, separation audio, Premiere tablette et APV comme inspirations shorts/mobile | status: todo | area: android-creator-workflow | id: sg-android17-creator-workflow-benchmark | impact: medium | effort: medium | unblocks: future-short-creation-ux | risk: platform-opportunity-missed
+🟡 [socialglowz] task: Regrouper plusieurs pages et vues ouvertes sous leur réseau et leur profil afin de naviguer entre conversations, communautés et contenus sans perdre le contexte | status: todo | area: workspace-navigation | id: sg-network-page-grouping | impact: high | effort: high | unblocks: multi-page-community-workflows | risk: webview-state-and-session-complexity
+🟡 [socialglowz] task: Rendre la recherche globale opérationnelle sur les données possédées par SocialGlowz, notamment réseaux, profils, contacts, notes, tâches et conversations autorisées, sans scraper les pages tierces | status: todo | area: workspace-search | id: sg-global-workspace-search | impact: high | effort: medium | unblocks: fast-community-context-retrieval | risk: privacy-and-cross-source-index-drift
+🟡 [socialglowz] task: Ajouter des notifications configurables par réseau ou application avec activation, silence, priorité et plage horaire, en respectant les capacités officielles de chaque source | status: todo | area: notification-controls | id: sg-per-app-notification-controls | impact: high | effort: medium | unblocks: community-response-workflow | risk: noisy-or-unsupported-third-party-notifications
+🟡 [socialglowz] task: Étendre le mode focus existant au-delà des niveaux de gris avec sélection des réseaux autorisés, silence temporaire des notifications et durée de session visible | status: todo | area: focus-mode | id: sg-guided-focus-mode | impact: medium | effort: medium | unblocks: distraction-controlled-community-work | risk: hidden-urgent-community-items
+🟡 [socialglowz] task: Mettre en veille les services et WebViews inactifs avec reprise fiable de la bonne session et exemptions configurables pour les réseaux communautaires prioritaires | status: todo | area: service-hibernation | id: sg-inactive-service-hibernation | impact: high | effort: high | unblocks: scalable-multi-network-workspaces | risk: missed-events-or-session-reload-regression | depends_on: BUG-2026-05-24-001
 
 ### 🟢 Completed
 
@@ -40,7 +45,7 @@
 
 ## Priority Notes
 
-- Priority last updated: 2026-07-10
+- Priority last updated: 2026-08-03
 - Prioritization criteria: balanced impact, blockers, security/money risk, and bounded effort.
 - Immediate start recommendation: run extension parity verification next; `BUG-2026-05-10-001` is now closed locally, and the remaining security pressure sits in the broader dependency migration/hardening backlog (`shell-quote`, `vite`, `undici`, `ws`).
 

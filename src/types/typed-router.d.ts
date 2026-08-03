@@ -130,6 +130,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/DashboardFilters'
       | '/setup/SocialGlowz/components/ExtensionParitySurface'
       | '/setup/SocialGlowz/components/FriendsPanel'
+      | '/setup/SocialGlowz/components/KeyboardShortcuts'
       | '/setup/SocialGlowz/components/MobileLayout'
       | '/setup/SocialGlowz/components/MobileProfileSheet'
       | '/setup/SocialGlowz/components/MobileSettingsSheet'
@@ -163,8 +164,12 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/networks/ThreadsView'
       | '/setup/SocialGlowz/components/networks/TikTokView'
       | '/setup/SocialGlowz/components/networks/TwitterView'
+      | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
+      | '/setup/SocialGlowz/components/tasks/TaskBoard'
+      | '/setup/SocialGlowz/components/tasks/TaskForm'
       | '/setup/SocialGlowz/views/LoginView'
       | '/setup/SocialGlowz/views/SessionLockView'
+      | '/setup/SocialGlowz/views/TasksView'
     >,
     '/setup/SocialGlowz/App': RouteRecordInfo<
       '/setup/SocialGlowz/App',
@@ -327,6 +332,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/SocialGlowz/components/KeyboardShortcuts': RouteRecordInfo<
+      '/setup/SocialGlowz/components/KeyboardShortcuts',
+      '/setup/SocialGlowz/components/KeyboardShortcuts',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/SocialGlowz/components/MobileLayout': RouteRecordInfo<
       '/setup/SocialGlowz/components/MobileLayout',
       '/setup/SocialGlowz/components/MobileLayout',
@@ -467,6 +479,27 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture': RouteRecordInfo<
+      '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture',
+      '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/tasks/TaskBoard': RouteRecordInfo<
+      '/setup/SocialGlowz/components/tasks/TaskBoard',
+      '/setup/SocialGlowz/components/tasks/TaskBoard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/tasks/TaskForm': RouteRecordInfo<
+      '/setup/SocialGlowz/components/tasks/TaskForm',
+      '/setup/SocialGlowz/components/tasks/TaskForm',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/SocialGlowz/components/Unauthorized': RouteRecordInfo<
       '/setup/SocialGlowz/components/Unauthorized',
       '/setup/SocialGlowz/components/Unauthorized',
@@ -484,6 +517,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/SocialGlowz/views/SessionLockView': RouteRecordInfo<
       '/setup/SocialGlowz/views/SessionLockView',
       '/setup/SocialGlowz/views/SessionLockView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/views/TasksView': RouteRecordInfo<
+      '/setup/SocialGlowz/views/TasksView',
+      '/setup/SocialGlowz/views/TasksView',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -607,6 +647,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/DashboardFilters'
         | '/setup/SocialGlowz/components/ExtensionParitySurface'
         | '/setup/SocialGlowz/components/FriendsPanel'
+        | '/setup/SocialGlowz/components/KeyboardShortcuts'
         | '/setup/SocialGlowz/components/MobileLayout'
         | '/setup/SocialGlowz/components/MobileProfileSheet'
         | '/setup/SocialGlowz/components/MobileSettingsSheet'
@@ -640,8 +681,12 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/networks/ThreadsView'
         | '/setup/SocialGlowz/components/networks/TikTokView'
         | '/setup/SocialGlowz/components/networks/TwitterView'
+        | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
+        | '/setup/SocialGlowz/components/tasks/TaskBoard'
+        | '/setup/SocialGlowz/components/tasks/TaskForm'
         | '/setup/SocialGlowz/views/LoginView'
         | '/setup/SocialGlowz/views/SessionLockView'
+        | '/setup/SocialGlowz/views/TasksView'
       views:
         | 'default'
     }
@@ -783,6 +828,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/SocialGlowz/components/KeyboardShortcuts.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/KeyboardShortcuts'
+      views:
+        | never
+    }
     'src/ui/setup/pages/SocialGlowz/components/MobileLayout.vue': {
       routes:
         | '/setup/SocialGlowz/components/MobileLayout'
@@ -903,6 +954,24 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/SocialGlowz/components/tasks/ExtensionTaskCapture.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/tasks/TaskBoard.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/tasks/TaskBoard'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/tasks/TaskForm.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/tasks/TaskForm'
+      views:
+        | never
+    }
     'src/ui/setup/pages/SocialGlowz/components/Unauthorized.vue': {
       routes:
         | '/setup/SocialGlowz/components/Unauthorized'
@@ -918,6 +987,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/views/SessionLockView.vue': {
       routes:
         | '/setup/SocialGlowz/views/SessionLockView'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/views/TasksView.vue': {
+      routes:
+        | '/setup/SocialGlowz/views/TasksView'
       views:
         | never
     }
