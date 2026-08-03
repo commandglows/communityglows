@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.3.0"
 project: "socialglowz"
 created: "2026-05-14"
-updated: "2026-07-15"
+updated: "2026-08-03"
 status: active
 source_skill: sf-docs
 scope: code_docs_map
@@ -17,6 +17,10 @@ linked_systems:
   - "README.md"
   - "shipflow_data/technical/context.md"
   - "src/ui/setup/pages/SocialGlowz/main.ts"
+  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
+  - "src/ui/setup/pages/SocialGlowz/components/ui/"
+  - "src/ui/setup/pages/SocialGlowz/directives/tooltip.ts"
+  - "src/utils/notifications.ts"
   - "src/ui/setup/pages/SocialGlowz/views/SessionLockView.vue"
   - "src/lib/convexAuth.ts"
   - "src/lib/convexAuth.test.ts"
@@ -37,10 +41,38 @@ evidence:
   - "src-tauri/plugins/android-webview/src/mobile.rs"
   - "src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt"
   - "shipflow_data/technical/android-webview-session-isolation.md"
+  - "shipflow_data/technical/design-system-authority.md"
 next_step: "/sf-docs maintain shipflow_data/technical/code-docs-map.md"
 ---
 
 # CODE DOCS MAP
+
+## Windows/Tauri component and design-system runtime
+
+- Code:
+  - `src/ui/setup/pages/SocialGlowz/main.ts`
+  - `src/ui/setup/pages/SocialGlowz/App.vue`
+  - `src/ui/setup/pages/SocialGlowz/assets/main.css`
+  - `src/ui/setup/pages/SocialGlowz/components/ui/`
+  - `src/ui/setup/pages/SocialGlowz/directives/tooltip.ts`
+  - `src/utils/notifications.ts`
+  - `vite.tauri.config.ts`
+- Behavior:
+  - Reka UI owns maintained keyboard, focus, overlay and splitter behavior for composite Windows controls.
+  - SocialGlowz wrappers own visible composition and consume the semantic tokens centralized in `main.css`.
+  - Notivue owns notification transport/rendering through the carrier mounted by `App.vue`; `v-sg-tooltip` owns accessible tooltips.
+  - The Windows/Tauri source, generated declarations and clean bundle contain no PrimeVue runtime. PrimeVue/PrimeFlex/PrimeIcons remain scoped to legacy extension consumers where applicable.
+- Docs:
+  - `shipflow_data/technical/design-system-authority.md`
+  - `shipflow_data/technical/context.md`
+  - `shipflow_data/technical/context-function-tree.md`
+  - `shipflow_data/workflow/specs/windows-reka-ui-design-system-migration.md`
+- Validation:
+  - `pnpm test:once`
+  - `pnpm run typecheck:core`
+  - `pnpm run tauri:build`
+  - Design drift scan and clean PrimeVue source/declaration/bundle inventories
+  - Manual Windows executable proof remains required
 
 ## Processor-agnostic product access
 

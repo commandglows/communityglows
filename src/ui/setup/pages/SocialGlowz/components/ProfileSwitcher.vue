@@ -294,12 +294,19 @@ onUnmounted(() => {
   top: var(--sg-position-calc-100pct-4px);
   left: var(--sg-position-0d5rem);
   right: var(--sg-position-0d5rem);
-  background: var(--surface-overlay);
+  background: var(--surface-card);
   border: 1px solid var(--surface-border);
   border-radius: var(--sg-radius-10px);
   box-shadow: var(--sg-shadow-0-8px-24px-rgba-0-0-0-0d15);
   z-index: var(--sg-layer-200);
   overflow: hidden;
+  backdrop-filter: none;
+}
+
+.profile-option,
+.profile-menu-footer,
+.profile-menu-header {
+  background: inherit;
 }
 
 .profile-switcher.menu-up .profile-menu {

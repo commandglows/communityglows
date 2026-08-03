@@ -1,17 +1,18 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: "socialglowz"
 created: "2026-08-03"
 created_at: "2026-08-03 04:30:00 UTC"
 updated: "2026-08-03"
-updated_at: "2026-08-03 19:11:19 UTC"
+updated_at: "2026-08-03 20:08:45 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "windows-reka-ui-design-system-migration"
 owner: "Diane"
+confidence: high
 user_story: "En tant qu'utilisatrice SocialGlowz sous Windows, je veux une application cohérente avec l'identité du produit et entièrement utilisable au clavier, afin de pouvoir naviguer rapidement sans dépendre d'une bibliothèque visuelle qui impose son style."
 risk_level: high
 security_impact: none
@@ -231,6 +232,7 @@ Non-automated Windows installer proof after the completed slice:
 | 2026-08-03 14:27:46 UTC | 005-sg-ship | GPT-5 Codex | Prepared the reviewed Windows Reka UI and design-system migration for commit, push, and the manual Windows installer workflow. | shipped | Complete the workflow build, then run the pending manual Windows executable scenarios. |
 | 2026-08-03 18:58:28 UTC | 106-sg-fix | GPT-5 Codex | Fixed collapsed sidebar reopen handles being covered only by active native WebViews by reserving tokenized transparent edge rails outside the measured WebView bounds. | fixed-pending-verify | Build Windows and confirm both handles remain visible over each active network. |
 | 2026-08-03 19:11:19 UTC | 102-sg-start | GPT-5 Codex | Replaced rejected full-height edge rails with a conditional horizontal control bar outside native WebView bounds; added persistent top/bottom placement in settings and retained both reopen handles. | implemented | Build Windows and verify bar placement plus both handles with an active network. |
+| 2026-08-03 20:08:45 UTC | 300-sg-docs | GPT-5 Codex | Updated current internal documentation for the Reka UI wrappers, semantic token authority, Notivue and tooltip ownership, zero-PrimeVue Windows runtime, legacy extension dependency boundary, and ten drift exceptions. | documented | Keep manual Windows executable proof pending; migrate legacy `shipflow_data/` governance topology separately. |
 
 ## Current Chantier Flow
 

@@ -622,6 +622,23 @@ async fn open_webview(
 
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
+async fn navigate_webview(
+  app: AppHandle,
+  url: String,
+  profile_id: String,
+  network_id: String,
+) -> Result<(), String> {
+  let label = webview_label(&profile_id, &network_id);
+  if let Some(wv) = app.get_webview(&label) {
+    let parsed: url::Url = url.parse().map_err(|e: url::ParseError| e.to_string())?;
+    wv.navigate(parsed).map_err(|e| e.to_string())?;
+    return Ok(())
+  }
+  Ok(())
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "android"))]
 fn resize_webview(
     app: AppHandle,
     profile_id: String,
@@ -1176,6 +1193,7 @@ pub fn run() {
             validate_android_oauth_callback,
             hide_webview,
             show_webview,
+            navigate_webview,
             set_grayscale,
             set_dark_mode,
             set_text_zoom,

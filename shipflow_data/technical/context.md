@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.3.0"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-07-15"
+updated: "2026-08-03"
 status: reviewed
 source_skill: sf-docs
 scope: context
@@ -22,6 +22,10 @@ evidence:
   - "vite.tauri.config.ts"
   - "src/ui/setup/pages/SocialGlowz/main.ts"
   - "src/ui/setup/pages/SocialGlowz/App.vue"
+  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
+  - "src/ui/setup/pages/SocialGlowz/components/ui/"
+  - "src/ui/setup/pages/SocialGlowz/directives/tooltip.ts"
+  - "src/utils/notifications.ts"
   - "src-tauri/src/lib.rs"
   - "convex/schema.ts"
   - "convex/billing.ts"
@@ -42,6 +46,7 @@ linked_systems:
   - "vite.config.ts"
   - "vite.tauri.config.ts"
   - "src-tauri/tauri.conf.json"
+  - "shipflow_data/technical/design-system-authority.md"
   - "convex/schema.ts"
 next_step: "/sf-docs update shipflow_data/technical/context.md"
 ---
@@ -67,8 +72,10 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 
 - `src/` : logique partagée, stores, composables, services, utilitaires.
 - `src/ui/setup/pages/SocialGlowz/` : application principale.
-- `src/ui/setup/pages/SocialGlowz/main.ts` : bootstrap front (Vue + Convex + services).
+- `src/ui/setup/pages/SocialGlowz/main.ts` : bootstrap front Windows/Tauri (Vue, Pinia, i18n, router, Notivue, directive tooltip SocialGlowz et Convex conditionnel).
 - `src/ui/setup/pages/SocialGlowz/App.vue` : shell desktop/mobile principal et orchestration.
+- `src/ui/setup/pages/SocialGlowz/components/ui/` : wrappers visuels SocialGlowz; Reka UI porte les comportements clavier/focus des contrôles composites.
+- `src/ui/setup/pages/SocialGlowz/assets/main.css` : autorité des tokens sémantiques de l'application Windows/Tauri.
 - `src/ui/*` : pages de shell navigateur (setup popup panel options).
 - `convex/` : backend serverless auth + données persistées.
 - `src-tauri/src/` : host natif, commandes IPC, création/gestion webviews.
@@ -80,9 +87,18 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 ### 1) Front boot + auth
 
 1. Vite démarre une entrée UI.
-2. `src/ui/setup/pages/SocialGlowz/main.ts` initialise Pinia, i18n, PrimeVue, router.
+2. `src/ui/setup/pages/SocialGlowz/main.ts` initialise Pinia, i18n, router, Notivue et `v-sg-tooltip`; PrimeVue, Aura et les services/directives PrimeVue ne sont plus chargés par cette entrée.
 3. Si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` initient Convex Auth.
 4. App bootstrap puis montage de l'application.
+
+#### Couche UI Windows/Tauri
+
+- `components/ui/` expose les boutons, champs, dialogues, switches, avatars, badges, sélecteurs, multi-sélecteurs et indicateurs de chargement SocialGlowz.
+- Reka UI fournit les primitives maintenues de sémantique, focus, clavier, overlays et redimensionnement; les wrappers SocialGlowz restent propriétaires du rendu et des variantes.
+- `assets/main.css` est le porteur canonique des couleurs, surfaces, espacements, rayons, ombres, focus, mouvement et thèmes clair/sombre Windows.
+- `src/utils/notifications.ts` configure Notivue; `App.vue` monte `Notivue`/`Notification`, et les producteurs utilisent `push`.
+- `directives/tooltip.ts` possède les infobulles accessibles au focus et au pointeur, leur `aria-describedby`, leur fermeture par `Escape` et leur nettoyage.
+- La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun runtime PrimeVue. Le package et les styles PrimeVue/PrimeFlex/PrimeIcons restent possibles sur les surfaces extension historiques et ne doivent pas être déclarés supprimés globalement.
 
 #### Android deeplinks (mobile/desktop Tauri)
 
@@ -132,11 +148,14 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 
 - Tauri est retenu pour la couche desktop/mobile pour partager la même base JS tout en gardant contrôle WebView natif.
 - L'application SocialGlowz reste dans `src/ui/setup/pages/SocialGlowz` avec réutilisation contrôlée des modules partagés de `src/`.
+- Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens SocialGlowz pour l'autorité visuelle; PrimeVue est limité aux anciennes surfaces extension qui le consomment encore.
 - La stratégie auth-connexion privilégie Convex Auth avec fallback offline.
 
 ## Hotspots
 
 - `src/ui/setup/pages/SocialGlowz/App.vue` : flux global, sync, gestion évènements natifs.
+- `src/ui/setup/pages/SocialGlowz/components/ui/` et `assets/main.css` : contrats de composants, accessibilité et autorité visuelle Windows.
+- `src/ui/setup/pages/SocialGlowz/directives/tooltip.ts` et `src/utils/notifications.ts` : comportements d'infobulle et de notification.
 - `src/stores/webviewState.ts` : state réseau actif, ouverture/fermeture et profils.
 - `src/lib/cloudSync.ts` : sync de settings et données entre local et Convex.
 - `src-tauri/src/lib.rs` : commandes natives critiques (webview, session, commande Android).
@@ -148,7 +167,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 
 ## Read by Task
 
-- Changer UI/UX : lire d'abord `src/ui/setup/pages/SocialGlowz/*` puis `src/stores/*` et `src/components/*`.
+- Changer UI/UX Windows : lire d'abord `shipflow_data/technical/design-system-authority.md`, `assets/main.css` et `components/ui/`, puis la vue concernée.
 - Changer logique métier : lire `src/` puis la vue SocialGlowz correspondante.
 - Changer extension shell : lire `src/ui/*`, manifest et `shipflow_data/technical/context-function-tree.md`.
 - Changer backend : lire `convex/*`, `src/lib/convex.ts`, `src/lib/convexAuth.ts`, puis mise à jour docs.

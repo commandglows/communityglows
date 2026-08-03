@@ -35,8 +35,9 @@
               </h1>
             </div>
 
-            <!-- Réseaux sociaux -->
-            <div class="menu-section">
+            <div class="sidebar-scrollable-content">
+              <!-- Réseaux sociaux -->
+              <div class="menu-section">
               <div
                 v-if="!iconsOnly"
                 class="section-header"
@@ -140,8 +141,11 @@
                   icon="pi pi-plus"
                   text
                   size="small"
+                  type="button"
                   :aria-label="$t('links.add_button')"
-                  @click="showAddLinkDialog = true"
+                  @mouseenter="setAddLinkTooltipOverlay(true)"
+                  @mouseleave="setAddLinkTooltipOverlay(false)"
+                  @click="openAddLinkDialog"
                 />
               </div>
               <div
@@ -184,16 +188,19 @@
                   </div>
                 </div>
               </div>
-              <Button
-                v-if="iconsOnly"
-                v-sg-tooltip.right="$t('links.add_tooltip')"
-                icon="pi pi-plus"
-                text
-                size="small"
-                class="custom-link-add-icon"
-                :aria-label="$t('links.add_button')"
-                @click="showAddLinkDialog = true"
-              />
+                <Button
+                  v-if="iconsOnly"
+                  v-sg-tooltip.right="$t('links.add_tooltip')"
+                  icon="pi pi-plus"
+                  text
+                  size="small"
+                  class="custom-link-add-icon"
+                  type="button"
+                  :aria-label="$t('links.add_button')"
+                  @mouseenter="setAddLinkTooltipOverlay(true)"
+                  @mouseleave="setAddLinkTooltipOverlay(false)"
+                  @click="openAddLinkDialog"
+                />
             </div>
 
             <SgDialog
@@ -224,58 +231,6 @@
               </div>
             </SgDialog>
 
-            <!-- Kanban Columns -->
-            <div
-              v-if="!iconsOnly"
-              class="kanban-section"
-            >
-              <div class="kanban-columns">
-                <div 
-                  v-for="column in kanbanStore.columns" 
-                  :key="column.id"
-                  class="kanban-column"
-                  @dragover.prevent
-                  @drop="handleDrop($event, column.id)"
-                >
-                  <div class="column-header">
-                    <span class="column-title">{{ $t(column.title) }}</span>
-                    <span class="column-count">{{ getColumnItems(column.id).length }}</span>
-                  </div>
-                  <div class="column-content">
-                    <TransitionGroup
-                      name="list"
-                      tag="div"
-                    >
-                      <div
-                        v-for="item in getColumnItems(column.id)"
-                        :key="item.id"
-                        class="kanban-item"
-                        :class="[
-                          `type-${item.type}`,
-                          { 'is-dragging': isDragging(item) }
-                        ]"
-                        draggable="true"
-                        @dragstart="handleDragStart($event, item)"
-                        @dragend="handleDragEnd"
-                      >
-                        <div class="item-header">
-                          <i :class="getItemIcon(item.type)"></i>
-                          <span class="item-title">{{ item.title }}</span>
-                          <Button
-                            icon="pi pi-times"
-                            :aria-label="`Supprimer ${item.title}`"
-                            text
-                            rounded
-                            size="small"
-                            severity="danger"
-                            @click="deleteKanbanItem(item.id)"
-                          />
-                        </div>
-                      </div>
-                    </TransitionGroup>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -299,17 +254,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, watch } from 'vue'
+import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
 import { useRouter, useRoute } from 'vue-router'
-import { useKanbanStore } from '@/stores/kanban'
 import { useWebviewStore } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
 import { useFriendsFilterStore } from '@/stores/friendsFilter'
 import { useCustomLinksStore } from '@/stores/customLinks'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 import type { MenuItem } from '../types'
-import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
 import Button from './ui/SgButton.vue'
 import SgDialog from './ui/SgDialog.vue'
 import ProfileSwitcher from './ProfileSwitcher.vue'
@@ -319,7 +272,6 @@ import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from 
 
 const router = useRouter()
 const route = useRoute()
-const kanbanStore = useKanbanStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const filterStore = useFriendsFilterStore()
@@ -333,6 +285,23 @@ const newLinkUrl = ref('')
 const filterEnabled = computed(() => filterStore.enabled)
 
 const setFilterEnabled = () => filterStore.toggle()
+
+function openAddLinkDialog() {
+  newLinkLabel.value = ''
+  newLinkUrl.value = ''
+  setAddLinkTooltipOverlay(true)
+  showAddLinkDialog.value = true
+}
+
+function setAddLinkTooltipOverlay(active: boolean) {
+  window.dispatchEvent(new CustomEvent('sfz-webview-overlay-state', { detail: { active } }))
+}
+
+watch(showAddLinkDialog, (isOpen) => {
+  if (!isOpen) {
+    setAddLinkTooltipOverlay(false)
+  }
+})
 
 const props = defineProps<{
   modelValue: boolean
@@ -350,54 +319,6 @@ watch(iconsOnly, async compact => {
   await nextTick()
   sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
-
-const totalKanbanItems = computed(() => {
-  return kanbanStore.columns.reduce((total, column) => total + column.items.length, 0)
-})
-
-const getColumnItems = (columnId: KanbanColumnId) => {
-  return kanbanStore.getColumnItems(columnId)
-}
-
-const isDragging = (item: KanbanItem) => {
-  return kanbanStore.draggedItem?.id === item.id
-}
-
-const getItemIcon = (type: string) => {
-  switch (type) {
-    case 'email':
-      return 'pi pi-envelope'
-    case 'task':
-      return 'pi pi-check-square'
-    case 'note':
-      return 'pi pi-file'
-    default:
-      return 'pi pi-file'
-  }
-}
-
-const handleDragStart = (event: DragEvent, item: KanbanItem) => {
-  if (event.dataTransfer) {
-    event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('text/plain', item.id)
-  }
-  kanbanStore.startDragging(item)
-}
-
-const handleDragEnd = () => {
-  kanbanStore.endDragging()
-}
-
-const handleDrop = (event: DragEvent, columnId: KanbanColumnId) => {
-  const itemId = event.dataTransfer?.getData('text/plain')
-  if (itemId) {
-    kanbanStore.moveItem(itemId, columnId)
-  }
-}
-
-const deleteKanbanItem = (itemId: string) => {
-  kanbanStore.deleteItem(itemId)
-}
 
 const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
 
@@ -433,9 +354,15 @@ const customLinkItems = computed<MenuItem[]>(() => {
 
 const isNetworkActive = (item: MenuItem): boolean =>
   item.route === '/crm'
-    ? route.path === '/crm' || route.path === '/gmail'
+    ? (
+      webviewStore.activeNetworkId === 'gmail'
+      || (
+        webviewStore.activeNetworkId === null
+        && (route.path === '/crm' || route.path === '/gmail')
+      )
+    )
     : item.route === '/tasks'
-      ? route.path === '/tasks'
+      ? route.path === '/tasks' || webviewStore.activeNetworkId === 'tasks'
     : webviewStore.activeNetworkId === item.route.slice(1)
 
 const navigateToNetwork = (network: MenuItem): void => {
@@ -473,8 +400,8 @@ const removeCustomLink = (linkId: string) => {
   customLinksStore.removeLink(profileId, linkId)
 }
 
-onMounted(() => {
-  kanbanStore.initialize()
+onUnmounted(() => {
+  setAddLinkTooltipOverlay(false)
 })
 </script>
 
@@ -507,7 +434,36 @@ onMounted(() => {
   flex: 1;
   min-height: 0;
   width: var(--sg-sidebar-fill-size);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+.sidebar-scrollable-content {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--sg-scrollbar-thumb) transparent;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar {
+  width: var(--sg-scrollbar-width);
+  -webkit-appearance: none;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-thumb {
+  background: var(--sg-scrollbar-thumb);
+  border-radius: var(--sg-scrollbar-radius);
+}
+
+.sidebar-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: var(--sg-scrollbar-thumb-hover);
 }
 
 .sidebar-header {
@@ -655,114 +611,9 @@ onMounted(() => {
   width: var(--sg-sidebar-fill-size);
 }
 
-.kanban-columns {
-  padding: var(--sg-sidebar-kanban-padding);
-}
-
-.kanban-column {
-  margin-bottom: var(--sg-sidebar-section-spacing);
-  background: var(--surface-ground);
-  border-radius: var(--sg-sidebar-kanban-column-radius);
-}
-
-.column-header {
-  padding: var(--sg-sidebar-kanban-padding);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--surface-border);
-}
-
-.column-title {
-  font-weight: bold;
-  font-size: var(--sg-sidebar-kanban-title-size);
-}
-
-.column-count {
-  background: var(--surface-hover);
-  color: var(--text-color);
-  padding: var(--sg-sidebar-kanban-count-padding-block) var(--sg-sidebar-kanban-count-padding-inline);
-  border-radius: var(--sg-sidebar-kanban-count-radius);
-  font-size: var(--sg-sidebar-kanban-count-size);
-}
-
-.column-content {
-  padding: var(--sg-sidebar-kanban-padding);
-  max-height: var(--sg-sidebar-kanban-content-max-height);
-  overflow-y: auto;
-}
-
-.kanban-item {
-  background: var(--surface-card);
-  border-radius: var(--sg-sidebar-kanban-item-radius);
-  padding: var(--sg-sidebar-kanban-padding);
-  margin-bottom: var(--sg-sidebar-subsection-spacing);
-  cursor: move;
-  box-shadow: var(--sg-sidebar-kanban-item-shadow);
-  transition: var(--sg-sidebar-kanban-item-transition);
-}
-
-.kanban-item:hover {
-  transform: translateX(var(--sg-sidebar-kanban-item-hover-offset));
-  box-shadow: var(--sg-sidebar-kanban-item-hover-shadow);
-}
-
-.kanban-item.is-dragging {
-  opacity: 0.5;
-}
-
-.item-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sg-sidebar-subsection-spacing);
-}
-
-.item-title {
-  flex: 1;
-  font-size: var(--sg-sidebar-kanban-title-size);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.type-email {
-  border-left: var(--sg-sidebar-active-indicator-width) solid var(--blue-500);
-}
-
-.type-task {
-  border-left: var(--sg-sidebar-active-indicator-width) solid var(--green-500);
-}
-
-.type-note {
-  border-left: var(--sg-sidebar-active-indicator-width) solid var(--yellow-500);
-}
-
-/* Animations */
-.list-move,
-.list-enter-active,
-.list-leave-active {
-  transition: var(--sg-sidebar-list-transition);
-}
-
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(var(--sg-sidebar-list-enter-offset));
-}
-
-.list-leave-active {
-  position: absolute;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .list-move,
-  .list-enter-active,
-  .list-leave-active {
-    transition: none;
-  }
-
   .sidebar,
-  .kanban-item {
+  .sidebar {
     transition: none;
   }
 

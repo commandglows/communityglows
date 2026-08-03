@@ -931,12 +931,12 @@ onUnmounted(() => {
   padding: var(--sg-space-0-1d25rem-1d5rem);
   overflow-y: auto;
   scrollbar-width: var(--sg-size-thin);
-  scrollbar-color: var(--primary-color, var(--sg-palette-indigo-500)) transparent;
+  scrollbar-color: var(--sg-scrollbar-thumb) transparent;
   scrollbar-gutter: stable;
 }
 
 .settings-content::-webkit-scrollbar {
-  width: var(--sg-size-6px);
+  width: var(--sg-scrollbar-width);
   -webkit-appearance: none;
 }
 
@@ -945,9 +945,12 @@ onUnmounted(() => {
 }
 
 .settings-content::-webkit-scrollbar-thumb {
-  background: var(--primary-color, var(--sg-palette-indigo-500));
-  border-radius: var(--sg-radius-3px);
-  opacity: 0.6;
+  background: var(--sg-scrollbar-thumb);
+  border-radius: var(--sg-scrollbar-radius);
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background: var(--sg-scrollbar-thumb-hover);
 }
 
 .settings-section-label {

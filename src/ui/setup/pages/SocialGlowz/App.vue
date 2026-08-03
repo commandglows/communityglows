@@ -25,11 +25,12 @@
             <AppRightSidebar
               v-model="rightSidebarVisible"
               @open-settings="settingsVisible = true"
+              @open-rightpanel-section="openRightPanelSection"
             >
               <!-- Native Tauri webview host: shown when a webview-capable network is active -->
               <NetworkWebviewHost
                 v-if="webviewStore.activeUrl"
-                :suspended="settingsVisible"
+                :suspended="settingsVisible || webviewOverlayActive > 0"
               />
               <!-- Router-view for Gmail (API), login, and other non-webview pages -->
               <router-view v-else />
@@ -108,6 +109,7 @@ import { useDesktopControlBarStore } from '@/stores/desktopControlBar'
 const sidebarVisible = ref(true)
 const rightSidebarVisible = ref(true)
 const settingsVisible = ref(false)
+const webviewOverlayActive = ref(0)
 
 // Signup nudge (desktop only — mobile has its own in MobileLayout)
 const nudge = useSignupNudge()
@@ -228,6 +230,7 @@ const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
 const onWebviewReady = () => { webviewReadyVersion.value += 1 }
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
+  if (event.type === 'keyup') return
   if (isEditableShortcutTarget(event.target)) return
   const pressed = normalizeShortcutEvent(event)
   const shortcut = shortcutsStore.enabledShortcuts.find(item => item.keys === pressed)
@@ -237,6 +240,222 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (shortcut.action === 'toggle-right-sidebar') rightSidebarVisible.value = !rightSidebarVisible.value
   if (shortcut.action === 'open-settings') settingsVisible.value = true
   if (shortcut.action === 'open-crm') router.push('/crm')
+  if (shortcut.action === 'open-network' && shortcut.target) {
+    webviewStore.selectNetwork(shortcut.target)
+  }
+  if (shortcut.action === 'open-profile-selector') {
+    window.dispatchEvent(new CustomEvent('sfz-show-profile-sheet'))
+  }
+  if (shortcut.action === 'open-profile' && shortcut.target) {
+    const nextProfileId = shortcut.target
+    profilesStore.setActive(nextProfileId)
+    const currentNetworkId = webviewStore.activeNetworkId
+    if (currentNetworkId && profilesStore.isNetworkHidden(nextProfileId, currentNetworkId)) {
+      webviewStore.clearNetwork()
+    }
+  }
+  if (shortcut.action === 'open-rightpanel-section' && shortcut.target) {
+    void openRightPanelSection(shortcut.target)
+  }
+}
+
+type RightPanelSection = 'feed' | 'profile' | 'friends' | 'notifications' | 'saved' | 'events'
+type RightPanelSectionMap = Record<string, Partial<Record<RightPanelSection, string>>>
+
+const rightPanelSectionMap: RightPanelSectionMap = {
+  twitter: {
+    feed: '/home',
+    friends: '/i/following',
+    notifications: '/notifications',
+    profile: '/i/account',
+    saved: '/i/bookmarks',
+    events: '/i/events',
+  },
+  facebook: {
+    feed: '/',
+    friends: '/friends',
+    notifications: '/notifications',
+    profile: '/profile',
+    saved: '/bookmarks',
+    events: '/events',
+  },
+  instagram: {
+    feed: '/',
+    friends: '/accounts/activity',
+    notifications: '/notifications',
+    profile: '/accounts/edit',
+    saved: '/saved',
+  },
+  linkedin: {
+    feed: '/feed',
+    friends: '/mynetwork',
+    notifications: '/notifications',
+    profile: '/in/',
+    saved: '/my-items/saved-posts',
+    events: '/events',
+  },
+  tiktok: {
+    feed: '/',
+    notifications: '/inbox',
+    profile: '/@me',
+    saved: '/foryou',
+  },
+  threads: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/users/me',
+    saved: '/search',
+  },
+  discord: {
+    feed: '/channels/@me',
+    friends: '/channels/@me',
+    notifications: '/channels/@me',
+    profile: '/settings',
+  },
+  reddit: {
+    feed: '/',
+    friends: '/user/me/friends',
+    notifications: '/message/inbox',
+    profile: '/user/me',
+    saved: '/user/me/saved',
+    events: '/r/all',
+  },
+  snapchat: {
+    feed: '/',
+    notifications: '/',
+    profile: '/@me',
+    saved: '/',
+  },
+  cinderreels: {
+    feed: '/',
+    notifications: '/',
+    profile: '/account',
+  },
+  quora: {
+    feed: '/',
+    friends: '/following',
+    notifications: '/notifications',
+    profile: '/profile',
+    saved: '/search',
+  },
+  pinterest: {
+    feed: '/',
+    friends: '/your-friends',
+    notifications: '/notifications',
+    profile: '/username',
+    saved: '/saved/',
+  },
+  telegram: {
+    feed: '/k',
+    notifications: '/im',
+    profile: '/settings',
+  },
+  nextdoor: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/profile',
+  },
+  patreon: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/manage',
+  },
+  theresanaiforthat: {
+    feed: '/',
+    notifications: '/discussions',
+    profile: '/user',
+    saved: '/saved',
+  },
+  industrysocial: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/my-account',
+  },
+  bluesky: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/profile',
+    saved: '/search',
+    events: '/search',
+  },
+  mastodon: {
+    feed: '/home',
+    notifications: '/notifications',
+    profile: '/users',
+    saved: '/explore/tags',
+    events: '/explore',
+  },
+  substack: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/home',
+    saved: '/saved',
+  },
+  'ko-fi': {
+    feed: '/',
+    profile: '/home',
+    saved: '/shop',
+  },
+  buymeacoffee: {
+    feed: '/',
+    profile: '/settings',
+    saved: '/',
+  },
+  producthunt: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/me',
+    saved: '/posts',
+  },
+  indiehackers: {
+    feed: '/',
+    notifications: '/notifications',
+    profile: '/members',
+  },
+  hackernews: {
+    feed: '/',
+    notifications: '/user',
+    profile: '/user',
+    saved: '/favorites',
+    events: '/newest',
+  },
+}
+
+function resolveRightPanelSectionPath(networkId: string, sectionId: string): string {
+  const section = sectionId.toLowerCase() as RightPanelSection
+  const byNetwork = rightPanelSectionMap[networkId] ?? {}
+  const defaultSectionPaths: Record<string, string> = {
+    feed: '',
+    profile: '',
+    friends: '/friends',
+    notifications: '/notifications',
+    saved: '/saved',
+    events: '/events',
+  }
+  return byNetwork[section] ?? defaultSectionPaths[section] ?? ''
+}
+
+async function openRightPanelSection(sectionId: string) {
+  const networkId = webviewStore.activeNetworkId
+  const profileId = profilesStore.activeProfileId
+  if (!networkId || !profileId || !WEBVIEW_URLS[networkId]) return
+
+  const baseUrl = WEBVIEW_URLS[networkId]
+  const path = resolveRightPanelSectionPath(networkId, sectionId)
+  const url = `${baseUrl.replace(/\/$/, '')}${path ? `/${path.replace(/^\//, '')}` : ''}`
+
+  if (isTauri) {
+    const { invoke } = await import('@tauri-apps/api/core')
+    try {
+      await invoke('navigate_webview', { profileId, networkId, url })
+      return
+    } catch {
+      // Fallback below for desktop where command may be unavailable in older builds.
+      webviewStore.selectNetwork(networkId, url)
+    }
+  } else {
+    webviewStore.selectNetwork(networkId, url)
+  }
 }
 
 // Global tap feedback — delegated to the native plugin so it honors
@@ -275,6 +494,13 @@ function openNetworkFromDeepLink(networkId: string, profileId?: string, urlOverr
 function openProfileChooserFromDeepLink() {
   webviewStore.clearNetwork()
   window.dispatchEvent(new CustomEvent('sfz-show-profile-sheet'))
+}
+
+function onWebviewOverlayState(event: Event) {
+  const detail = (event as CustomEvent<{ active: boolean }>).detail
+  if (!detail) return
+  if (detail.active) webviewOverlayActive.value += 1
+  else webviewOverlayActive.value = Math.max(0, webviewOverlayActive.value - 1)
 }
 
 function applyDeepLinkAction(action: SocialGlowzDeepLinkAction) {
@@ -468,7 +694,8 @@ onMounted(async () => {
 
   window.addEventListener('resize', handleResize)
   window.addEventListener('sfz-network-webview-ready', onWebviewReady)
-  window.addEventListener('keydown', onKeyboardShortcut)
+  window.addEventListener('keydown', onKeyboardShortcut, { capture: true })
+  window.addEventListener('keyup', onKeyboardShortcut, { capture: true })
 
   if (isTauri) {
     const invoke = await ensureTauriInvoke()
@@ -528,6 +755,7 @@ onMounted(async () => {
   window.addEventListener(SOCIALGLOWZ_DEEP_LINK_EVENT, onDeepLinkAction)
   window.addEventListener(SOCIALGLOWZ_PROFILE_PICKED_EVENT, onProfilePicked)
   window.addEventListener(SOCIALGLOWZ_SHARED_LINK_EVENT, onSharedLink)
+  window.addEventListener('sfz-webview-overlay-state', onWebviewOverlayState)
 
   // Global haptic/sound feedback for Vue-side buttons.
   // Delegated pointerdown → native plugin respects user's haptic + tap_sound prefs.
@@ -540,7 +768,8 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('sfz-network-webview-ready', onWebviewReady)
-  window.removeEventListener('keydown', onKeyboardShortcut)
+  window.removeEventListener('keydown', onKeyboardShortcut, { capture: true })
+  window.removeEventListener('keyup', onKeyboardShortcut, { capture: true })
   window.removeEventListener('sfz-webview-back', onWebviewBack)
   window.removeEventListener('sfz-grayscale-changed', onGrayscaleChanged)
   window.removeEventListener('sfz-open-profile-sheet', onOpenProfileSheet)
@@ -551,6 +780,7 @@ onUnmounted(() => {
   window.removeEventListener(SOCIALGLOWZ_DEEP_LINK_EVENT, onDeepLinkAction)
   window.removeEventListener(SOCIALGLOWZ_PROFILE_PICKED_EVENT, onProfilePicked)
   window.removeEventListener(SOCIALGLOWZ_SHARED_LINK_EVENT, onSharedLink)
+  window.removeEventListener('sfz-webview-overlay-state', onWebviewOverlayState)
   document.removeEventListener('pointerdown', onGlobalTap, true)
   unlistenTray?.()
 })

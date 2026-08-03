@@ -28,6 +28,10 @@
   --sg-motion-colors: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
   --sg-motion-transform: transform 150ms ease;
   --sg-opacity-disabled: 0.52;
+  --sg-scrollbar-width: 4px;
+  --sg-scrollbar-radius: 999px;
+  --sg-scrollbar-thumb: color-mix(in srgb, var(--sg-color-text-muted) 34%, transparent);
+  --sg-scrollbar-thumb-hover: color-mix(in srgb, var(--sg-color-text-muted) 52%, transparent);
   --sg-layer-modal: 2000;
   --sg-dialog-width: 42rem;
   --sg-dialog-max-height: 48rem;
@@ -140,7 +144,7 @@
   --sg-tooltip-padding: 0.4rem 0.6rem;
   --sg-tooltip-offset: 0.75rem;
   --sg-tooltip-font-size: 0.8rem;
-  --sg-tooltip-layer: 3000;
+  --sg-tooltip-layer: 12000;
   /* Exact-value foundations used while consolidating historical component CSS. */
   --sg-color-facebook: #1877F2;
   --sg-color-facebook-action: #2078f4;
@@ -484,10 +488,12 @@
   --sg-right-sidebar-badge-size: 1.25rem;
   --sg-right-sidebar-gutter-transition: background-color 0.2s;
   --sg-right-sidebar-panel-transition: flex-basis 0.3s;
+  --sg-right-sidebar-widget-kanban-max-height: min(60vh, 40rem);
+  --sg-right-sidebar-widget-crm-max-height: min(45vh, 28rem);
   --sg-settings-padding: 1rem;
   --sg-settings-max-height: 70vh;
-  --sg-settings-scrollbar-width: 6px;
-  --sg-settings-scrollbar-radius: 3px;
+  --sg-settings-scrollbar-width: var(--sg-scrollbar-width);
+  --sg-settings-scrollbar-radius: var(--sg-scrollbar-radius);
   --sg-settings-item-spacing: 1rem;
   --sg-settings-label-icon-gap: 0.5rem;
   --sg-settings-control-padding-block: 0.35rem;

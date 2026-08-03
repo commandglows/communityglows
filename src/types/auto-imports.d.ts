@@ -56,6 +56,7 @@ declare global {
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
   const isDefined: typeof import('@vueuse/core')['isDefined']
+  const isEditableShortcutTarget: typeof import('../stores/shortcuts')['isEditableShortcutTarget']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -69,6 +70,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeDesktopControlBarPosition: typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarPosition']
   const normalizeShortcutEvent: typeof import('../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../utils/notifications')['notivue']
   const onActivated: typeof import('vue')['onActivated']
@@ -191,6 +193,7 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDesktopControlBarStore: typeof import('../stores/desktopControlBar')['useDesktopControlBarStore']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
   const useDeviceOrientation: typeof import('@vueuse/core')['useDeviceOrientation']
   const useDevicePixelRatio: typeof import('@vueuse/core')['useDevicePixelRatio']
@@ -369,6 +372,9 @@ declare global {
   export type { CustomLink } from '../stores/customLinks'
   import('../stores/customLinks')
   // @ts-ignore
+  export type { DesktopControlBarPosition } from '../stores/desktopControlBar'
+  import('../stores/desktopControlBar')
+  // @ts-ignore
   export type { KanbanItem, KanbanColumnId } from '../stores/kanban'
   import('../stores/kanban')
   // @ts-ignore
@@ -378,7 +384,7 @@ declare global {
   export type { Profile } from '../stores/profiles'
   import('../stores/profiles')
   // @ts-ignore
-  export type { ShortcutAction, AppShortcut } from '../stores/shortcuts'
+  export type { CoreShortcutAction, NetworkShortcutAction, ProfileShortcutAction, RightPanelShortcutAction, ShortcutAction, AppShortcut } from '../stores/shortcuts'
   import('../stores/shortcuts')
   // @ts-ignore
   export type { ThemeMode, AutoThemeSource, AutoThemeResolution } from '../utils/themeAuto'
@@ -440,6 +446,7 @@ declare module 'vue' {
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
+    readonly isEditableShortcutTarget: UnwrapRef<typeof import('../stores/shortcuts')['isEditableShortcutTarget']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -453,6 +460,7 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly mockPosts: UnwrapRef<typeof import('../stores/mockData/facebookMock')['mockPosts']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeDesktopControlBarPosition: UnwrapRef<typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarPosition']>
     readonly normalizeShortcutEvent: UnwrapRef<typeof import('../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../utils/notifications')['notivue']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
@@ -575,6 +583,7 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDesktopControlBarStore: UnwrapRef<typeof import('../stores/desktopControlBar')['useDesktopControlBarStore']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>

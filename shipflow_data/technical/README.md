@@ -1,14 +1,14 @@
 ---
 artifact: development_guidelines
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.1.0"
 project: socialglowz
 created: "2026-04-26"
 status: reviewed
 source_skill: sf-docs
 scope: engineering-guidelines
 owner: "Diane"
-updated: "2026-05-29"
+updated: "2026-08-03"
 confidence: high
 risk_level: medium
 security_impact: medium
@@ -21,6 +21,9 @@ evidence:
   - "vite.firefox.config.ts"
   - "vite.web.config.ts"
   - "vite.tauri.config.ts"
+  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
+  - "src/ui/setup/pages/SocialGlowz/components/ui/"
+  - "shipflow_data/technical/design-system-authority.md"
 supersedes: []
 next_step: "/sf-docs audit shipflow_data/technical/README.md"
 ---
@@ -30,8 +33,9 @@ next_step: "/sf-docs audit shipflow_data/technical/README.md"
 ## Technical standards
 
 - Use existing stack conventions:
-  - Vue 3, TypeScript, Pinia, PrimeVue
-  - Tailwind utilities with DaisyUI where useful
+  - Windows/Tauri: Vue 3, TypeScript, Pinia, Reka UI, SocialGlowz wrappers/tokens and Notivue
+  - Legacy extension surfaces: preserve existing PrimeVue/PrimeFlex/PrimeIcons consumers until a separately validated migration removes them
+  - Site and historical web surfaces: Tailwind/DaisyUI only where already established; do not introduce them as a second Windows visual authority
   - Convex for persistence and auth
   - Tauri 2 for desktop/mobile
 - Keep platform-specific build config in the root `vite.*.config.ts` files.
@@ -44,6 +48,7 @@ next_step: "/sf-docs audit shipflow_data/technical/README.md"
 3. Guard optional features (e.g., Gmail integration) with graceful fallbacks.
 4. Preserve existing hash-based routing in desktop/mobile compatibility paths.
 5. Ensure webview and profile/session flows remain deterministic.
+6. Route Windows visual values through `assets/main.css` and complex interactions through `components/ui/` with Reka UI where applicable.
 
 ## Quality rules
 
@@ -51,6 +56,7 @@ next_step: "/sf-docs audit shipflow_data/technical/README.md"
 - Keep user-facing strings in i18n.
 - Minimize coupling between UI and native platform plumbing.
 - Avoid new dependencies unless they reduce technical debt.
+- For Windows UI changes, run the design drift check and preserve accessible names, visible focus, Escape/focus restoration and editable-field shortcut isolation.
 
 ## Data handling and privacy
 

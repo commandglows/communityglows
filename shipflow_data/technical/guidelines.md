@@ -1,10 +1,10 @@
 ---
 artifact: technical_guidelines
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.1.0"
 project: "socialglowz"
 created: "2026-05-12"
-updated: "2026-05-12"
+updated: "2026-08-03"
 status: reviewed
 source_skill: sf-docs
 scope: technical
@@ -18,6 +18,7 @@ linked_systems:
   - "shipflow_data/technical/context-function-tree.md"
   - "shipflow_data/technical/architecture.md"
   - "shipflow_data/technical/README.md"
+  - "shipflow_data/technical/design-system-authority.md"
   - "README.md"
   - "vite.config.ts"
   - "vite.chrome.config.ts"
@@ -27,7 +28,7 @@ linked_systems:
   - "manifest.config.ts"
 depends_on:
   - artifact: "shipflow_data/technical/context.md"
-    artifact_version: "1.0.0"
+    artifact_version: "1.3.0"
     required_status: reviewed
   - artifact: "shipflow_data/technical/architecture.md"
     artifact_version: "1.0.2"
@@ -41,10 +42,12 @@ evidence:
   - "vite.web.config.ts"
   - "vite.tauri.config.ts"
   - "src/ui/setup/pages/SocialGlowz/main.ts"
+  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
+  - "src/ui/setup/pages/SocialGlowz/components/ui/"
   - "src-tauri/src/lib.rs"
   - "convex/schema.ts"
 supersedes: []
-next_review: "2026-06-12"
+next_review: "2026-09-03"
 next_step: "/sf-docs update shipflow_data/technical/guidelines.md"
 ---
 
@@ -52,7 +55,8 @@ next_step: "/sf-docs update shipflow_data/technical/guidelines.md"
 
 ## Technical stack conventions
 
-- Frontend: Vue 3 + TypeScript + Pinia + PrimeVue (desktop/mobile/web/Auth shell shared).
+- Windows/Tauri UI: Vue 3 + TypeScript + Pinia + Reka UI + wrappers/tokens SocialGlowz + Notivue; aucun runtime PrimeVue dans cette entrée.
+- Legacy extension UI: preserve PrimeVue/PrimeFlex/PrimeIcons only where historical extension entries still consume them.
 - Backend: Convex Auth + Convex schema layer.
 - Native host: Tauri 2 (Rust + Kotlin/Swift), including Android WebView plugin.
 - Build targets: `vite.web.config.ts`, `vite.chrome.config.ts`, `vite.firefox.config.ts`, `vite.tauri.config.ts`.

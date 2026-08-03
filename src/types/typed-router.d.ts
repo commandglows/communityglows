@@ -126,8 +126,10 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/AppSidebar'
       | '/setup/SocialGlowz/components/BackupRestore'
       | '/setup/SocialGlowz/components/BillingAccessPanel'
+      | '/setup/SocialGlowz/components/CrmSidebarWidget'
       | '/setup/SocialGlowz/components/CrmToolbar'
       | '/setup/SocialGlowz/components/DashboardFilters'
+      | '/setup/SocialGlowz/components/DesktopControlBar'
       | '/setup/SocialGlowz/components/ExtensionParitySurface'
       | '/setup/SocialGlowz/components/FriendsPanel'
       | '/setup/SocialGlowz/components/KeyboardShortcuts'
@@ -167,6 +169,17 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
       | '/setup/SocialGlowz/components/tasks/TaskBoard'
       | '/setup/SocialGlowz/components/tasks/TaskForm'
+      | '/setup/SocialGlowz/components/ui/SgAvatar'
+      | '/setup/SocialGlowz/components/ui/SgBadge'
+      | '/setup/SocialGlowz/components/ui/SgButton'
+      | '/setup/SocialGlowz/components/ui/SgDialog'
+      | '/setup/SocialGlowz/components/ui/SgInput'
+      | '/setup/SocialGlowz/components/ui/SgMultiSelect'
+      | '/setup/SocialGlowz/components/ui/SgPassword'
+      | '/setup/SocialGlowz/components/ui/SgSelect'
+      | '/setup/SocialGlowz/components/ui/SgSpinner'
+      | '/setup/SocialGlowz/components/ui/SgSwitch'
+      | '/setup/SocialGlowz/components/ui/SgTextarea'
       | '/setup/SocialGlowz/views/LoginView'
       | '/setup/SocialGlowz/views/SessionLockView'
       | '/setup/SocialGlowz/views/TasksView'
@@ -234,6 +247,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/SocialGlowz/components/CrmSidebarWidget': RouteRecordInfo<
+      '/setup/SocialGlowz/components/CrmSidebarWidget',
+      '/setup/SocialGlowz/components/CrmSidebarWidget',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/SocialGlowz/components/CrmToolbar': RouteRecordInfo<
       '/setup/SocialGlowz/components/CrmToolbar',
       '/setup/SocialGlowz/components/CrmToolbar',
@@ -244,6 +264,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/SocialGlowz/components/DashboardFilters': RouteRecordInfo<
       '/setup/SocialGlowz/components/DashboardFilters',
       '/setup/SocialGlowz/components/DashboardFilters',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/DesktopControlBar': RouteRecordInfo<
+      '/setup/SocialGlowz/components/DesktopControlBar',
+      '/setup/SocialGlowz/components/DesktopControlBar',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -500,6 +527,83 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/SocialGlowz/components/ui/SgAvatar': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgAvatar',
+      '/setup/SocialGlowz/components/ui/SgAvatar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgBadge': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgBadge',
+      '/setup/SocialGlowz/components/ui/SgBadge',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgButton': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgButton',
+      '/setup/SocialGlowz/components/ui/SgButton',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgDialog': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgDialog',
+      '/setup/SocialGlowz/components/ui/SgDialog',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgInput': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgInput',
+      '/setup/SocialGlowz/components/ui/SgInput',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgMultiSelect': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgMultiSelect',
+      '/setup/SocialGlowz/components/ui/SgMultiSelect',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgPassword': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgPassword',
+      '/setup/SocialGlowz/components/ui/SgPassword',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgSelect': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgSelect',
+      '/setup/SocialGlowz/components/ui/SgSelect',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgSpinner': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgSpinner',
+      '/setup/SocialGlowz/components/ui/SgSpinner',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgSwitch': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgSwitch',
+      '/setup/SocialGlowz/components/ui/SgSwitch',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/ui/SgTextarea': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgTextarea',
+      '/setup/SocialGlowz/components/ui/SgTextarea',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/SocialGlowz/components/Unauthorized': RouteRecordInfo<
       '/setup/SocialGlowz/components/Unauthorized',
       '/setup/SocialGlowz/components/Unauthorized',
@@ -643,8 +747,10 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/AppSidebar'
         | '/setup/SocialGlowz/components/BackupRestore'
         | '/setup/SocialGlowz/components/BillingAccessPanel'
+        | '/setup/SocialGlowz/components/CrmSidebarWidget'
         | '/setup/SocialGlowz/components/CrmToolbar'
         | '/setup/SocialGlowz/components/DashboardFilters'
+        | '/setup/SocialGlowz/components/DesktopControlBar'
         | '/setup/SocialGlowz/components/ExtensionParitySurface'
         | '/setup/SocialGlowz/components/FriendsPanel'
         | '/setup/SocialGlowz/components/KeyboardShortcuts'
@@ -684,6 +790,17 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
         | '/setup/SocialGlowz/components/tasks/TaskBoard'
         | '/setup/SocialGlowz/components/tasks/TaskForm'
+        | '/setup/SocialGlowz/components/ui/SgAvatar'
+        | '/setup/SocialGlowz/components/ui/SgBadge'
+        | '/setup/SocialGlowz/components/ui/SgButton'
+        | '/setup/SocialGlowz/components/ui/SgDialog'
+        | '/setup/SocialGlowz/components/ui/SgInput'
+        | '/setup/SocialGlowz/components/ui/SgMultiSelect'
+        | '/setup/SocialGlowz/components/ui/SgPassword'
+        | '/setup/SocialGlowz/components/ui/SgSelect'
+        | '/setup/SocialGlowz/components/ui/SgSpinner'
+        | '/setup/SocialGlowz/components/ui/SgSwitch'
+        | '/setup/SocialGlowz/components/ui/SgTextarea'
         | '/setup/SocialGlowz/views/LoginView'
         | '/setup/SocialGlowz/views/SessionLockView'
         | '/setup/SocialGlowz/views/TasksView'
@@ -744,6 +861,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/SocialGlowz/components/CrmSidebarWidget.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/CrmSidebarWidget'
+      views:
+        | never
+    }
     'src/ui/setup/pages/SocialGlowz/components/CrmToolbar.vue': {
       routes:
         | '/setup/SocialGlowz/components/CrmToolbar'
@@ -753,6 +876,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/components/DashboardFilters.vue': {
       routes:
         | '/setup/SocialGlowz/components/DashboardFilters'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/DesktopControlBar.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/DesktopControlBar'
       views:
         | never
     }
@@ -969,6 +1098,72 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/components/tasks/TaskForm.vue': {
       routes:
         | '/setup/SocialGlowz/components/tasks/TaskForm'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgAvatar.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgAvatar'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgBadge.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgBadge'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgButton.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgButton'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgDialog.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgDialog'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgInput.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgInput'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgMultiSelect.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgMultiSelect'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgPassword.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgPassword'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgSelect.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgSelect'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgSpinner.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgSpinner'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgSwitch.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgSwitch'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgTextarea.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgTextarea'
       views:
         | never
     }

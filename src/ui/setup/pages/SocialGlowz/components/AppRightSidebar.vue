@@ -21,21 +21,25 @@
         >
           <div
             class="sidebar-header"
-            :class="{ 'justify-content-center': iconsOnly, 'justify-content-between': !iconsOnly }"
+            :class="{ 'sidebar-header--compact': iconsOnly, 'justify-content-between': !iconsOnly }"
           >
-            <div class="sidebar-actions">
+            <div
+              class="sidebar-actions"
+              :class="{ 'sidebar-actions--compact': iconsOnly }"
+            >
               <Button
                 v-sg-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
                 :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
                 text
+                :class="['sidebar-header-button', iconsOnly ? 'w-full' : 'justify-content-center']"
                 :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
                 @click="copyDiagnostics"
               />
               <Button
-                v-if="!iconsOnly"
                 v-sg-tooltip.left="$t('common.settings')"
                 icon="pi pi-cog"
                 text
+                :class="['sidebar-header-button', iconsOnly ? 'w-full' : 'justify-content-center']"
                 :aria-label="$t('common.settings')"
                 @click="emit('open-settings')"
               />
@@ -44,6 +48,7 @@
               v-sg-tooltip.left="'Toggle right sidebar'"
               icon="pi pi-bars"
               text
+              class="sidebar-toggle-button"
               aria-label="Toggle right sidebar"
               @click="toggleSidebar"
             />
@@ -86,6 +91,7 @@
               :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'feed')"
             />
             <Button
               icon="pi pi-user"
@@ -93,6 +99,7 @@
               :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'profile')"
             />
             <Button
               icon="pi pi-users"
@@ -100,6 +107,7 @@
               :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'friends')"
             />
             <Button
               icon="pi pi-bell"
@@ -108,6 +116,7 @@
               :badge="'3'"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'notifications')"
             />
             <Button
               icon="pi pi-bookmark"
@@ -115,6 +124,7 @@
               :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'saved')"
             />
             <Button
               icon="pi pi-calendar"
@@ -122,7 +132,64 @@
               :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
               text
               :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              @click="emit('open-rightpanel-section', 'events')"
             />
+          </div>
+
+          <div
+            v-if="!iconsOnly"
+            class="kanban-host"
+          >
+            <div
+              class="sidebar-widget"
+            >
+              <button
+                class="sidebar-widget__toggle"
+                type="button"
+                :aria-label="isKanbanCollapsed ? 'Replier puis ouvrir Kanban' : 'Déplier et réduire Kanban'"
+                :aria-expanded="String(!isKanbanCollapsed)"
+                @click="isKanbanCollapsed = !isKanbanCollapsed"
+              >
+                <span class="sidebar-widget__title">Kanban</span>
+                <span class="sidebar-widget__state">
+                  {{ isKanbanCollapsed ? 'Replié' : 'Déplié' }}
+                </span>
+                <i :class="['pi', isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']" />
+              </button>
+              <div
+                class="sidebar-widget__body sidebar-widget__body--kanban"
+                :class="{ 'sidebar-widget__body--collapsed': isKanbanCollapsed }"
+              >
+                <KanbanSidebar />
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="!iconsOnly"
+            class="crm-host"
+          >
+            <div class="sidebar-widget">
+              <button
+                class="sidebar-widget__toggle"
+                type="button"
+                :aria-label="isCrmCollapsed ? 'Replier puis ouvrir CRM' : 'Déplier et réduire CRM'"
+                :aria-expanded="String(!isCrmCollapsed)"
+                @click="isCrmCollapsed = !isCrmCollapsed"
+              >
+                <span class="sidebar-widget__title">CRM</span>
+                <span class="sidebar-widget__state">
+                  {{ isCrmCollapsed ? 'Replié' : 'Déplié' }}
+                </span>
+                <i :class="['pi', isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']" />
+              </button>
+              <div
+                class="sidebar-widget__body sidebar-widget__body--crm"
+                :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
+              >
+                <CrmSidebarWidget />
+              </div>
+            </div>
           </div>
         </div>
       </SplitterPanel>
@@ -134,7 +201,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
 import Button from './ui/SgButton.vue'
 import Avatar from './ui/SgAvatar.vue'
@@ -144,6 +211,8 @@ import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
 import { getPlatformCapabilities } from '@/platform/capabilities'
 import { useWebviewStore } from '@/stores/webviewState'
 import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
+import KanbanSidebar from './kanban/KanbanSidebar.vue'
+import CrmSidebarWidget from './CrmSidebarWidget.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -152,6 +221,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   'open-settings': []
+  'open-rightpanel-section': [sectionId: string]
 }>()
 
 const webviewStore = useWebviewStore()
@@ -188,7 +258,42 @@ async function copyDiagnostics() {
 
 const iconsOnly = ref(false)
 const profilesStore = useProfilesStore()
+const isKanbanCollapsed = ref(false)
+const isCrmCollapsed = ref(true)
+const KANBAN_COLLAPSE_KEY = 'socialglowz-right-sidebar-kanban-collapsed'
+const CRM_COLLAPSE_KEY = 'socialglowz-right-sidebar-crm-collapsed'
 const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
+
+const readBoolFromStorage = (key: string, fallback: boolean) => {
+  try {
+    const value = window.localStorage.getItem(key)
+    if (value === null) return fallback
+    return value === '1' || value.toLowerCase() === 'true'
+  } catch {
+    return fallback
+  }
+}
+
+const writeBoolToStorage = (key: string, value: boolean) => {
+  try {
+    window.localStorage.setItem(key, value ? '1' : '0')
+  } catch {
+    // noop
+  }
+}
+
+onMounted(() => {
+  isKanbanCollapsed.value = readBoolFromStorage(KANBAN_COLLAPSE_KEY, false)
+  isCrmCollapsed.value = readBoolFromStorage(CRM_COLLAPSE_KEY, true)
+})
+
+watch(isKanbanCollapsed, isCollapsed => {
+  writeBoolToStorage(KANBAN_COLLAPSE_KEY, isCollapsed)
+})
+
+watch(isCrmCollapsed, isCollapsed => {
+  writeBoolToStorage(CRM_COLLAPSE_KEY, isCollapsed)
+})
 
 watch(iconsOnly, async compact => {
   await nextTick()
@@ -239,10 +344,41 @@ const handleResize = (sizes: number[]) => {
   margin-bottom: var(--sg-sidebar-section-gap);
 }
 
+.sidebar-header--compact {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sg-sidebar-subsection-spacing);
+  min-height: auto;
+}
+
 .sidebar-actions {
   display: flex;
   align-items: center;
   gap: var(--sg-sidebar-control-gap);
+}
+
+.sidebar-actions--compact {
+  width: var(--sg-sidebar-fill-size);
+  flex-direction: column;
+  gap: var(--sg-sidebar-subsection-spacing);
+}
+
+.sidebar-header-button {
+  height: var(--sg-right-sidebar-menu-row-height);
+}
+
+.sidebar-header--compact :deep(.sg-button) {
+  width: var(--sg-sidebar-fill-size);
+  justify-content: center;
+}
+
+.sidebar-toggle-button {
+  width: fit-content;
+}
+
+.sidebar-header--compact .sidebar-toggle-button {
+  width: var(--sg-sidebar-fill-size);
+  justify-content: center;
 }
 
 .content-centered {
@@ -302,6 +438,82 @@ const handleResize = (sizes: number[]) => {
   position: absolute;
   top: var(--sg-right-sidebar-badge-inset);
   right: var(--sg-right-sidebar-badge-inset);
+}
+
+.kanban-host {
+  margin-top: var(--sg-sidebar-section-spacing);
+  min-height: 0;
+}
+
+.crm-host {
+  margin-top: var(--sg-sidebar-section-spacing);
+  min-height: 0;
+}
+
+.sidebar-widget {
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--sg-radius-sm);
+  overflow: hidden;
+}
+
+.sidebar-widget__toggle {
+  margin: 0;
+  border: 0;
+  width: var(--sg-sidebar-fill-size);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sg-sidebar-control-gap);
+  padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
+  background: var(--surface-card);
+  color: var(--text-color);
+  cursor: pointer;
+  font: inherit;
+}
+
+.sidebar-widget__toggle:hover {
+  background: var(--surface-hover);
+}
+
+.sidebar-widget__toggle:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+
+.sidebar-widget__title {
+  font-size: var(--sg-sidebar-section-title-size);
+  font-weight: 600;
+  color: var(--text-color-secondary);
+}
+
+.sidebar-widget__state {
+  margin-left: auto;
+  margin-right: var(--sg-sidebar-control-gap);
+  font-size: var(--sg-font-size-0d8rem);
+  color: var(--text-color-secondary);
+}
+
+.sidebar-widget__body {
+  overflow: hidden;
+  transition: max-height var(--sg-motion-all-0d2s-ease), opacity var(--sg-motion-all-0d2s-ease);
+  opacity: 1;
+}
+
+.sidebar-widget__body--kanban {
+  max-height: var(--sg-right-sidebar-widget-kanban-max-height);
+}
+
+.sidebar-widget__body--crm {
+  max-height: var(--sg-right-sidebar-widget-crm-max-height);
+}
+
+.sidebar-widget__body--collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .icons-only .menu-section :deep(.sg-button__badge) {

@@ -117,11 +117,15 @@
 
       <hr class="settings-divider">
 
-      <KeyboardShortcuts />
+      <div class="settings-full-row">
+        <KeyboardShortcuts />
+      </div>
 
       <hr class="settings-divider">
 
-      <BillingAccessPanel />
+      <div class="settings-full-row">
+        <BillingAccessPanel />
+      </div>
 
       <hr class="settings-divider">
 
@@ -132,7 +136,9 @@
           <span>{{ $t('backup.section_title') }}</span>
         </div>
       </div>
-      <BackupRestore />
+      <div class="settings-full-row">
+        <BackupRestore />
+      </div>
     </div>
   </SgDialog>
 </template>
@@ -225,8 +231,33 @@ defineExpose({
   max-height: var(--sg-settings-max-height);
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--sg-color-action) transparent;
+  scrollbar-color: var(--sg-scrollbar-thumb) transparent;
   scrollbar-gutter: stable;
+}
+
+@media (min-width: 980px) {
+  .settings-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sg-space-1rem);
+    row-gap: var(--sg-settings-item-spacing);
+  }
+
+  .setting-item,
+  .theme-mode-hint,
+  .settings-full-row,
+  .settings-divider {
+    grid-column: span 1;
+  }
+
+  .settings-full-row,
+  .theme-mode-hint {
+    grid-column: 1 / -1;
+  }
+
+  .settings-divider {
+    width: 100%;
+  }
 }
 
 .settings-divider { border: 0; border-top: 1px solid var(--surface-border); margin: var(--sg-settings-item-spacing) 0; }
@@ -241,8 +272,12 @@ defineExpose({
 }
 
 .settings-container::-webkit-scrollbar-thumb {
-  background: var(--sg-color-action);
+  background: var(--sg-scrollbar-thumb);
   border-radius: var(--sg-settings-scrollbar-radius);
+}
+
+.settings-container::-webkit-scrollbar-thumb:hover {
+  background: var(--sg-scrollbar-thumb-hover);
 }
 
 .setting-item {

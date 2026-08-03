@@ -35,14 +35,17 @@ Any product claim in the repo should be backed by the product registry, a live r
 ```
 Une seule codebase Vue.js → extension navigateur, desktop et mobile
 
-src/ui/setup/pages/SocialGlowz/    # App principale (Vue 3 + PrimeVue)
+src/ui/setup/pages/SocialGlowz/    # App principale Windows/Tauri (Vue 3 + Reka UI)
 ├── main.ts                        # Entry point standalone
 ├── App.vue                        # Layout responsive (mobile/desktop)
 ├── router/                        # Vue Router (createWebHashHistory)
 ├── components/
 │   ├── networks/                  # Vues par réseau social
 │   ├── kanban/                    # Tableau Kanban
-│   └── feed/                      # Feed unifié
+│   ├── feed/                      # Feed unifié
+│   └── ui/                        # Wrappers SocialGlowz accessibles et tokenisés
+├── assets/main.css                # Tokens sémantiques Windows/Tauri
+├── directives/tooltip.ts          # Infobulles clavier/pointeur SocialGlowz
 ├── stores/                        # Pinia stores
 ├── composables/                   # Hooks Vue
 └── services/                      # Services API (Gmail, etc.)
@@ -105,7 +108,9 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 ## Stack technique
 
-- **Frontend** : Vue 3, PrimeVue, Tailwind CSS, DaisyUI, Pinia
+- **App Windows/Tauri** : Vue 3, Reka UI, wrappers SocialGlowz, tokens CSS sémantiques, Notivue, Pinia
+- **Surfaces extension historiques** : Vue 3 avec des consommateurs PrimeVue/PrimeFlex/PrimeIcons encore conservés selon l'entrée; PrimeVue n'est plus chargé par le runtime Windows/Tauri
+- **Site** : Astro/Tailwind avec un porteur de tokens distinct; l'identité est commune mais les tokens ne sont pas encore générés depuis une source unique
 - **Auth** : Convex Auth (`@auth/core`, `@convex-dev/auth`)
 - **Backend** : Convex (serverless)
 - **i18n** : vue-i18n

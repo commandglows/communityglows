@@ -1,7 +1,16 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-export type ShortcutAction = 'toggle-left-sidebar' | 'toggle-right-sidebar' | 'open-settings' | 'open-crm'
+export type CoreShortcutAction =
+  | 'toggle-left-sidebar'
+  | 'toggle-right-sidebar'
+  | 'open-settings'
+  | 'open-crm'
+  | 'open-profile-selector'
+export type NetworkShortcutAction = 'open-network'
+export type ProfileShortcutAction = 'open-profile'
+export type RightPanelShortcutAction = 'open-rightpanel-section'
+export type ShortcutAction = CoreShortcutAction | NetworkShortcutAction | ProfileShortcutAction | RightPanelShortcutAction
 
 export interface AppShortcut {
   id: string
@@ -9,6 +18,7 @@ export interface AppShortcut {
   label: string
   keys: string
   enabled: boolean
+  target?: string
 }
 
 const STORAGE_KEY = 'sfz_keyboard_shortcuts'
@@ -18,16 +28,121 @@ const defaults: AppShortcut[] = [
   { id: 'toggle-right-sidebar', action: 'toggle-right-sidebar', label: 'Afficher/masquer le panneau droit', keys: 'Alt+R', enabled: true },
   { id: 'open-settings', action: 'open-settings', label: 'Ouvrir les paramètres', keys: 'Alt+,', enabled: true },
   { id: 'open-crm', action: 'open-crm', label: 'Ouvrir le CRM', keys: 'Alt+C', enabled: true },
+  { id: 'open-profile-selector', action: 'open-profile-selector', label: 'Ouvrir le sélecteur de profil', keys: 'Alt+P', enabled: true },
 ]
+
+const NETWORK_SHORTCUT_PREFIX = 'open-network:'
+const PROFILE_SHORTCUT_PREFIX = 'open-profile:'
+const RIGHT_PANEL_SECTION_PREFIX = 'open-rightpanel-section:'
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+function normalizeShortcutAction(value: unknown): ShortcutAction {
+  if (
+    value === 'toggle-left-sidebar'
+    || value === 'toggle-right-sidebar'
+    || value === 'open-settings'
+    || value === 'open-crm'
+    || value === 'open-profile-selector'
+    || value === 'open-network'
+    || value === 'open-profile'
+    || value === 'open-rightpanel-section'
+  ) {
+    return value
+  }
+  return 'open-settings'
+}
+
+function parseShortcutEntry(entry: unknown): Partial<AppShortcut> {
+  if (!isObject(entry)) return {}
+  return {
+    ...entry,
+    id: typeof entry.id === 'string' ? entry.id : '',
+    action: normalizeShortcutAction(entry.action),
+    label: typeof entry.label === 'string' ? entry.label : '',
+    keys: typeof entry.keys === 'string' ? entry.keys : '',
+    enabled: parseBoolean(entry.enabled, false),
+    target: typeof entry.target === 'string' ? entry.target : undefined,
+  }
+}
+
+function toNetworkShortcutId(networkId: string): string {
+  return `${NETWORK_SHORTCUT_PREFIX}${networkId}`
+}
+
+function toProfileShortcutId(profileId: string): string {
+  return `${PROFILE_SHORTCUT_PREFIX}${profileId}`
+}
+
+function toRightPanelSectionShortcutId(sectionId: string): string {
+  return `${RIGHT_PANEL_SECTION_PREFIX}${sectionId}`
+}
+
+function parseBoolean(value: unknown, fallback: boolean): boolean {
+  if (typeof value === 'boolean') return value
+  if (typeof value === 'string') {
+    if (value.toLowerCase() === 'true') return true
+    if (value.toLowerCase() === 'false') return false
+  }
+  return fallback
+}
 
 function loadShortcuts(): AppShortcut[] {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
     if (!Array.isArray(parsed)) return structuredClone(defaults)
-    return defaults.map((fallback) => ({
-      ...fallback,
-      ...(parsed.find((item: AppShortcut) => item.id === fallback.id) ?? {}),
-    }))
+    const loaded = parsed.map(parseShortcutEntry).filter(entry => entry.id)
+    const normalized: AppShortcut[] = defaults.map((fallback) => {
+      const item = loaded.find((entry: Partial<AppShortcut>) => entry.id === fallback.id) ?? {}
+      return {
+        ...fallback,
+        ...item,
+        enabled: parseBoolean(item.enabled, fallback.enabled),
+      }
+    })
+
+    for (const entry of loaded) {
+      if (defaults.some((fallback) => fallback.id === entry.id)) continue
+      if (!entry.id || typeof entry.id !== 'string') continue
+      const hasTarget = typeof entry.target === 'string' && entry.target.length > 0
+      const isNetwork = entry.action === 'open-network' && hasTarget
+      if (entry.action === 'open-network' && hasTarget) {
+        normalized.push({
+          id: entry.id,
+          action: 'open-network',
+          label: entry.label || `Ouvrir ${entry.target}`,
+          keys: typeof entry.keys === 'string' ? entry.keys : '',
+          enabled: parseBoolean(entry.enabled, false),
+          target: entry.target!,
+        })
+      }
+      const isRightPanelSection = entry.action === 'open-rightpanel-section'
+      if (!isNetwork && isRightPanelSection && entry.target) {
+        normalized.push({
+          id: entry.id,
+          action: 'open-rightpanel-section',
+          label: entry.label || entry.id,
+          keys: typeof entry.keys === 'string' ? entry.keys : '',
+          enabled: parseBoolean(entry.enabled, false),
+          target: entry.target,
+        })
+        continue
+      }
+      if (!isNetwork && entry.id && entry.label) {
+        normalized.push({
+          id: entry.id,
+          action: normalizeShortcutAction(entry.action),
+          label: entry.label || entry.id!,
+          keys: typeof entry.keys === 'string' ? entry.keys : '',
+          enabled: parseBoolean(entry.enabled, false),
+          target: entry.target,
+        })
+      }
+    }
+
+    return normalized
   } catch {
     return structuredClone(defaults)
   }
@@ -41,18 +156,85 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(shortcuts.value))
   }
 
-  function setKeys(id: string, keys: string) {
-    const shortcut = shortcuts.value.find(item => item.id === id)
-    if (!shortcut) return
-    shortcut.keys = keys
+  function keyForNetwork(networkId: string): string {
+    return toNetworkShortcutId(networkId)
+  }
+
+  function findById(id: string) {
+    return shortcuts.value.find(item => item.id === id)
+  }
+
+  function hasKeysConflict(keys: string, exceptId?: string): boolean {
+    return shortcuts.value.some(
+      shortcut => shortcut.id !== exceptId && shortcut.keys.length > 0 && shortcut.keys === keys
+    )
+  }
+
+  function setKeys(id: string, keys: string): boolean {
+    if (hasKeysConflict(keys, id)) return false
+    const index = shortcuts.value.findIndex(item => item.id === id)
+    if (index < 0) return false
+    shortcuts.value[index] = { ...shortcuts.value[index], keys }
     persist()
+    return true
   }
 
   function setEnabled(id: string, enabled: boolean) {
-    const shortcut = shortcuts.value.find(item => item.id === id)
-    if (!shortcut) return
-    shortcut.enabled = enabled
+    shortcuts.value = shortcuts.value.map((shortcut) => (
+      shortcut.id === id ? { ...shortcut, enabled: parseBoolean(enabled, false) } : shortcut
+    ))
     persist()
+  }
+
+  function ensureNetworkShortcut(networkId: string, label: string): AppShortcut {
+    const id = keyForNetwork(networkId)
+    const existing = findById(id)
+    if (existing) return existing
+    const next: AppShortcut = {
+      id,
+      action: 'open-network',
+      target: networkId,
+      label: `Ouvrir ${label}`,
+      keys: '',
+      enabled: false,
+    }
+    shortcuts.value = [...shortcuts.value, next]
+    persist()
+    return next
+  }
+
+  function ensureProfileShortcut(profileId: string, label: string): AppShortcut {
+    const id = toProfileShortcutId(profileId)
+    const existing = findById(id)
+    if (existing) return existing
+    const next: AppShortcut = {
+      id,
+      action: 'open-profile',
+      target: profileId,
+      label: `Activer ${label}`,
+      keys: '',
+      enabled: false,
+    }
+    shortcuts.value = [...shortcuts.value, next]
+    persist()
+    return next
+  }
+
+  function ensureRightPanelShortcut(sectionId: string, label: string): AppShortcut {
+    const id = toRightPanelSectionShortcutId(sectionId)
+    const existing = findById(id)
+    if (existing) return existing
+    const next: AppShortcut = {
+      id,
+      action: 'open-rightpanel-section',
+      target: sectionId,
+      label,
+      keys: '',
+      enabled: false,
+    }
+    shortcuts.value = [...shortcuts.value, next]
+    persist()
+    return next
   }
 
   function reset() {
@@ -60,7 +242,19 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
     persist()
   }
 
-  return { shortcuts, enabledShortcuts, setKeys, setEnabled, reset }
+  return {
+    shortcuts,
+    enabledShortcuts,
+    keyForNetwork,
+    setKeys,
+    setEnabled,
+    ensureNetworkShortcut,
+    ensureProfileShortcut,
+    ensureRightPanelShortcut,
+    hasKeysConflict,
+    findById,
+    reset,
+  }
 })
 
 export function normalizeShortcutEvent(event: KeyboardEvent): string {

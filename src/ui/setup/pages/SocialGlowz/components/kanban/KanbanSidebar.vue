@@ -57,12 +57,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useKanbanStore } from '@/stores/kanban'
 import Button from '../ui/SgButton.vue'
 import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
 
 const store = useKanbanStore()
+
+onMounted(() => {
+  store.initialize()
+})
 
 const totalItems = computed(() => {
   return store.columns.reduce((total, column) => total + column.items.length, 0)
