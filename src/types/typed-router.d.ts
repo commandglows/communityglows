@@ -126,12 +126,14 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/AppSidebar'
       | '/setup/SocialGlowz/components/BackupRestore'
       | '/setup/SocialGlowz/components/BillingAccessPanel'
+      | '/setup/SocialGlowz/components/CrmToolbar'
       | '/setup/SocialGlowz/components/DashboardFilters'
       | '/setup/SocialGlowz/components/ExtensionParitySurface'
       | '/setup/SocialGlowz/components/FriendsPanel'
       | '/setup/SocialGlowz/components/MobileLayout'
       | '/setup/SocialGlowz/components/MobileProfileSheet'
       | '/setup/SocialGlowz/components/MobileSettingsSheet'
+      | '/setup/SocialGlowz/components/NetworkBrandIcon'
       | '/setup/SocialGlowz/components/NetworkWebviewHost'
       | '/setup/SocialGlowz/components/OnboardingFlow'
       | '/setup/SocialGlowz/components/PostAuthSyncOverlay'
@@ -223,6 +225,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/SocialGlowz/components/common/SocialNetworkLogo': RouteRecordInfo<
       '/setup/SocialGlowz/components/common/SocialNetworkLogo',
       '/setup/SocialGlowz/components/common/SocialNetworkLogo',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/CrmToolbar': RouteRecordInfo<
+      '/setup/SocialGlowz/components/CrmToolbar',
+      '/setup/SocialGlowz/components/CrmToolbar',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -335,6 +344,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/SocialGlowz/components/MobileSettingsSheet': RouteRecordInfo<
       '/setup/SocialGlowz/components/MobileSettingsSheet',
       '/setup/SocialGlowz/components/MobileSettingsSheet',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/SocialGlowz/components/NetworkBrandIcon': RouteRecordInfo<
+      '/setup/SocialGlowz/components/NetworkBrandIcon',
+      '/setup/SocialGlowz/components/NetworkBrandIcon',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -587,12 +603,14 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/AppSidebar'
         | '/setup/SocialGlowz/components/BackupRestore'
         | '/setup/SocialGlowz/components/BillingAccessPanel'
+        | '/setup/SocialGlowz/components/CrmToolbar'
         | '/setup/SocialGlowz/components/DashboardFilters'
         | '/setup/SocialGlowz/components/ExtensionParitySurface'
         | '/setup/SocialGlowz/components/FriendsPanel'
         | '/setup/SocialGlowz/components/MobileLayout'
         | '/setup/SocialGlowz/components/MobileProfileSheet'
         | '/setup/SocialGlowz/components/MobileSettingsSheet'
+        | '/setup/SocialGlowz/components/NetworkBrandIcon'
         | '/setup/SocialGlowz/components/NetworkWebviewHost'
         | '/setup/SocialGlowz/components/OnboardingFlow'
         | '/setup/SocialGlowz/components/PostAuthSyncOverlay'
@@ -678,6 +696,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/components/common/SocialNetworkLogo.vue': {
       routes:
         | '/setup/SocialGlowz/components/common/SocialNetworkLogo'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/CrmToolbar.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/CrmToolbar'
       views:
         | never
     }
@@ -774,6 +798,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/components/MobileSettingsSheet.vue': {
       routes:
         | '/setup/SocialGlowz/components/MobileSettingsSheet'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/NetworkBrandIcon.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/NetworkBrandIcon'
       views:
         | never
     }

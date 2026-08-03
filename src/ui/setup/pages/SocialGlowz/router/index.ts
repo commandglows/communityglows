@@ -120,6 +120,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/gmail',
+    alias: '/crm',
     name: 'Gmail',
     component: () => import('../components/networks/GmailView.vue'),
     meta: {

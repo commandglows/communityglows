@@ -17,16 +17,17 @@
         >
           <div class="sidebar-main">
             <div
-              class="flex align-items-center mb-3"
+              class="sidebar-header"
               :class="{ 'justify-content-center': iconsOnly, 'justify-content-between': !iconsOnly }"
             >
               <Button
-                v-tooltip.right="'Toggle compact mode'"
-                icon="pi pi-arrows-h"
+                v-tooltip.right="'Toggle left sidebar'"
+                icon="pi pi-bars"
                 text
-                aria-label="Toggle compact mode"
-                @click="toggleIconsOnly"
+                aria-label="Toggle left sidebar"
+                @click="toggleSidebar"
               />
+              <h1 v-if="!iconsOnly" class="app-title">SocialGlowz</h1>
             </div>
 
             <!-- Réseaux sociaux -->
@@ -287,13 +288,21 @@
     </Splitter>
   </template>
   <template v-else>
+    <Button
+      v-tooltip.right="'Ouvrir le panneau gauche'"
+      icon="pi pi-bars"
+      text
+      aria-label="Ouvrir le panneau gauche"
+      class="sidebar-reopen sidebar-reopen--left"
+      @click="toggleSidebar"
+    />
     <slot></slot>
   </template>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useKanbanStore } from '@/stores/kanban'
 import { useWebviewStore } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
@@ -311,6 +320,7 @@ import FriendsPanel from './FriendsPanel.vue'
 import NetworkBrandIcon from './NetworkBrandIcon.vue'
 
 const router = useRouter()
+const route = useRoute()
 const kanbanStore = useKanbanStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
@@ -395,6 +405,8 @@ const toggleIconsOnly = () => {
   iconsOnly.value = !iconsOnly.value
 }
 
+const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
+
 interface ResizeEventPayload {
   sizes?: number[]
 }
@@ -421,7 +433,7 @@ const builtinMenuItems = builtInSocialNetworks.map((network, index) => ({
 
 const menuItems = ref<MenuItem[]>([
   ...builtinMenuItems,
-  { id: builtinMenuItems.length + 1, label: 'Kanban', icon: 'pi pi-th-large', route: '/kanban' },
+  { id: builtinMenuItems.length + 1, label: 'CRM', icon: 'pi pi-briefcase', route: '/crm' },
 ])
 
 const customLinkItems = computed<MenuItem[]>(() => {
@@ -435,7 +447,9 @@ const customLinkItems = computed<MenuItem[]>(() => {
 })
 
 const isNetworkActive = (item: MenuItem): boolean =>
-  webviewStore.activeNetworkId === item.route.slice(1)
+  item.route === '/crm'
+    ? route.path === '/crm' || route.path === '/gmail'
+    : webviewStore.activeNetworkId === item.route.slice(1)
 
 const navigateToNetwork = (network: MenuItem): void => {
   const networkId = network.route.slice(1) // '/twitter' → 'twitter'
@@ -482,8 +496,24 @@ onMounted(() => {
   background-color: var(--surface-card);
   border-right: 1px solid var(--surface-border);
   height: var(--sg-sidebar-viewport-height);
-  margin-top: var(--sg-sidebar-top-offset);
+  margin-top: 0;
   transition: var(--sg-sidebar-transition);
+}
+
+.sidebar-reopen {
+  position: fixed;
+  top: var(--sg-sidebar-control-padding);
+  z-index: var(--sg-sidebar-overlay-z-index, 1100);
+  color: var(--text-color);
+  background: transparent;
+}
+
+.sidebar-reopen--left {
+  left: var(--sg-sidebar-control-padding);
+}
+
+.sidebar-reopen:hover {
+  background: var(--surface-hover);
 }
 
 .sidebar.icons-only {
@@ -507,6 +537,21 @@ onMounted(() => {
   min-height: 0;
   width: var(--sg-sidebar-fill-size);
   overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-sidebar-control-gap);
+  min-height: var(--sg-sidebar-header-height);
+  padding: var(--sg-sidebar-control-padding);
+}
+
+.app-title {
+  margin: 0;
+  color: var(--text-color);
+  font-size: var(--sg-sidebar-app-title-size);
+  white-space: nowrap;
 }
 
 .content-centered {

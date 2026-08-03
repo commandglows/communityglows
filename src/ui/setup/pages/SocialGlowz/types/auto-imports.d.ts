@@ -65,6 +65,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../../../../../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeShortcutEvent: typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../../../../../utils/notifications')['notivue']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
@@ -276,6 +277,7 @@ declare global {
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
   const useShare: typeof import('@vueuse/core')['useShare']
+  const useShortcutsStore: typeof import('../../../../../stores/shortcuts')['useShortcutsStore']
   const useSignupNudge: typeof import('../../../../../composables/useSignupNudge')['useSignupNudge']
   const useSlots: typeof import('vue')['useSlots']
   const useSocialNetworksStore: typeof import('../../../../../stores/socialNetworks')['useSocialNetworksStore']
@@ -363,6 +365,9 @@ declare global {
   export type { Profile } from '../../../../../stores/profiles'
   import('../../../../../stores/profiles')
   // @ts-ignore
+  export type { ShortcutAction, AppShortcut } from '../../../../../stores/shortcuts'
+  import('../../../../../stores/shortcuts')
+  // @ts-ignore
   export type { ThemeMode, AutoThemeSource, AutoThemeResolution } from '../../../../../utils/themeAuto'
   import('../../../../../utils/themeAuto')
 }
@@ -429,6 +434,7 @@ declare module 'vue' {
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeShortcutEvent: UnwrapRef<typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../../../../../utils/notifications')['notivue']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
@@ -639,6 +645,7 @@ declare module 'vue' {
     readonly useScrollLock: UnwrapRef<typeof import('@vueuse/core')['useScrollLock']>
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
+    readonly useShortcutsStore: UnwrapRef<typeof import('../../../../../stores/shortcuts')['useShortcutsStore']>
     readonly useSignupNudge: UnwrapRef<typeof import('../../../../../composables/useSignupNudge')['useSignupNudge']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSocialNetworksStore: UnwrapRef<typeof import('../../../../../stores/socialNetworks')['useSocialNetworksStore']>

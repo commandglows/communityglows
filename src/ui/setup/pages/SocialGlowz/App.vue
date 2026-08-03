@@ -8,13 +8,11 @@
 
     <!-- Desktop layout: header + resizable sidebars -->
     <template v-else>
-      <AppHeader
-        v-model:sidebar-visible="sidebarVisible"
-        v-model:right-sidebar-visible="rightSidebarVisible"
-        @open-settings="settingsVisible = true"
-      />
       <AppSidebar v-model="sidebarVisible">
-        <AppRightSidebar v-model="rightSidebarVisible">
+        <AppRightSidebar
+          v-model="rightSidebarVisible"
+          @open-settings="settingsVisible = true"
+        >
           <!-- Native Tauri webview host: shown when a webview-capable network is active -->
           <NetworkWebviewHost
             v-if="webviewStore.activeUrl"
@@ -61,6 +59,8 @@ import {
   type SocialGlowzDeepLinkAction,
 } from '@/lib/socialGlowzDeepLinks'
 import { useOnboardingStore } from '@/stores/onboarding'
+import { normalizeShortcutEvent, useShortcutsStore } from '@/stores/shortcuts'
+import { useRouter } from 'vue-router'
 import {
   DEFAULT_TAP_SOUND_VARIANT,
   TAP_SOUND_STORAGE_KEY,
@@ -70,7 +70,6 @@ import { preloadWebviews } from './composables/useWebviewPreload'
 import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from './utils/textZoom'
 import { useSignupNudge } from '@/composables/useSignupNudge'
 import { isDesktopTauri, supportsHaptics } from '@/platform/capabilities'
-import AppHeader from './components/AppHeader.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppRightSidebar from './components/AppRightSidebar.vue'
 import NetworkWebviewHost from './components/NetworkWebviewHost.vue'
@@ -94,6 +93,8 @@ const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
+const shortcutsStore = useShortcutsStore()
+const router = useRouter()
 const textZoomLevel = ref(normalizeTextZoomLevel(
   Number(localStorage.getItem('sfz_text_zoom') ?? String(TEXT_ZOOM_DEFAULT)),
 ))
@@ -197,6 +198,18 @@ const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
   handleSharedUrl(rawUrl)
 }) as unknown as (e: Event) => void
 const onWebviewReady = () => { webviewReadyVersion.value += 1 }
+
+const onKeyboardShortcut = (event: KeyboardEvent) => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return
+  const pressed = normalizeShortcutEvent(event)
+  const shortcut = shortcutsStore.enabledShortcuts.find(item => item.keys === pressed)
+  if (!shortcut) return
+  event.preventDefault()
+  if (shortcut.action === 'toggle-left-sidebar') sidebarVisible.value = !sidebarVisible.value
+  if (shortcut.action === 'toggle-right-sidebar') rightSidebarVisible.value = !rightSidebarVisible.value
+  if (shortcut.action === 'open-settings') settingsVisible.value = true
+  if (shortcut.action === 'open-crm') router.push('/crm')
+}
 
 // Global tap feedback — delegated to the native plugin so it honors
 // the same hapticEnabled / tapSoundEnabled flags as the Kotlin bottom bar.
@@ -421,6 +434,7 @@ onMounted(async () => {
 
   window.addEventListener('resize', handleResize)
   window.addEventListener('sfz-network-webview-ready', onWebviewReady)
+  window.addEventListener('keydown', onKeyboardShortcut)
 
   if (isTauri) {
     const invoke = await ensureTauriInvoke()
@@ -492,6 +506,7 @@ onMounted(async () => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   window.removeEventListener('sfz-network-webview-ready', onWebviewReady)
+  window.removeEventListener('keydown', onKeyboardShortcut)
   window.removeEventListener('sfz-webview-back', onWebviewBack)
   window.removeEventListener('sfz-grayscale-changed', onGrayscaleChanged)
   window.removeEventListener('sfz-open-profile-sheet', onOpenProfileSheet)
@@ -519,7 +534,7 @@ input, textarea, [contenteditable="true"] {
 }
 
 .app-container {
-  height: 100vh;
+  height: var(--sg-app-viewport-height);
   overflow: hidden;
 }
 

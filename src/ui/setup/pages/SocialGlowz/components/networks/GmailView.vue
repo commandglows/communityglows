@@ -10,6 +10,8 @@
       </div>
     </div>
 
+    <CrmToolbar class="crm-toolbar-container" />
+
     <div class="gmail-content">
       <!-- Liste des emails -->
       <div class="emails-section">
@@ -18,8 +20,7 @@
           class="loading-state"
         >
           <i
-            class="pi pi-spin pi-spinner"
-            style="font-size: 2rem"
+            class="pi pi-spin pi-spinner status-icon"
           ></i>
           <p>Chargement des emails...</p>
         </div>
@@ -29,8 +30,7 @@
           class="empty-state"
         >
           <i
-            class="pi pi-inbox"
-            style="font-size: 2rem"
+            class="pi pi-inbox status-icon"
           ></i>
           <p>Aucun email à afficher</p>
         </div>
@@ -94,6 +94,7 @@
 import { ref, onMounted } from 'vue'
 import SocialAvatar from '../feed/SocialAvatar.vue'
 import KanbanBoard from '../kanban/KanbanBoard.vue'
+import CrmToolbar from '../CrmToolbar.vue'
 import { formatDate } from '../../utils/dateFormatter'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 import { useKanbanStore } from '@/stores/kanban'
@@ -129,8 +130,8 @@ onMounted(async () => {
 
 <style scoped>
 .gmail-container {
-  height: 100%;
-  padding: 1rem;
+  height: var(--sg-sidebar-fill-size);
+  padding: var(--sg-crm-content-padding);
   display: flex;
   flex-direction: column;
 }
@@ -139,7 +140,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-crm-section-spacing);
+}
+
+.crm-toolbar-container {
+  flex-shrink: 0;
+  margin-bottom: var(--sg-crm-section-spacing);
 }
 
 .gmail-header h2 {
@@ -149,14 +155,14 @@ onMounted(async () => {
 .unread-count {
   background: var(--primary-color);
   color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 1rem;
-  font-size: 0.9em;
+  padding: var(--sg-crm-unread-padding-block) var(--sg-crm-unread-padding-inline);
+  border-radius: var(--sg-crm-pill-radius);
+  font-size: var(--sg-crm-secondary-copy-size);
 }
 
 .gmail-content {
   display: flex;
-  gap: 1rem;
+  gap: var(--sg-crm-section-spacing);
   flex: 1;
   overflow: hidden;
 }
@@ -170,7 +176,7 @@ onMounted(async () => {
   flex: 1;
   overflow: hidden;
   background: var(--surface-ground);
-  border-radius: 8px;
+  border-radius: var(--sg-crm-card-radius);
 }
 
 .loading-state,
@@ -179,33 +185,37 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh;
+  height: var(--sg-crm-empty-height);
   color: var(--text-color-secondary);
+}
+
+.status-icon {
+  font-size: var(--sg-crm-status-icon-size);
 }
 
 .loading-state p,
 .empty-state p {
-  margin-top: 1rem;
+  margin-top: var(--sg-crm-section-spacing);
 }
 
 .emails-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sg-crm-section-spacing);
 }
 
 .email-item {
   background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--sg-crm-card-radius);
+  padding: var(--sg-crm-card-padding);
   border: 1px solid var(--surface-border);
-  transition: all 0.2s ease;
+  transition: var(--sg-crm-card-transition);
   cursor: pointer;
 }
 
 .email-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(var(--sg-crm-card-hover-offset));
+  box-shadow: var(--sg-crm-card-hover-shadow);
 }
 
 .email-item.unread {
@@ -216,8 +226,8 @@ onMounted(async () => {
 .email-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: var(--sg-crm-item-gap);
+  margin-bottom: var(--sg-crm-item-gap);
 }
 
 .sender {
@@ -227,12 +237,12 @@ onMounted(async () => {
 
 .date {
   color: var(--text-color-secondary);
-  font-size: 0.9em;
+  font-size: var(--sg-crm-secondary-copy-size);
 }
 
 .email-content h3 {
-  margin: 0.5rem 0;
-  font-size: 1.1em;
+  margin: var(--sg-crm-item-gap) 0;
+  font-size: var(--sg-crm-heading-size);
 }
 
 .email-content p {
@@ -242,16 +252,16 @@ onMounted(async () => {
 
 .email-labels {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: var(--sg-crm-item-gap);
+  margin-top: var(--sg-crm-item-gap);
 }
 
 .label {
   background: var(--primary-color);
   color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8em;
+  padding: var(--sg-crm-label-padding-block) var(--sg-crm-label-padding-inline);
+  border-radius: var(--sg-crm-label-radius);
+  font-size: var(--sg-crm-label-size);
 }
 
 @media (max-width: 1024px) {
@@ -262,7 +272,7 @@ onMounted(async () => {
   .emails-section,
   .kanban-section {
     flex: none;
-    height: 50vh;
+    height: var(--sg-crm-empty-height);
   }
 }
 </style> 

@@ -115,6 +115,10 @@
 
       <Divider />
 
+      <KeyboardShortcuts />
+
+      <Divider />
+
       <BillingAccessPanel />
 
       <Divider />
@@ -149,6 +153,7 @@ import Dialog from 'primevue/dialog'
 import Divider from 'primevue/divider'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
+import KeyboardShortcuts from './KeyboardShortcuts.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
 
 const { locale, t } = useI18n()
@@ -214,8 +219,8 @@ defineExpose({
 
 <style scoped>
 .settings-container {
-  padding: 1rem;
-  max-height: 70vh;
+  padding: var(--sg-settings-padding);
+  max-height: var(--sg-settings-max-height);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--primary-color, #6366f1) transparent;
@@ -223,7 +228,7 @@ defineExpose({
 }
 
 .settings-container::-webkit-scrollbar {
-  width: 6px;
+  width: var(--sg-settings-scrollbar-width);
   -webkit-appearance: none;
 }
 
@@ -233,14 +238,14 @@ defineExpose({
 
 .settings-container::-webkit-scrollbar-thumb {
   background: var(--primary-color, #6366f1);
-  border-radius: 3px;
+  border-radius: var(--sg-settings-scrollbar-radius);
 }
 
 .setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-settings-item-spacing);
 }
 
 .setting-label {
@@ -250,38 +255,38 @@ defineExpose({
 }
 
 .setting-label i {
-  margin-right: 0.5rem;
+  margin-right: var(--sg-settings-label-icon-gap);
 }
 
 .locale-select {
-  padding: 0.35rem 0.6rem;
-  border-radius: 8px;
+  padding: var(--sg-settings-control-padding-block) var(--sg-settings-control-padding-inline);
+  border-radius: var(--sg-settings-control-radius);
   border: 1px solid var(--surface-border, #ddd);
   background: var(--surface-card, #fff);
   color: var(--text-color, #333);
-  font-size: 0.85rem;
+  font-size: var(--sg-settings-control-copy-size);
   cursor: pointer;
 }
 
 .theme-mode-group {
   display: inline-flex;
-  gap: 0.35rem;
-  padding: 0.2rem;
-  border-radius: 12px;
+  gap: var(--sg-settings-theme-gap);
+  padding: var(--sg-settings-theme-group-padding);
+  border-radius: var(--sg-settings-theme-group-radius);
   border: 1px solid var(--surface-border, #ddd);
   background: var(--surface-ground, #f6f6f6);
 }
 
 .theme-mode-btn {
   border: none;
-  border-radius: 9px;
+  border-radius: var(--sg-settings-theme-button-radius);
   background: transparent;
   color: var(--text-color-secondary, #666);
-  padding: 0.42rem 0.7rem;
-  font-size: 0.82rem;
+  padding: var(--sg-settings-theme-button-padding-block) var(--sg-settings-theme-button-padding-inline);
+  font-size: var(--sg-settings-theme-button-size);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: var(--sg-settings-transition);
 }
 
 .theme-mode-btn.active {
@@ -290,32 +295,32 @@ defineExpose({
 }
 
 .theme-mode-hint {
-  margin: -0.45rem 0 0.9rem;
-  font-size: 0.78rem;
-  line-height: 1.4;
+  margin: var(--sg-settings-hint-margin-block-start) 0 var(--sg-settings-hint-margin-block-end);
+  font-size: var(--sg-settings-hint-size);
+  line-height: var(--sg-settings-hint-line-height);
   color: var(--text-color-secondary, #666);
 }
 
 .text-zoom-value {
-  font-size: 0.85rem;
+  font-size: var(--sg-settings-control-copy-size);
   color: var(--primary-color);
   font-weight: 600;
 }
 
 .text-zoom-slider {
-  width: 100%;
-  margin: -0.5rem 0 0.5rem;
+  width: var(--sg-sidebar-fill-size);
+  margin: var(--sg-settings-slider-margin-block-start) 0 var(--sg-settings-slider-margin-block-end);
   accent-color: var(--primary-color);
 }
 
 .replay-btn {
-  padding: 0.4rem 0.7rem;
-  border-radius: 8px;
+  padding: var(--sg-settings-theme-button-padding-block) var(--sg-settings-theme-button-padding-inline);
+  border-radius: var(--sg-settings-control-radius);
   border: 1px solid var(--surface-border);
   background: var(--surface-card);
   color: var(--text-color-secondary);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: var(--sg-settings-transition);
 }
 
 .replay-btn:hover {
@@ -323,18 +328,18 @@ defineExpose({
 }
 
 :global(.dark) .locale-select {
-  background: #313244;
-  border-color: #45475a;
-  color: #cdd6f4;
+  background: var(--sg-settings-dark-surface);
+  border-color: var(--sg-settings-dark-border);
+  color: var(--sg-settings-dark-text);
 }
 
 :global(.dark) .theme-mode-group {
-  background: #1f2432;
-  border-color: #45475a;
+  background: var(--sg-settings-dark-ground);
+  border-color: var(--sg-settings-dark-border);
 }
 
 :global(.dark) .theme-mode-btn.active {
-  background: #313244;
-  color: #89b4fa;
+  background: var(--sg-settings-dark-surface);
+  color: var(--sg-settings-dark-primary);
 }
 </style>

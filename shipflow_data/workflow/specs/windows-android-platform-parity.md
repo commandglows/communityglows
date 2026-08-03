@@ -404,6 +404,8 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-03 00:20:00 CEST | 006-sg-design | GPT-5 Codex | Replaced Aura's default emerald primary preset with its blue semantic token family and bridged the legacy Vue primary variable to PrimeVue's generated primary token. This removes the fluorescent green Windows controls without changing layout. | implemented-pending-manual | Build Windows only, then compare primary text, buttons, focus, and active states in light and dark themes. |
 | 2026-08-03 00:24:00 CEST | 004-sg-deploy | GPT-5 Codex | Pushed `6abcfd5` and built Windows only. GitHub Actions passed and the stable `.exe` targets that exact token-alignment commit; Android was not built. | partial | Manually confirm blue primary controls in light and dark themes alongside the pending settings/profile checks. |
 | 2026-08-03 00:32:00 CEST | 003-sg-bug / 106-sg-fix / 004-sg-deploy | GPT-5 Codex | Added the dark/light initial background to native Windows WebView2 creation and to hidden preloads, then published `51527bf` with the Windows workflow only. | implemented-pending-manual | Confirm no white flash on the first dark-mode opening of a network. |
+| 2026-08-02 23:00:21 UTC | 103-sg-verify | GPT-5 Codex | Verified the recent Windows shell, CRM toolbar, hidden-sidebar recovery controls, and keyboard-shortcut work. Automated tests and the Tauri frontend build pass; token audit found remaining legacy component literals and Windows installer scenarios remain unexecuted. | partial | Resolve design-token drift in legacy changed components, then execute the combined Windows installer checklist. |
+| 2026-08-03 04:00:19 UTC | 006-sg-design | GPT-5 Codex | Migrated the touched Windows sidebars, settings, CRM and keyboard-shortcut styles to named semantic tokens in the declared Vue token authority. The drift scan now reports only the two explicit responsive breakpoints. | implemented-pending-visual-proof | Execute the combined Windows installer checklist and visually inspect responsive panel states. |
 
 ## Current Chantier Flow
 
@@ -411,6 +413,7 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
 - `102-sg-start`: implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, atomic restore, safe diagnostics, and desktop profile surface are coded; Windows settings overlay and direct profile creation are pending installer proof.
 - `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
-- `103-sg-verify`: pending implementation.
+- `103-sg-verify`: partial — automated checks pass for the recent shell and shortcuts changes, but clean verification is blocked by unresolved design-system drift findings and missing Windows installer proof.
+- `006-sg-design`: implemented-pending-visual-proof — token consumption is complete for the touched components; the remaining responsive breakpoints need installed Windows visual proof.
 - `104-sg-end`: pending verified outcome.
 - `005-sg-ship`: pending bounded ship after platform proof.

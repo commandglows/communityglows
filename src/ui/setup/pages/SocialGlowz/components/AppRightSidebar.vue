@@ -19,14 +19,32 @@
           :class="{ 'content-centered': iconsOnly }"
         >
           <div
-            class="flex align-items-center mb-3"
+            class="sidebar-header"
             :class="{ 'justify-content-center': iconsOnly, 'justify-content-between': !iconsOnly }"
           >
-            <Button 
-              v-tooltip.left="'Toggle compact mode'" 
-              icon="pi pi-arrows-h" 
+            <div class="sidebar-actions">
+              <Button
+                v-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+                :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
+                text
+                :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+                @click="copyDiagnostics"
+              />
+              <Button
+                v-if="!iconsOnly"
+                v-tooltip.left="$t('common.settings')"
+                icon="pi pi-cog"
+                text
+                :aria-label="$t('common.settings')"
+                @click="emit('open-settings')"
+              />
+            </div>
+            <Button
+              v-tooltip.left="'Toggle right sidebar'"
+              icon="pi pi-bars"
               text
-              @click="toggleIconsOnly"
+              aria-label="Toggle right sidebar"
+              @click="toggleSidebar"
             />
           </div>
 
@@ -104,6 +122,14 @@
     </Splitter>
   </template>
   <template v-else>
+    <Button
+      v-tooltip.left="'Ouvrir le panneau droit'"
+      icon="pi pi-bars"
+      text
+      aria-label="Ouvrir le panneau droit"
+      class="sidebar-reopen sidebar-reopen--right"
+      @click="toggleSidebar"
+    />
     <slot></slot>
   </template>
 </template>
@@ -114,6 +140,9 @@ import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import { useProfilesStore } from '@/stores/profiles'
 import ProfileSwitcher from './ProfileSwitcher.vue'
+import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
+import { getPlatformCapabilities } from '@/platform/capabilities'
+import { useWebviewStore } from '@/stores/webviewState'
 
 const props = defineProps<{
   modelValue: boolean
@@ -121,7 +150,40 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+  'open-settings': []
 }>()
+
+const webviewStore = useWebviewStore()
+const diagnosticsCopied = ref(false)
+
+const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
+
+async function copyDiagnostics() {
+  const capabilities = getPlatformCapabilities()
+  const report = buildDiagnosticsReport({
+    surface: 'desktop-right-sidebar',
+    active_network: webviewStore.activeNetworkId ?? 'none',
+    profile_selected: profilesStore.activeProfileId ? 'yes' : 'no',
+    profile_count: String(profilesStore.profiles.length),
+    desktop_tauri: String(capabilities.isDesktopTauri),
+    native_webview: String(capabilities.supportsNativeWebview),
+    native_session_isolation: String(capabilities.supportsNativeSessionIsolation),
+  })
+
+  try {
+    await navigator.clipboard.writeText(report)
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = report
+    document.body.appendChild(textarea)
+    textarea.select()
+    document.execCommand('copy')
+    document.body.removeChild(textarea)
+  }
+
+  diagnosticsCopied.value = true
+  window.setTimeout(() => { diagnosticsCopied.value = false }, 2000)
+}
 
 const splitterRef = ref()
 const iconsOnly = ref(false)
@@ -158,23 +220,53 @@ const handleResizeEnd = handleResize
 .sidebar {
   background-color: var(--surface-card);
   border-left: 1px solid var(--surface-border);
-  height: 100vh;
-  margin-top: 4rem;
-  transition: all 0.3s;
+  height: var(--sg-right-sidebar-viewport-height);
+  margin-top: 0;
+  transition: var(--sg-right-sidebar-transition);
+}
+
+.sidebar-reopen {
+  position: fixed;
+  top: var(--sg-sidebar-control-padding);
+  z-index: var(--sg-sidebar-overlay-z-index, 1100);
+  color: var(--text-color);
+  background: transparent;
+}
+
+.sidebar-reopen--right {
+  right: var(--sg-sidebar-control-padding);
+}
+
+.sidebar-reopen:hover {
+  background: var(--surface-hover);
 }
 
 .sidebar.icons-only {
-  min-width: 4rem;
-  max-width: 4rem;
+  min-width: var(--sg-right-sidebar-compact-width);
+  max-width: var(--sg-right-sidebar-compact-width);
 }
 
 .sidebar:not(.icons-only) {
-  min-width: 15rem;
+  min-width: var(--sg-right-sidebar-expanded-min-width);
 }
 
 .sidebar-content {
-  height: 100%;
-  padding: 1rem;
+  height: var(--sg-sidebar-fill-size);
+  padding: var(--sg-right-sidebar-content-padding);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-sidebar-control-gap);
+  min-height: var(--sg-sidebar-header-height);
+  margin-bottom: var(--sg-sidebar-section-gap);
+}
+
+.sidebar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-sidebar-control-gap);
 }
 
 .content-centered {
@@ -184,40 +276,40 @@ const handleResizeEnd = handleResize
 }
 
 .content-centered .menu-section {
-  width: 100%;
+  width: var(--sg-sidebar-fill-size);
 }
 
 .profile-section {
   text-align: center;
-  padding-bottom: 1rem;
+  padding-bottom: var(--sg-right-sidebar-profile-spacing);
   border-bottom: 1px solid var(--surface-border);
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-right-sidebar-profile-spacing);
 }
 
 .profile-section h3 {
-  margin: 0.5rem 0 0.25rem;
-  font-size: 1.2rem;
+  margin: var(--sg-right-sidebar-profile-title-margin-block-start) 0 var(--sg-right-sidebar-profile-title-margin-block-end);
+  font-size: var(--sg-right-sidebar-profile-title-size);
 }
 
 .profile-section p {
   color: var(--text-color-secondary);
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--sg-right-sidebar-profile-copy-size);
 }
 
 .menu-section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--sg-right-sidebar-menu-gap);
 }
 
 .menu-section :deep(.p-button) {
-  height: 3rem;
+  height: var(--sg-right-sidebar-menu-row-height);
   position: relative;
 }
 
 .menu-section :deep(.p-button.justify-content-start) {
-  padding: 0 1rem;
+  padding: 0 var(--sg-right-sidebar-menu-padding-inline);
 }
 
 .menu-section :deep(.p-button.justify-content-center) {
@@ -232,21 +324,21 @@ const handleResizeEnd = handleResize
 
 .menu-section :deep(.p-badge) {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: var(--sg-right-sidebar-badge-inset);
+  right: var(--sg-right-sidebar-badge-inset);
 }
 
 .icons-only .menu-section :deep(.p-badge) {
-  right: -0.25rem;
+  right: var(--sg-right-sidebar-badge-compact-offset);
   top: 0;
   transform: scale(0.8);
-  min-width: 1.25rem;
-  height: 1.25rem;
+  min-width: var(--sg-right-sidebar-badge-size);
+  height: var(--sg-right-sidebar-badge-size);
 }
 
 @media (max-width: 768px) {
   .sidebar {
-    width: 100%;
+    width: var(--sg-sidebar-fill-size);
     background-color: var(--surface-overlay);
   }
 }
@@ -257,7 +349,7 @@ const handleResizeEnd = handleResize
 
 :deep(.p-splitter-gutter) {
   background: var(--surface-border);
-  transition: background-color 0.2s;
+  transition: var(--sg-right-sidebar-gutter-transition);
 }
 
 :deep(.p-splitter-gutter:hover) {
@@ -265,7 +357,7 @@ const handleResizeEnd = handleResize
 }
 
 :deep(.p-splitter-panel) {
-  transition: flex-basis 0.3s;
+  transition: var(--sg-right-sidebar-panel-transition);
 }
 
 @media (prefers-reduced-motion: reduce) {
