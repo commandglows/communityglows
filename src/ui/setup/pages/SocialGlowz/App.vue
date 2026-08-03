@@ -11,20 +11,40 @@
 
     <!-- Desktop layout: header + resizable sidebars -->
     <template v-else>
-      <AppSidebar v-model="sidebarVisible">
-        <AppRightSidebar
-          v-model="rightSidebarVisible"
-          @open-settings="settingsVisible = true"
-        >
-          <!-- Native Tauri webview host: shown when a webview-capable network is active -->
-          <NetworkWebviewHost
-            v-if="webviewStore.activeUrl"
-            :suspended="settingsVisible"
-          />
-          <!-- Router-view for Gmail (API), login, and other non-webview pages -->
-          <router-view v-else />
-        </AppRightSidebar>
-      </AppSidebar>
+      <div class="desktop-layout">
+        <DesktopControlBar
+          v-if="showDesktopControlBar && controlBarStore.position === 'top'"
+          :left-hidden="!sidebarVisible"
+          :right-hidden="!rightSidebarVisible"
+          position="top"
+          @open-left="sidebarVisible = true"
+          @open-right="rightSidebarVisible = true"
+        />
+        <div class="desktop-layout__content">
+          <AppSidebar v-model="sidebarVisible">
+            <AppRightSidebar
+              v-model="rightSidebarVisible"
+              @open-settings="settingsVisible = true"
+            >
+              <!-- Native Tauri webview host: shown when a webview-capable network is active -->
+              <NetworkWebviewHost
+                v-if="webviewStore.activeUrl"
+                :suspended="settingsVisible"
+              />
+              <!-- Router-view for Gmail (API), login, and other non-webview pages -->
+              <router-view v-else />
+            </AppRightSidebar>
+          </AppSidebar>
+        </div>
+        <DesktopControlBar
+          v-if="showDesktopControlBar && controlBarStore.position === 'bottom'"
+          :left-hidden="!sidebarVisible"
+          :right-hidden="!rightSidebarVisible"
+          position="bottom"
+          @open-left="sidebarVisible = true"
+          @open-right="rightSidebarVisible = true"
+        />
+      </div>
     </template>
 
     <!-- Desktop signup nudge (Dialog mode) -->
@@ -76,12 +96,14 @@ import { useSignupNudge } from '@/composables/useSignupNudge'
 import { isDesktopTauri, supportsHaptics } from '@/platform/capabilities'
 import AppSidebar from './components/AppSidebar.vue'
 import AppRightSidebar from './components/AppRightSidebar.vue'
+import DesktopControlBar from './components/DesktopControlBar.vue'
 import NetworkWebviewHost from './components/NetworkWebviewHost.vue'
 import MobileLayout from './components/MobileLayout.vue'
 import MobileSettingsSheet from './components/MobileSettingsSheet.vue'
 import PostAuthSyncOverlay from './components/PostAuthSyncOverlay.vue'
 import SignupNudge from './components/SignupNudge.vue'
 import OnboardingFlow from './components/OnboardingFlow.vue'
+import { useDesktopControlBarStore } from '@/stores/desktopControlBar'
 
 const sidebarVisible = ref(true)
 const rightSidebarVisible = ref(true)
@@ -98,7 +120,9 @@ const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
 const shortcutsStore = useShortcutsStore()
+const controlBarStore = useDesktopControlBarStore()
 const router = useRouter()
+const showDesktopControlBar = computed(() => !sidebarVisible.value || !rightSidebarVisible.value)
 const textZoomLevel = ref(normalizeTextZoomLevel(
   Number(localStorage.getItem('sfz_text_zoom') ?? String(TEXT_ZOOM_DEFAULT)),
 ))
@@ -547,6 +571,9 @@ input, textarea, [contenteditable="true"] {
   height: var(--sg-app-viewport-height);
   overflow: hidden;
 }
+
+.desktop-layout { display: flex; width: var(--sg-size-full); height: var(--sg-size-full); min-width: 0; flex-direction: column; }
+.desktop-layout__content { width: var(--sg-size-full); min-width: 0; min-height: 0; overflow: hidden; flex: 1; }
 
 :root {
   /* Compatibility aliases for views that have not adopted the sg-* names yet. */

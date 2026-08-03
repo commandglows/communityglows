@@ -294,17 +294,7 @@
     </SplitterGroup>
   </template>
   <template v-else>
-    <div class="sidebar-collapsed-layout sidebar-collapsed-layout--left">
-      <Button
-        v-sg-tooltip.right="'Ouvrir le panneau gauche'"
-        icon="pi pi-bars"
-        text
-        aria-label="Ouvrir le panneau gauche"
-        class="sidebar-reopen sidebar-reopen--left"
-        @click="toggleSidebar"
-      />
-      <slot></slot>
-    </div>
+    <slot></slot>
   </template>
 </template>
 
@@ -495,33 +485,6 @@ onMounted(() => {
   height: var(--sg-sidebar-viewport-height);
   margin-top: 0;
   transition: var(--sg-sidebar-transition);
-}
-
-.sidebar-reopen {
-  position: fixed;
-  top: var(--sg-sidebar-control-padding);
-  z-index: var(--sg-sidebar-overlay-z-index, 1100);
-  color: var(--text-color);
-  background: transparent;
-}
-
-.sidebar-reopen--left {
-  left: var(--sg-sidebar-control-padding);
-}
-
-.sidebar-reopen:hover {
-  background: var(--surface-hover);
-}
-
-.sidebar-collapsed-layout {
-  box-sizing: border-box;
-  width: var(--sg-size-full);
-  min-width: 0;
-  min-height: var(--sg-sidebar-viewport-height);
-}
-
-.sidebar-collapsed-layout--left {
-  padding-left: var(--sg-sidebar-collapsed-rail-width);
 }
 
 .sidebar.icons-only {

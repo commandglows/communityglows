@@ -18,6 +18,7 @@ declare module 'vue' {
     CreatePost: typeof import('./../components/feed/CreatePost.vue')['default']
     CrmToolbar: typeof import('./../components/CrmToolbar.vue')['default']
     DashboardFilters: typeof import('./../components/DashboardFilters.vue')['default']
+    DesktopControlBar: typeof import('./../components/DesktopControlBar.vue')['default']
     DiscordView: typeof import('./../components/networks/DiscordView.vue')['default']
     DisplayError: typeof import('./../../../../../components/state/DisplayError.vue')['default']
     ExtensionParitySurface: typeof import('./../components/ExtensionParitySurface.vue')['default']

@@ -66,6 +66,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../../../../../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeDesktopControlBarPosition: typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarPosition']
   const normalizeShortcutEvent: typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../../../../../utils/notifications')['notivue']
   const onActivated: typeof import('vue')['onActivated']
@@ -186,6 +187,7 @@ declare global {
   const useDebounce: typeof import('@vueuse/core')['useDebounce']
   const useDebounceFn: typeof import('@vueuse/core')['useDebounceFn']
   const useDebouncedRefHistory: typeof import('@vueuse/core')['useDebouncedRefHistory']
+  const useDesktopControlBarStore: typeof import('../../../../../stores/desktopControlBar')['useDesktopControlBarStore']
   const useDeviceMotion: typeof import('@vueuse/core')['useDeviceMotion']
   const useDeviceOrientation: typeof import('@vueuse/core')['useDeviceOrientation']
   const useDevicePixelRatio: typeof import('@vueuse/core')['useDevicePixelRatio']
@@ -364,6 +366,9 @@ declare global {
   export type { CustomLink } from '../../../../../stores/customLinks'
   import('../../../../../stores/customLinks')
   // @ts-ignore
+  export type { DesktopControlBarPosition } from '../../../../../stores/desktopControlBar'
+  import('../../../../../stores/desktopControlBar')
+  // @ts-ignore
   export type { KanbanItem, KanbanColumnId } from '../../../../../stores/kanban'
   import('../../../../../stores/kanban')
   // @ts-ignore
@@ -440,6 +445,7 @@ declare module 'vue' {
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeDesktopControlBarPosition: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarPosition']>
     readonly normalizeShortcutEvent: UnwrapRef<typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../../../../../utils/notifications')['notivue']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
@@ -560,6 +566,7 @@ declare module 'vue' {
     readonly useDebounce: UnwrapRef<typeof import('@vueuse/core')['useDebounce']>
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
+    readonly useDesktopControlBarStore: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['useDesktopControlBarStore']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>

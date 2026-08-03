@@ -405,7 +405,10 @@
   --sg-sidebar-header-height: 3.5rem;
   --sg-sidebar-section-gap: 1rem;
   --sg-sidebar-overlay-z-index: 30;
-  --sg-sidebar-collapsed-rail-width: 3.5rem;
+  --sg-control-bar-height: 3.5rem;
+  --sg-control-bar-edge-column: 3rem;
+  --sg-control-bar-padding-inline: 0.5rem;
+  --sg-control-bar-blur: 0.75rem;
   --sg-sidebar-filter-height: 2.5rem;
   --sg-sidebar-dialog-width: 24rem;
   --sg-sidebar-dialog-max-width: 95vw;

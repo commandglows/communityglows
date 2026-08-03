@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-08-03"
 created_at: "2026-08-03 04:30:00 UTC"
 updated: "2026-08-03"
-updated_at: "2026-08-03 18:58:28 UTC"
+updated_at: "2026-08-03 19:11:19 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -230,7 +230,8 @@ Non-automated Windows installer proof after the completed slice:
 | 2026-08-03 14:24:58 UTC | 001-sg-build | GPT-5 Codex | Corrected all seven pre-build review findings: controlled splitter resizing, atomic upload limits, loading-button names, nested editable shortcut guards, sidebar tokens, icon-button names, and generated declaration scope. Independent rereview found no blocking issue. | implemented | Commit the bounded migration, trigger the Windows workflow, and run manual executable proof. |
 | 2026-08-03 14:27:46 UTC | 005-sg-ship | GPT-5 Codex | Prepared the reviewed Windows Reka UI and design-system migration for commit, push, and the manual Windows installer workflow. | shipped | Complete the workflow build, then run the pending manual Windows executable scenarios. |
 | 2026-08-03 18:58:28 UTC | 106-sg-fix | GPT-5 Codex | Fixed collapsed sidebar reopen handles being covered only by active native WebViews by reserving tokenized transparent edge rails outside the measured WebView bounds. | fixed-pending-verify | Build Windows and confirm both handles remain visible over each active network. |
+| 2026-08-03 19:11:19 UTC | 102-sg-start | GPT-5 Codex | Replaced rejected full-height edge rails with a conditional horizontal control bar outside native WebView bounds; added persistent top/bottom placement in settings and retained both reopen handles. | implemented | Build Windows and verify bar placement plus both handles with an active network. |
 
 ## Current Chantier Flow
 
-`100-sg-spec complete -> 101-sg-ready ready -> 102-sg-start implemented (all Windows components migrated and tokenized) -> 103-sg-verify partial (automated code/build proof passed; sidebar WebView overlay retest pending) -> 104-sg-end pending -> 005-sg-ship shipped (replacement Windows installer pending)`
+`100-sg-spec complete -> 101-sg-ready ready -> 102-sg-start implemented (configurable collapsed-panel control bar) -> 103-sg-verify partial (automated proof passed; active-WebView bar retest pending) -> 104-sg-end pending -> 005-sg-ship shipped (replacement Windows installer pending)`

@@ -239,6 +239,25 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
+                <i class="pi pi-window-maximize" />
+                Position de la barre de contrôles
+              </span>
+            </div>
+            <div class="settings-theme-mode-group settings-control-bar-position">
+              <button
+                v-for="position in controlBarPositions"
+                :key="position.value"
+                type="button"
+                class="settings-theme-mode-btn"
+                :class="{ active: controlBarStore.position === position.value }"
+                @click="controlBarStore.setPosition(position.value)"
+              >
+                {{ position.label }}
+              </button>
+            </div>
+
+            <div class="settings-toggle-row">
+              <span class="settings-toggle-label">
                 <i class="pi pi-palette" />
                 {{ $t('theme.focus_mode') }}
               </span>
@@ -337,6 +356,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
+import { useDesktopControlBarStore, type DesktopControlBarPosition } from '@/stores/desktopControlBar'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { useSignupNudge } from '@/composables/useSignupNudge'
 import { signIn, signOut as convexSignOut, isAuthenticated, isConvexConfigured } from '@/lib/convexAuth'
@@ -371,6 +391,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
+const controlBarStore = useDesktopControlBarStore()
 const onboardingStore = useOnboardingStore()
 const nudge = useSignupNudge()
 const isSignedIn = isAuthenticated
@@ -378,6 +399,10 @@ const themeModes: Array<{ value: ThemeMode; labelKey: string }> = [
   { value: 'light', labelKey: 'theme.light' },
   { value: 'dark', labelKey: 'theme.dark' },
   { value: 'auto', labelKey: 'theme.auto' },
+]
+const controlBarPositions: Array<{ value: DesktopControlBarPosition; label: string }> = [
+  { value: 'top', label: 'En haut' },
+  { value: 'bottom', label: 'En bas' },
 ]
 const autoThemeHint = computed(() => {
   const sourceKey = themeStore.autoThemeSource === 'sun'
@@ -1241,6 +1266,8 @@ onUnmounted(() => {
   gap: var(--sg-space-0d55rem);
   margin: var(--sg-space-neg-0d15rem-0-0d8rem);
 }
+
+.settings-control-bar-position { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 .settings-theme-mode-btn {
   min-height: var(--sg-size-2d45rem);
