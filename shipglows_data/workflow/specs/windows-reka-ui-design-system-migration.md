@@ -5,8 +5,8 @@ artifact_version: "1.0.1"
 project: "socialglowz"
 created: "2026-08-03"
 created_at: "2026-08-03 04:30:00 UTC"
-updated: "2026-08-03"
-updated_at: "2026-08-03 20:08:45 UTC"
+updated: "2026-08-04"
+updated_at: "2026-08-04 00:00:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -36,8 +36,8 @@ depends_on:
     required_status: "ready"
 supersedes: []
 evidence:
-  - "PrimeVue is initialized globally in src/ui/setup/pages/SocialGlowz/main.ts and is imported by 34 source files."
-  - "The Windows shell has concurrent visual authorities: PrimeVue Aura, main.css, App.vue overrides, and component-local CSS."
+  - "Windows/Tauri startup and generated bundle inventories show no active PrimeVue runtime behavior on the desktop shell."
+  - "Windows visual design authority is now centered in `main.css` and `src/ui/setup/pages/SocialGlowz/components/ui`, while full runtime hardcoded-token debt is still non-zero (known residual reported in design-drift checks)."
   - "The operator approved Reka UI directly for maintained accessibility primitives and SocialGlowz-owned visual wrappers, with keyboard navigation as a priority."
   - "Windows is the active delivery platform; Android must not receive a build or layout redesign as part of this migration."
 next_step: "/101-sg-ready windows-reka-ui-design-system-migration"
@@ -76,6 +76,10 @@ Reka UI owns maintained accessibility behavior for complex controls: semantics, 
 - Tab and Shift+Tab order, Escape, dialog focus restoration, visible focus, disabled state, labels, and app shortcut suppression in editable fields work on every migrated surface.
 - The primary Windows shell migration covers the left/right sidebars, their overlay reopen actions, settings, keyboard-shortcut editor, CRM toolbar, and signup prompt without relying on PrimeVue visual components.
 - Existing network child-WebView behavior, routing, profile/session state, diagnostics, and desktop-only layout continue to work unchanged.
+
+Known status note:
+
+- Visual design-token compliance is partial because hardcoded values still exist outside the canonical token source in non-finalized scans (latest known residual: 508 findings). No cross-surface parity claim is implied by this state.
 
 ## Error Behavior
 
@@ -202,6 +206,7 @@ Non-automated Windows installer proof after the completed slice:
   - Files: `AppSidebar.vue`, `AppRightSidebar.vue`, `AppSettings.vue`, `KeyboardShortcuts.vue`, `CrmToolbar.vue`, `SignupNudge.vue`, `NetworkWebviewHost.vue`, related CSS.
   - Action: replace PrimeVue usage in the Windows shell with wrappers or native semantic controls without altering panel layout or WebView behavior.
   - Validate with: shell regression scenarios, dialog focus restoration, overlay reopen controls, and shortcut isolation. Settings, shortcut controls, signup desktop dialog, CRM search, both sidebars, friends dialog, WebView diagnostics actions, and keyboard-resizable splitters are migrated and compile successfully.
+  - Known gap: full-runtime token debt in this scope is still tracked in the design system authority as 508 outstanding visual findings; do not treat this as completed parity.
 
 - [x] Task 4: Migrate remaining production consumers in bounded groups.
   - Files: remaining imports under `src/ui/setup/pages/SocialGlowz/`, then legacy extension surfaces only when they share production startup.
@@ -212,6 +217,7 @@ Non-automated Windows installer proof after the completed slice:
   - Files: `main.ts`, `package.json`, `pnpm-lock.yaml`, generated resolver types/configuration, docs and QA evidence.
   - Action: remove PrimeVue bootstrap/theme/styles/dependencies after zero-consumer confirmation; build the Windows installer, run the manual scenarios, and record bundle and accessibility evidence.
   - Validate with: Windows workflow installer, `WIN-A11Y-001` through `WIN-REGRESSION-006`, design drift scan, tests, lint, Tauri build, and clean diff. PrimeVue is removed from the Windows startup and bundle; package retention is limited to legacy extension surfaces. Automated proof passes, while installer and manual Windows scenarios remain pending.
+  - Before closure, remaining non-protocol drift in visual literals must be resolved or formally documented as exception.
 
 ## Skill Run History
 
@@ -235,7 +241,8 @@ Non-automated Windows installer proof after the completed slice:
 | 2026-08-03 20:08:45 UTC | 300-sg-docs | GPT-5 Codex | Updated current internal documentation for the Reka UI wrappers, semantic token authority, Notivue and tooltip ownership, zero-PrimeVue Windows runtime, legacy extension dependency boundary, and ten changed-file drift exceptions. | documented | Keep manual Windows executable proof pending; migrate legacy `shipglows_data/` governance topology separately. |
 | 2026-08-03 21:55:00 UTC | 006-sg-design | GPT-5 Codex | Re-audited the active Windows authority after the Reka migration and corrected governance claims without changing rendered design: PrimeVue components are absent from Windows, while PrimeIcons and limited PrimeFlex utilities remain active compatibility dependencies; the ten-exception result is scoped to the migration diff rather than the full runtime. | documented-partial | Replace active PrimeIcons/PrimeFlex consumers in bounded, visually equivalent slices and classify pre-existing full-runtime drift before claiming complete token consumption. |
 | 2026-08-03 23:05:00 UTC | 006-sg-design | GPT-5 Codex | Replaced the remaining Windows PrimeFlex sidebar alignment utilities with component-owned equivalent CSS, removed the PrimeFlex Windows import and Tauri chunk rule, and preserved the existing layout. | implemented | Keep PrimeIcons until a separately proven icon migration; execute installed-Windows visual proof for both sidebar states. |
+| 2026-08-04 00:00:00 UTC | 006-sg-design | GPT-5 Codex | Documented explicit partial token state in the design-system authority and migration spec: preserved hardcoded-design debt (known residual 508 findings), and aligned internal documentation with remaining runtime obligations. | documented | Continue with Windows installer proof and targeted hardcoded-value tokenization slices. |
 
 ## Current Chantier Flow
 
-`100-sg-spec complete -> 101-sg-ready ready -> 102-sg-start implemented (Reka component migration; PrimeFlex removed from Windows; PrimeIcons retained) -> 103-sg-verify partial (installed sidebar visual proof, full-runtime drift classification and active-WebView bar retest pending) -> 104-sg-end pending -> 005-sg-ship shipped (replacement Windows installer pending)`
+`100-sg-spec complete -> 101-sg-ready ready -> 102-sg-start implemented (Reka component migration; PrimeFlex removed from Windows; PrimeIcons retained) -> 103-sg-verify partial (installed sidebar visual proof, full-runtime token-drift classification and active-WebView bar retest pending) -> 104-sg-end pending -> 005-sg-ship shipped (replacement Windows installer pending)`

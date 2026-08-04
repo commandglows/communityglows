@@ -67,6 +67,8 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { Notification, Notivue } from 'notivue'
 import { useI18n } from 'vue-i18n'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import { useThemeStore } from '@/stores/theme'
 import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
@@ -135,9 +137,7 @@ const queuedDeepLinkAction = ref<SocialGlowzDeepLinkAction | null>(consumePendin
 const pendingProfileChoiceAction = ref<SocialGlowzDeepLinkAction | null>(null)
 const lastHandledSharedUrl = ref<string | null>(null)
 
-// Mobile detection — reactive on window resize
-const isMobile = ref(window.innerWidth <= 768)
-const handleResize = () => { isMobile.value = window.innerWidth <= 768 }
+const isMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
 
 let unlistenTray: (() => void) | undefined
 
@@ -692,7 +692,6 @@ onMounted(async () => {
     }
   }
 
-  window.addEventListener('resize', handleResize)
   window.addEventListener('sfz-network-webview-ready', onWebviewReady)
   window.addEventListener('keydown', onKeyboardShortcut, { capture: true })
   window.addEventListener('keyup', onKeyboardShortcut, { capture: true })
@@ -766,7 +765,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
   window.removeEventListener('sfz-network-webview-ready', onWebviewReady)
   window.removeEventListener('keydown', onKeyboardShortcut, { capture: true })
   window.removeEventListener('keyup', onKeyboardShortcut, { capture: true })

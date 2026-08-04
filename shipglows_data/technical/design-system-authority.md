@@ -4,7 +4,7 @@ metadata_schema_version: "1.0"
 artifact_version: "1.2.2"
 project: "socialglowz"
 created: "2026-06-12"
-updated: "2026-08-03"
+updated: "2026-08-04"
 status: "reviewed"
 source_skill: 001-sg-build
 scope: design-system-authority
@@ -36,7 +36,7 @@ evidence:
   - "The site has a separate Tailwind token carrier in `site/src/styles/global.css`; matching names do not prove a shared token pipeline."
   - "Reka UI is the maintained headless primitive layer for migrated desktop controls; SocialGlowz wrappers own visual composition."
   - "The Windows source, generated declarations, and clean Tauri bundle contain zero PrimeVue runtime references; automated tests, core typecheck, lint, Tauri frontend build, and diff checks passed on 2026-08-03."
-  - "The migration diff reported ten documented protocol exceptions: seven media-query breakpoints and three window.open feature strings; this is changed-file evidence, not a clean full-runtime inventory."
+  - "Design token compliance is partial: latest scans report remaining hardcoded visual values in the active migration scope (last known count: 508 findings), plus documented protocol-only exceptions."
 next_review: "2026-09-03"
 next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
 ---
@@ -89,6 +89,9 @@ design_system_authority:
     - shadows
     - motion
     - layout
+  current_compliance_state:
+    status: partial
+    note: hardcoded visual literals remain outside the canonical token source until a dedicated cleanup wave is completed.
   validation:
     - python3 "${SHIPGLOWS_ROOT:-$HOME/shipglows}/tools/design_system_drift_check.py" --changed --format markdown
     - keyboard proof: Tab/Shift+Tab, pattern arrows/Home/End, Escape, focus restoration, accessible names/states, visible focus in light and dark themes
@@ -114,15 +117,17 @@ design_system_authority:
 
 ## Drift Evidence And Exceptions
 
-The migration's changed-file drift scan ended with ten accepted, non-tokenizable protocol boundaries rather than visual-authority bypasses:
+The migration scans still report remaining visual hardcoded values outside the canonical token source in addition to protocol boundaries. Full compliance is therefore partial.
+
+Accepted protocol boundaries remain:
 
 - Seven responsive breakpoints inside `@media` conditions. CSS custom properties cannot be used as media-query condition values.
 - Three `window.open` feature strings. Their dimensions are browser API protocol text, not rendered component design values.
 
-Any additional drift finding requires a semantic token or a separately documented platform/protocol exception.
+Any additional non-protocol drift finding requires a semantic token path or a separately documented platform/protocol exception.
 
-This result applies to the migration diff only. A full scan of the pre-existing runtime is a debt inventory and can include both actionable literals and structural false positives such as full-width dimensions. It must not be summarized as "ten remaining values" without naming the scanned scope.
-
+Latest known residual from the active migration scan is 508 findings; this document does not reclassify those as exceptions.
+This result was originally confirmed in migration diff checks and does not mean the full runtime is zero-drift.
 ## Governing Rule
 
 For app or site visual changes:

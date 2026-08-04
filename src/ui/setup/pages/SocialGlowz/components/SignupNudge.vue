@@ -171,6 +171,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import { useI18n } from 'vue-i18n'
 import { signIn } from '@/lib/convexAuth'
 import { finalizePasswordSignIn } from '@/lib/cloudSync'
@@ -191,7 +193,7 @@ const visible = computed({
   set: (v) => emit('update:modelValue', v),
 })
 
-const isMobile = ref(window.innerWidth <= 768)
+const isMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
 const email = ref('')
 const password = ref('')
 const error = ref('')
