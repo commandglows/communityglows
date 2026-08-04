@@ -42,7 +42,7 @@ const openCrm = () => {
   gap: var(--sg-sidebar-control-gap);
   padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
   border-radius: var(--sg-radius-sm);
-  background: var(--sg-color-surface-raised);
+  background: var(--sg-color-surface-muted);
   border: 1px solid var(--sg-color-border);
 }
 

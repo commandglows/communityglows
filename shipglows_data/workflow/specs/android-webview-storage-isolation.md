@@ -8,7 +8,7 @@ created_at: "2026-05-22 15:55:00 UTC"
 updated: "2026-05-23"
 updated_at: "2026-05-23 19:00:22 UTC"
 status: ready
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "gpt-5.5"
 scope: security-hardening
 owner: "Diane"

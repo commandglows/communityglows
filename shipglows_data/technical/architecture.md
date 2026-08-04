@@ -1,12 +1,12 @@
 ---
 artifact: architecture_context
 metadata_schema_version: "1.0"
-artifact_version: "1.0.2"
+artifact_version: "1.0.3"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-05-11"
+updated: "2026-08-04"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: architecture
 owner: "Diane"
 confidence: medium
@@ -37,8 +37,8 @@ supersedes:
 evidence:
   - "Legacy root archi.md was a pointer to shipglows_data/technical/architecture.md."
   - "Vite, Tauri, Convex, and manifest configs define SocialGlowz's distribution targets."
-next_review: "2026-06-11"
-next_step: "/sf-docs audit shipglows_data/technical/architecture.md"
+next_review: "2026-09-03"
+next_step: "/300-sg-docs audit shipglows_data/technical/architecture.md"
 ---
 
 # Architecture

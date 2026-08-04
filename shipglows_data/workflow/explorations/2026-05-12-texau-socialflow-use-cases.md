@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-12"
 updated: "2026-05-13"
 status: draft
-source_skill: sf-explore
+source_skill: 700-sg-explore
 scope: "TexAu API and MCP use cases for SocialGlowz"
 owner: "Diane"
 confidence: medium
@@ -26,7 +26,7 @@ evidence:
   - "TexAu release text provided by user, dated 2026-05-04"
 depends_on: []
 supersedes: []
-next_step: "/sf-spec TexAu-powered GTM workspace for SocialGlowz"
+next_step: "/100-sg-spec TexAu-powered GTM workspace for SocialGlowz"
 ---
 
 # Exploration Report: TexAu Use Cases For SocialGlowz

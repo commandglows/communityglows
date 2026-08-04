@@ -1,12 +1,12 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
+artifact_version: "1.3.1"
 project: "socialglowz"
 created: "2026-05-14"
-updated: "2026-08-03"
+updated: "2026-08-04"
 status: active
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: code_docs_map
 owner: "socialglowz-team"
 confidence: medium
@@ -42,7 +42,7 @@ evidence:
   - "src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt"
   - "shipglows_data/technical/android-webview-session-isolation.md"
   - "shipglows_data/technical/design-system-authority.md"
-next_step: "/sf-docs maintain shipglows_data/technical/code-docs-map.md"
+next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ---
 
 # CODE DOCS MAP
@@ -59,7 +59,7 @@ next_step: "/sf-docs maintain shipglows_data/technical/code-docs-map.md"
   - `vite.tauri.config.ts`
 - Behavior:
   - Reka UI owns maintained keyboard, focus, overlay and splitter behavior for composite Windows controls.
-  - SocialGlowz wrappers own visible composition and consume the semantic tokens centralized in `main.css`.
+  - SocialGlowz wrappers own visible composition and consume generated semantic tokens; `design/tokens/reference.json` is the editable cross-platform authority, while `main.css` provides composition and compatibility aliases.
   - Notivue owns notification transport/rendering through the carrier mounted by `App.vue`; `v-sg-tooltip` owns accessible tooltips.
   - The Windows/Tauri source, generated declarations and clean bundle contain no PrimeVue runtime. PrimeVue/PrimeFlex/PrimeIcons remain scoped to legacy extension consumers where applicable.
 - Docs:

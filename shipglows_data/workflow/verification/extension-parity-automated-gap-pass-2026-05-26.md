@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-26"
 updated: "2026-05-26"
 status: reviewed
-source_skill: sf-start
+source_skill: 102-sg-start
 scope: extension-parity-automated-gaps
 owner: "Diane"
 confidence: high
@@ -44,7 +44,7 @@ verified_outcomes:
   - "Chrome/Firefox extension builds and core automated checks pass."
   - "Generated manifests and entrypoints align with extension parity expectations."
   - "Remaining web-ext UNSAFE_VAR_ASSIGNMENT warnings originate from bundled vendor/runtime internals."
-next_step: "/sf-verify extension-tauri-feature-parity"
+next_step: "/103-sg-verify extension-tauri-feature-parity"
 ---
 
 # Verification Report — Extension Parity Automated Gaps

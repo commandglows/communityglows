@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-23"
 updated: "2026-05-23"
 status: draft
-source_skill: sf-explore
+source_skill: 700-sg-explore
 scope: "socialglowz product improvement ideas"
 owner: "Diane"
 confidence: medium
@@ -31,7 +31,7 @@ depends_on:
     artifact_version: unknown
     required_status: unknown
 supersedes: []
-next_step: "/sf-spec SocialGlowz profile session health and network readiness improvements"
+next_step: "/100-sg-spec SocialGlowz profile session health and network readiness improvements"
 ---
 
 # Exploration Report: SocialGlowz Product Improvement Ideas

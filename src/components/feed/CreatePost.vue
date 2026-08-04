@@ -126,15 +126,15 @@ const createPost = () => {
 
 <style scoped>
 .create-post {
-  background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-header {
   display: flex;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-input {
@@ -143,41 +143,41 @@ const createPost = () => {
 
 .image-preview {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .preview-image {
-  width: 100%;
-  max-height: 300px;
+  width: var(--sg-size-100pct);
+  max-height: var(--sg-size-300px);
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .remove-image {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  top: var(--sg-space-0d5rem);
+  right: var(--sg-space-0d5rem);
+  background: var(--sg-color-overlay) !important;
+  color: var(--sg-color-text-on-action) !important;
 }
 
 .post-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1rem;
-  border-top: 1px solid var(--surface-border);
+  padding-top: var(--sg-space-1rem);
+  border-top: var(--sg-border-1px) solid var(--sg-color-border);
 }
 
 .left-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 :deep(.image-upload) {
   .p-button {
-    width: 2.5rem !important;
-    padding: 0.5rem !important;
+    width: var(--sg-size-2d5rem) !important;
+    padding: var(--sg-space-0d5rem) !important;
   }
 }
 </style> 

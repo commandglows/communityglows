@@ -6,7 +6,7 @@ project: socialglowz
 created: "2026-05-29"
 updated: "2026-05-29"
 status: ready
-source_skill: sf-build
+source_skill: 001-sg-build
 scope: billing-redemption-ui
 owner: "Diane"
 confidence: medium
@@ -27,7 +27,7 @@ supersedes: []
 evidence:
   - "Backend entitlement layer is shipped in commit 46d6341."
   - "TASKS.md lists sg-billing-redemption-ui as the next billing step."
-next_step: "/sf-start socialglowz-redemption-ui"
+next_step: "/102-sg-start socialglowz-redemption-ui"
 ---
 
 # SocialGlowz Redemption UI

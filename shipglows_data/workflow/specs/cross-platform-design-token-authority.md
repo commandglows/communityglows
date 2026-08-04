@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-08-04"
 created_at: "2026-08-04 11:27:34 UTC"
 updated: "2026-08-04"
-updated_at: "2026-08-04 18:48:00 UTC"
+updated_at: "2026-08-04 21:47:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -53,7 +53,7 @@ Cross-Platform Design Token Authority
 
 ## Status
 
-Ready revision. This specification creates one semantic design-token authority and converges Windows/Tauri and Android on the visual language currently expressed by the public site.
+Ready refinement revision. The shared authority and first convergence wave are implemented; this revision adds the bounded visual-hierarchy and theme-quality pass requested after rendered Windows review.
 
 ## User Story
 
@@ -73,17 +73,17 @@ The repository accepts one versioned, machine-readable set of semantic design to
 
 SocialGlowz has a declared Windows authority and a successful Reka UI component bridge, but not one cross-platform design authority. Windows uses `--sg-*` variables from `main.css`; the site maintains an independent Tailwind carrier and typography; Android hardcodes native visual values without shared resources. Parallel carriers make visual drift possible even when every surface locally uses tokens.
 
-The current desktop token file also mixes semantic roles, legacy aliases, screen-specific values, and value-shaped token names. Convergence must therefore happen through stable semantic roles and bounded consumer waves, not through screen-local restyling.
+The current desktop token file also mixes semantic roles, legacy aliases, screen-specific values, and value-shaped token names. Convergence must therefore happen through stable semantic roles and bounded consumer waves, not through screen-local restyling. Rendered review additionally shows that the first dark convergence is too flat: background, raised, muted, hover and border roles do not create enough perceptual depth, while `--surface-ground` can still resolve a legacy surface instead of the canonical app background.
 
 ## Solution
 
-Use the repository-owned JSON source and deterministic generator to promote the site's visual roles into canonical semantic roles, emit platform-native carriers, and migrate Windows and Android consumers onto those roles. Preserve information architecture, interaction behavior and platform geometry while deliberately converging palette, typography, radius, elevation and motion.
+Use the repository-owned JSON source and deterministic generator to promote the site's visual roles into canonical semantic roles, emit platform-native carriers, and migrate Windows and Android consumers onto those roles. Preserve information architecture, interaction behavior and platform geometry while deliberately converging palette, typography, radius, elevation and motion. Refine both themes through an explicit depth ladder (`canvas`, `panel`, `control`, `interactive`), stronger typographic emphasis, restrained elevation and accessible state contrast; dark remains the reference and light remains its deliberate companion.
 
 ## Product Decision
 
 Before: the token pipeline preserves three different visual systems and therefore centralizes files without creating a recognizable shared identity.
 
-After: the site's current visual language is the approved design reference, `design/tokens/reference.json` is the only editable value authority, and generated carriers apply that language to the site, Windows and Android with documented platform adaptations.
+After: the site's current visual language is the approved design reference, `design/tokens/reference.json` is the only editable value authority, and generated carriers apply a calmer but more legible hierarchy to the site, Windows and Android with documented platform adaptations. Dark surfaces remain near-neutral rather than blue or fluorescent, but adjacent containers, controls and interactive states are visibly distinguishable.
 
 Preserved invariants:
 
@@ -150,6 +150,9 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - Move active Android native product chrome away from ad-hoc colors/dimensions into generated resources.
 - Update authority documentation, README architecture statements, CI checks, and contributor guidance.
 - Provide visual, resolved-value, accessibility and build proof for light/dark modes and representative surfaces.
+- Refine the canonical light/dark surface, border, text, focus and elevation ladders so hierarchy is visible without adding decorative chrome.
+- Retire active compatibility aliases that resolve a role to the wrong semantic level, beginning with the desktop app canvas.
+- Consolidate representative title, section, body, metadata and control typography onto a bounded semantic hierarchy without changing copy or layout structure.
 
 ## Scope Out
 
@@ -159,6 +162,7 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - Replacing Reka UI, Vue, Tauri, Astro, Tailwind, or Android WebView architecture.
 - Removing historical extension dependencies unless their active visual values are migrated in a separately bounded slice.
 - Rationalizing every legacy token name in the same commit as source centralization.
+- Decorative gradients, glass effects, colored dark surfaces, ornamental motion or a new brand direction unrelated to hierarchy and legibility.
 
 ## Constraints
 
@@ -171,6 +175,8 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - Android resource identifiers must remain valid, stable and collision-free across day/night resources.
 - Official network colors, protocol strings, responsive media-query conditions, measured WebView bounds and platform safe-area APIs require classification rather than blind semantic normalization.
 - Unrelated worktree changes must be preserved.
+- The redesign must improve hierarchy through canonical roles and component contracts; screen-local color, shadow, radius or type literals are forbidden.
+- Primary and secondary text must retain at least WCAG AA text contrast, while borders, focus indicators and selected-control boundaries target at least 3:1 against adjacent colors where WCAG 2.2 requires non-text contrast.
 
 ## Dependencies
 
@@ -268,6 +274,16 @@ Generated files include a warning header and canonical source version. Authored 
   - Action: declare the new canonical source and all carriers, update current drift evidence, remove stale dependency claims, and schedule legacy alias removal separately from baseline migration.
   - Validate with: metadata lint, documentation link checks and zero contradictory authority statements.
 
+- [ ] Task 9: Refine canonical theme hierarchy and remove active wrong-level aliases.
+  - Files: `design/tokens/reference.json`, generated carriers, `App.vue`, global app styles and representative SocialGlowz wrappers/components.
+  - Action: introduce or remap the canvas/panel/control/interactive depth ladder; separate hover from muted surfaces; improve border, focus, text emphasis and elevation roles; map `--surface-ground` to the canonical background; preserve layout and network-brand colors.
+  - Validate with: resolved color/contrast matrix, deterministic generation, changed-file drift scan, and before/after Windows captures in both modes.
+
+- [ ] Task 10: Consolidate visual emphasis across representative application states.
+  - Files: app shell, onboarding, sidebars, settings, CRM controls, dialogs and shared Reka wrappers.
+  - Action: consume the refined roles consistently for page titles, section titles, body, metadata, selected rows, fields, cards and overlays; remove component forks that flatten hierarchy or bypass semantic state roles.
+  - Validate with: desktop light/dark screenshots at 1440x900, focus/hover/selected/disabled checks, 200% zoom sanity, reduced-motion check, unit tests, typecheck and Tauri frontend build.
+
 ## Acceptance Criteria
 
 - [ ] `design/tokens/` is the only editable source of shared semantic token values.
@@ -283,6 +299,11 @@ Generated files include a warning header and canonical source version. Authored 
 - [ ] Changed-file drift checks contain only named protocol/platform exceptions.
 - [ ] The design-system authority document names Android and all generated carriers and contains current evidence.
 - [ ] No navigation, information-architecture, WebView lifecycle, safe-area or interaction-behavior change is introduced by visual convergence.
+- [ ] Dark mode exposes four perceptually distinct semantic depth states for canvas, panel, control and interactive hover/selection without colored or fluorescent chrome.
+- [ ] Light mode applies the same hierarchy with explicit values rather than reversing dark values mechanically.
+- [ ] The app canvas resolves `--sg-color-background` on first paint and after light/dark/system changes; no active legacy alias silently substitutes a raised or muted surface.
+- [ ] Representative title, section, body and metadata roles are visibly ordered and remain readable at 200% zoom.
+- [ ] Text, focus and applicable non-text boundaries satisfy the declared WCAG 2.2 contrast thresholds in both themes.
 
 ## Edge Cases
 
@@ -297,6 +318,9 @@ Generated files include a warning header and canonical source version. Authored 
 - A media-query breakpoint or native measured dimension is incorrectly treated as a freely reusable visual token.
 - Generation is interrupted between validation and output replacement.
 - Reduced-motion mode changes animation duration while resolved-value snapshots compare the normal mode.
+- Browser or Tauri starts before persisted theme initialization and briefly paints the opposite canvas.
+- A border disappears because its color equals the adjacent panel even though text contrast still passes.
+- A selected or hover state becomes indistinguishable from a control surface in one mode.
 
 ## Test Contract
 
@@ -340,6 +364,8 @@ Visual equality is evaluated by semantic role and approved baseline, not by requ
 - `TOK-SITE-201`: site desktop/mobile resolved roles and representative pages match baseline, including typography and reduced motion.
 - `TOK-ANDROID-301`: Android day/night resources compile and native chrome/WebView transitions match baseline with safe targets and insets.
 - `TOK-A11Y-401`: action, text, border, focus and status roles meet declared contrast/focus requirements on every supported mode.
+- `TOK-WIN-102`: Windows canvas, panel, control and interactive states remain distinguishable in light/dark captures without layout change.
+- `TOK-A11Y-402`: representative text emphasis, focus and non-text boundaries pass the declared contrast matrix and 200% zoom sanity check.
 - `TOK-ROLLBACK-501`: one carrier can return to its prior committed file without corrupting canonical source or other generated carriers.
 
 ## Diagnostics And Observability
@@ -428,9 +454,21 @@ None. The site-led direction, source format, platform footprint, dark-reference/
 | 2026-08-04 18:40:00 UTC | 100-sg-spec | GPT-5 Codex | Revised the contract from isovisual centralization to site-led visual convergence, preserving structure and interaction invariants while defining dark-reference and light-adaptation rules. | draft | Run readiness review against the revised visual and proof contract. |
 | 2026-08-04 18:48:00 UTC | 101-sg-ready | GPT-5 Codex | Verified the revised user outcome, site-led dark reference, explicit light adaptation, platform invariants, ordered migration tasks, rollback and proof obligations. | ready | Implement canonical semantic roles and migrate Windows, site and Android consumers. |
 | 2026-08-04 20:35:00 UTC | 102-sg-start | GPT-5 Codex | Added one shared semantic role layer, mapped the site's dark-first language and an explicit light companion, generated all carriers, migrated Windows and Android product chrome consumption, hardened Android conversion errors, and aligned governance. | implemented | Collect rendered Windows/site proof and compile/test Android on the configured CI/device environment. |
+| 2026-08-04 21:47:00 UTC | 006-sg-design | GPT-5 Codex | Audited the rendered light/dark entry state and active consumers; confirmed a flat dark depth ladder, diffuse typography, and an active legacy canvas alias that resolves the wrong semantic level. | rerouted | Extend and revalidate the existing authority spec for a bounded theme-hierarchy refinement. |
+| 2026-08-04 21:49:00 UTC | 100-sg-spec | GPT-5 Codex | Extended the existing contract with explicit canvas/panel/control/interactive hierarchy, typography emphasis, first-paint, WCAG contrast, representative-state and no-layout-change requirements. | draft | Run readiness review for the refinement slice. |
+| 2026-08-04 21:51:00 UTC | 101-sg-ready | GPT-5 Codex | Confirmed the refinement has a fixed site-led direction, canonical token owner, bounded consumers, preserved behavior, measurable contrast and visual proof, rollback path and no unresolved product or security decision. | ready | Implement the canonical hierarchy and representative consumer convergence. |
+| 2026-08-04 21:58:00 UTC | 102-sg-start | GPT-5 Codex | Refined canonical light/dark depth, text, border, translucent surface, focus and elevation roles; corrected the desktop canvas alias; and applied representative panel hierarchy to onboarding and login without layout or behavior changes. | implemented | Collect rendered Windows evidence and run build, contrast, drift and accessibility-focused checks. |
+| 2026-08-04 22:02:00 UTC | 006-sg-design | GPT-5 Codex | Captured rendered light/dark onboarding and desktop-shell states at 1440x900, confirmed resolved depth roles, and passed token, test, typecheck, Windows/site build and drift checks. Android rendered proof remains external. | partial | Retain the refinement and collect Android day/night rendered proof on the configured device or CI environment before cross-platform closure. |
+| 2026-08-04 22:08:01 UTC | 006-sg-design | GPT-5 Codex | Migrated representative task, Kanban and CRM consumers onto the shared button, depth, border, shadow and semantic-status contracts; removed local DaisyUI action styling and legacy color/shadow paths. | implemented | Capture authenticated task/CRM states and collect Android rendered day/night proof before cross-platform closure. |
 | 2026-08-04 20:36:35 UTC | 006-sg-design | GPT-5 Codex | Completed the focused light-mode migration pass: removed legacy purple and Catppuccin consumer overrides, mapped compatibility aliases and auth recovery UI to semantic roles, and enforced WCAG AA contrast for essential light/dark pairs in token validation. | implemented | Collect rendered Windows light-mode proof and compile/test Android day/night resources on the configured CI/device environment. |
 | 2026-08-04 21:18:50 UTC | 405-sg-prod | GPT-5 Codex | Diagnosed the failing quality run as RustSec advisory RUSTSEC-2026-0235, upgraded and pinned `tauri-plugin-log` 2.9, removed the vulnerable `rkyv` 0.7 dependency chain, and reproduced every CI check locally. | repaired | Push the bounded dependency repair and confirm the replacement GitHub Actions run. |
+| 2026-08-04 22:16:05 UTC | 006-sg-design | GPT-5 Codex | Aligned representative local network cards, badges and hover states with the shared depth/action roles, and removed local white and legacy shadow paths from the mobile settings toggle without changing network brand colors. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
+| 2026-08-04 22:19:40 UTC | 300-sg-docs | GPT-5 Codex | Corrected README, design-system authority and technical map to state the generated JSON-led carrier pipeline, current validation evidence and the measured residual drift scope. | updated | Keep the documentation aligned as additional consumers migrate; cross-platform rendered proof remains pending. |
+| 2026-08-04 22:21:47 UTC | 006-sg-design | GPT-5 Codex | Migrated the post-authentication sync overlay from local light/dark palette declarations to the generated semantic surfaces, overlay, border, elevation and accent roles while preserving its responsive flow and transition behavior. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
+| 2026-08-04 22:26:30 UTC | 006-sg-design | GPT-5 Codex | Formalized the remaining shared extension-shell dimensions in the canonical token source, regenerated every platform carrier, and migrated the historical extension CSS to consume them. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
+| 2026-08-04 22:28:09 UTC | 006-sg-design | GPT-5 Codex | Corrected the extension carrier order so every historical extension entry loads the generated semantic tokens after legacy compatibility aliases, removing the remaining active palette divergence from Windows/Tauri. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
+| 2026-08-04 22:50:29 UTC | 006-sg-design | GPT-5 Codex | Migrated the historical feed components to semantic surface, spacing, border, sizing and state roles; Chrome build and changed-file drift validation confirm no newly introduced visual literals. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
 
 ## Current Chantier Flow
 
-`006-sg-design migration routed -> 100-sg-spec revised -> 101-sg-ready complete -> 102-sg-start implemented -> 006-sg-design proof pending -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`
+`006-sg-design redesign audited -> 100-sg-spec refinement revised -> 101-sg-ready complete -> 102-sg-start refinement implemented -> 006-sg-design representative desktop, network and mobile consumers implemented -> authenticated Windows/Android visual proof pending -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`

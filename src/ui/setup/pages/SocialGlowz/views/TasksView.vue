@@ -9,6 +9,7 @@ import { useProfilesStore } from '@/stores/profiles'
 import { useWebviewStore } from '@/stores/webviewState'
 import TaskForm from '../components/tasks/TaskForm.vue'
 import TaskBoard from '../components/tasks/TaskBoard.vue'
+import SgButton from '../components/ui/SgButton.vue'
 
 const route = useRoute()
 const tasksStore = useContextualTasksStore()
@@ -69,21 +70,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="tasks-view" :class="{ 'is-compact': isTasksCompact }">
+  <main
+    class="tasks-view"
+    :class="{ 'is-compact': isTasksCompact }"
+  >
     <header class="tasks-header">
       <div>
         <p class="tasks-eyebrow">Organisation communautaire</p>
         <h1>Tâches contextuelles</h1>
         <p class="tasks-description">Note ce que tu veux faire et garde le lien vers l’endroit où agir. SocialGlowz ne lit pas la page.</p>
       </div>
-      <button
-        class="btn btn-primary"
+      <SgButton
+        label="Nouvelle tâche"
+        icon="pi pi-plus"
         type="button"
         @click="showForm = !showForm"
-      >
-        <SgIcon icon="pi pi-plus" />
-        Nouvelle tâche
-      </button>
+      />
     </header>
 
     <p

@@ -38,7 +38,7 @@ evidence:
   - "site/shipflow_data/ contains nine files; all nine differ from their root shipflow_data/ counterparts and require preservation before consolidation."
   - "AGENTS.md is a compatibility symlink to AGENT.md, as required by canonical-path policy."
   - "103-sg-verify excellence passed: compliant topology, 75/75 metadata files valid, nine archived site files SHA-256 identical to HEAD, no runtime changes, and clean diff checks."
-next_step: "/005-sg-ship Migrate the governance corpus to a single canonical shipglows_data root"
+next_step: "none - migration reviewed; remaining governance normalization is tracked separately"
 ---
 
 # Migrate the governance corpus to a single canonical `shipglows_data/` root
@@ -152,7 +152,7 @@ Quand le mainteneur lance la migration sur le repo actuel, chaque document actif
 
 - `site/shipflow_data/` contient des versions plus anciennes, plus recentes ou simplement differentes: archiver les neuf fichiers tels quels, comparer ensuite, et ne fusionner que les informations encore valides.
 - Un tracker root contient une entree deja presente sous une formulation differente: dedupliquer par identifiant lorsqu'il existe, sinon par date, sujet et preuve; conserver les deux si l'equivalence n'est pas certaine.
-- La spec courante se deplace pendant son propre chantier: la deplacer vers `shipglows_data/workflow/specs/shipglowz-data-corpus-migration.md` apres creation de la famille workflow, puis poursuivre la trace a ce chemin.
+- La spec courante se deplace pendant son propre chantier: la deplacer vers `shipglows_data/workflow/specs/shipglows-data-corpus-migration.md` apres creation de la famille workflow, puis poursuivre la trace a ce chemin.
 - Une mention de `shipflow_data/` est historique: elle peut rester uniquement dans une archive ou une preuve explicitement qualifiee de legacy, jamais dans une instruction active ou un lien attendu resolvable.
 - Un lien relatif change de profondeur apres deplacement: le recalculer et verifier sa cible, sans conversion automatique aveugle.
 - Le worktree contient des changements non lies: limiter le diff aux documents gouvernes et ne pas les inclure dans une eventuelle livraison.
@@ -291,7 +291,7 @@ Cross-validations:
 - `README.md`, `AGENT.md` et tous les frontmatter actifs doivent pointer vers `shipglows_data/`.
 - Les docs du corpus migre conservent leurs liens internes apres recalcul de chemin.
 - `docs/repo-architecture-audit.md` devient un document technique canonique, pas une racine concurrente.
-- Cette spec poursuit son historique sous `shipglows_data/workflow/specs/shipglowz-data-corpus-migration.md` une fois deplacee.
+- Cette spec poursuit son historique sous `shipglows_data/workflow/specs/shipglows-data-corpus-migration.md` une fois deplacee.
 - Les snapshots historiques conservent leurs noms et contenus legacy sous `shipglows_data/workflow/archives/`.
 
 ## Risks

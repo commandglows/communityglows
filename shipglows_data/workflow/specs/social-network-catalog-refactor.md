@@ -8,7 +8,7 @@ created_at: "2026-05-08 00:00:00 UTC"
 updated: "2026-05-08"
 updated_at: "2026-05-08 00:00:00 UTC"
 status: ready
-source_skill: sf-build
+source_skill: 001-sg-build
 source_model: "GPT-5 Codex"
 scope: "architecture-refactor"
 owner: "Diane"
@@ -36,7 +36,7 @@ supersedes: []
 evidence:
   - "2026-05-08 network-addition review found duplicated built-in network metadata in WEBVIEW_URLS, AppSidebar, MobileLayout, MobileProfileSheet, and OnboardingFlow."
   - "Android native plugin keeps a separate network registry for bottom bar icons, cookies, login URLs, and UA behavior; this refactor must not pretend frontend metadata fully owns native behavior."
-next_step: "/sf-start shipglows_data/workflow/specs/social-network-catalog-refactor.md"
+next_step: "/102-sg-start shipglows_data/workflow/specs/social-network-catalog-refactor.md"
 ---
 
 # Social Network Catalog Refactor

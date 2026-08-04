@@ -67,13 +67,13 @@ defineEmits<{
 <style scoped>
 .social-comment {
   display: flex;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 8px;
+  margin-bottom: var(--sg-space-1rem);
+  padding: var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-8px);
 }
 
 .social-comment:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .comment-content {
@@ -83,33 +83,33 @@ defineEmits<{
 .comment-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  gap: var(--sg-space-0d5rem);
+  margin-bottom: var(--sg-space-0d25rem);
 }
 
 .author-name {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 600;
 }
 
 .comment-date {
-  font-size: 0.75rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d75rem);
+  color: var(--sg-color-text-muted);
 }
 
 .comment-text {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.875rem;
+  margin: 0 0 var(--sg-space-0d5rem) 0;
+  font-size: var(--sg-font-size-0d9rem);
   white-space: pre-wrap;
 }
 
 .comment-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .like-button.liked {
-  color: #ff4081;
+  color: var(--sg-color-danger);
 }
-</style> 
+</style>

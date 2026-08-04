@@ -6,7 +6,7 @@ project: socialglowz
 created: "2026-06-11"
 updated: "2026-06-11"
 status: draft
-source_skill: 300-sf-docs
+source_skill: 300-300-sg-docs
 scope: editorial
 owner: "Diane"
 confidence: medium
@@ -24,7 +24,7 @@ depends_on:
 supersedes: []
 evidence:
   - "site content and routing files"
-next_step: "/sf-docs editorial"
+next_step: "/300-sg-docs editorial"
 next_review: "2026-09-11"
 ---
 

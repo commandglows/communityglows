@@ -294,7 +294,7 @@ onUnmounted(() => {
   background: var(--sg-color-surface-raised);
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
-  box-shadow: var(--sg-shadow-0-8px-24px-rgba-0-0-0-0d15);
+  box-shadow: var(--sg-shadow-modal);
   z-index: var(--sg-layer-200);
   overflow: hidden;
   backdrop-filter: none;
@@ -397,7 +397,7 @@ onUnmounted(() => {
 }
 
 .action-btn--danger:hover {
-  color: var(--red-500);
+  color: var(--sg-color-danger);
 }
 
 /* Footer */

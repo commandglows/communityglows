@@ -6,7 +6,10 @@
   >
     <div
       class="settings-container"
-      :class="{ 'is-desktop-grid': isSettingsDesktop }"
+      :class="{
+        'is-desktop-grid': isSettingsDesktop,
+        'is-ultra-wide': isSettingsUltraWide,
+      }"
     >
       <!-- Language -->
       <div class="setting-item">
@@ -175,6 +178,7 @@ const visible = ref(false)
 const notifications = ref(true)
 const currentLocale = ref(locale.value)
 const isSettingsDesktop = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsDesktop}px)`)
+const isSettingsUltraWide = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsUltraWide}px)`)
 
 const themeStore = useThemeStore()
 const onboardingStore = useOnboardingStore()
@@ -248,6 +252,10 @@ defineExpose({
   row-gap: var(--sg-settings-item-spacing);
 }
 
+.settings-container.is-desktop-grid.is-ultra-wide {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .settings-container.is-desktop-grid .setting-item,
 .settings-container.is-desktop-grid .theme-mode-hint,
 .settings-container.is-desktop-grid .settings-full-row,
@@ -261,7 +269,7 @@ defineExpose({
 }
 
 .settings-container.is-desktop-grid .settings-divider {
-  width: var(--sg-size-100pct);
+  display: none;
 }
 
 .settings-divider { border: 0; border-top: 1px solid var(--sg-color-border); margin: var(--sg-settings-item-spacing) 0; }

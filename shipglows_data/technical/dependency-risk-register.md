@@ -1,12 +1,12 @@
 ---
 artifact: dependency_risk_register
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.0.2"
 project: socialglowz
 created: "2026-04-30"
-updated: "2026-05-26"
+updated: "2026-08-04"
 status: active
-source_skill: sf-start
+source_skill: 102-sg-start
 scope: dependency-risk
 owner: "Diane"
 confidence: high
@@ -14,15 +14,15 @@ risk_level: medium
 security_impact: yes
 docs_impact: yes
 depends_on:
-  - artifact: "shipglows_data/workflow/specs/socialglowz-dependency-hygiene-and-major-line-migration.md"
+  - artifact: "shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md"
     artifact_version: "1.0.0"
     required_status: "ready"
 supersedes: []
 evidence:
   - "Dependency hygiene and native RustSec migration specs define the accepted risk policy."
   - "Register entries document affected dependency paths, reachability, decision, and removal criteria."
-next_review: "2026-06-09"
-next_step: "/sf-verify sg-extension-deps-audit-fixes"
+next_review: "2026-09-03"
+next_step: "/103-sg-verify sg-extension-deps-audit-fixes"
 ---
 
 # Dependency Risk Register

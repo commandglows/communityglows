@@ -8,7 +8,7 @@ created_at: "2026-05-30 18:58:12 UTC"
 updated: "2026-05-30"
 updated_at: "2026-05-30 20:04:18 UTC"
 status: draft
-source_skill: "sf-start"
+source_skill: "102-sg-start"
 scope: "socialglowz-processor-agnostic-ltd-commerce"
 owner: "Diane"
 confidence: high
@@ -25,7 +25,7 @@ depends_on:
 supersedes: []
 evidence:
   - "shipglows_data/workflow/specs/socialglowz-processor-agnostic-ltd-commerce.md"
-next_step: "/sf-verify socialglowz-processor-agnostic-ltd-commerce"
+next_step: "/103-sg-verify socialglowz-processor-agnostic-ltd-commerce"
 ---
 
 # Manual Test Checklist: socialglowz-processor-agnostic-ltd-commerce

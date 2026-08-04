@@ -1,12 +1,12 @@
 ---
 artifact: technical_guidelines
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.0.2"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-05-25"
+updated: "2026-08-04"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: agent-entrypoint
 owner: "Diane"
 confidence: medium
@@ -38,8 +38,8 @@ evidence:
   - "src-tauri/src/lib.rs"
   - "src-tauri/tauri.conf.json"
   - "manifest.config.ts"
-next_review: "2026-07-26"
-next_step: "/sf-docs audit AGENT.md"
+next_review: "2026-09-03"
+next_step: "/300-sg-docs audit AGENT.md"
 ---
 
 # AGENT

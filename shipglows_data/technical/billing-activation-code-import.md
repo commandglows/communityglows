@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-30"
 updated: "2026-05-30"
 status: active
-source_skill: sf-build
+source_skill: 001-sg-build
 scope: "billing / activation-code-import"
 owner: "Diane"
 confidence: high

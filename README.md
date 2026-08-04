@@ -30,6 +30,17 @@ Any product claim in the repo should be backed by the product registry, a live r
 | Android | Tauri 2 Mobile | CI GitHub Actions | Production |
 | iOS | Tauri 2 Mobile | CI GitHub Actions (macOS) | Planned |
 
+### Prérequis Runtime
+
+Le runtime requis est Node.js `24.0.0`.
+
+- `.nvmrc`, `.node-version` et `.tool-versions` pointent sur `24.0.0`
+- Si ton terminal affiche encore `v22.x`, active la version via ton gestionnaire de versions (`nvm`, `fnm`, `asdf`) :
+
+```bash
+nvm install 24.0.0 && nvm use 24.0.0
+```
+
 ## Architecture
 
 ```
@@ -112,7 +123,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 - **App Windows/Tauri** : Vue 3, Reka UI, wrappers SocialGlowz, tokens CSS sémantiques, Notivue, Pinia; PrimeIcons reste chargé comme compatibilité visuelle temporaire, tandis que PrimeFlex n'est plus importé par cette entrée
 - **Surfaces extension historiques** : Vue 3 avec des consommateurs PrimeVue/PrimeFlex/PrimeIcons encore conservés selon l'entrée; les composants et le bootstrap PrimeVue ne sont plus chargés par le runtime Windows/Tauri
-- **Site** : Astro/Tailwind avec un porteur de tokens distinct; l'identité est commune mais les tokens ne sont pas encore générés depuis une source unique
+- **Site** : Astro/Tailwind avec un carrier de tokens généré depuis la même autorité `design/tokens/reference.json` que Windows et Android
 - **Auth** : Convex Auth (`@auth/core`, `@convex-dev/auth`)
 - **Backend** : Convex (serverless)
 - **i18n** : vue-i18n
@@ -191,6 +202,8 @@ pnpm lint                    # ESLint
 pnpm format                  # Prettier
 pnpm typecheck               # TypeScript
 pnpm exec tsc -p convex/tsconfig.json --noEmit  # Typecheck Convex
+pnpm run design:tokens:validate # Contrat de la source de tokens
+pnpm run design:tokens:check    # Carriers générés à jour
 ```
 
 ## Déploiement

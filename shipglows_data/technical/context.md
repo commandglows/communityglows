@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: context
 owner: "Diane"
 confidence: medium
@@ -48,7 +48,7 @@ linked_systems:
   - "src-tauri/tauri.conf.json"
   - "shipglows_data/technical/design-system-authority.md"
   - "convex/schema.ts"
-next_step: "/sf-docs update shipglows_data/technical/context.md"
+next_step: "/300-sg-docs update shipglows_data/technical/context.md"
 ---
 
 # CONTEXT

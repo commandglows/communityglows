@@ -166,6 +166,7 @@ onMounted(() => {
   flex: 1;
   min-width: var(--sg-size-300px);
   background: var(--sg-color-surface-muted);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-8px);
   display: flex;
   flex-direction: column;
@@ -174,6 +175,7 @@ onMounted(() => {
 .column-header {
   padding: var(--sg-space-1rem);
   background: var(--sg-color-surface-raised);
+  border-bottom: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-8px-8px-0-0);
   display: flex;
   justify-content: space-between;
@@ -187,7 +189,7 @@ onMounted(() => {
 
 .item-count {
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   padding: var(--sg-space-0d2rem-0d6rem);
   border-radius: var(--sg-radius-1rem);
   font-size: var(--sg-font-size-0d9rem);
@@ -201,17 +203,19 @@ onMounted(() => {
 
 .kanban-item {
   background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-6px);
   padding: var(--sg-space-1rem);
   margin-bottom: var(--sg-space-0d5rem);
   cursor: move;
-  box-shadow: var(--sg-shadow-0-2px-4px-rgba-0-0-0-0d1);
+  box-shadow: var(--sg-shadow-control);
   transition: var(--sg-motion-all-0d3s-ease);
 }
 
 .kanban-item:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--sg-shadow-0-4px-6px-rgba-0-0-0-0d1);
+  border-color: var(--sg-color-border-strong);
+  background: var(--sg-color-surface-hover);
+  box-shadow: var(--sg-shadow-modal);
 }
 
 .kanban-item.is-dragging {
@@ -255,7 +259,7 @@ onMounted(() => {
 
 .label {
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   padding: var(--sg-space-0d2rem-0d4rem);
   border-radius: var(--sg-radius-4px);
   font-size: var(--sg-font-size-0d8rem);

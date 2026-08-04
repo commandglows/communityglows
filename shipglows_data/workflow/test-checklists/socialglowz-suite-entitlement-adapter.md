@@ -8,7 +8,7 @@ created_at: "2026-05-30 16:55:38 UTC"
 updated: "2026-05-30"
 updated_at: "2026-05-30 17:17:01 UTC"
 status: draft
-source_skill: "sf-start"
+source_skill: "102-sg-start"
 scope: "socialglowz-suite-entitlement-adapter"
 owner: "Diane"
 target_scope: "shipglows_data/workflow/specs/socialglowz-suite-entitlement-adapter.md"
@@ -25,7 +25,7 @@ depends_on:
     artifact_version: "1.0.0"
     required_status: "ready"
 supersedes: []
-next_step: "/sf-test socialglowz-suite-entitlement-adapter --preview"
+next_step: "/107-sg-test socialglowz-suite-entitlement-adapter --preview"
 ---
 
 # Manual Test Checklist: socialglowz-suite-entitlement-adapter

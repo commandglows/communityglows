@@ -37,8 +37,10 @@
 
 .snap-card {
   background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-8px);
   overflow: hidden;
+  box-shadow: var(--sg-shadow-control);
 }
 
 .snap-placeholder {

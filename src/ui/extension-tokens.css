@@ -1,8 +1,9 @@
 @import "./setup/pages/SocialGlowz/assets/main.css";
+@import "./setup/pages/SocialGlowz/assets/generated/tokens.css";
 
 body {
   margin: 0;
-  min-width: 24rem;
+  min-width: var(--sg-size-24rem);
   overflow-y: scroll !important;
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
@@ -27,7 +28,7 @@ textarea,
 label {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: var(--sg-space-0d375rem);
   font-weight: 600;
   color: var(--sg-color-text);
 }
@@ -96,7 +97,7 @@ select {
 .ext-parity-root {
   margin-inline: auto;
   width: var(--sg-size-100pct);
-  max-width: 64rem;
+  max-width: var(--sg-size-64rem);
   padding: var(--sg-space-1rem);
   display: flex;
   flex-direction: column;
@@ -321,7 +322,7 @@ select {
 }
 
 .ext-btn--xs {
-  min-height: 1.75rem;
+  min-height: var(--sg-size-1d75rem);
   padding: var(--sg-space-0d25rem) var(--sg-space-0d6rem);
   font-size: var(--sg-font-size-0d8rem);
 }

@@ -8,7 +8,7 @@ created_at: "2026-04-30 10:25:48 UTC"
 updated: "2026-04-30"
 updated_at: "2026-04-30 16:20:48 UTC"
 status: ready
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "migration / audit-fix"
 owner: "Diane"
@@ -103,7 +103,7 @@ evidence:
   - "sf-ready 2026-04-30 found the draft not ready because `pnpm tauri:build` is only a Vite build, release RustSec coverage was ambiguous, fresh-docs coverage was partial, and Convex/Auth security checks were underspecified."
   - "package.json defines `tauri:build` as `vite build -c vite.tauri.config.ts`; native desktop packaging requires `pnpm exec tauri build` or the existing `tauri:bundle` script."
   - "Current Vite 8 and ESLint 10 docs require Node 20.19+; `.nvmrc` currently says `20` and must be treated as a Node-major pin, not proof of the patch-level floor."
-next_step: "/sf-start SocialGlowz Dependency Hygiene and Major-Line Migration"
+next_step: "/102-sg-start SocialGlowz Dependency Hygiene and Major-Line Migration"
 ---
 
 # Title
@@ -597,7 +597,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 
 | Step | Status | Notes |
 |------|--------|-------|
-| sf-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialglowz-dependency-hygiene-and-major-line-migration.md`. |
+| 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
 | sf-start | partial | Stage 11/12 migration work executed in this pass (PrimeVue and Tailwind v4 migration steps, `@tailwindcss/vite`, package/config updates). Remaining migration stages remain blocked until `sf-verify` runs and completes. |
 | sf-verify | partial | Stage 11/12 compile/build proof passes, but release readiness remains partial due open high bugs, native/device proof gap, Sass/Tailwind compatibility debt, manifest warnings, and unrelated dirty worktree changes. |

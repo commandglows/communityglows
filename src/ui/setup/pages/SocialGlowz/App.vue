@@ -808,7 +808,7 @@ input, textarea, [contenteditable="true"] {
   --primary-color: var(--sg-color-action);
   --text-color: var(--sg-color-text);
   --text-color-secondary: var(--sg-color-text-muted);
-  --surface-ground: var(--sg-color-surface-muted);
+  --surface-ground: var(--sg-color-background);
   --surface-card: var(--sg-color-surface-raised);
   --surface-border: var(--sg-color-border);
   --surface-hover: var(--sg-color-surface-hover);

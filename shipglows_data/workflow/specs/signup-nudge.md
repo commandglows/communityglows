@@ -6,7 +6,7 @@ project: socialglowz
 created: "2026-04-25"
 updated: "2026-04-27"
 status: ready
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: feature
 owner: Diane
 confidence: medium
@@ -18,7 +18,7 @@ linked_systems: []
 depends_on: []
 supersedes: []
 evidence: []
-next_step: "/sf-docs audit shipglows_data/workflow/specs/signup-nudge.md"
+next_step: "/300-sg-docs audit shipglows_data/workflow/specs/signup-nudge.md"
 ---
 # Spec : Nudge d'inscription — "Crée ton compte"
 

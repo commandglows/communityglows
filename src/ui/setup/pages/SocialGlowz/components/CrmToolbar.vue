@@ -36,7 +36,7 @@ const crmContext: MenuItem = {
   padding: var(--sg-crm-toolbar-padding);
   background: var(--sg-color-surface-raised);
   border: 1px solid var(--sg-color-border);
-  border-radius: var(--border-radius);
+  border-radius: var(--sg-radius-sm);
 }
 
 .crm-search {

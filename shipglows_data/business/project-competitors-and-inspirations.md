@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-11"
 updated: "2026-08-03"
 status: reviewed
-source_skill: sf-veille
+source_skill: 205-sg-veille
 scope: "project-competitors-and-inspirations"
 owner: "Diane"
 confidence: medium

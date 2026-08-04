@@ -8,7 +8,7 @@ created_at: "2026-05-23 20:10:00 UTC"
 updated: "2026-05-23"
 updated_at: "2026-05-23 20:00:27 UTC"
 status: ready
-source_skill: sf-build
+source_skill: 001-sg-build
 source_model: "GPT-5 Codex"
 scope: android-performance-architecture
 owner: "Diane"

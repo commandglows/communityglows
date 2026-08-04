@@ -5,7 +5,7 @@ artifact_version: "1.1.0"
 project: socialglowz
 created: "2026-04-26"
 status: active
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: brand
 owner: "Diane"
 updated: "2026-08-04"
@@ -19,7 +19,7 @@ evidence:
   - "package.json"
   - "src/ui/setup/pages/SocialGlowz/App.vue"
 supersedes: []
-next_step: "/sf-docs audit shipglows_data/business/branding.md"
+next_step: "/300-sg-docs audit shipglows_data/business/branding.md"
 ---
 
 # Branding Context

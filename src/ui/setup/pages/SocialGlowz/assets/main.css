@@ -664,6 +664,7 @@ input, textarea, [contenteditable="true"] {
 }
 
 body {
+  min-width: unset;
   background-color: var(--sg-color-background);
   color: var(--sg-color-text);
 }

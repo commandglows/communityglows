@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-25"
 updated: "2026-05-25"
 status: active
-source_skill: sf-start
+source_skill: 102-sg-start
 scope: extension-parity
 owner: "Diane"
 confidence: medium
@@ -37,7 +37,7 @@ evidence:
   - "manifest.firefox.config.ts keeps Firefox-compatible baseline without side panel fields."
   - "src/platform/extensionNetworkLauncher.ts enforces normalized HTTPS URLs and blocks embedded credentials."
   - "Extension UI surfaces now render ExtensionParitySurface instead of scaffold/demo views."
-next_step: "/sf-verify extension-tauri-feature-parity"
+next_step: "/103-sg-verify extension-tauri-feature-parity"
 ---
 
 # Extension Parity Map

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { ContextualTaskInput, ContextualTaskPriority, ContextualTaskStatus } from '@/services/contextualTasksService'
+import SgButton from '../ui/SgButton.vue'
 
 const props = withDefaults(defineProps<{
   initialUrl?: string
@@ -116,20 +117,17 @@ function submit() {
     </div>
 
     <div class="task-form-actions">
-      <button
-        class="btn btn-ghost"
+      <SgButton
+        label="Annuler"
+        text
         type="button"
         @click="emit('cancel')"
-      >
-        Annuler
-      </button>
-      <button
-        class="btn btn-primary"
+      />
+      <SgButton
+        :label="submitLabel"
         type="submit"
         :disabled="!canSubmit"
-      >
-        {{ submitLabel }}
-      </button>
+      />
     </div>
   </form>
 </template>

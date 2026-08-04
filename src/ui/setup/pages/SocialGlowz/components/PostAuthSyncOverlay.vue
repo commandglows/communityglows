@@ -4,7 +4,7 @@
       <div
         v-if="feedback.visible"
         class="sync-overlay"
-        :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile': isPostAuthSyncNarrow }"
+        :class="{ 'is-mobile': isPostAuthSyncNarrow }"
         role="alertdialog"
         aria-modal="true"
         aria-live="polite"
@@ -47,7 +47,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useThemeStore } from "@/stores/theme";
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import {
@@ -56,8 +55,6 @@ import {
 } from "@/lib/postAuthSyncFeedback";
 
 const { t } = useI18n();
-const themeStore = useThemeStore();
-
 const blockingOrder: Array<Exclude<PostAuthSyncStage, "idle" | "ready">> = [
   "waitingServer",
   "dataReceived",
@@ -120,14 +117,14 @@ const isPostAuthSyncNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS
 .sync-overlay {
   --sync-overlay-top-gap: var(--sg-space-1d25rem);
   --sync-overlay-bottom-gap: var(--sg-space-1d25rem);
-  --sync-backdrop-tint: rgba(59, 130, 246, 0.18);
-  --sync-backdrop-base: rgba(15, 23, 42, 0.42);
-  --sync-card-bg-start: rgba(255, 255, 255, 0.96);
-  --sync-card-bg-end: rgba(248, 250, 252, 0.94);
-  --sync-card-border: rgba(255, 255, 255, 0.58);
-  --sync-card-shadow: var(--sg-shadow-0-28px-70px-rgba-15-23-42-0d22);
-  --sync-card-glow: rgba(59, 130, 246, 0.12);
-  --sync-icon-bg: color-mix(in srgb, var(--sg-color-action) 14%, white 86%);
+  --sync-backdrop-tint: var(--sg-color-blue-alpha-20);
+  --sync-backdrop-base: var(--sg-color-overlay);
+  --sync-card-bg-start: var(--sg-color-translucent-surface);
+  --sync-card-bg-end: var(--sg-color-surface-raised);
+  --sync-card-border: var(--sg-color-border);
+  --sync-card-shadow: var(--sg-shadow-modal);
+  --sync-card-glow: var(--sg-color-blue-alpha-20);
+  --sync-icon-bg: color-mix(in srgb, var(--sg-color-action) 14%, var(--sg-color-surface-raised) 86%);
   --sync-step-bg: color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-surface-muted) 12%);
   --sync-step-done-bg: color-mix(in srgb, var(--sg-color-action) 6%, var(--sg-color-surface-raised) 94%);
   --sync-step-current-bg: color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
@@ -166,27 +163,8 @@ const isPostAuthSyncNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS
   color: var(--sg-color-text);
 }
 
-.sync-overlay.is-dark,
-:global(html.dark) .sync-overlay,
-:global(.dark) .sync-overlay {
-  --sync-backdrop-tint: rgba(91, 168, 245, 0.22);
-  --sync-backdrop-base: rgba(2, 6, 23, 0.68);
-  --sync-card-bg-start: rgba(24, 24, 27, 0.96);
-  --sync-card-bg-end: rgba(9, 9, 11, 0.94);
-  --sync-card-border: rgba(82, 82, 91, 0.76);
-  --sync-card-shadow: var(--sg-shadow-0-28px-70px-rgba-2-6-23-0d56);
-  --sync-card-glow: rgba(91, 168, 245, 0.16);
-  --sync-icon-bg: color-mix(in srgb, var(--sg-color-action) 22%, rgba(9, 9, 11, 0.94) 78%);
-  --sync-step-bg: color-mix(in srgb, var(--sg-color-surface-raised) 84%, var(--sg-color-white-alpha-02) 16%);
-  --sync-step-done-bg: color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
-  --sync-step-current-bg: color-mix(in srgb, var(--sg-color-action) 14%, var(--sg-color-surface-raised) 86%);
-  --sync-step-border: color-mix(in srgb, var(--sg-color-border) 88%, var(--sg-color-white-alpha-003) 12%);
-  --sync-step-current-border: color-mix(in srgb, var(--sg-color-action) 38%, var(--sg-color-border) 62%);
-  --sync-step-done-border: color-mix(in srgb, var(--sg-color-action) 26%, var(--sg-color-border) 74%);
-}
-
 .sync-card.is-success {
-  border-color: color-mix(in srgb, var(--sg-color-action) 24%, rgba(255, 255, 255, 0.1));
+  border-color: color-mix(in srgb, var(--sg-color-action) 24%, var(--sg-color-border) 76%);
 }
 
 .sync-icon-wrap {

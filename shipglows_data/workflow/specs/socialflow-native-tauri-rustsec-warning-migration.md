@@ -8,7 +8,7 @@ created_at: "2026-05-02 12:38:54 UTC"
 updated: "2026-05-02"
 updated_at: "2026-05-02 19:56:37 UTC"
 status: ready
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "migration / audit-fix"
 owner: "Diane"
@@ -38,7 +38,7 @@ depends_on:
   - artifact: "CLAUDE.md"
     artifact_version: "1.0.0"
     required_status: "active"
-  - artifact: "shipglows_data/workflow/specs/socialglowz-dependency-hygiene-and-major-line-migration.md"
+  - artifact: "shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md"
     artifact_version: "1.0.0"
     required_status: "ready"
   - artifact: "docs/dependency-risk-register.md"
@@ -69,7 +69,7 @@ evidence:
   - "RustSec GTK3 binding advisories such as RUSTSEC-2024-0415 have no patched GTK3 versions and point toward gtk4-rs rather than a simple patch bump."
   - "Tauri official docs state `tauri build` and `tauri android build` run `build.beforeBuildCommand` and use `build.frontendDist`; `pnpm tauri:build` remains only the frontend Vite build script in this repo."
   - "Local docs and workflows already use `cargo-audit` as the executable RustSec gate; `cargo-deny` is unavailable locally and is deferred from this stage."
-next_step: "/sf-start SocialGlowz Native Tauri RustSec Warning Migration"
+next_step: "/102-sg-start SocialGlowz Native Tauri RustSec Warning Migration"
 ---
 
 # Title

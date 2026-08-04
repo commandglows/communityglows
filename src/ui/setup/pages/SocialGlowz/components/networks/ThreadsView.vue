@@ -65,8 +65,10 @@ import SgButton from '../ui/SgButton.vue'
 
 .thread-card {
   background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-12px);
   padding: var(--sg-space-1rem);
+  box-shadow: var(--sg-shadow-control);
 }
 
 .thread-header {

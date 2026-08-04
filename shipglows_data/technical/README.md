@@ -5,7 +5,7 @@ artifact_version: "1.1.0"
 project: socialglowz
 created: "2026-04-26"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: engineering-guidelines
 owner: "Diane"
 updated: "2026-08-03"
@@ -25,7 +25,7 @@ evidence:
   - "src/ui/setup/pages/SocialGlowz/components/ui/"
   - "shipglows_data/technical/design-system-authority.md"
 supersedes: []
-next_step: "/sf-docs audit shipglows_data/technical/README.md"
+next_step: "/300-sg-docs audit shipglows_data/technical/README.md"
 ---
 
 # Technical Guidelines

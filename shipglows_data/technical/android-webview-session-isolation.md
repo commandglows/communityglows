@@ -1,12 +1,12 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.2.1"
 project: "socialglowz"
 created: "2026-05-23"
-updated: "2026-07-15"
+updated: "2026-08-04"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: android-webview-session-isolation
 owner: "Diane"
 confidence: medium
@@ -33,8 +33,8 @@ supersedes: []
 evidence:
   - "shipglows_data/workflow/specs/android-webview-storage-isolation.md"
   - "src/config/socialNetworks.ts"
-next_review: "2026-07-23"
-next_step: "/sf-docs audit shipglows_data/technical/android-webview-session-isolation.md"
+next_review: "2026-09-03"
+next_step: "/300-sg-docs audit shipglows_data/technical/android-webview-session-isolation.md"
 ---
 
 # Android WebView Session Isolation

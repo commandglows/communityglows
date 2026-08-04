@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ContextualTask, ContextualTaskStatus } from '@/services/contextualTasksService'
+import SgButton from '../ui/SgButton.vue'
 
 defineProps<{
   tasksByStatus: Record<ContextualTaskStatus, ContextualTask[]>
@@ -74,13 +75,14 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
               :key="tag"
             >#{{ tag }}</span>
           </div>
-          <button
-            class="btn btn-outline btn-sm task-open-button"
+          <SgButton
+            label="Ouvrir le contexte"
+            outlined
+            size="small"
+            class="task-open-button"
             type="button"
             @click="emit('open', task)"
-          >
-            Ouvrir le contexte
-          </button>
+          />
         </article>
 
         <p
@@ -107,6 +109,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   min-width: 0;
   min-height: var(--sg-tasks-column-min-height);
   background: var(--sg-color-surface-muted);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
   display: flex;
   flex-direction: column;
@@ -148,6 +151,13 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   background: var(--sg-color-surface-raised);
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
+  box-shadow: var(--sg-shadow-control);
+  transition: var(--sg-motion-colors);
+}
+
+.task-card:hover {
+  border-color: var(--sg-color-border-strong);
+  background: var(--sg-color-surface-hover);
 }
 
 .task-card-header,
@@ -174,7 +184,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   text-transform: capitalize;
 }
 
-.task-priority--high { color: var(--red-500); }
+.task-priority--high { color: var(--sg-color-danger); }
 .task-priority--normal { color: var(--sg-color-action); }
 .task-priority--low { color: var(--sg-color-text-muted); }
 

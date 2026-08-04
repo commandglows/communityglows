@@ -6,7 +6,7 @@ project: socialglowz
 created: "2026-05-29"
 updated: "2026-05-29"
 status: ready
-source_skill: sf-build
+source_skill: 001-sg-build
 scope: billing-entitlements
 owner: "Diane"
 confidence: medium
@@ -23,7 +23,7 @@ supersedes: []
 evidence:
   - "SocialGlowz has no AI/provider usage cost in its current documented product model."
   - "Existing Convex schema has a simple subscriptions table but no processor-agnostic entitlement ledger."
-next_step: "/sf-start socialglowz-billing-entitlements-foundation"
+next_step: "/102-sg-start socialglowz-billing-entitlements-foundation"
 ---
 
 # SocialGlowz Billing Entitlements Foundation

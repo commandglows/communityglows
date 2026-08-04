@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-05-12"
 updated: "2026-08-03"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: technical
 owner: "Diane"
 confidence: high
@@ -48,7 +48,7 @@ evidence:
   - "convex/schema.ts"
 supersedes: []
 next_review: "2026-09-03"
-next_step: "/sf-docs update shipglows_data/technical/guidelines.md"
+next_step: "/300-sg-docs update shipglows_data/technical/guidelines.md"
 ---
 
 # Technical Guidelines

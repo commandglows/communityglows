@@ -5,7 +5,7 @@ artifact_version: "1.0.0"
 project: socialglowz
 created: "2026-04-26"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: business
 owner: "Diane"
 updated: "2026-04-26"
@@ -19,7 +19,7 @@ evidence:
   - "package.json"
   - "src/ui/setup/pages/SocialGlowz/App.vue"
 supersedes: []
-next_step: "/sf-docs audit shipglows_data/business/business.md"
+next_step: "/300-sg-docs audit shipglows_data/business/business.md"
 ---
 
 # Business Context

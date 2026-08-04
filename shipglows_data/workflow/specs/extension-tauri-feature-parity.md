@@ -8,7 +8,7 @@ created_at: "2026-05-25 17:59:45 UTC"
 updated: "2026-05-27"
 updated_at: "2026-05-28 18:18:00 UTC"
 status: ready
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "feature"
 owner: "Diane"
@@ -62,7 +62,7 @@ evidence:
   - "src/ui/setup/pages/SocialGlowz/App.vue is the actual Tauri application shell with onboarding, profiles, settings, sync, network launcher, and native webview orchestration."
   - "Chrome official docs: chrome.sidePanel requires sidePanel permission and is Chrome 114+ MV3+."
   - "MDN WebExtensions docs: Firefox WebExtensions differ from Chrome APIs and support browser/chrome namespace compatibility with browser-specific API differences."
-next_step: "/sf-start extension-tauri-feature-parity"
+next_step: "/102-sg-start extension-tauri-feature-parity"
 ---
 
 # Spec: Extension Tauri Feature Parity

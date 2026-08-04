@@ -6,7 +6,7 @@ project: "socialglowz"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: function_tree
 owner: "Diane"
 confidence: medium
@@ -36,7 +36,7 @@ linked_systems:
   - "shipglows_data/technical/architecture.md"
   - "shipglows_data/technical/design-system-authority.md"
   - "AGENT.md"
-next_step: "/sf-docs update shipglows_data/technical/context-function-tree.md"
+next_step: "/300-sg-docs update shipglows_data/technical/context-function-tree.md"
 ---
 
 # CONTEXT-FUNCTION-TREE.md
@@ -107,7 +107,7 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
   - Parse les deeplinks applicatifs SocialGlowz, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
 - `src/lib/cloudSync*.ts`
   - Sync settings, queue de sync, feedback post-auth.
-- `src/lib/disableCopyProtection.ts`
+- `src/utils/disableCopyProtection.ts`
   - Effet anti-copie, hooks installés côté entrée UI.
 - `src/composables/*`
   - Hooks transverses (auth, locales, webviews, settings, signup nudge).

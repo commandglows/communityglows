@@ -1,12 +1,12 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "0.1.0"
+artifact_version: "0.1.1"
 project: socialglowz
 created: "2026-05-30"
-updated: "2026-05-30"
+updated: "2026-08-04"
 status: draft
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: platform-usage-lemonsqueezy
 owner: Diane
 confidence: high
@@ -32,8 +32,8 @@ supersedes: []
 evidence:
   - "SocialGlowz public site delegates direct Lifetime Deal checkout to the WinFlowz suite commerce route."
   - "Fresh Lemon Squeezy docs checked on 2026-05-30; no official CLI or MCP was identified."
-next_review: "2026-06-30"
-next_step: "/sf-verify socialglowz-processor-agnostic-ltd-commerce after Lemon Squeezy test-mode and hosted Convex refund/replay smoke"
+next_review: "2026-09-03"
+next_step: "/103-sg-verify socialglowz-processor-agnostic-ltd-commerce after Lemon Squeezy test-mode and hosted Convex refund/replay smoke"
 ---
 
 # Lemon Squeezy Usage

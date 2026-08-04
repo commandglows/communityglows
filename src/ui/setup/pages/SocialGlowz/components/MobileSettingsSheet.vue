@@ -1339,8 +1339,8 @@ onUnmounted(() => {
   width: var(--sg-size-1d1rem);
   height: var(--sg-size-1d1rem);
   border-radius: var(--sg-radius-50pct);
-  background: var(--sg-color-white);
-  box-shadow: var(--sg-shadow-0-1px-3px-rgba-0-0-0-0d2);
+  background: var(--sg-color-surface-raised);
+  box-shadow: var(--sg-shadow-control);
   transition: var(--sg-motion-transform-0d2s);
 }
 

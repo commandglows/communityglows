@@ -8,7 +8,7 @@ created_at: "2026-05-11 19:51:04 UTC"
 updated: "2026-05-14"
 updated_at: "2026-05-14 17:59:02 UTC"
 status: reviewed
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "audit-fix"
 owner: "socialglowz-team"
@@ -44,7 +44,7 @@ evidence:
   - "src-tauri/tauri.conf.json:1-120"
   - "src-tauri/src/lib.rs:1-200"
   - "src/stores/socialNetworks.ts:1-200"
-next_step: "/sf-test validation Android auth deep-link sur device"
+next_step: "/107-sg-test validation Android auth deep-link sur device"
 ---
 
 Title

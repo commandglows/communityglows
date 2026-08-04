@@ -261,7 +261,7 @@ function finish() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--sg-color-surface-muted);
+  background: var(--sg-color-background);
   padding: var(--sg-space-1rem);
 }
 
@@ -272,6 +272,11 @@ function finish() {
   flex-direction: column;
   align-items: center;
   gap: var(--sg-space-1d5rem);
+  padding: var(--sg-space-2rem);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-surface-raised);
+  box-shadow: var(--sg-shadow-modal);
 }
 
 .onboarding-dots {
@@ -315,7 +320,8 @@ function finish() {
   width: var(--sg-size-80px);
   height: var(--sg-size-80px);
   border-radius: var(--sg-radius-20px);
-  background: var(--sg-color-action);
+  background: var(--sg-color-surface-muted);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -491,6 +497,11 @@ function finish() {
   font-weight: 600;
   cursor: pointer;
   transition: var(--sg-motion-opacity-0d15s);
+  box-shadow: var(--sg-shadow-control);
+}
+
+.btn-primary:hover {
+  background: var(--sg-color-action-hover);
 }
 
 .btn-primary:active {
@@ -519,7 +530,6 @@ function finish() {
   font-size: var(--sg-font-size-0d85rem);
   cursor: pointer;
   padding: var(--sg-space-0d5rem);
-  opacity: 0.7;
   transition: var(--sg-motion-opacity-0d15s);
 }
 

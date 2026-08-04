@@ -6,7 +6,7 @@ project: socialglowz
 created: "2026-06-11"
 updated: "2026-06-11"
 status: draft
-source_skill: 300-sf-docs
+source_skill: 300-300-sg-docs
 scope: editorial_surface_governance
 owner: "Diane"
 confidence: medium
@@ -26,7 +26,7 @@ evidence:
   - "shipglows_data/editorial/content-map.md"
   - "README.md"
   - "shipglows_data/technical/context.md"
-next_step: "/sf-docs editorial"
+next_step: "/300-sg-docs editorial"
 next_review: "2026-09-11"
 ---
 

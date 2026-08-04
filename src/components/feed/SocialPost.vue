@@ -85,16 +85,16 @@ defineEmits<{
 
 <style scoped>
 .social-post {
-  background: var(--surface-card);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-8px);
+  padding: var(--sg-space-1rem);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-meta {
@@ -103,38 +103,38 @@ defineEmits<{
 
 .author-name {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--sg-font-size-1rem);
   font-weight: 600;
 }
 
 .post-date {
-  font-size: 0.875rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d9rem);
+  color: var(--sg-color-text-muted);
 }
 
 .post-content {
-  margin-bottom: 1rem;
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-content p {
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--sg-space-1rem) 0;
   white-space: pre-wrap;
 }
 
 .post-image {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  width: var(--sg-size-100pct);
+  border-radius: var(--sg-radius-8px);
+  margin-bottom: var(--sg-space-1rem);
 }
 
 .post-actions {
   display: flex;
-  gap: 1rem;
-  border-top: 1px solid var(--surface-border);
-  padding-top: 1rem;
+  gap: var(--sg-space-1rem);
+  border-top: var(--sg-border-1px) solid var(--sg-color-border);
+  padding-top: var(--sg-space-1rem);
 }
 
 .like-button.liked {
-  color: #ff4081;
+  color: var(--sg-color-danger);
 }
-</style> 
+</style>

@@ -14,9 +14,9 @@ risk_level: medium
 security_impact: none
 docs_impact: yes
 linked_systems:
-  - shipglowz_data/workflow/specs/shipglowz-data-corpus-migration.md
-  - shipglowz_data/workflow/archives/pre-canonical-migration/site-shipflow_data/
-  - shipglowz_data/workflow/archives/legacy-root-archive/
+  - shipglows_data/workflow/specs/shipglows-data-corpus-migration.md
+  - shipglows_data/workflow/archives/pre-canonical-migration/site-shipflow_data/
+  - shipglows_data/workflow/archives/legacy-root-archive/
 depends_on: []
 supersedes: []
 evidence:
@@ -30,13 +30,13 @@ next_step: "Keep this record with the archived migration sources."
 
 | Source artifact | Canonical target | Content preserved | Content intentionally rejected | Tracker extraction | Final local state |
 |---|---|---|---|---|---|
-| `shipflow_data/**` | `shipglowz_data/**` | Entire active corpus moved with Git-visible history | None | Existing workflow trackers retained | Legacy root removed |
-| `site/shipflow_data/**` | `shipglowz_data/workflow/archives/pre-canonical-migration/site-shipflow_data/**` | Nine divergent files copied byte-for-byte | No variant content deleted; archived variants remain available for later semantic review | None | Nested corpus removed |
-| Root `TASKS.md` | `shipglowz_data/workflow/TASKS.md` | Both task ids already existed canonically; the active major-migration task has the newer `in_progress` state | Duplicate, older tracker lines | Compared by stable task id | Root tracker removed |
-| Root `AUDIT_LOG.md` | `shipglowz_data/workflow/AUDIT_LOG.md` | Dependency-hygiene audit already existed canonically with identical material content | Duplicate line | Compared by date and subject | Root tracker removed |
-| Root `TEST_LOG.md` | `shipglowz_data/workflow/TEST_LOG.md` | CinderReels Android session-isolation result appended verbatim in meaning | None | QA record added under its original date | Root tracker removed |
-| `docs/**` | Business, technical, and workflow families under `shipglowz_data/` | All six documents moved according to the migration spec | None | Exploration reports reclassified | Root docs directory removed |
-| `archive/**` | `shipglowz_data/workflow/archives/legacy-root-archive/**` | Full historical snapshot and archive policy moved without content edits | None | None | Root archive removed |
-| `specs/**` | `shipglowz_data/workflow/specs/**` | Migration spec moved and remains the chantier source of truth | None | Skill history retained in spec | Root specs directory removed |
+| `shipflow_data/**` | `shipglows_data/**` | Entire active corpus moved with Git-visible history | None | Existing workflow trackers retained | Legacy root removed |
+| `site/shipflow_data/**` | `shipglows_data/workflow/archives/pre-canonical-migration/site-shipflow_data/**` | Nine divergent files copied byte-for-byte | No variant content deleted; archived variants remain available for later semantic review | None | Nested corpus removed |
+| Root `TASKS.md` | `shipglows_data/workflow/TASKS.md` | Both task ids already existed canonically; the active major-migration task has the newer `in_progress` state | Duplicate, older tracker lines | Compared by stable task id | Root tracker removed |
+| Root `AUDIT_LOG.md` | `shipglows_data/workflow/AUDIT_LOG.md` | Dependency-hygiene audit already existed canonically with identical material content | Duplicate line | Compared by date and subject | Root tracker removed |
+| Root `TEST_LOG.md` | `shipglows_data/workflow/TEST_LOG.md` | CinderReels Android session-isolation result appended verbatim in meaning | None | QA record added under its original date | Root tracker removed |
+| `docs/**` | Business, technical, and workflow families under `shipglows_data/` | All six documents moved according to the migration spec | None | Exploration reports reclassified | Root docs directory removed |
+| `archive/**` | `shipglows_data/workflow/archives/legacy-root-archive/**` | Full historical snapshot and archive policy moved without content edits | None | None | Root archive removed |
+| `specs/**` | `shipglows_data/workflow/specs/**` | Migration spec moved and remains the chantier source of truth | None | Skill history retained in spec | Root specs directory removed |
 
 Historical path strings inside archived snapshots are intentionally unchanged. They are evidence, not active instructions.

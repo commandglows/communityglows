@@ -1,5 +1,8 @@
 <template>
-  <div class="gmail-container" :class="{ 'is-tablet': isGmailCompact }">
+  <div
+    class="gmail-container"
+    :class="{ 'is-tablet': isGmailCompact }"
+  >
     <div class="gmail-header">
       <h2>Gmail</h2>
       <div
@@ -154,7 +157,7 @@ onMounted(async () => {
 
 .unread-count {
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   padding: var(--sg-crm-unread-padding-block) var(--sg-crm-unread-padding-inline);
   border-radius: var(--sg-crm-pill-radius);
   font-size: var(--sg-crm-secondary-copy-size);
@@ -176,6 +179,7 @@ onMounted(async () => {
   flex: 1;
   overflow: hidden;
   background: var(--sg-color-surface-muted);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
 }
 
@@ -214,8 +218,9 @@ onMounted(async () => {
 }
 
 .email-item:hover {
-  transform: translateY(var(--sg-crm-card-hover-offset));
-  box-shadow: var(--sg-crm-card-hover-shadow);
+  border-color: var(--sg-color-border-strong);
+  background: var(--sg-color-surface-hover);
+  box-shadow: var(--sg-shadow-control);
 }
 
 .email-item.unread {
@@ -258,7 +263,7 @@ onMounted(async () => {
 
 .label {
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   padding: var(--sg-crm-label-padding-block) var(--sg-crm-label-padding-inline);
   border-radius: var(--sg-crm-label-radius);
   font-size: var(--sg-crm-label-size);

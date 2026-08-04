@@ -223,7 +223,7 @@ La V1 choisit une persistance locale par runtime. Ce choix réduit le lot à l�
   - Notes: Ne pas modifier une URL entrée par l’utilisateur sans exposer le fait que des éléments sensibles ont été retirés.
 
 - [ ] Task 2: Ajouter un store local dédié et une migration Kanban sans perte.
-  - Files: `src/stores/contextualTasks.ts`, `src/stores/contextualTasks.test.ts`, `src/ui/setup/pages/SocialGlowz/services/kanbanService.ts`, `src/stores/kanban.ts`.
+  - Files: `src/stores/contextualTasks.ts`, `src/services/contextualTasksService.test.ts`, `src/ui/setup/pages/SocialGlowz/services/kanbanService.ts`, `src/stores/kanban.ts`.
   - Action: Choisir une clé locale versionnée pour les tâches contextuelles et migrer de manière idempotente les éléments Kanban de type `task` lorsque cela est possible, sans supprimer ni réécrire aveuglément `kanban-state`. Conserver les e-mails/notes Kanban existants hors de la nouvelle vue si leurs données ne satisfont pas le contrat de tâche.
   - User story link: Les tâches sont durables sans perdre l’existant.
   - Depends on: Task 1.

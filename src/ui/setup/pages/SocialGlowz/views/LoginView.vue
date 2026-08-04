@@ -133,7 +133,7 @@ async function handleSignIn() {
   align-items: center;
   justify-content: center;
   min-height: var(--sg-size-100vh);
-  background: var(--sg-color-surface-muted);
+  background: var(--sg-color-background);
 }
 
 .login-card {
@@ -144,6 +144,10 @@ async function handleSignIn() {
   padding: var(--sg-space-2rem);
   max-width: var(--sg-size-480px);
   width: var(--sg-size-100pct);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-surface-raised);
+  box-shadow: var(--sg-shadow-modal);
 }
 
 .login-header {

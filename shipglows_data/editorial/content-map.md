@@ -1,10 +1,10 @@
 ---
 artifact: content_map
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.2.1"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-07-15"
+updated: "2026-08-04"
 status: reviewed
 source_skill: manual
 scope: content_map
@@ -30,8 +30,8 @@ depends_on:
     artifact_version: "1.0.1"
     required_status: reviewed
 supersedes: []
-next_review: "2026-05-26"
-next_step: "/sf-docs audit shipglows_data/editorial/content-map.md"
+next_review: "2026-09-03"
+next_step: "/300-sg-docs audit shipglows_data/editorial/content-map.md"
 content_surfaces:
   - repo_docs
   - landing_pages

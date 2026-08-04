@@ -1,7 +1,7 @@
 ---
 artifact: design_system_authority
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
+artifact_version: "1.4.0"
 project: "socialglowz"
 created: "2026-06-12"
 updated: "2026-08-04"
@@ -32,13 +32,13 @@ depends_on:
     required_status: reviewed
 supersedes: []
 evidence:
-  - "The Vue desktop semantic tokens are declared in `src/ui/setup/pages/SocialGlowz/assets/main.css` and consumed by SocialGlowz-owned wrappers."
-  - "The site has a separate Tailwind token carrier in `site/src/styles/global.css`; matching names do not prove a shared token pipeline."
+  - "`design/tokens/reference.json` is the editable authority; the generator emits active Windows, site and Android carriers."
+  - "`main.css` and `site/src/styles/global.css` compose layouts and compatibility aliases; they do not declare canonical visual values."
   - "Reka UI is the maintained headless primitive layer for migrated desktop controls; SocialGlowz wrappers own visual composition."
-  - "The Windows source, generated declarations, and clean Tauri bundle contain zero PrimeVue runtime references; automated tests, core typecheck, lint, Tauri frontend build, and diff checks passed on 2026-08-03."
-  - "Design token compliance is partial: latest scans report remaining hardcoded visual values in the active migration scope (last known count: 508 findings), plus documented protocol-only exceptions."
+  - "The Windows source, generated declarations, and clean Tauri bundle contain zero PrimeVue runtime references; 109 tests, focused lint, Tauri frontend build, token validation and diff checks passed on 2026-08-04."
+  - "Design token compliance is partial: the full scan on 2026-08-04 reports 160 candidates across legacy extension surfaces, un-migrated components and documented network-brand metadata."
 next_review: "2026-09-03"
-next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
+next_step: "/300-sg-docs update shipglows_data/technical/design-system-authority.md"
 ---
 
 # SocialGlowz Design-System Authority
@@ -123,7 +123,7 @@ design_system_authority:
 - Generated Tauri declarations: zero PrimeVue components.
 - Clean Tauri bundle: zero PrimeVue or `@primeuix` runtime markers.
 - PrimeVue is not removed globally because historical extension entries still consume it. PrimeIcons remains a direct Windows compatibility dependency until its active icon consumers are migrated without visual regression. PrimeFlex has zero Windows entry imports and consumers.
-- Automated proof passed: lint of the migration surface, `typecheck:core`, 107 tests, clean Tauri frontend build and `git diff --check`.
+- Automated proof passed: token validation, focused lint of the migration surface, `typecheck:core`, 109 tests, clean Tauri frontend build and `git diff --check`.
 - Manual executable proof remains pending for Windows focus/keyboard behavior, notifications, themes, splitters, sidebars and native WebViews.
 
 ## Drift Evidence And Exceptions
@@ -134,17 +134,17 @@ Accepted protocol boundaries remain:
 
 - Seven responsive breakpoints inside `@media` conditions. CSS custom properties cannot be used as media-query condition values.
 - Three `window.open` feature strings. Their dimensions are browser API protocol text, not rendered component design values.
+- The social-network brand registry. Its third-party brand colors and tile gradients are catalog metadata, not the SocialGlowz semantic UI palette.
 
 Any additional non-protocol drift finding requires a semantic token path or a separately documented platform/protocol exception.
 
-Latest known residual from the active migration scan is 508 findings; this document does not reclassify those as exceptions.
-This result was originally confirmed in migration diff checks and does not mean the full runtime is zero-drift.
+The full scan on 2026-08-04 reports 160 candidates. It does not reclassify every candidate as an exception and does not mean the runtime is zero-drift.
 ## Governing Rule
 
 For app or site visual changes:
 
-1. add or reuse semantic values in `main.css`,
-2. consume them through a SocialGlowz wrapper or component CSS variable,
+1. add or reuse semantic values in `design/tokens/reference.json`,
+2. generate and verify the platform carriers before consuming the role through a wrapper or component CSS variable,
 3. use Reka UI for complex interactive patterns rather than copying a vendor implementation,
 4. avoid new hardcoded visual values (colors, sizes, radii, spacing, shadows, motion timing) unless documented as a platform-bound exception.
 
@@ -158,4 +158,4 @@ For app or site visual changes:
 
 ## Maintenance Rule
 
-If a shared token pipeline is introduced (for example a JSON token source with generated Vue and Tailwind outputs), update this artifact before accepting a cross-surface parity claim. The Windows/Tauri inventory is already at zero PrimeVue component runtime and zero PrimeFlex usage; both packages remain available for legacy extension surfaces. PrimeIcons remains active in Windows and must not be removed until its consumer inventory reaches zero.
+When a token role, carrier or platform mapping changes, update this artifact before accepting a cross-surface parity claim. The Windows/Tauri inventory is already at zero PrimeVue component runtime and zero PrimeFlex usage; both packages remain available for legacy extension surfaces. PrimeIcons remains active in Windows and must not be removed until its consumer inventory reaches zero.

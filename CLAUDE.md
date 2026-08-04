@@ -5,7 +5,7 @@ artifact_version: "1.0.1"
 project: socialglowz
 created: "2026-04-26"
 status: active
-source_skill: sf-docs
+source_skill: 300-sg-docs
 scope: technical-guidance
 owner: "Diane"
 updated: "2026-05-25"
@@ -20,7 +20,7 @@ evidence:
   - "src/lib/convex.ts"
   - "src/lib/convexAuth.ts"
 supersedes: []
-next_step: "/sf-docs audit CLAUDE.md"
+next_step: "/300-sg-docs audit CLAUDE.md"
 ---
 
 # CLAUDE.md

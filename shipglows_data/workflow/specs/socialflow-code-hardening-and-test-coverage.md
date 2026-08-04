@@ -8,7 +8,7 @@ created_at: "2026-04-28 01:08:44 UTC"
 updated: "2026-04-28"
 updated_at: "2026-04-28 01:22:02 UTC"
 status: ready
-source_skill: sf-spec
+source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "audit-fix"
 owner: "Diane"
@@ -54,7 +54,7 @@ evidence:
   - "shipglows_data/workflow/TASKS.md Audit: Code 2026-04-28 lists duplicated src/ and src/ui/setup/pages/SocialGlowz paths as convention drift."
   - "pnpm lint passed with 67 warnings, many from any-typed auth/cloud/Convex boundaries."
   - "convex/customLinks.ts, convex/profiles.ts, and convex/settings.ts accept broad string/number payloads without stronger domain validation."
-next_step: "/sf-verify SocialGlowz Code Hardening and Test Coverage"
+next_step: "/103-sg-verify SocialGlowz Code Hardening and Test Coverage"
 ---
 
 # Title

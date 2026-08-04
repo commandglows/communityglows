@@ -140,7 +140,7 @@ const deleteItem = (itemId: string) => {
 
 .item-count {
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   padding: var(--sg-space-0d2rem-0d6rem);
   border-radius: var(--sg-radius-1rem);
   font-size: var(--sg-font-size-0d8rem);
@@ -187,16 +187,18 @@ const deleteItem = (itemId: string) => {
 
 .kanban-item {
   background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-4px);
   padding: var(--sg-space-0d5rem);
   cursor: move;
-  box-shadow: var(--sg-shadow-0-1px-3px-rgba-0-0-0-0d1);
+  box-shadow: var(--sg-shadow-control);
   transition: var(--sg-motion-all-0d2s-ease);
 }
 
 .kanban-item:hover {
-  transform: translateX(2px);
-  box-shadow: var(--sg-shadow-0-2px-4px-rgba-0-0-0-0d1);
+  border-color: var(--sg-color-border-strong);
+  background: var(--sg-color-surface-hover);
+  box-shadow: var(--sg-shadow-modal);
 }
 
 .kanban-item.is-dragging {
@@ -218,15 +220,15 @@ const deleteItem = (itemId: string) => {
 }
 
 .type-email {
-  border-left: 3px solid var(--blue-500);
+  border-left-color: var(--sg-color-info);
 }
 
 .type-task {
-  border-left: 3px solid var(--green-500);
+  border-left-color: var(--sg-color-success);
 }
 
 .type-note {
-  border-left: 3px solid var(--yellow-500);
+  border-left-color: var(--sg-color-warning);
 }
 
 /* Animations */

@@ -75,11 +75,12 @@ const resolvedAriaLabel = computed(() => {
 </script>
 
 <style scoped>
-.sg-button { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: var(--sg-button-gap); min-height: var(--sg-button-min-height); padding: var(--sg-button-padding); border: 1px solid var(--sg-color-action); border-radius: var(--sg-radius-sm); background: var(--sg-color-action); color: var(--sg-color-text-on-action); font: inherit; font-weight: 600; cursor: pointer; transition: var(--sg-motion-colors); }
+.sg-button { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: var(--sg-button-gap); min-height: var(--sg-button-min-height); padding: var(--sg-button-padding); border: 1px solid var(--sg-color-action); border-radius: var(--sg-radius-sm); background: var(--sg-color-action); color: var(--sg-color-text-on-action); font: inherit; font-weight: 600; cursor: pointer; box-shadow: var(--sg-shadow-control); transition: var(--sg-motion-colors); }
 .sg-button:hover { background: var(--sg-color-action-hover); }
-.sg-button--text { border-color: transparent; background: transparent; color: var(--sg-color-text-muted); }
+.sg-button--text { border-color: transparent; background: transparent; color: var(--sg-color-text-muted); box-shadow: none; }
 .sg-button--text:hover { background: var(--sg-color-surface-hover); color: var(--sg-color-text); }
-.sg-button--outlined { background: transparent; color: var(--sg-color-action); }
+.sg-button--outlined { background: transparent; color: var(--sg-color-action); box-shadow: none; }
+.sg-button--outlined:hover { background: var(--sg-color-surface-hover); }
 .sg-button--rounded { border-radius: var(--sg-radius-pill); }
 .sg-button--small { min-height: var(--sg-control-height-sm); padding: var(--sg-control-padding-sm); }
 .sg-button--large { min-height: var(--sg-control-height-lg); }

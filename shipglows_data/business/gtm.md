@@ -1,10 +1,10 @@
 ---
 artifact: gtm_context
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.0.2"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-05-11"
+updated: "2026-08-04"
 status: reviewed
 source_skill: manual
 scope: gtm
@@ -24,8 +24,8 @@ depends_on:
     artifact_version: "1.0.1"
     required_status: reviewed
 supersedes: []
-next_review: "2026-05-26"
-next_step: "/sf-docs audit shipglows_data/business/gtm.md"
+next_review: "2026-09-03"
+next_step: "/300-sg-docs audit shipglows_data/business/gtm.md"
 target_segment: "independent operators, small marketing teams, and social operators managing multiple accounts across networks and devices"
 offer: "an all-in-one social operations workspace with shared UI, local profiles, and cross-platform delivery from one codebase"
 channels: "developer and user documentation, landing pages, feature changelogs, social proof from update cadence, and onboarding walkthroughs"

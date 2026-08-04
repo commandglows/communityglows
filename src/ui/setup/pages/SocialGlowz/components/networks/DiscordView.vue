@@ -126,7 +126,7 @@ const channels = ref([
   bottom: 0;
   right: var(--sg-position-neg-5px);
   background: var(--sg-color-action);
-  color: white;
+  color: var(--sg-color-text-on-action);
   border-radius: var(--sg-radius-50pct);
   width: var(--sg-size-20px);
   height: var(--sg-size-20px);

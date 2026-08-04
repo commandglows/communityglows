@@ -1,12 +1,12 @@
 ---
 artifact: editorial_article_source
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: "socialglowz"
 created: "2026-05-23"
-updated: "2026-05-23"
+updated: "2026-08-04"
 status: reviewed
-source_skill: sf-redact
+source_skill: 200-sg-redact
 scope: android-webview-session-isolation-faq
 owner: "Diane"
 confidence: medium
@@ -37,7 +37,7 @@ evidence:
   - "shipglows_data/editorial/content-map.md"
   - "shipglows_data/workflow/specs/android-webview-storage-isolation.md"
   - "site/src/content/blog/android-webview-session-isolation.md"
-next_review: "2026-06-23"
+next_review: "2026-09-03"
 next_step: "Auditer l'article public avant ship si la surface blog est incluse dans le prochain release scope."
 ---
 
