@@ -53,6 +53,7 @@ declare module 'vue' {
     SgBadge: typeof import('./../components/ui/SgBadge.vue')['default']
     SgButton: typeof import('./../components/ui/SgButton.vue')['default']
     SgDialog: typeof import('./../components/ui/SgDialog.vue')['default']
+    SgIcon: typeof import('./../components/ui/SgIcon.vue')['default']
     SgInput: typeof import('./../components/ui/SgInput.vue')['default']
     SgMultiSelect: typeof import('./../components/ui/SgMultiSelect.vue')['default']
     SgPassword: typeof import('./../components/ui/SgPassword.vue')['default']

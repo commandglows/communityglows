@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.3.2"
+artifact_version: "1.4.0"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-08-03"
+updated: "2026-08-04"
 status: reviewed
 source_skill: sf-docs
 scope: context
@@ -75,7 +75,8 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 - `src/ui/setup/pages/SocialGlowz/main.ts` : bootstrap front Windows/Tauri (Vue, Pinia, i18n, router, Notivue, directive tooltip SocialGlowz et Convex conditionnel).
 - `src/ui/setup/pages/SocialGlowz/App.vue` : shell desktop/mobile principal et orchestration.
 - `src/ui/setup/pages/SocialGlowz/components/ui/` : wrappers visuels SocialGlowz; Reka UI porte les comportements clavier/focus des contrôles composites.
-- `src/ui/setup/pages/SocialGlowz/assets/main.css` : autorité des tokens sémantiques de l'application Windows/Tauri.
+- `design/tokens/reference.json` : autorité éditable des rôles sémantiques partagés, fondée sur le langage visuel dark-first du site.
+- `src/ui/setup/pages/SocialGlowz/assets/main.css` : styles consommateurs et compatibilité Windows/Tauri; les valeurs canoniques viennent du carrier généré.
 - `src/ui/*` : pages de shell navigateur (setup popup panel options).
 - `convex/` : backend serverless auth + données persistées.
 - `src-tauri/src/` : host natif, commandes IPC, création/gestion webviews.
@@ -95,7 +96,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 
 - `components/ui/` expose les boutons, champs, dialogues, switches, avatars, badges, sélecteurs, multi-sélecteurs et indicateurs de chargement SocialGlowz.
 - Reka UI fournit les primitives maintenues de sémantique, focus, clavier, overlays et redimensionnement; les wrappers SocialGlowz restent propriétaires du rendu et des variantes.
-- `assets/main.css` est le porteur canonique des couleurs, surfaces, espacements, rayons, ombres, focus, mouvement et thèmes clair/sombre Windows.
+- `assets/generated/tokens.css` porte les rôles canoniques générés; `assets/main.css` conserve la composition et les alias de compatibilité Windows.
 - `src/utils/notifications.ts` configure Notivue; `App.vue` monte `Notivue`/`Notification`, et les producteurs utilisent `push`.
 - `directives/tooltip.ts` possède les infobulles accessibles au focus et au pointeur, leur `aria-describedby`, leur fermeture par `Escape` et leur nettoyage.
 - La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun composant ni bootstrap PrimeVue. PrimeVue reste consommé par des surfaces extension historiques. PrimeIcons est encore importé par l'entrée Windows pour la compatibilité visuelle; PrimeFlex ne l'est plus. Aucun des deux ne porte l'autorité sémantique Windows.

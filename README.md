@@ -44,12 +44,14 @@ src/ui/setup/pages/SocialGlowz/    # App principale Windows/Tauri (Vue 3 + Reka 
 │   ├── kanban/                    # Tableau Kanban
 │   ├── feed/                      # Feed unifié
 │   └── ui/                        # Wrappers SocialGlowz accessibles et tokenisés
-├── assets/main.css                # Tokens sémantiques Windows/Tauri
+├── assets/main.css                # Styles consommateurs Windows/Tauri
 ├── directives/tooltip.ts          # Infobulles clavier/pointeur SocialGlowz
 ├── stores/                        # Pinia stores
 ├── composables/                   # Hooks Vue
 └── services/                      # Services API (Gmail, etc.)
 ```
+
+Les valeurs visuelles partagées sont éditées dans `design/tokens/reference.json`. Le générateur produit les carriers CSS Windows/site et les ressources Android jour/nuit ; le site porte la référence visuelle dark-first, tandis que le JSON reste l'autorité technique.
 
 ### Tâches contextuelles
 

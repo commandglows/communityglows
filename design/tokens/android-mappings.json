@@ -23,7 +23,6 @@
     { "name": "socialglowz_space_4", "token": "--sg-space-4" },
     { "name": "socialglowz_radius_sm", "token": "--sg-radius-sm" },
     { "name": "socialglowz_radius_lg", "token": "--sg-radius-lg" },
-    { "name": "socialglowz_spinner_size", "token": "--sg-spinner-size" },
-    { "name": "socialglowz_tooltip_layer", "token": "--sg-tooltip-layer" }
+    { "name": "socialglowz_spinner_size", "token": "--sg-spinner-size" }
   ]
 }

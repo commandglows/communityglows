@@ -1,14 +1,14 @@
 ---
 artifact: branding_system
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.1.0"
 project: socialglowz
 created: "2026-04-26"
 status: active
 source_skill: sf-docs
 scope: brand
 owner: "Diane"
-updated: "2026-08-03"
+updated: "2026-08-04"
 confidence: medium
 risk_level: low
 security_impact: low
@@ -34,7 +34,8 @@ SocialGlowz positions itself as a **pragmatic productivity interface** for socia
 
 ## Visual direction
 
-- Maintain the current Windows information architecture and visual appearance while using Reka UI for maintained interaction behavior and SocialGlowz wrappers/tokens for visual authority.
+- Use the public site's dark-first visual language as the cross-platform reference while preserving each application's information architecture and maintained interaction behavior.
+- Keep `design/tokens/reference.json` as the technical value authority; the site is the approved visual reference, not an editable parallel token source.
 - Prioritize contrast, legibility, and minimal chrome.
 - Keep interface actions visually stable across desktop and mobile.
 - App icon: compact "social flow" mark with connected nodes, dark calm base, teal/aqua/blue accents, and high small-size readability.

@@ -370,19 +370,4 @@ defineExpose({
   background: var(--sg-color-surface-hover);
 }
 
-:global(.dark) .locale-select {
-  background: var(--sg-settings-dark-surface);
-  border-color: var(--sg-settings-dark-border);
-  color: var(--sg-settings-dark-text);
-}
-
-:global(.dark) .theme-mode-group {
-  background: var(--sg-settings-dark-ground);
-  border-color: var(--sg-settings-dark-border);
-}
-
-:global(.dark) .theme-mode-btn.active {
-  background: var(--sg-settings-dark-surface);
-  color: var(--sg-settings-dark-primary);
-}
 </style>

@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "socialglowz"
 created: "2026-04-26"
-updated: "2026-08-03"
+updated: "2026-08-04"
 status: reviewed
 source_skill: sf-docs
 scope: function_tree
@@ -84,8 +84,10 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 - `src/ui/setup/pages/SocialGlowz/components/ui/*`
   - Wrappers SocialGlowz pour boutons, formulaires, dialogues, sélecteurs, avatars, badges et chargement.
   - Reka UI porte la sémantique, le focus, le clavier, les overlays et les splitters complexes; les wrappers portent le rendu et les tokens.
-- `src/ui/setup/pages/SocialGlowz/assets/main.css`
-  - Porteur central des tokens sémantiques Windows/Tauri et des thèmes clair/sombre.
+- `design/tokens/reference.json`
+  - Source éditable unique des rôles sémantiques partagés et de leurs modes clair/sombre.
+- `src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css`
+  - Carrier généré Windows/Tauri; `assets/main.css` conserve la composition et les alias de compatibilité.
 - `src/ui/setup/pages/SocialGlowz/directives/tooltip.ts`
   - Directive d'infobulle accessible `v-sg-tooltip`: focus/pointeur, `aria-describedby`, `Escape`, mise à jour et nettoyage.
 - `src/utils/notifications.ts` + `App.vue`

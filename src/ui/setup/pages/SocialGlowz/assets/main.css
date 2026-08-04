@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
 :root {
   /* Canonical semantic authority for the Vue desktop shell. */
   --sg-color-action: #2563eb;
@@ -468,12 +470,13 @@
   --nv-radius: var(--sg-radius-sm);
   --nv-border-width: 1px;
   --nv-shadow: var(--sg-shadow-control);
-  --primary-color: #4318FF;
-  --secondary-color: #868CFF;
-  --background-color: #ffffff;
-  --surface-color: #f8f9fa;
-  --text-color: #1B2559;
-  --border-color: #e9ecef;
+  /* Compatibility aliases for legacy views; semantic tokens remain authoritative. */
+  --primary-color: var(--sg-color-action);
+  --secondary-color: var(--sg-color-text-muted);
+  --background-color: var(--sg-color-background);
+  --surface-color: var(--sg-color-surface-raised);
+  --text-color: var(--sg-color-text);
+  --border-color: var(--sg-color-border);
   --sg-sidebar-top-offset: 4rem;
   --sg-sidebar-viewport-height: 100vh;
   --sg-sidebar-fill-size: 100%;
@@ -589,11 +592,6 @@
   --sg-settings-hint-line-height: 1.4;
   --sg-settings-slider-margin-block-start: -0.5rem;
   --sg-settings-slider-margin-block-end: 0.5rem;
-  --sg-settings-dark-surface: #313244;
-  --sg-settings-dark-border: #45475a;
-  --sg-settings-dark-text: #cdd6f4;
-  --sg-settings-dark-ground: #1f2432;
-  --sg-settings-dark-primary: #89b4fa;
   --sg-crm-content-padding: 1rem;
   --sg-crm-section-spacing: 1rem;
   --sg-crm-unread-padding-block: 0.3rem;
@@ -649,10 +647,10 @@
   --sg-color-text: #eef4ff;
   --sg-color-text-muted: #b7c4d9;
   --sg-color-overlay: rgba(2, 6, 23, 0.72);
-  --background-color: #1a1a1a;
-  --surface-color: #2d2d2d;
-  --text-color: #ffffff;
-  --border-color: #404040;
+  --background-color: var(--sg-color-background);
+  --surface-color: var(--sg-color-surface-raised);
+  --text-color: var(--sg-color-text);
+  --border-color: var(--sg-color-border);
 }
 
 * {
@@ -666,7 +664,7 @@ input, textarea, [contenteditable="true"] {
 }
 
 body {
-  background-color: var(--sg-color-surface-raised);
+  background-color: var(--sg-color-background);
   color: var(--sg-color-text);
 }
 

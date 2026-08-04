@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.1.0"
 project: "socialglowz"
 created: "2026-08-04"
 created_at: "2026-08-04 11:27:34 UTC"
 updated: "2026-08-04"
-updated_at: "2026-08-04 11:51:07 UTC"
+updated_at: "2026-08-04 18:48:00 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -27,10 +27,10 @@ linked_systems:
   - "package.json"
 depends_on:
   - artifact: "shipglows_data/technical/design-system-authority.md"
-    artifact_version: "1.2.2"
+    artifact_version: "1.3.0"
     required_status: reviewed
   - artifact: "shipglows_data/business/branding.md"
-    artifact_version: "1.0.1"
+    artifact_version: "1.1.0"
     required_status: active
   - artifact: "shipglows_data/workflow/specs/windows-reka-ui-design-system-migration.md"
     artifact_version: "1.0.1"
@@ -53,7 +53,7 @@ Cross-Platform Design Token Authority
 
 ## Status
 
-Ready. This specification creates one semantic design-token authority for Windows/Tauri, Android, and the public site without redesigning any existing surface during the migration baseline.
+Ready revision. This specification creates one semantic design-token authority and converges Windows/Tauri and Android on the visual language currently expressed by the public site.
 
 ## User Story
 
@@ -67,29 +67,29 @@ Observable result: equivalent semantic roles resolve from one versioned source, 
 
 ## Minimal Behavior Contract
 
-The repository accepts one versioned, machine-readable set of semantic design tokens and deterministic platform mappings. Generation produces the token carriers consumed by Vue/Tauri, the Astro/Tailwind site, and Android resources. A missing token, invalid alias, unsupported platform mapping, stale generated output, or undocumented resolved-value difference fails validation rather than falling back silently. Existing rendered values remain unchanged during the baseline migration unless a difference is already intentional and recorded as a platform adaptation. The easy failure to miss is replacing parallel CSS files with nominally shared names while preserving unrelated resolved values or leaving Android native overlays outside the authority.
+The repository accepts one versioned, machine-readable set of semantic design tokens whose dark roles reproduce the site's current visual language and whose light roles are explicit accessible adaptations. Generation produces carriers consumed by Vue/Tauri, Astro/Tailwind and Android native chrome. Missing roles, stale output, unsupported conversions or undocumented differences fail validation. The easy failure to miss is generating equivalent names while Windows or Android still resolve legacy values after the generated carrier.
 
 ## Problem
 
 SocialGlowz has a declared Windows authority and a successful Reka UI component bridge, but not one cross-platform design authority. Windows uses `--sg-*` variables from `main.css`; the site maintains an independent Tailwind carrier and typography; Android hardcodes native visual values without shared resources. Parallel carriers make visual drift possible even when every surface locally uses tokens.
 
-The current desktop token file also mixes semantic roles, legacy aliases, screen-specific values, and value-shaped token names. A direct visual cleanup would combine architecture migration with redesign risk. The authority must therefore be centralized first with resolved-value preservation, then rationalized in separately proven waves.
+The current desktop token file also mixes semantic roles, legacy aliases, screen-specific values, and value-shaped token names. Convergence must therefore happen through stable semantic roles and bounded consumer waves, not through screen-local restyling.
 
 ## Solution
 
-Introduce a repository-owned JSON token source and deterministic generator that emits platform-native carriers for Vue/Tauri, Astro/Tailwind, and Android. Capture each surface's current resolved values before switching consumers, preserve those values during the baseline, and require explicit adaptation metadata for intentional differences. Migrate one carrier at a time behind compatibility aliases, then enforce freshness and changed-file drift checks in CI only after all active carriers are generated reproducibly.
+Use the repository-owned JSON source and deterministic generator to promote the site's visual roles into canonical semantic roles, emit platform-native carriers, and migrate Windows and Android consumers onto those roles. Preserve information architecture, interaction behavior and platform geometry while deliberately converging palette, typography, radius, elevation and motion.
 
 ## Product Decision
 
-Before: Windows, site, and Android own hand-maintained visual values independently; only Windows has a declared canonical semantic carrier.
+Before: the token pipeline preserves three different visual systems and therefore centralizes files without creating a recognizable shared identity.
 
-After: the brand contract governs intent, one machine-readable semantic token source governs values and aliases, generated platform outputs carry those decisions, and a documented adaptation registry governs legitimate platform differences.
+After: the site's current visual language is the approved design reference, `design/tokens/reference.json` is the only editable value authority, and generated carriers apply that language to the site, Windows and Android with documented platform adaptations.
 
 Preserved invariants:
 
-- The current Windows information architecture and visual appearance do not change during baseline centralization.
+- The current Windows and Android information architecture does not change; their visual treatment intentionally converges on the site.
 - Reka UI continues to own maintained interaction behavior; SocialGlowz wrappers continue to own visual composition.
-- The site retains its current rendered appearance until an explicit convergence decision changes a value.
+- The site's current dark visual treatment is the reference baseline and remains stable during convergence.
 - Android WebView lifecycle, session behavior, native overlays, safe areas, and navigation behavior remain unchanged.
 - Social-network brand colors remain data/brand assets and are not normalized into the product accent palette.
 
@@ -124,8 +124,8 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - One edit to a canonical semantic token deterministically updates all applicable platform outputs.
 - `generate` is idempotent and produces no diff on a clean up-to-date repository.
 - `check` fails on stale outputs, unresolved aliases, duplicate roles, invalid modes, undocumented platform differences, forbidden edits, or direct visual literals introduced in changed production files.
-- Windows wrappers resolve the same values as before the migration baseline.
-- The site resolves the same values as before baseline unless a difference is explicitly approved as convergence work.
+- Windows wrappers resolve the canonical site-led semantic roles while preserving interaction and layout behavior.
+- The site remains the visual reference and consumes the same canonical roles it defines.
 - Android native product chrome consumes generated resources; network-owned web content and official social-network colors remain outside product-theme normalization.
 - Light and dark roles exist wherever the surface supports both modes; unsupported modes are declared rather than inferred.
 - Focus, contrast, reduced motion, touch-target and keyboard behavior remain valid after carrier replacement.
@@ -136,7 +136,7 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - CI rejects hand-edited generated files and reports the canonical source path that must change.
 - Missing platform mappings cannot fall back to arbitrary defaults.
 - An intentional platform divergence without adaptation metadata fails resolved-value comparison.
-- A conversion incapable of preserving a current value stops that migration slice; it does not approximate silently.
+- A conversion incapable of representing a canonical value exactly stops that migration slice; it does not approximate silently.
 - A generated Android resource collision or invalid resource name fails before Gradle compilation.
 
 ## Scope In
@@ -144,7 +144,7 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 - Establish the canonical JSON token schema, source files, adaptation registry, generator and deterministic check.
 - Generate and integrate Vue/Tauri CSS, site CSS/Tailwind mappings, and Android resources.
 - Inventory current resolved values by semantic role before changing carriers.
-- Preserve current rendering during the baseline migration and document intentional differences.
+- Capture current rendering as before-proof, then document and verify the intentional convergence differences.
 - Separate network brand/data colors from SocialGlowz product-theme colors.
 - Introduce compatibility aliases for active legacy desktop token names with measurable retirement rules.
 - Move active Android native product chrome away from ad-hoc colors/dimensions into generated resources.
@@ -153,7 +153,7 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 
 ## Scope Out
 
-- Redesigning Windows, Android, or the public site.
+- Redesigning navigation, information architecture, feature composition, or third-party WebView content.
 - Forcing identical layout density where platform conventions require an explicit adaptation.
 - Restyling third-party social-network pages rendered inside WebViews.
 - Replacing Reka UI, Vue, Tauri, Astro, Tailwind, or Android WebView architecture.
@@ -162,7 +162,8 @@ Value-shaped legacy names such as tokens containing literal pixel/rem/color enco
 
 ## Constraints
 
-- Baseline centralization is isovisual: no palette, typography, spacing, radius, elevation, motion, density, layout, navigation, or information-architecture change is accepted implicitly.
+- Visual convergence is intentional for palette, typography, radius, elevation and motion; layout geometry, navigation, safe areas and information architecture remain unchanged unless a named platform adaptation requires it.
+- Dark semantic roles match the site reference. Light roles are explicit accessibility-preserving adaptations, not independent platform palettes.
 - Canonical token generation must run locally and in CI without network access, hosted services, secrets, or user data.
 - Use the existing Node 24, TypeScript/`tsx`, pnpm, Vue, Tailwind, Tauri and Android toolchains; do not add a token SaaS or provider lock-in.
 - Generated outputs are committed build inputs and carry a non-editable header; contributors change canonical JSON only.
@@ -234,7 +235,7 @@ Generated files include a warning header and canonical source version. Authored 
 
 - [ ] Task 2: Create the canonical schema and semantic source.
   - Files: `design/tokens/schema.json`, reference/semantic/component/network/adaptation JSON documents.
-  - Action: encode stable aliases, modes, semantic roles, deprecation metadata and platform adaptations without changing resolved values.
+  - Action: encode site-led canonical roles, stable aliases, light/dark modes, deprecation metadata and named platform adaptations.
   - Validate with: schema tests for valid aliases, cycles, required modes, unique names and adaptation reasons.
 
 - [ ] Task 3: Build deterministic generation and validation.
@@ -242,12 +243,12 @@ Generated files include a warning header and canonical source version. Authored 
   - Action: generate CSS and Android outputs atomically; add `design:tokens:generate` and `design:tokens:check`; compare committed output and resolved baselines.
   - Validate with: idempotence, stale-output failure, invalid-source fixtures, no-partial-write tests and `git diff --check`.
 
-- [ ] Task 4: Migrate Windows/Tauri to generated tokens without redesign.
+- [ ] Task 4: Converge Windows/Tauri on the site-led generated roles without changing structure or interaction behavior.
   - Files: generated Vue CSS, `main.css`, `base.css`, `components/ui/`, active SocialGlowz screens.
   - Action: import generated tokens, convert authored canonical declarations to consumption/compatibility aliases, and remove active non-exception literals in bounded slices.
   - Validate with: before/after resolved-value comparison, drift check, light/dark screenshots, wrapper keyboard/focus proof, tests and Tauri frontend build.
 
-- [ ] Task 5: Migrate the site carrier without redesign.
+- [ ] Task 5: Make the site consume canonical roles without changing its approved reference rendering.
   - Files: generated site CSS, `site/src/styles/global.css`, site components and build config.
   - Action: map Tailwind theme variables to generated semantic roles, retain documented site adaptations and remove parallel ungoverned definitions.
   - Validate with: resolved-value comparison, desktop/mobile visual proof for representative public pages, reduced-motion proof and site build.
@@ -272,7 +273,8 @@ Generated files include a warning header and canonical source version. Authored 
 - [ ] `design/tokens/` is the only editable source of shared semantic token values.
 - [ ] Vue/Tauri, site and Android outputs are generated deterministically from that source.
 - [ ] A clean `design:tokens:check` proves generated outputs are current and aliases are valid.
-- [ ] Current Windows, site and Android baseline values are preserved or every difference has approved adaptation metadata.
+- [ ] Site dark semantic roles are the canonical visual reference and resolve equivalently on Windows and Android native chrome.
+- [ ] Light roles are explicit, contrast-safe adaptations derived from the same semantic hierarchy.
 - [ ] Windows and site no longer maintain competing definitions for shared semantic roles.
 - [ ] Android product-owned native chrome no longer uses unexplained local color/dimension literals.
 - [ ] Official social-network colors are classified as data-brand tokens rather than incorrectly normalized.
@@ -280,7 +282,7 @@ Generated files include a warning header and canonical source version. Authored 
 - [ ] Representative visual proofs exist for Windows, site desktop/mobile, and Android.
 - [ ] Changed-file drift checks contain only named protocol/platform exceptions.
 - [ ] The design-system authority document names Android and all generated carriers and contains current evidence.
-- [ ] No redesign or information-architecture change is introduced by the baseline migration.
+- [ ] No navigation, information-architecture, WebView lifecycle, safe-area or interaction-behavior change is introduced by visual convergence.
 
 ## Edge Cases
 
@@ -299,7 +301,7 @@ Generated files include a warning header and canonical source version. Authored 
 ## Test Contract
 
 - Surface: Windows/Tauri application, Astro/Tailwind public site, Android native SocialGlowz chrome, and the canonical generator/CI path.
-- Proof profile: cross-platform design authority, isovisual migration, accessibility preservation and deterministic build output.
+- Proof profile: site-led cross-platform visual convergence, accessibility preservation and deterministic build output.
 - Proof order: source/schema validation -> generator unit tests -> idempotence/stale-output checks -> resolved-value comparisons -> platform builds -> automated accessibility checks -> representative visual/manual scenarios.
 - Checklist path: create bounded evidence under `shipglows_data/workflow/test-checklists/cross-platform-design-token-authority/` during implementation; do not store generated screenshots in the spec.
 - Required scenario IDs: `TOK-GEN-001` through `TOK-GEN-005`, `TOK-WIN-101`, `TOK-SITE-201`, `TOK-ANDROID-301`, `TOK-A11Y-401`, and `TOK-ROLLBACK-501`.
@@ -403,7 +405,7 @@ pnpm run tauri:build
 python3 "${SHIPGLOWS_ROOT:-$HOME/shipglows}/tools/design_system_drift_check.py" --changed --format markdown
 ```
 
-Also run the site build and Android build/resource compilation through their existing repository commands/workflows. Stop a slice when resolved values cannot be preserved, generation is non-deterministic, a platform build fails, visual evidence is missing, accessibility regresses, or a new local visual literal lacks an approved exception. Do not solve those failures by weakening the checker or broadening adaptation metadata.
+Also run the site build and Android build/resource compilation through their existing repository commands/workflows. Stop a slice when canonical values cannot be represented exactly, generation is non-deterministic, a platform build fails, visual evidence is missing, accessibility regresses, or a new local visual literal lacks an approved exception. Do not solve those failures by weakening the checker or broadening adaptation metadata.
 
 ## Security Impact
 
@@ -411,7 +413,7 @@ Security impact is none because the source and generator contain public visual c
 
 ## Open Questions
 
-None. The source format, platform footprint, isovisual baseline, adaptation policy, ownership boundaries, rollout order and proof requirements are fixed by this contract.
+None. The site-led direction, source format, platform footprint, dark-reference/light-adaptation policy, ownership boundaries, rollout order and proof requirements are fixed by this contract.
 
 ## Skill Run History
 
@@ -422,7 +424,12 @@ None. The source format, platform footprint, isovisual baseline, adaptation poli
 | 2026-08-04 12:15:00 UTC | 102-sg-start | GPT-5 Codex | Added deterministic cross-platform design token authority source (`design/tokens`), generator/check commands, generated Windows/site/Android outputs, and first-wave wiring in Windows/Site entrypoints plus new scripts. | implemented | Run `103-sg-verify` for end-to-end proof and platform parity evidence. |
 | 2026-08-04 12:28:00 UTC | 103-sg-verify | GPT-5 Codex | Standard verification found deterministic generation and static builds, but generated carriers are not yet the effective authority in Windows/site, Android native chrome does not consume generated resources, and conversion errors are silently skipped. | partial | Complete the carrier migration and enforce the token checks in CI, then rerun cross-platform visual and Android proof. |
 | 2026-08-04 13:00:00 UTC | 102-sg-start | GPT-5 Codex | Made generated Windows/site carriers effective without changing baseline values, stabilized generated headers across Node versions, added freshness checking to CI, and cleared changed-file drift. Android native consumption remains deferred to its dedicated slice. | partial | Migrate Android native chrome to generated resources, harden conversion failure handling, then rerun cross-platform proof. |
+| 2026-08-04 18:38:00 UTC | 006-sg-design | GPT-5 Codex | Accepted migration mode and identified the operator-approved product-direction change: the site visual language becomes the cross-platform reference while JSON remains the technical authority. | rerouted | Revise and revalidate the implementation contract before visual convergence. |
+| 2026-08-04 18:40:00 UTC | 100-sg-spec | GPT-5 Codex | Revised the contract from isovisual centralization to site-led visual convergence, preserving structure and interaction invariants while defining dark-reference and light-adaptation rules. | draft | Run readiness review against the revised visual and proof contract. |
+| 2026-08-04 18:48:00 UTC | 101-sg-ready | GPT-5 Codex | Verified the revised user outcome, site-led dark reference, explicit light adaptation, platform invariants, ordered migration tasks, rollback and proof obligations. | ready | Implement canonical semantic roles and migrate Windows, site and Android consumers. |
+| 2026-08-04 20:35:00 UTC | 102-sg-start | GPT-5 Codex | Added one shared semantic role layer, mapped the site's dark-first language and an explicit light companion, generated all carriers, migrated Windows and Android product chrome consumption, hardened Android conversion errors, and aligned governance. | implemented | Collect rendered Windows/site proof and compile/test Android on the configured CI/device environment. |
+| 2026-08-04 20:36:35 UTC | 006-sg-design | GPT-5 Codex | Completed the focused light-mode migration pass: removed legacy purple and Catppuccin consumer overrides, mapped compatibility aliases and auth recovery UI to semantic roles, and enforced WCAG AA contrast for essential light/dark pairs in token validation. | implemented | Collect rendered Windows light-mode proof and compile/test Android day/night resources on the configured CI/device environment. |
 
 ## Current Chantier Flow
 
-`100-sg-spec complete -> 101-sg-ready complete -> 102-sg-start partial (Windows/site complete; Android pending) -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`
+`006-sg-design migration routed -> 100-sg-spec revised -> 101-sg-ready complete -> 102-sg-start implemented -> 006-sg-design proof pending -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`

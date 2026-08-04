@@ -25,6 +25,7 @@ type TokenSource = {
   updated_at: string;
   notes: string;
   tokens: {
+    semantic: SurfaceSource;
     windows: SurfaceSource;
     site: SurfaceSource;
     android: SurfaceSource;
@@ -169,6 +170,41 @@ function isTokenMap(value: unknown): value is TokenMap {
   );
 }
 
+function relativeLuminance(hex: string): number {
+  assert(/^#[0-9a-f]{6}$/i.test(hex), `contrast token must be a six-digit hex color: ${hex}`);
+  const channels = [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16) / 255);
+  const [red, green, blue] = channels.map((channel) =>
+    channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const lighter = Math.max(relativeLuminance(foreground), relativeLuminance(background));
+  const darker = Math.min(relativeLuminance(foreground), relativeLuminance(background));
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function assertSemanticContrast(mode: "light" | "dark", tokens: TokenMap): void {
+  const pairs = [
+    ["--sg-color-text", "--sg-color-background"],
+    ["--sg-color-text", "--sg-color-surface-raised"],
+    ["--sg-color-text-muted", "--sg-color-surface-raised"],
+    ["--sg-color-text-on-action", "--sg-color-action"],
+  ] as const;
+
+  for (const [foregroundToken, backgroundToken] of pairs) {
+    const foreground = tokens[foregroundToken];
+    const background = tokens[backgroundToken];
+    assert(foreground && background, `${mode} contrast tokens missing: ${foregroundToken}, ${backgroundToken}`);
+    const ratio = contrastRatio(foreground, background);
+    assert(
+      ratio >= 4.5,
+      `${mode} contrast ${foregroundToken} on ${backgroundToken} is ${ratio.toFixed(2)}:1; expected at least 4.5:1`,
+    );
+  }
+}
+
 function asTokenSource(raw: unknown): TokenSource {
   assert(typeof raw === "object" && raw !== null, "invalid source JSON");
   const source = raw as TokenSource;
@@ -179,7 +215,7 @@ function asTokenSource(raw: unknown): TokenSource {
   assert(typeof source.notes === "string", "notes must be a string");
   assert(isPlainObject(source.tokens), "tokens missing");
 
-  const required = ["windows", "site", "android"] as const;
+  const required = ["semantic", "windows", "site", "android"] as const;
   for (const surface of required) {
     const surfaceSource = source.tokens[surface];
     assert(!!surfaceSource, `tokens.${surface} missing`);
@@ -199,14 +235,20 @@ function asTokenSource(raw: unknown): TokenSource {
   assert(Array.isArray(source.android_mappings?.color), "android_mappings.color invalid");
   assert(Array.isArray(source.android_mappings?.dimension), "android_mappings.dimension invalid");
 
-  const windowsTokens = {
-    ...source.tokens.windows.light.root,
-    ...(source.tokens.windows.dark?.root || {}),
+  const resourceNames = [
+    ...source.android_mappings.color.map(({ name }) => name),
+    ...source.android_mappings.dimension.map(({ name }) => name),
+  ];
+  assert(new Set(resourceNames).size === resourceNames.length, "duplicate Android resource name");
+
+  const semanticTokens = {
+    ...source.tokens.semantic.light.root,
+    ...(source.tokens.semantic.dark?.root || {}),
   };
 
   for (const mapping of source.android_mappings.color) {
     assert(typeof mapping?.name === "string" && mapping.name.length > 0, "android color mapping name invalid");
-    assert(typeof mapping?.token === "string" && mapping.token in windowsTokens, `android color mapping token missing: ${mapping.token}`);
+    assert(typeof mapping?.token === "string" && mapping.token in semanticTokens, `android color mapping token missing: ${mapping.token}`);
   }
 
   for (const mapping of source.android_mappings.dimension) {
@@ -215,10 +257,14 @@ function asTokenSource(raw: unknown): TokenSource {
       "android dimension mapping name invalid",
     );
     assert(
-      typeof mapping?.token === "string" && mapping.token in windowsTokens,
+      typeof mapping?.token === "string" && mapping.token in semanticTokens,
       `android dimension mapping token missing: ${mapping.token}`,
     );
   }
+
+  assertSemanticContrast("light", source.tokens.semantic.light.root);
+  assert(source.tokens.semantic.dark, "tokens.semantic.dark missing");
+  assertSemanticContrast("dark", source.tokens.semantic.dark.root);
 
   return source;
 }
@@ -250,15 +296,24 @@ function formatGenerationHeader(sourceName: string, generatedAt: string): string
   ];
 }
 
-function serializeWindowsCss(source: SurfaceSource, generatedAt: string): string {
+function mergeMode(base: SurfaceMode, aliases?: SurfaceMode): SurfaceMode {
+  return {
+    root: { ...(aliases?.root || {}), ...base.root },
+    theme: aliases?.theme,
+  };
+}
+
+function serializeWindowsCss(semantic: SurfaceSource, source: SurfaceSource, generatedAt: string): string {
+  const light = mergeMode(semantic.light, source.light);
+  const dark = semantic.dark ? mergeMode(semantic.dark, source.dark) : source.dark;
   const lines: string[] = [
     ...formatGenerationHeader(WINDOWS_SOURCE_NAME, generatedAt),
-    serializeCssMode(source.light),
+    serializeCssMode(light),
   ];
 
-  if (source.dark && Object.keys(source.dark.root).length > 0) {
+  if (dark && Object.keys(dark.root).length > 0) {
     lines.push(":root.dark {");
-    Object.entries(source.dark.root)
+    Object.entries(dark.root)
       .sort(([a], [b]) => a.localeCompare(b))
       .forEach(([token, value]) => {
         lines.push(`  ${token}: ${value};`);
@@ -270,13 +325,15 @@ function serializeWindowsCss(source: SurfaceSource, generatedAt: string): string
   return lines.join("\n");
 }
 
-function serializeSiteCss(source: SurfaceSource, generatedAt: string): string {
+function serializeSiteCss(semantic: SurfaceSource, source: SurfaceSource, generatedAt: string): string {
+  const referenceMode = semantic.dark || semantic.light;
+  const root = { ...source.light.root, ...referenceMode.root };
   const lines: string[] = [
     ...formatGenerationHeader(SITE_SOURCE_NAME, generatedAt),
     ":root {",
   ];
 
-  Object.entries(source.light.root)
+  Object.entries(root)
     .sort(([a], [b]) => a.localeCompare(b))
     .forEach(([token, value]) => {
       lines.push(`  ${token}: ${value};`);
@@ -395,13 +452,13 @@ function serializeColor(value: string): string | null {
 }
 
 function serializeAndroidXml(
-  windows: SurfaceSource,
+  semantic: SurfaceSource,
   mappings: TokenSource["android_mappings"],
   mode: "light" | "dark",
   generatedAt: string,
 ): string {
-  const modeRoot = mode === "dark" && windows.dark ? windows.dark.root : windows.light.root;
-  const fallbackRoot = windows.light.root;
+  const modeRoot = mode === "dark" && semantic.dark ? semantic.dark.root : semantic.light.root;
+  const fallbackRoot = semantic.light.root;
 
   const lines = [
     `<!-- generated by ${GENERATOR_ID} -->`,
@@ -414,9 +471,9 @@ function serializeAndroidXml(
     lines.push("  <!-- Colors mapped from canonical tokens -->");
     for (const mapping of mappings.color) {
       const sourceValue = (modeRoot[mapping.token] || fallbackRoot[mapping.token])?.trim();
-      if (!sourceValue) continue;
+      assert(sourceValue, `Android ${mode} color token missing: ${mapping.token}`);
       const color = serializeColor(sourceValue);
-      if (!color) continue;
+      assert(color, `Android ${mode} color cannot be serialized: ${mapping.token}=${sourceValue}`);
       lines.push(`  <color name="${mapping.name}">${color}</color>`);
     }
   }
@@ -425,9 +482,9 @@ function serializeAndroidXml(
     lines.push("", "  <!-- Dimensions mapped from canonical tokens -->");
     for (const mapping of mappings.dimension) {
       const sourceValue = (modeRoot[mapping.token] || fallbackRoot[mapping.token])?.trim();
-      if (!sourceValue) continue;
+      assert(sourceValue, `Android ${mode} dimension token missing: ${mapping.token}`);
       const dimen = parseDimen(sourceValue);
-      if (!dimen) continue;
+      assert(dimen, `Android ${mode} dimension cannot be serialized: ${mapping.token}=${sourceValue}`);
       lines.push(`  <dimen name="${mapping.name}">${dimen}</dimen>`);
     }
   }
@@ -468,6 +525,10 @@ async function bootstrap(): Promise<void> {
     updated_at: now,
     notes: "Bootstrap generated from existing runtime surfaces. No visual changes applied.",
     tokens: {
+      semantic: {
+        light: { root: windowsParsed.root },
+        dark: windowsParsed.dark ? { root: windowsParsed.dark } : undefined,
+      },
       windows: {
         light: { root: windowsParsed.root },
         dark: windowsParsed.dark ? { root: windowsParsed.dark } : undefined,
@@ -500,10 +561,10 @@ async function bootstrap(): Promise<void> {
 async function generate(): Promise<void> {
   const source = asTokenSource(await readJson<TokenSource>(SOURCE_REFERENCE));
   const generatedAt = source.updated_at;
-  const windowsOutput = serializeWindowsCss(source.tokens.windows, generatedAt);
-  const siteOutput = serializeSiteCss(source.tokens.site, generatedAt);
-  const androidLightOutput = serializeAndroidXml(source.tokens.windows, source.android_mappings, "light", generatedAt);
-  const androidDarkOutput = serializeAndroidXml(source.tokens.windows, source.android_mappings, "dark", generatedAt);
+  const windowsOutput = serializeWindowsCss(source.tokens.semantic, source.tokens.windows, generatedAt);
+  const siteOutput = serializeSiteCss(source.tokens.semantic, source.tokens.site, generatedAt);
+  const androidLightOutput = serializeAndroidXml(source.tokens.semantic, source.android_mappings, "light", generatedAt);
+  const androidDarkOutput = serializeAndroidXml(source.tokens.semantic, source.android_mappings, "dark", generatedAt);
 
   const changed = [
     await writeIfChanged(WINDOWS_OUTPUT, windowsOutput),
@@ -523,10 +584,10 @@ async function generate(): Promise<void> {
 async function check(): Promise<void> {
   const source = asTokenSource(await readJson<TokenSource>(SOURCE_REFERENCE));
   const generatedAt = source.updated_at;
-  const windowsOutput = serializeWindowsCss(source.tokens.windows, generatedAt);
-  const siteOutput = serializeSiteCss(source.tokens.site, generatedAt);
-  const androidLightOutput = serializeAndroidXml(source.tokens.windows, source.android_mappings, "light", generatedAt);
-  const androidDarkOutput = serializeAndroidXml(source.tokens.windows, source.android_mappings, "dark", generatedAt);
+  const windowsOutput = serializeWindowsCss(source.tokens.semantic, source.tokens.windows, generatedAt);
+  const siteOutput = serializeSiteCss(source.tokens.semantic, source.tokens.site, generatedAt);
+  const androidLightOutput = serializeAndroidXml(source.tokens.semantic, source.android_mappings, "light", generatedAt);
+  const androidDarkOutput = serializeAndroidXml(source.tokens.semantic, source.android_mappings, "dark", generatedAt);
 
   const expected = [
     [WINDOWS_OUTPUT, windowsOutput],

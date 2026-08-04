@@ -38,6 +38,7 @@ import android.view.MotionEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.PathParser
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewCompat
@@ -500,6 +501,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
 @TauriPlugin
 class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
+
+    private fun tokenColor(resourceId: Int): Int = ContextCompat.getColor(activity, resourceId)
 
     // Main Tauri WebView (the one running Vue) — used to dispatch CustomEvents to Vue
     // via evaluateJavascript(). This is the reliable Kotlin→Vue communication channel.
@@ -3036,7 +3039,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val bar = LinearLayout(activity)
         bar.orientation = LinearLayout.HORIZONTAL
         bar.gravity = Gravity.TOP or Gravity.CENTER_VERTICAL
-        bar.setBackgroundColor(if (isDarkMode) Color.parseColor("#09090B") else Color.parseColor("#FFFFFF"))
+        bar.setBackgroundColor(tokenColor(R.color.socialglowz_window_surface))
         bar.setPadding(0, 0, 0, navBarHeight)
 
         // Inner row sits at the top of the bar (nav bar padding is below)
@@ -3114,7 +3117,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
     private fun buildDivider(density: Float): View {
         val divider = View(activity)
-        divider.setBackgroundColor(if (isDarkMode) Color.parseColor("#27272A") else Color.parseColor("#DEE2E6"))
+        divider.setBackgroundColor(tokenColor(R.color.socialglowz_window_border))
         val params = LinearLayout.LayoutParams((1 * density).toInt(), (24 * density).toInt())
         params.setMargins((4 * density).toInt(), 0, (4 * density).toInt(), 0)
         divider.layoutParams = params
@@ -3130,7 +3133,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         btn.typeface = primeIconsTypeface
         btn.textSize = 18f
         btn.gravity = Gravity.CENTER
-        btn.setTextColor(if (isDarkMode) Color.parseColor("#E0E0E0") else Color.parseColor("#495057"))
+        btn.setTextColor(tokenColor(R.color.socialglowz_window_text))
         btn.background = null
         val size = (48 * density).toInt()
         btn.layoutParams = LinearLayout.LayoutParams(size, size)
@@ -3194,7 +3197,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
         val menu = LinearLayout(activity)
         menu.orientation = LinearLayout.VERTICAL
-        val bgColor = if (isDarkMode) Color.parseColor("#1C1C1E") else Color.parseColor("#FFFFFF")
+        val bgColor = tokenColor(R.color.socialglowz_window_surface)
         val menuBg = GradientDrawable()
         menuBg.setColor(bgColor)
         menuBg.cornerRadius = 16 * density
@@ -3217,7 +3220,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
         // 1. Profile list — inline switcher
         if (menuProfiles.isNotEmpty()) {
-            val sectionColor = if (isDarkMode) Color.parseColor("#9A9AB0") else Color.parseColor("#ADB5BD")
+            val sectionColor = tokenColor(R.color.socialglowz_window_text_muted)
             val sectionLabel = TextView(activity)
             sectionLabel.text = Strings.t("profiles")
             sectionLabel.textSize = 11f
@@ -3237,7 +3240,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
             // Divider
             val divider = View(activity)
-            val divColor = if (isDarkMode) Color.parseColor("#2C2C2E") else Color.parseColor("#E5E5EA")
+            val divColor = tokenColor(R.color.socialglowz_window_border)
             divider.setBackgroundColor(divColor)
             val divParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (1 * density).toInt())
             val divMargin = (8 * density).toInt()
@@ -3312,8 +3315,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val padBottom = (10 * density).toInt()
         wrap.setPadding(padH, padTop, padH, padBottom)
 
-        val textColor = if (isDarkMode) Color.parseColor("#E0E0E0") else Color.parseColor("#1C1C1E")
-        val secondaryColor = if (isDarkMode) Color.parseColor("#9A9AB0") else Color.parseColor("#6C757D")
+        val textColor = tokenColor(R.color.socialglowz_window_text)
+        val secondaryColor = tokenColor(R.color.socialglowz_window_text_muted)
 
         val topRow = LinearLayout(activity)
         topRow.orientation = LinearLayout.HORIZONTAL
@@ -3397,7 +3400,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 android.view.MotionEvent.ACTION_DOWN -> {
                     if (hapticEnabled) v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     playTapSound()
-                    rippleBg.setColor(if (isDarkMode) Color.parseColor("#2C2C2E") else Color.parseColor("#F2F2F7"))
+                    rippleBg.setColor(tokenColor(R.color.socialglowz_window_surface_hover))
                     v.invalidate()
                 }
                 android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> {
@@ -3408,8 +3411,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             false
         }
 
-        val textColor = if (isDarkMode) Color.parseColor("#E0E0E0") else Color.parseColor("#1C1C1E")
-        val dimColor = if (isDarkMode) Color.parseColor("#9A9AB0") else Color.parseColor("#ADB5BD")
+        val textColor = tokenColor(R.color.socialglowz_window_text)
+        val dimColor = tokenColor(R.color.socialglowz_window_text_muted)
 
         // Icon
         val icon = TextView(activity)
@@ -3470,7 +3473,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 MotionEvent.ACTION_DOWN -> {
                     if (hapticEnabled) v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     playTapSound()
-                    rippleBg.setColor(if (isDarkMode) Color.parseColor("#2C2C2E") else Color.parseColor("#F2F2F7"))
+                    rippleBg.setColor(tokenColor(R.color.socialglowz_window_surface_hover))
                     v.invalidate()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -3481,8 +3484,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             false
         }
 
-        val textColor = if (isDarkMode) Color.parseColor("#E0E0E0") else Color.parseColor("#1C1C1E")
-        val dimColor = if (isDarkMode) Color.parseColor("#9A9AB0") else Color.parseColor("#ADB5BD")
+        val textColor = tokenColor(R.color.socialglowz_window_text)
+        val dimColor = tokenColor(R.color.socialglowz_window_text_muted)
         val avatarSize = (28 * density).toInt()
 
         val avatarFrame = FrameLayout(activity)
@@ -3497,7 +3500,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
         val avatarBg = GradientDrawable()
         avatarBg.shape = GradientDrawable.OVAL
-        avatarBg.setColor(if (isDarkMode) Color.parseColor("#2C2C2E") else Color.parseColor("#E5E5EA"))
+        avatarBg.setColor(tokenColor(R.color.socialglowz_window_surface_hover))
         avatarFrame.background = avatarBg
 
         val avatarImage = ImageView(activity)
@@ -3800,15 +3803,15 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     /** Re-apply dark/light colors to an existing bottom bar without rebuilding it. */
     private fun applyDarkModeToBottomBar(bar: LinearLayout?) {
         bar ?: return
-        bar.setBackgroundColor(if (isDarkMode) Color.parseColor("#09090B") else Color.parseColor("#FFFFFF"))
-        val iconColor = if (isDarkMode) Color.parseColor("#E0E0E0") else Color.parseColor("#495057")
+        bar.setBackgroundColor(tokenColor(R.color.socialglowz_window_surface))
+        val iconColor = tokenColor(R.color.socialglowz_window_text)
         // Walk the inner row and update dividers + utility button colors
         val innerRow = bar.getChildAt(0) as? LinearLayout ?: return
         for (i in 0 until innerRow.childCount) {
             val child = innerRow.getChildAt(i)
             // Dividers are plain Views (not TextView, not ImageButton, not HorizontalScrollView)
             if (child is View && child !is ViewGroup && child !is TextView && child !is ImageButton) {
-                child.setBackgroundColor(if (isDarkMode) Color.parseColor("#27272A") else Color.parseColor("#DEE2E6"))
+                child.setBackgroundColor(tokenColor(R.color.socialglowz_window_border))
             }
         }
         // Update home button (first TextView in inner row, before the scroll view)
@@ -3884,9 +3887,10 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             bg.setColor(net.color)
         } else {
             // Blend brand color with bar background — different base for light vs dark
-            val baseR = if (isDarkMode) 0x09 else 0xE8
-            val baseG = if (isDarkMode) 0x09 else 0xE8
-            val baseB = if (isDarkMode) 0x0B else 0xF0
+            val baseColor = tokenColor(R.color.socialglowz_window_surface_muted)
+            val baseR = Color.red(baseColor)
+            val baseG = Color.green(baseColor)
+            val baseB = Color.blue(baseColor)
             val brandWeight = if (isDarkMode) 0.25f else 0.3f
             val baseWeight = 1f - brandWeight
             val r = ((Color.red(net.color) * brandWeight) + (baseR * baseWeight)).toInt()
@@ -3896,7 +3900,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         }
         btn.background = bg
         // Icon color: white on dark, darker on light (for inactive with light bg)
-        val iconColor = if (isActive || isDarkMode) Color.WHITE else Color.parseColor("#495057")
+        val iconColor = if (isActive) Color.WHITE else tokenColor(R.color.socialglowz_window_text)
         if (btn is TextView) {
             btn.setTextColor(iconColor)
         } else if (btn is FrameLayout && btn.childCount > 0) {
@@ -3948,7 +3952,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 m.setScale(w / 24f, h / 24f)
                 srcPath.transform(m, scaled)
 
-                val color = (tag as? Int) ?: if (isDarkMode) Color.WHITE else Color.parseColor("#495057")
+                val color = (tag as? Int) ?: tokenColor(R.color.socialglowz_window_text)
                 fillPaint.color = color
                 fillPaint.style = android.graphics.Paint.Style.FILL
 

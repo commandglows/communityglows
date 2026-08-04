@@ -37,13 +37,13 @@ function renderAuthBootstrapError(message: string) {
   const retryButton = document.createElement('button')
   const loginButton = document.createElement('button')
 
-  main.style.cssText = 'font-family:system-ui,-apple-system,sans-serif;min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-palette-slate-50);color:var(--sg-palette-slate-900);'
-  panel.style.cssText = 'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-white);border:1px solid var(--sg-palette-slate-200);border-radius: var(--sg-radius-12px);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-0-8px-20px-rgba-15-23-42-d08);'
+  main.style.cssText = 'font-family:var(--sg-font-family);min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-color-background);color:var(--sg-color-text);'
+  panel.style.cssText = 'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-surface-raised);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-lg);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-modal);'
   title.style.cssText = 'margin: var(--sg-space-0-0-8px);font-size: var(--sg-font-size-20px);'
   description.style.cssText = 'margin: var(--sg-space-0-0-16px);line-height: var(--sg-line-height-1d45);'
   actions.style.cssText = 'display:flex;gap: var(--sg-space-12px);flex-wrap:wrap;'
-  retryButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-8px);background:var(--sg-palette-slate-900);color:var(--sg-color-white);cursor:pointer;'
-  loginButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-palette-slate-300);border-radius: var(--sg-radius-8px);background:var(--sg-color-white);color:var(--sg-palette-slate-900);cursor:pointer;'
+  retryButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-sm);background:var(--sg-color-action);color:var(--sg-color-text-on-action);cursor:pointer;'
+  loginButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-sm);background:var(--sg-color-surface-raised);color:var(--sg-color-text);cursor:pointer;'
 
   title.textContent = 'Connexion indisponible'
   description.textContent = message

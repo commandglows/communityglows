@@ -1,7 +1,7 @@
 ---
 artifact: design_system_authority
 metadata_schema_version: "1.0"
-artifact_version: "1.2.2"
+artifact_version: "1.3.0"
 project: "socialglowz"
 created: "2026-06-12"
 updated: "2026-08-04"
@@ -45,12 +45,13 @@ next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
 
 ## Purpose
 
-`socialglowz` has a Vue/Tauri runtime and a marketing site. The editable cross-surface token source is now `design/tokens/reference.json`; generated Windows and site carriers are imported after their legacy CSS so they are the effective runtime authority without changing the baseline values. Android resources are generated but native chrome consumption remains a tracked migration slice.
+`socialglowz` has a Vue/Tauri runtime and a marketing site. The public site's current dark-first language is the approved visual reference, while `design/tokens/reference.json` is the only editable cross-surface value authority. Generated Windows and site carriers are active; Windows and Android are converging on the canonical roles while preserving platform structure and interaction behavior.
 
 ## Surface Carriers
 
 - Windows/Tauri app runtime:
-  - `src/ui/setup/pages/SocialGlowz/assets/main.css` (canonical semantic colors, surfaces, typography, spacing, radii, elevation, focus, motion, and theme values)
+  - `src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css` (generated semantic colors, surfaces, typography, spacing, radii, elevation, focus and modes)
+  - `src/ui/setup/pages/SocialGlowz/assets/main.css` (layout composition and compatibility aliases; not a value authority)
   - `src/assets/base.css` (legacy global base styles; it must consume, not redefine, desktop semantic intent)
   - `src/ui/setup/pages/SocialGlowz/components/ui/` (SocialGlowz wrappers: visual composition and token consumption)
   - `reka-ui` (maintained semantics, focus, keyboard, and overlay behavior for complex migrated controls)
@@ -59,7 +60,8 @@ next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
   - PrimeIcons is still imported by the Windows/Tauri entry for icon compatibility; it does not provide component behavior or semantic token authority.
   - PrimeFlex remains installed for historical extension consumers but is no longer imported or consumed by the Windows/Tauri entry; equivalent sidebar alignment is owned locally without changing layout.
 - Site:
-  - `site/src/styles/global.css` (`@theme inline` variables and shared animation/prose utility tokens)
+  - `site/src/styles/generated/tokens.css` (generated canonical roles and Tailwind mappings)
+  - `site/src/styles/global.css` (component, animation and prose composition)
 - Brand contract:
   - `/home/claude/socialglowz/shipglows_data/business/branding.md`
 
@@ -70,7 +72,10 @@ design_system_authority:
   status: declared
   brand_contract: /home/claude/socialglowz/shipglows_data/business/branding.md
   technology_carriers:
-    - src/ui/setup/pages/SocialGlowz/assets/main.css
+    - src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css
+    - site/src/styles/generated/tokens.css
+    - src-tauri/plugins/android-webview/android/src/main/res/values/socialglowz_tokens.xml
+    - src-tauri/plugins/android-webview/android/src/main/res/values-night/socialglowz_tokens.xml
   canonical_source: design/tokens/reference.json
   governed_contract: /home/claude/socialglowz/shipglows_data/technical/design-system-authority.md
   component_bridge:
@@ -78,11 +83,11 @@ design_system_authority:
     visual_owner: src/ui/setup/pages/SocialGlowz/components/ui/
     forbidden: copied vendor implementations, provider theme overrides, arbitrary style/class escape hatches
   cross_surface_mapping:
-    status: partial
+    status: generated-and-consumed
     windows_carrier: src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css
     site_carrier: site/src/styles/generated/tokens.css
     android_carrier: src-tauri/plugins/android-webview/android/src/main/res/values/socialglowz_tokens.xml
-    rule: generated Windows and site carriers are active; Android native chrome must consume its generated carrier before a full parity claim.
+    rule: generated carriers are active on every target; rendered Windows and Android proof is still required before a full parity claim.
   mandatory_scope:
     - color
     - typography
@@ -92,8 +97,8 @@ design_system_authority:
     - motion
     - layout
   current_compliance_state:
-    status: partial
-    note: hardcoded visual literals remain outside the canonical token source until a dedicated cleanup wave is completed.
+    status: migration
+    note: site-led semantic roles feed generated Windows/site/Android carriers; rendered and device proof remains required before parity is verified.
   validation:
     - python3 "${SHIPGLOWS_ROOT:-$HOME/shipglows}/tools/design_system_drift_check.py" --changed --format markdown
     - keyboard proof: Tab/Shift+Tab, pattern arrows/Home/End, Escape, focus restoration, accessible names/states, visible focus in light and dark themes
@@ -112,7 +117,7 @@ design_system_authority:
 
 - Windows/Tauri and site load generated token carriers after legacy styles, preserving current resolved values while making canonical changes effective.
 - `pnpm run design:tokens:check` is part of the quality workflow and generated headers are stable across supported Node versions.
-- Android day/night resources are generated, but `NativeWebViewPlugin.kt` still contains product-chrome literals and must be migrated before cross-platform parity is claimed.
+- Android product chrome now consumes generated day/night color resources; remaining `Color.parseColor` values belong to the isolated social-network brand registry.
 
 - Windows/Tauri source inventory: zero PrimeVue runtime imports or bootstrap configuration.
 - Generated Tauri declarations: zero PrimeVue components.

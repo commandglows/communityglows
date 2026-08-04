@@ -28,8 +28,11 @@
     },
     "tokens": {
       "type": "object",
-      "required": ["windows", "site", "android"],
+      "required": ["semantic", "windows", "site", "android"],
       "properties": {
+        "semantic": {
+          "$ref": "#/definitions/surface"
+        },
         "windows": {
           "$ref": "#/definitions/surface"
         },
