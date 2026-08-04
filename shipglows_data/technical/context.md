@@ -1,7 +1,7 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
+artifact_version: "1.3.2"
 project: "socialglowz"
 created: "2026-04-26"
 updated: "2026-08-03"
@@ -98,7 +98,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 - `assets/main.css` est le porteur canonique des couleurs, surfaces, espacements, rayons, ombres, focus, mouvement et thèmes clair/sombre Windows.
 - `src/utils/notifications.ts` configure Notivue; `App.vue` monte `Notivue`/`Notification`, et les producteurs utilisent `push`.
 - `directives/tooltip.ts` possède les infobulles accessibles au focus et au pointeur, leur `aria-describedby`, leur fermeture par `Escape` et leur nettoyage.
-- La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun runtime PrimeVue. Le package et les styles PrimeVue/PrimeFlex/PrimeIcons restent possibles sur les surfaces extension historiques et ne doivent pas être déclarés supprimés globalement.
+- La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun composant ni bootstrap PrimeVue. PrimeVue reste consommé par des surfaces extension historiques. PrimeIcons est encore importé par l'entrée Windows pour la compatibilité visuelle; PrimeFlex ne l'est plus. Aucun des deux ne porte l'autorité sémantique Windows.
 
 #### Android deeplinks (mobile/desktop Tauri)
 
@@ -148,7 +148,7 @@ SocialGlowz est une application social multi-canaux avec une base Vue 3 commune 
 
 - Tauri est retenu pour la couche desktop/mobile pour partager la même base JS tout en gardant contrôle WebView natif.
 - L'application SocialGlowz reste dans `src/ui/setup/pages/SocialGlowz` avec réutilisation contrôlée des modules partagés de `src/`.
-- Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens SocialGlowz pour l'autorité visuelle; PrimeVue est limité aux anciennes surfaces extension qui le consomment encore.
+- Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens SocialGlowz pour l'autorité visuelle. Les composants PrimeVue et PrimeFlex sont limités aux anciennes surfaces extension; PrimeIcons reste la seule dépendance visuelle Prime active dans l'entrée Windows.
 - La stratégie auth-connexion privilégie Convex Auth avec fallback offline.
 
 ## Hotspots

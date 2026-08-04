@@ -16,9 +16,9 @@
         </div>
         <div class="post-info">
           <span>{{ formatDate(post.timestamp) }}</span>
-          <i
+          <SgIcon
             v-if="post.privacy"
-            :class="privacyIcon"
+            :icon="privacyIcon"
           />
         </div>
       </div>
@@ -105,11 +105,11 @@
         class="reactions"
       >
         <div class="reaction-icons">
-          <i
+          <SgIcon
             v-for="(count, type) in post.stats.reactions" 
             v-show="count > 0"
             :key="type"
-            :class="reactionIcon(type)"
+            :icon="reactionIcon(type)"
           />
         </div>
         <span>{{ totalReactions }}</span>
@@ -328,7 +328,7 @@ const toggleComments = () => {
 
 <style scoped>
 .social-post {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
   margin-bottom: var(--sg-space-1rem);
@@ -353,7 +353,7 @@ const toggleComments = () => {
   display: flex;
   align-items: center;
   gap: var(--sg-space-0d5rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 
@@ -363,7 +363,7 @@ const toggleComments = () => {
 }
 
 .content-text :deep(a) {
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   text-decoration: none;
 }
 
@@ -372,7 +372,7 @@ const toggleComments = () => {
 }
 
 .content-link {
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-8px);
   overflow: hidden;
   margin-bottom: var(--sg-space-1rem);
@@ -399,7 +399,7 @@ const toggleComments = () => {
 
 .link-info p {
   margin: 0;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 
@@ -442,8 +442,8 @@ const toggleComments = () => {
   display: flex;
   justify-content: space-between;
   padding: var(--sg-space-0d5rem-0);
-  border-bottom: 1px solid var(--surface-border);
-  color: var(--text-color-secondary);
+  border-bottom: 1px solid var(--sg-color-border);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 
@@ -470,7 +470,7 @@ const toggleComments = () => {
 .post-actions {
   display: flex;
   padding: var(--sg-space-0d5rem-0);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .post-comments {
@@ -504,7 +504,7 @@ const toggleComments = () => {
 }
 
 .interaction-stats .comments-count:hover {
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   text-decoration: underline;
 }
 </style> 

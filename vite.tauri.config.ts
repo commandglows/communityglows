@@ -103,7 +103,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (/\/(vue|vue-router|pinia|@vueuse)\//.test(id)) return 'vendor-vue'
-            if (/\/(primeicons|primeflex)\//.test(id)) return 'vendor-ui'
+            if (/\/primeicons\//.test(id)) return 'vendor-ui'
           }
         },
       },

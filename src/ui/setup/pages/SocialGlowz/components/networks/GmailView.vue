@@ -1,5 +1,5 @@
 <template>
-  <div class="gmail-container">
+  <div class="gmail-container" :class="{ 'is-tablet': isGmailCompact }">
     <div class="gmail-header">
       <h2>Gmail</h2>
       <div
@@ -19,9 +19,7 @@
           v-if="loading"
           class="loading-state"
         >
-          <i
-            class="pi pi-spin pi-spinner status-icon"
-          ></i>
+          <SgIcon icon="pi pi-spin pi-spinner status-icon" />
           <p>Chargement des emails...</p>
         </div>
 
@@ -29,9 +27,7 @@
           v-else-if="!store.gmail.emails?.length"
           class="empty-state"
         >
-          <i
-            class="pi pi-inbox status-icon"
-          ></i>
+          <SgIcon icon="pi pi-inbox status-icon" />
           <p>Aucun email à afficher</p>
         </div>
 
@@ -93,6 +89,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import SocialAvatar from '../feed/SocialAvatar.vue'
 import KanbanBoard from '../kanban/KanbanBoard.vue'
 import CrmToolbar from '../CrmToolbar.vue'
@@ -100,11 +97,13 @@ import { formatDate } from '../../utils/dateFormatter'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 import { useKanbanStore } from '@/stores/kanban'
 import Button from '../ui/SgButton.vue'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import type { Email } from '../../types'
 
 const store = useSocialNetworksStore()
 const kanbanStore = useKanbanStore()
 const loading = ref(true)
+const isGmailCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.gmailCompact}px)`)
 
 const openEmail = (email: Email) => {
   const emailToUpdate = store.gmail.emails.find(e => e.id === email.id)
@@ -154,7 +153,7 @@ onMounted(async () => {
 }
 
 .unread-count {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   padding: var(--sg-crm-unread-padding-block) var(--sg-crm-unread-padding-inline);
   border-radius: var(--sg-crm-pill-radius);
@@ -176,7 +175,7 @@ onMounted(async () => {
 .kanban-section {
   flex: 1;
   overflow: hidden;
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-crm-card-radius);
 }
 
@@ -187,7 +186,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   height: var(--sg-crm-empty-height);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .status-icon {
@@ -206,10 +205,10 @@ onMounted(async () => {
 }
 
 .email-item {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-crm-card-radius);
   padding: var(--sg-crm-card-padding);
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--sg-color-border);
   transition: var(--sg-crm-card-transition);
   cursor: pointer;
 }
@@ -220,7 +219,7 @@ onMounted(async () => {
 }
 
 .email-item.unread {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
   font-weight: bold;
 }
 
@@ -237,7 +236,7 @@ onMounted(async () => {
 }
 
 .date {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-crm-secondary-copy-size);
 }
 
@@ -248,7 +247,7 @@ onMounted(async () => {
 
 .email-content p {
   margin: 0;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .email-labels {
@@ -258,22 +257,20 @@ onMounted(async () => {
 }
 
 .label {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   padding: var(--sg-crm-label-padding-block) var(--sg-crm-label-padding-inline);
   border-radius: var(--sg-crm-label-radius);
   font-size: var(--sg-crm-label-size);
 }
 
-@media (max-width: 1024px) {
-  .gmail-content {
-    flex-direction: column;
-  }
+.gmail-container.is-tablet .gmail-content {
+  flex-direction: column;
+}
 
-  .emails-section,
-  .kanban-section {
-    flex: none;
-    height: var(--sg-crm-empty-height);
-  }
+.gmail-container.is-tablet .emails-section,
+.gmail-container.is-tablet .kanban-section {
+  flex: none;
+  height: var(--sg-crm-empty-height);
 }
 </style> 

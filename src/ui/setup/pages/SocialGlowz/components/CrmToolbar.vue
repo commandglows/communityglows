@@ -2,7 +2,7 @@
   <div class="crm-toolbar">
     <div class="crm-search">
       <label class="crm-search-field">
-        <i class="pi pi-search" />
+        <SgIcon icon="pi pi-search" />
         <input
           type="search"
           aria-label="Rechercher dans le CRM"
@@ -34,8 +34,8 @@ const crmContext: MenuItem = {
   gap: var(--sg-crm-toolbar-gap);
   flex-wrap: wrap;
   padding: var(--sg-crm-toolbar-padding);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--border-radius);
 }
 

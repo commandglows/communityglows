@@ -133,7 +133,7 @@ async function handleSignIn() {
   align-items: center;
   justify-content: center;
   min-height: var(--sg-size-100vh);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
 }
 
 .login-card {
@@ -154,12 +154,12 @@ async function handleSignIn() {
   font-size: var(--sg-font-size-1d75rem);
   font-weight: 700;
   margin: var(--sg-space-0-0-0d25rem);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .login-header p {
   margin: 0;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d95rem);
 }
 

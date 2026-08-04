@@ -2,7 +2,7 @@
   <div class="lock-screen">
     <section class="lock-panel">
       <div class="lock-mark">
-        <i class="pi pi-lock" />
+        <SgIcon icon="pi pi-lock" />
       </div>
       <h1>Session verrouillée</h1>
       <p>
@@ -105,7 +105,7 @@ async function returnToLogin() {
   display: grid;
   place-items: center;
   padding: var(--sg-space-1d5rem);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
 }
 
 .lock-panel {
@@ -115,7 +115,7 @@ async function returnToLogin() {
   align-items: center;
   gap: var(--sg-space-1rem);
   padding: var(--sg-space-2rem);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .lock-mark {
@@ -124,8 +124,8 @@ async function returnToLogin() {
   border-radius: var(--sg-radius-999px);
   display: grid;
   place-items: center;
-  color: var(--primary-color);
-  background: var(--surface-hover);
+  color: var(--sg-color-action);
+  background: var(--sg-color-surface-hover);
 }
 
 .lock-panel h1 {
@@ -136,7 +136,7 @@ async function returnToLogin() {
 .lock-panel p {
   margin: 0;
   text-align: center;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   line-height: var(--sg-line-height-1d45);
 }
 

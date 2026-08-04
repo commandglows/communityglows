@@ -16,8 +16,8 @@
       :aria-pressed="visible"
       @click="visible = !visible"
     >
-      <i
-        :class="visible ? 'pi pi-eye-slash' : 'pi pi-eye'"
+      <SgIcon
+        :icon="visible ? 'pi pi-eye-slash' : 'pi pi-eye'"
         aria-hidden="true"
       />
     </button>
@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed, ref, useAttrs } from 'vue'
+import SgIcon from './SgIcon.vue'
 
 defineOptions({ inheritAttrs: false })
 withDefaults(defineProps<{ modelValue?: string; toggleMask?: boolean }>(), {

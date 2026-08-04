@@ -184,22 +184,25 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-5xl p-4 space-y-4">
-    <header class="space-y-1">
-      <h1 class="text-2xl font-semibold">
+  <section class="ext-parity-root">
+    <header class="ext-parity-header">
+      <h1 class="ext-parity-title">
         {{ $t(headerKey) }}
       </h1>
-      <p class="text-sm opacity-80">
+      <p class="ext-parity-description">
         {{ $t(descriptionKey) }}
       </p>
     </header>
 
     <ExtensionTaskCapture v-if="props.surface === 'popup'" />
 
-    <div class="grid gap-3 md:grid-cols-3">
-      <label class="form-control">
-        <span class="label-text font-semibold">{{ $t("extension.profile.label") }}</span>
-        <select v-model="activeProfileId">
+    <div class="ext-parity-grid ext-parity-grid--settings">
+      <label class="ext-field">
+        <span class="ext-field-label">{{ $t("extension.profile.label") }}</span>
+        <select
+          v-model="activeProfileId"
+          class="ext-select"
+        >
           <option
             v-for="profile in profilesStore.profiles"
             :key="profile.id"
@@ -210,17 +213,20 @@ onMounted(() => {
         </select>
       </label>
 
-      <label class="form-control">
-        <span class="label-text font-semibold">{{ $t("settings.language") }}</span>
-        <select v-model="locale">
+      <label class="ext-field">
+        <span class="ext-field-label">{{ $t("settings.language") }}</span>
+        <select
+          v-model="locale"
+          class="ext-select"
+        >
           <option value="fr">Français</option>
           <option value="en">English</option>
         </select>
       </label>
 
-      <div class="flex items-end">
+      <div class="ext-parity-actions">
         <button
-          class="btn btn-outline w-full"
+          class="ext-btn ext-btn--outline ext-btn--full"
           type="button"
           @click="toggleTheme"
         >
@@ -229,18 +235,18 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="space-y-2">
-      <h2 class="text-lg font-semibold">
+    <div class="ext-parity-grid">
+      <h2 class="ext-parity-section-title">
         {{ $t("extension.networks.title") }}
       </h2>
       <div
-        class="grid gap-2"
-        :class="props.compact ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4 lg:grid-cols-5'"
+        class="ext-network-grid"
+        :class="{ 'ext-network-grid--compact': props.compact }"
       >
         <button
           v-for="network in visibleNetworks"
           :key="network.id"
-          class="btn btn-sm btn-primary justify-start"
+          class="ext-btn ext-btn--small ext-btn--primary ext-btn--left"
           type="button"
           @click="openBuiltInNetwork(network.url)"
         >
@@ -249,23 +255,25 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="space-y-2">
-      <h2 class="text-lg font-semibold">
+    <div class="ext-parity-grid">
+      <h2 class="ext-parity-section-title">
         {{ $t("extension.custom_links.title") }}
       </h2>
-      <div class="grid gap-2 md:grid-cols-[1fr,1fr,auto]">
+      <div class="ext-parity-grid ext-parity-grid--links">
         <input
           v-model="customLabel"
+          class="ext-text-input"
           type="text"
           :placeholder="$t('extension.custom_links.name_placeholder')"
         />
         <input
           v-model="customUrl"
+          class="ext-text-input"
           type="text"
           :placeholder="$t('extension.custom_links.url_placeholder')"
         />
         <button
-          class="btn btn-secondary"
+          class="ext-btn ext-btn--secondary"
           type="button"
           @click="addCustomLink"
         >
@@ -273,15 +281,15 @@ onMounted(() => {
         </button>
       </div>
 
-      <ul class="space-y-2">
+      <ul class="ext-link-list">
         <li
           v-for="link in profileLinks"
           :key="link.id"
-          class="flex items-center justify-between gap-2 rounded border border-base-300 p-2"
+          class="ext-link-item"
         >
           <span class="truncate">{{ link.label }}</span>
           <button
-            class="btn btn-xs btn-outline"
+            class="ext-btn ext-btn--xs ext-btn--outline"
             type="button"
             @click="openCustomLink(link.url)"
           >
@@ -291,16 +299,16 @@ onMounted(() => {
       </ul>
     </div>
 
-    <div class="flex flex-wrap gap-2">
+    <div class="ext-actions">
       <button
-        class="btn btn-outline"
+        class="ext-btn ext-btn--outline"
         type="button"
         @click="openDashboard"
       >
         {{ $t("extension.actions.open_dashboard") }}
       </button>
       <button
-        class="btn btn-outline"
+        class="ext-btn ext-btn--outline"
         type="button"
         :disabled="!canOpenSidePanel"
         @click="openSidePanel"
@@ -311,18 +319,18 @@ onMounted(() => {
 
     <div
       v-if="statusMessage"
-      class="alert alert-success text-sm"
+      class="ext-alert ext-alert--success"
     >
       {{ statusMessage }}
     </div>
     <div
       v-if="errorMessage"
-      class="alert alert-error text-sm"
+      class="ext-alert ext-alert--error"
     >
       {{ errorMessage }}
     </div>
 
-    <div class="rounded border border-warning/40 bg-warning/5 p-3 text-sm space-y-1">
+    <div class="ext-warning">
       <p>{{ $t("extension.limitations.session_isolation") }}</p>
       <p>{{ $t("extension.limitations.native_backup") }}</p>
       <p>{{ $t("extension.limitations.native_haptics") }}</p>

@@ -11,7 +11,7 @@
           <div class="nudge-handle" />
           <div class="nudge-content">
             <div class="nudge-icon">
-              <i class="pi pi-gift" />
+              <SgIcon icon="pi pi-gift" />
             </div>
             <h3 class="nudge-title">{{ $t('nudge.title') }}</h3>
             <p class="nudge-promo">{{ $t('nudge.promo_text') }}</p>
@@ -46,8 +46,8 @@
                     class="signup-error-btn"
                     @click="copyError"
                   >
-                    <i
-                      class="pi"
+                    <SgIcon
+                      icon="pi"
                       :class="errorCopied ? 'pi-check' : 'pi-copy'"
                     />
                     {{ errorCopied ? $t('common.copied') : $t('common.copy') }}
@@ -67,9 +67,9 @@
                 class="nudge-cta"
                 :disabled="loading"
               >
-                <i
+                <SgIcon
                   v-if="loading"
-                  class="pi pi-spin pi-spinner"
+                  icon="pi pi-spin pi-spinner"
                 />
                 {{ loading ? '' : $t('nudge.cta_button') }}
               </button>
@@ -96,7 +96,7 @@
   >
     <div class="nudge-content nudge-desktop">
       <div class="nudge-icon">
-        <i class="pi pi-gift" />
+        <SgIcon icon="pi pi-gift" />
       </div>
       <p class="nudge-promo">{{ $t('nudge.promo_text') }}</p>
 
@@ -130,8 +130,8 @@
               class="signup-error-btn"
               @click="copyError"
             >
-              <i
-                class="pi"
+              <SgIcon
+                icon="pi"
                 :class="errorCopied ? 'pi-check' : 'pi-copy'"
               />
               {{ errorCopied ? $t('common.copied') : $t('common.copy') }}
@@ -151,9 +151,9 @@
           class="nudge-cta"
           :disabled="loading"
         >
-          <i
+          <SgIcon
             v-if="loading"
-            class="pi pi-spin pi-spinner"
+            icon="pi pi-spin pi-spinner"
           />
           {{ loading ? '' : $t('nudge.cta_button') }}
         </button>
@@ -320,13 +320,13 @@ async function copyError() {
   margin: 0;
   font-size: var(--sg-nudge-title-size);
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .nudge-promo {
   margin: 0;
   font-size: var(--sg-nudge-copy-size);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   line-height: var(--sg-nudge-copy-line-height);
 }
 
@@ -344,14 +344,14 @@ async function copyError() {
   border-radius: var(--sg-nudge-input-radius);
   border: 1px solid var(--sg-color-border);
   background: var(--sg-color-surface-muted);
-  color: var(--text-color);
+  color: var(--sg-color-text);
   font-size: var(--sg-nudge-input-size);
   outline: none;
   box-sizing: border-box;
 }
 
 .nudge-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--sg-color-action);
 }
 
 .signup-error-card {
@@ -417,7 +417,7 @@ async function copyError() {
 .nudge-dismiss {
   background: none;
   border: none;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-nudge-dismiss-size);
   cursor: pointer;
   padding: var(--sg-space-2);

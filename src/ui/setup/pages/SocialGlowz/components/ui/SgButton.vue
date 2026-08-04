@@ -23,10 +23,9 @@
       :class="{ 'sg-button__content--loading': loading }"
     >
       <slot name="icon">
-        <i
+        <SgIcon
           v-if="icon"
-          :class="icon"
-          aria-hidden="true"
+          :icon="icon"
         />
       </slot>
       <span
@@ -44,6 +43,7 @@
 
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
+import SgIcon from './SgIcon.vue'
 
 defineOptions({ inheritAttrs: false })
 

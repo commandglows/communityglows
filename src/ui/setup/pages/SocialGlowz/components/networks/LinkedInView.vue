@@ -39,14 +39,14 @@
             <h3>{{ $t('linkedin.network_section') }}</h3>
             <div class="network-stats">
               <div class="network-stat">
-                <i class="pi pi-users"></i>
+                <SgIcon icon="pi pi-users" />
                 <div class="stat-content">
                   <span>{{ $t('linkedin.connections') }}</span>
                   <strong>{{ profileInfo.connections }}</strong>
                 </div>
               </div>
               <div class="network-stat">
-                <i class="pi pi-building"></i>
+                <SgIcon icon="pi pi-building" />
                 <div class="stat-content">
                   <span>{{ $t('linkedin.followed_pages') }}</span>
                   <strong>{{ profileInfo.followedPages }}</strong>
@@ -135,7 +135,7 @@
             </div>
 
             <div class="post-stats">
-              <span><i class="pi pi-thumbs-up"></i> {{ post.likes }}</span>
+              <span><SgIcon icon="pi pi-thumbs-up" /> {{ post.likes }}</span>
               <span>{{ post.comments }} {{ $t('common.comments_count') }}</span>
               <span>{{ post.shares }} {{ $t('common.shares_count') }}</span>
             </div>
@@ -316,10 +316,13 @@ const posts = ref([
 ])
 
 const connectLinkedIn = () => {
+  const authWindowWidth = 500
+  const authWindowHeight = 600
+  const authWindowFeatures = `width=${authWindowWidth},height=${authWindowHeight},scrollbars=yes`
   const authWindow = window.open(
     '/api/auth/linkedin',
     'LinkedIn Auth',
-    'width=500,height=600,scrollbars=yes'
+    authWindowFeatures
   )
 
   window.addEventListener('message', async (event) => {
@@ -350,7 +353,7 @@ const connectLinkedIn = () => {
   margin: var(--sg-space-2rem-auto);
   text-align: center;
   padding: var(--sg-space-2rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
 }
 
@@ -360,11 +363,11 @@ const connectLinkedIn = () => {
 
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .profile-card {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-10px);
   overflow: hidden;
   margin-bottom: var(--sg-space-1rem);
@@ -382,7 +385,7 @@ const connectLinkedIn = () => {
 }
 
 .profile-avatar {
-  border: 4px solid var(--surface-card);
+  border: 4px solid var(--sg-color-surface-raised);
 }
 
 .profile-info h3 {
@@ -390,13 +393,13 @@ const connectLinkedIn = () => {
 }
 
 .headline {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
   margin-bottom: var(--sg-space-1rem);
 }
 
 .profile-stats {
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-space-1rem);
   margin-top: var(--sg-space-1rem);
 }
@@ -407,12 +410,12 @@ const connectLinkedIn = () => {
 }
 
 .stat-label {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 
 .network-card {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-10px);
   padding: var(--sg-space-1d5rem);
 }
@@ -435,7 +438,7 @@ const connectLinkedIn = () => {
 
 .stat-content span {
   font-size: var(--sg-font-size-0d9rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .feed-section {
@@ -445,7 +448,7 @@ const connectLinkedIn = () => {
 }
 
 .post-composer {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-10px);
   padding: var(--sg-space-1rem);
   display: flex;
@@ -460,7 +463,7 @@ const connectLinkedIn = () => {
   width: var(--sg-size-100pct);
   justify-content: flex-start;
   margin-bottom: var(--sg-space-0d5rem);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-radius-2rem);
 }
 
@@ -470,7 +473,7 @@ const connectLinkedIn = () => {
 }
 
 .post-card {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-10px);
   padding: var(--sg-space-1d5rem);
 }
@@ -491,13 +494,13 @@ const connectLinkedIn = () => {
 
 .author-headline {
   font-size: var(--sg-font-size-0d9rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   margin: var(--sg-space-0d25rem-0);
 }
 
 .post-time {
   font-size: var(--sg-font-size-0d8rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .post-content {
@@ -514,9 +517,9 @@ const connectLinkedIn = () => {
   display: flex;
   gap: var(--sg-space-1rem);
   padding: var(--sg-space-0d5rem-0);
-  border-top: 1px solid var(--surface-border);
-  border-bottom: 1px solid var(--surface-border);
-  color: var(--text-color-secondary);
+  border-top: 1px solid var(--sg-color-border);
+  border-bottom: 1px solid var(--sg-color-border);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 

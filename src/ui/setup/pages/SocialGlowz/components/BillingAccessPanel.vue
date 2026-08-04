@@ -1,8 +1,11 @@
 <template>
-  <section class="billing-panel">
+  <section
+    class="billing-panel"
+    :class="{ 'is-narrow': isBillingNarrow }"
+  >
     <div class="billing-panel-header">
       <div class="billing-title-row">
-        <i class="pi pi-key" />
+        <SgIcon icon="pi pi-key" />
         <h3>{{ $t('billing.title') }}</h3>
       </div>
       <span
@@ -51,9 +54,9 @@
           type="submit"
           :disabled="submitDisabled"
         >
-          <i
+          <SgIcon
             v-if="isRedeeming"
-            class="pi pi-spin pi-spinner"
+            icon="pi pi-spin pi-spinner"
           />
           <span>{{ isRedeeming ? $t('billing.redeeming') : $t('billing.redeem_button') }}</span>
         </button>
@@ -64,14 +67,14 @@
       v-if="successKey"
       class="billing-message success"
     >
-      <i class="pi pi-check-circle" />
+      <SgIcon icon="pi pi-check-circle" />
       {{ $t(successKey) }}
     </p>
     <p
       v-else-if="errorKey"
       class="billing-message error"
     >
-      <i class="pi pi-exclamation-circle" />
+      <SgIcon icon="pi pi-exclamation-circle" />
       {{ $t(errorKey) }}
     </p>
   </section>
@@ -81,6 +84,8 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBillingAccess } from '@/composables/useBillingAccess'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
 const { t } = useI18n()
 const redemptionCode = ref('')
@@ -118,6 +123,8 @@ const statusLabel = computed(() => {
   if (status.value === 'error') return t('billing.status_error')
   return t('billing.status_free')
 })
+
+const isBillingNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.billingCompact}px)`)
 
 const helperText = computed(() => {
   if (status.value === 'unconfigured') return t('billing.unconfigured_hint')
@@ -157,14 +164,20 @@ async function submitRedeem() {
 
 <style scoped>
 .billing-panel {
+  --billing-spacing-sm: var(--sg-space-0d5rem);
+  --billing-spacing-md: var(--sg-space-0d75rem);
+  --billing-spacing-lg: var(--sg-space-1rem);
+  --billing-title-font-size: var(--sg-font-size-0d95rem);
+  --billing-muted-bg: color-mix(in srgb, var(--sg-color-text-muted) 16%, transparent);
+  --billing-error-bg: color-mix(in srgb, var(--sg-color-danger) 8%, transparent);
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 0.95rem;
-  margin-bottom: 1rem;
-  border: 1px solid color-mix(in srgb, var(--surface-border) 76%, var(--primary-color) 24%);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--surface-card) 92%, var(--surface-ground) 8%);
+  gap: var(--sg-space-0d8rem);
+  padding: calc(var(--sg-space-0d75rem) + var(--sg-space-0d25rem));
+  margin-bottom: var(--sg-space-1rem);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
+  background: color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-surface-muted) 8%);
 }
 
 .billing-panel-header,
@@ -178,120 +191,120 @@ async function submitRedeem() {
 
 .billing-panel-header {
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 
 .billing-title-row {
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
   min-width: 0;
 }
 
-.billing-title-row i {
-  color: var(--primary-color);
-  font-size: 0.95rem;
+.billing-title-row :deep(.sg-icon) {
+  color: var(--sg-color-action);
+  font-size: var(--billing-title-font-size);
 }
 
 .billing-title-row h3 {
   margin: 0;
-  color: var(--text-color);
-  font-size: 0.95rem;
-  line-height: 1.25;
+  color: var(--sg-color-text);
+  font-size: var(--billing-title-font-size);
+  line-height: var(--sg-line-height-1d2);
 }
 
 .billing-status-pill {
   flex: 0 0 auto;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-card) 88%);
-  color: var(--primary-color);
-  font-size: 0.72rem;
+  padding: var(--sg-space-0d3rem-0d55rem);
+  border-radius: var(--sg-radius-pill);
+  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
+  color: var(--sg-color-action);
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 700;
   white-space: nowrap;
 }
 
 .billing-status-pill.muted {
-  background: rgba(148, 163, 184, 0.16);
-  color: var(--text-color-secondary);
+  background: var(--billing-muted-bg);
+  color: var(--sg-color-text-muted);
 }
 
 .billing-status-pill.error {
-  background: rgba(239, 68, 68, 0.08);
-  color: #dc2626;
+  background: var(--billing-error-bg);
+  color: var(--sg-color-danger-text);
 }
 
 .billing-copy {
   margin: 0;
-  color: var(--text-color-secondary);
-  font-size: 0.82rem;
-  line-height: 1.45;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d82rem);
+  line-height: var(--sg-line-height-1d45);
 }
 
 .billing-plan-row {
   justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.65rem 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 10px;
-  background: var(--surface-ground);
-  color: var(--text-color-secondary);
-  font-size: 0.82rem;
+  gap: var(--billing-spacing-md);
+  padding: calc(var(--sg-space-0d5rem) + var(--sg-space-0d25rem)) var(--sg-space-0d75rem);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-10px);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d82rem);
 }
 
 .billing-plan-row strong {
-  color: var(--text-color);
-  font-size: 0.84rem;
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d82rem);
   text-align: right;
 }
 
 .billing-redeem-form {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
 }
 
 .billing-input-label {
-  color: var(--text-color-secondary);
-  font-size: 0.8rem;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 600;
 }
 
 .billing-input-row {
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
 }
 
 .billing-input {
   flex: 1 1 auto;
   min-width: 0;
-  width: 100%;
-  padding: 0.62rem 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 10px;
+  width: var(--sg-size-100pct);
+  padding: calc(var(--sg-space-0d5rem) + var(--sg-space-0d25rem)) var(--sg-space-0d75rem);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
   outline: none;
-  background: var(--surface-ground);
-  color: var(--text-color);
-  font-size: 0.9rem;
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d9rem);
   box-sizing: border-box;
 }
 
 .billing-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--sg-color-action);
 }
 
 .billing-submit-btn {
   flex: 0 0 auto;
-  min-height: 2.45rem;
-  padding: 0.62rem 0.85rem;
+  min-height: var(--sg-size-2d45rem);
+  padding: calc(var(--sg-space-0d5rem) + var(--sg-space-0d25rem)) var(--sg-space-0d75rem);
   border: none;
-  border-radius: 10px;
-  background: var(--primary-color);
-  color: #fff;
-  font-size: 0.85rem;
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-font-size-0d85rem);
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
 }
 
 .billing-submit-btn:disabled {
@@ -300,36 +313,34 @@ async function submitRedeem() {
 }
 
 .billing-message {
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.4;
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d4);
 }
 
 .billing-message.success {
-  color: #15803d;
+  color: var(--sg-color-success);
 }
 
 .billing-message.error {
-  color: #dc2626;
+  color: var(--sg-color-danger);
 }
 
-@media (max-width: 520px) {
-  .billing-panel {
-    padding: 0.9rem;
-  }
+.billing-panel.is-narrow {
+  padding: var(--sg-space-0d9rem);
+}
 
-  .billing-panel-header {
-    align-items: flex-start;
-  }
+.billing-panel.is-narrow .billing-panel-header {
+  align-items: flex-start;
+}
 
-  .billing-input-row {
-    align-items: stretch;
-    flex-direction: column;
-  }
+.billing-panel.is-narrow .billing-input-row {
+  align-items: stretch;
+  flex-direction: column;
+}
 
-  .billing-submit-btn {
-    width: 100%;
-  }
+.billing-panel.is-narrow .billing-submit-btn {
+  width: var(--sg-size-100pct);
 }
 </style>

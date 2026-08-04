@@ -173,6 +173,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/SocialGlowz/components/ui/SgBadge'
       | '/setup/SocialGlowz/components/ui/SgButton'
       | '/setup/SocialGlowz/components/ui/SgDialog'
+      | '/setup/SocialGlowz/components/ui/SgIcon'
       | '/setup/SocialGlowz/components/ui/SgInput'
       | '/setup/SocialGlowz/components/ui/SgMultiSelect'
       | '/setup/SocialGlowz/components/ui/SgPassword'
@@ -555,6 +556,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/SocialGlowz/components/ui/SgIcon': RouteRecordInfo<
+      '/setup/SocialGlowz/components/ui/SgIcon',
+      '/setup/SocialGlowz/components/ui/SgIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/SocialGlowz/components/ui/SgInput': RouteRecordInfo<
       '/setup/SocialGlowz/components/ui/SgInput',
       '/setup/SocialGlowz/components/ui/SgInput',
@@ -794,6 +802,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/SocialGlowz/components/ui/SgBadge'
         | '/setup/SocialGlowz/components/ui/SgButton'
         | '/setup/SocialGlowz/components/ui/SgDialog'
+        | '/setup/SocialGlowz/components/ui/SgIcon'
         | '/setup/SocialGlowz/components/ui/SgInput'
         | '/setup/SocialGlowz/components/ui/SgMultiSelect'
         | '/setup/SocialGlowz/components/ui/SgPassword'
@@ -1122,6 +1131,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/SocialGlowz/components/ui/SgDialog.vue': {
       routes:
         | '/setup/SocialGlowz/components/ui/SgDialog'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/SocialGlowz/components/ui/SgIcon.vue': {
+      routes:
+        | '/setup/SocialGlowz/components/ui/SgIcon'
       views:
         | never
     }

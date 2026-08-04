@@ -15,10 +15,10 @@
       :severity="badgeSeverity"
       class="avatar-badge"
     >
-      <i
+      <SgIcon
         v-if="badgeIcon"
-        :class="badgeIcon"
-      ></i>
+        :icon="badgeIcon"
+      />
     </SgBadge>
     <div
       v-if="showStatus"

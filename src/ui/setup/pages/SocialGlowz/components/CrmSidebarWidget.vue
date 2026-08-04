@@ -42,21 +42,21 @@ const openCrm = () => {
   gap: var(--sg-sidebar-control-gap);
   padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
   border-radius: var(--sg-radius-sm);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
 }
 
 .crm-widget-header h3 {
   margin: 0;
   font-size: var(--sg-sidebar-section-title-size);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .crm-sidebar-widget :deep(.crm-toolbar) {
   padding: 0;
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-sm);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
 }
 
 .crm-sidebar-widget :deep(.crm-search) {

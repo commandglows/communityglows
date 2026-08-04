@@ -44,31 +44,58 @@ function submit() {
 </script>
 
 <template>
-  <form class="task-form" @submit.prevent="submit">
+  <form
+    class="task-form"
+    @submit.prevent="submit"
+  >
     <div class="task-form-grid">
       <label>
         <span>Titre</span>
-        <input v-model="title" type="text" maxlength="160" required placeholder="Ex. Répondre à cette question" />
+        <input
+          v-model="title"
+          type="text"
+          maxlength="160"
+          required
+          placeholder="Ex. Répondre à cette question"
+        />
       </label>
       <label>
         <span>URL du contexte</span>
-        <input v-model="url" type="url" inputmode="url" required placeholder="https://..." />
+        <input
+          v-model="url"
+          type="url"
+          inputmode="url"
+          required
+          placeholder="https://..."
+        />
       </label>
     </div>
 
     <label>
       <span>Note personnelle</span>
-      <textarea v-model="note" maxlength="4000" rows="3" placeholder="Ce que je veux faire ou retenir…" />
+      <textarea
+        v-model="note"
+        maxlength="4000"
+        rows="3"
+        placeholder="Ce que je veux faire ou retenir…"
+      />
     </label>
 
     <div class="task-form-grid task-form-grid--details">
       <label>
         <span>Tags</span>
-        <input v-model="tags" type="text" placeholder="communauté, relance" />
+        <input
+          v-model="tags"
+          type="text"
+          placeholder="communauté, relance"
+        />
       </label>
       <label>
         <span>Échéance</span>
-        <input v-model="dueDate" type="date" />
+        <input
+          v-model="dueDate"
+          type="date"
+        />
       </label>
       <label>
         <span>Priorité</span>
@@ -89,8 +116,20 @@ function submit() {
     </div>
 
     <div class="task-form-actions">
-      <button class="btn btn-ghost" type="button" @click="emit('cancel')">Annuler</button>
-      <button class="btn btn-primary" type="submit" :disabled="!canSubmit">{{ submitLabel }}</button>
+      <button
+        class="btn btn-ghost"
+        type="button"
+        @click="emit('cancel')"
+      >
+        Annuler
+      </button>
+      <button
+        class="btn btn-primary"
+        type="submit"
+        :disabled="!canSubmit"
+      >
+        {{ submitLabel }}
+      </button>
     </div>
   </form>
 </template>
@@ -120,7 +159,7 @@ function submit() {
 }
 
 .task-form label span {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-crm-secondary-copy-size);
 }
 

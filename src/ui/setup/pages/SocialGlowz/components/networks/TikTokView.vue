@@ -9,13 +9,13 @@
           class="video-card"
         >
           <div class="video-placeholder">
-            <i class="pi pi-play"></i>
+            <SgIcon icon="pi pi-play" />
           </div>
           <div class="video-info">
             <p class="video-title">TikTok #{{ i }}</p>
             <div class="video-stats">
-              <span><i class="pi pi-heart"></i> {{ Math.floor(Math.random() * 1000) }}K</span>
-              <span><i class="pi pi-comments"></i> {{ Math.floor(Math.random() * 100) }}K</span>
+              <span><SgIcon icon="pi pi-heart" /> {{ Math.floor(Math.random() * 1000) }}K</span>
+              <span><SgIcon icon="pi pi-comments" /> {{ Math.floor(Math.random() * 100) }}K</span>
             </div>
           </div>
         </div>
@@ -26,33 +26,33 @@
 
 <style scoped>
 .tiktok-content {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .video-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .video-card {
-  background: var(--surface-card);
-  border-radius: 8px;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-8px);
   overflow: hidden;
 }
 
 .video-placeholder {
   aspect-ratio: 9/16;
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-2rem);
+  color: var(--sg-color-text-muted);
 }
 
 .video-info {
-  padding: 0.8rem;
+  padding: var(--sg-space-0d8rem);
 }
 
 .video-title {
@@ -62,14 +62,14 @@
 
 .video-stats {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  color: var(--text-color-secondary);
+  gap: var(--sg-space-1rem);
+  margin-top: var(--sg-space-0d5rem);
+  color: var(--sg-color-text-muted);
 }
 
 .video-stats span {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--sg-space-0d3rem);
 }
-</style> 
+</style>

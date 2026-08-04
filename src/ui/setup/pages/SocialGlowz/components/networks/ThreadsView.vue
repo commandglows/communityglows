@@ -64,7 +64,7 @@ import SgButton from '../ui/SgButton.vue'
 }
 
 .thread-card {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-12px);
   padding: var(--sg-space-1rem);
 }
@@ -87,7 +87,7 @@ import SgButton from '../ui/SgButton.vue'
 
 .timestamp {
   font-size: var(--sg-font-size-0d8rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .thread-body {
@@ -97,7 +97,7 @@ import SgButton from '../ui/SgButton.vue'
 .thread-actions {
   display: flex;
   gap: var(--sg-space-0d5rem);
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-space-0d8rem);
 }
 </style>

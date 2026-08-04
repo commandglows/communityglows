@@ -95,7 +95,7 @@
             :style="selectedNetworks.has(net.id) ? { background: net.color, borderColor: net.color } : {}"
             @click="toggleNetwork(net.id)"
           >
-            <i :class="net.icon" />
+            <SgIcon :icon="net.icon" />
             <span>{{ net.label }}</span>
           </button>
         </div>
@@ -124,35 +124,35 @@
         <h2 class="step-title">{{ $t('onboarding.features_title') }}</h2>
         <div class="features-list">
           <div class="feature-item">
-            <i class="pi pi-users feature-icon" />
+            <SgIcon icon="pi pi-users feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_profiles') }}</strong>
               <p>{{ $t('onboarding.feature_profiles_desc') }}</p>
             </div>
           </div>
           <div class="feature-item">
-            <i class="pi pi-th-large feature-icon" />
+            <SgIcon icon="pi pi-th-large feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_customize') }}</strong>
               <p>{{ $t('onboarding.feature_customize_desc') }}</p>
             </div>
           </div>
           <div class="feature-item">
-            <i class="pi pi-palette feature-icon" />
+            <SgIcon icon="pi pi-palette feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_focus') }}</strong>
               <p>{{ $t('onboarding.feature_focus_desc') }}</p>
             </div>
           </div>
           <div class="feature-item">
-            <i class="pi pi-heart feature-icon" />
+            <SgIcon icon="pi pi-heart feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_friends') }}</strong>
               <p>{{ $t('onboarding.feature_friends_desc') }}</p>
             </div>
           </div>
           <div class="feature-item">
-            <i class="pi pi-lock feature-icon" />
+            <SgIcon icon="pi pi-lock feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_privacy') }}</strong>
               <p>{{ $t('onboarding.feature_privacy_desc') }}</p>
@@ -257,240 +257,240 @@ function finish() {
 .onboarding-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: var(--sg-layer-10000);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-ground);
-  padding: 1rem;
+  background: var(--sg-color-surface-muted);
+  padding: var(--sg-space-1rem);
 }
 
 .onboarding-card {
-  width: 100%;
-  max-width: 480px;
+  width: var(--sg-size-100pct);
+  max-width: var(--sg-size-480px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--sg-space-1d5rem);
 }
 
 .onboarding-dots {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--surface-border);
-  transition: background 0.2s, transform 0.2s;
+  width: var(--sg-size-8px);
+  height: var(--sg-size-8px);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-border);
+  transition: var(--sg-motion-background-0d15s), var(--sg-motion-transform-0d15s);
 }
 
 .dot.active {
-  background: var(--primary-color);
-  transform: scale(1.3);
+  background: var(--sg-color-action);
+  transform: var(--sg-motion-scale-1d3);
 }
 
 .dot.done {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   opacity: 0.5;
 }
 
 .onboarding-step {
-  width: 100%;
+  width: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  animation: fadeIn 0.25s ease;
+  gap: var(--sg-space-1rem);
+  animation: fadeIn var(--sg-motion-all-0d25s-ease);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(var(--sg-size-8px)); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .welcome-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
-  background: var(--primary-color);
+  width: var(--sg-size-80px);
+  height: var(--sg-size-80px);
+  border-radius: var(--sg-radius-20px);
+  background: var(--sg-color-action);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--sg-space-0d5rem);
 }
 
 .welcome-logo {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  width: var(--sg-size-56px);
+  height: var(--sg-size-56px);
+  border-radius: var(--sg-radius-12px);
 }
 
 .step-title {
-  font-size: 1.5rem;
+  font-size: var(--sg-font-size-1d5rem);
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   margin: 0;
   text-align: center;
 }
 
 .step-desc {
-  font-size: 0.95rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d95rem);
+  color: var(--sg-color-text-muted);
   text-align: center;
   margin: 0;
-  line-height: 1.5;
-  max-width: 360px;
+  line-height: var(--sg-line-height-1d5);
+  max-width: var(--sg-size-360px);
 }
 
 /* Profile setup */
 .profile-setup {
-  width: 100%;
+  width: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .emoji-picker {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   justify-content: center;
-  max-width: 320px;
+  max-width: var(--sg-size-320px);
 }
 
 .emoji-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 2px solid var(--surface-border);
-  background: var(--surface-card);
-  font-size: 1.3rem;
+  width: var(--sg-size-44px);
+  height: var(--sg-size-44px);
+  border-radius: var(--sg-radius-12px);
+  border: var(--sg-border-2px) solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  font-size: var(--sg-font-size-1d3rem);
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.15s;
+  transition: var(--sg-motion-borderneg-color-0d15s), var(--sg-motion-transform-0d15s);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .emoji-btn.selected {
-  border-color: var(--primary-color);
-  transform: scale(1.1);
+  border-color: var(--sg-color-action);
+  transform: var(--sg-motion-scale-1d1);
 }
 
 .profile-input {
-  width: 100%;
-  max-width: 300px;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  border: 1.5px solid var(--surface-border);
-  background: var(--surface-card);
-  color: var(--text-color);
-  font-size: 1rem;
+  width: var(--sg-size-100pct);
+  max-width: var(--sg-size-300px);
+  padding: var(--sg-space-0d75rem) var(--sg-space-1rem);
+  border-radius: var(--sg-radius-12px);
+  border: var(--sg-size-1d5px) solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-1rem);
   text-align: center;
   outline: none;
-  transition: border-color 0.15s;
+  transition: var(--sg-motion-borderneg-color-0d15s);
 }
 
 .profile-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--sg-color-action);
 }
 
 /* Network grid */
 .network-grid {
-  width: 100%;
+  width: var(--sg-size-100pct);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   justify-content: center;
-  max-height: 45vh;
+  max-height: var(--sg-size-45vh);
   overflow-y: auto;
-  padding: 0.25rem;
+  padding: var(--sg-space-0d25rem);
 }
 
 .network-chip {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.85rem;
-  border-radius: 20px;
-  border: 1.5px solid var(--surface-border);
-  background: var(--surface-card);
-  color: var(--text-color);
-  font-size: 0.85rem;
+  gap: var(--sg-space-0d4rem);
+  padding: var(--sg-space-0d5rem) var(--sg-space-0d85rem);
+  border-radius: var(--sg-radius-20px);
+  border: var(--sg-size-1d5px) solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d85rem);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: var(--sg-motion-all-0d15s);
 }
 
 .network-chip.selected {
-  color: #fff;
+  color: var(--sg-color-text-on-action);
   border-color: transparent;
 }
 
 .network-chip i {
-  font-size: 1rem;
+  font-size: var(--sg-font-size-1rem);
 }
 
 /* Features */
 .features-list {
-  width: 100%;
+  width: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 
 .feature-item {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
   align-items: flex-start;
-  padding: 0.75rem;
-  border-radius: 12px;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  padding: var(--sg-space-0d75rem);
+  border-radius: var(--sg-radius-12px);
+  background: var(--sg-color-surface-raised);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
 }
 
 .feature-icon {
-  font-size: 1.2rem;
-  color: var(--primary-color);
-  margin-top: 0.15rem;
+  font-size: var(--sg-font-size-1d2rem);
+  color: var(--sg-color-action);
+  margin-top: var(--sg-space-0d15rem);
   flex-shrink: 0;
 }
 
 .feature-item strong {
-  font-size: 0.9rem;
-  color: var(--text-color);
+  font-size: var(--sg-font-size-0d9rem);
+  color: var(--sg-color-text);
 }
 
 .feature-item p {
-  font-size: 0.8rem;
-  color: var(--text-color-secondary);
-  margin: 0.2rem 0 0;
-  line-height: 1.4;
+  font-size: var(--sg-font-size-0d8rem);
+  color: var(--sg-color-text-muted);
+  margin: var(--sg-space-0d2rem) 0 0;
+  line-height: var(--sg-line-height-1d4);
 }
 
 /* Actions */
 .step-actions {
   display: flex;
-  gap: 0.75rem;
-  width: 100%;
-  max-width: 320px;
-  margin-top: 0.5rem;
+  gap: var(--sg-space-0d75rem);
+  width: var(--sg-size-100pct);
+  max-width: var(--sg-size-320px);
+  margin-top: var(--sg-space-0d5rem);
 }
 
 .btn-primary {
   flex: 1;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
+  padding: var(--sg-space-0d75rem) var(--sg-space-1d5rem);
+  border-radius: var(--sg-radius-12px);
   border: none;
-  background: var(--primary-color);
-  color: #fff;
-  font-size: 1rem;
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-font-size-1rem);
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: var(--sg-motion-opacity-0d15s);
 }
 
 .btn-primary:active {
@@ -498,29 +498,29 @@ function finish() {
 }
 
 .btn-ghost {
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  border: 1.5px solid var(--surface-border);
+  padding: var(--sg-space-0d75rem) var(--sg-space-1d25rem);
+  border-radius: var(--sg-radius-12px);
+  border: var(--sg-size-1d5px) solid var(--sg-color-border);
   background: transparent;
-  color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d9rem);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: var(--sg-motion-background-0d15s);
 }
 
 .btn-ghost:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .skip-link {
   background: none;
   border: none;
-  color: var(--text-color-secondary);
-  font-size: 0.85rem;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d85rem);
   cursor: pointer;
-  padding: 0.5rem;
+  padding: var(--sg-space-0d5rem);
   opacity: 0.7;
-  transition: opacity 0.15s;
+  transition: var(--sg-motion-opacity-0d15s);
 }
 
 .skip-link:hover {

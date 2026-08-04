@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import { useRoute } from 'vue-router'
 import { useContextualTasksStore, type ContextualTask, type ContextualTaskInput, type ContextualTaskStatus } from '@/stores/contextualTasks'
 import { sanitizeContextualUrl } from '@/services/contextualTasksService'
@@ -14,6 +16,7 @@ const profilesStore = useProfilesStore()
 const webviewStore = useWebviewStore()
 const showForm = ref(false)
 const notice = ref<string | null>(null)
+const isTasksCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.tasksCompact}px)`)
 
 const initialUrl = computed(() => typeof route.query.url === 'string' ? route.query.url : '')
 const tasksByStatus = computed<Record<ContextualTaskStatus, ContextualTask[]>>(() => ({
@@ -66,23 +69,40 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="tasks-view">
+  <main class="tasks-view" :class="{ 'is-compact': isTasksCompact }">
     <header class="tasks-header">
       <div>
         <p class="tasks-eyebrow">Organisation communautaire</p>
         <h1>Tâches contextuelles</h1>
         <p class="tasks-description">Note ce que tu veux faire et garde le lien vers l’endroit où agir. SocialGlowz ne lit pas la page.</p>
       </div>
-      <button class="btn btn-primary" type="button" @click="showForm = !showForm">
-        <i class="pi pi-plus" />
+      <button
+        class="btn btn-primary"
+        type="button"
+        @click="showForm = !showForm"
+      >
+        <SgIcon icon="pi pi-plus" />
         Nouvelle tâche
       </button>
     </header>
 
-    <p v-if="notice" class="tasks-notice" role="status">{{ notice }}</p>
+    <p
+      v-if="notice"
+      class="tasks-notice"
+      role="status"
+    >
+      {{ notice }}
+    </p>
 
-    <section v-if="showForm" class="tasks-form-panel">
-      <TaskForm :initial-url="initialUrl" @submit="createTask" @cancel="showForm = false" />
+    <section
+      v-if="showForm"
+      class="tasks-form-panel"
+    >
+      <TaskForm
+        :initial-url="initialUrl"
+        @submit="createTask"
+        @cancel="showForm = false"
+      />
     </section>
 
     <TaskBoard
@@ -122,40 +142,38 @@ onMounted(() => {
 }
 
 .tasks-eyebrow {
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-size: var(--sg-crm-secondary-copy-size);
   font-weight: 600;
 }
 
 .tasks-description {
   max-width: var(--sg-tasks-description-max-width);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .tasks-notice {
   margin: 0;
   padding: var(--sg-crm-toolbar-padding);
-  color: var(--text-color-secondary);
-  background: var(--surface-ground);
+  color: var(--sg-color-text-muted);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-crm-card-radius);
 }
 
 .tasks-form-panel {
   padding: var(--sg-crm-toolbar-padding);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
 }
 
-@media (max-width: 768px) {
-  .tasks-view {
-    height: auto;
-    min-height: var(--sg-app-viewport-height);
-    overflow: auto;
-  }
+.tasks-view.is-compact {
+  height: auto;
+  min-height: var(--sg-app-viewport-height);
+  overflow: auto;
+}
 
-  .tasks-header {
-    flex-direction: column;
-  }
+.tasks-view.is-compact .tasks-header {
+  flex-direction: column;
 }
 </style>

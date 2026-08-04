@@ -46,9 +46,17 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
           @dragstart="(event) => event.dataTransfer?.setData('text/plain', task.id)"
         >
           <div class="task-card-header">
-            <span class="task-priority" :class="`task-priority--${task.priority}`">{{ task.priority }}</span>
-            <button class="task-icon-button" type="button" aria-label="Supprimer la tâche" @click="emit('remove', task.id)">
-              <i class="pi pi-trash" />
+            <span
+              class="task-priority"
+              :class="`task-priority--${task.priority}`"
+            >{{ task.priority }}</span>
+            <button
+              class="task-icon-button"
+              type="button"
+              aria-label="Supprimer la tâche"
+              @click="emit('remove', task.id)"
+            >
+              <SgIcon icon="pi pi-trash" />
             </button>
           </div>
           <h4>{{ task.title }}</h4>
@@ -57,15 +65,30 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
             <span>{{ task.host }}</span>
             <span v-if="task.dueDate">{{ task.dueDate }}</span>
           </div>
-          <div v-if="task.tags.length" class="task-tags">
-            <span v-for="tag in task.tags" :key="tag">#{{ tag }}</span>
+          <div
+            v-if="task.tags.length"
+            class="task-tags"
+          >
+            <span
+              v-for="tag in task.tags"
+              :key="tag"
+            >#{{ tag }}</span>
           </div>
-          <button class="btn btn-outline btn-sm task-open-button" type="button" @click="emit('open', task)">
+          <button
+            class="btn btn-outline btn-sm task-open-button"
+            type="button"
+            @click="emit('open', task)"
+          >
             Ouvrir le contexte
           </button>
         </article>
 
-        <p v-if="!tasksByStatus[column.id].length" class="task-column-empty">Aucune tâche</p>
+        <p
+          v-if="!tasksByStatus[column.id].length"
+          class="task-column-empty"
+        >
+          Aucune tâche
+        </p>
       </div>
     </section>
   </div>
@@ -83,7 +106,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 .task-column {
   min-width: 0;
   min-height: var(--sg-tasks-column-min-height);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-crm-card-radius);
   display: flex;
   flex-direction: column;
@@ -94,8 +117,8 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   align-items: center;
   justify-content: space-between;
   padding: var(--sg-crm-toolbar-padding);
-  background: var(--surface-card);
-  border-bottom: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .task-column-header h3 {
@@ -105,7 +128,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 
 .task-count,
 .task-tags span {
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-size: var(--sg-crm-secondary-copy-size);
 }
 
@@ -122,8 +145,8 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   flex-direction: column;
   gap: var(--sg-sidebar-subsection-spacing);
   padding: var(--sg-crm-toolbar-padding);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
 }
 
@@ -142,7 +165,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 
 .task-card p,
 .task-card-meta {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-crm-secondary-copy-size);
 }
 
@@ -152,13 +175,13 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 }
 
 .task-priority--high { color: var(--red-500); }
-.task-priority--normal { color: var(--primary-color); }
-.task-priority--low { color: var(--text-color-secondary); }
+.task-priority--normal { color: var(--sg-color-action); }
+.task-priority--low { color: var(--sg-color-text-muted); }
 
 .task-icon-button {
   border: 0;
   background: transparent;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   cursor: pointer;
 }
 
@@ -173,7 +196,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 }
 
 .task-column-empty {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   text-align: center;
 }
 

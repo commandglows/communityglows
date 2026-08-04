@@ -273,7 +273,7 @@ Appliquer le renommage dans l'ordre suivant : inventaire et classification des o
   - Validate with : billing tests, existing entitlement lookup/redeem/revoke/refund tests and bridge contract smoke.
 
 - [ ] Tâche 9 : Update extension manifests, CI workflows, release artifacts and operator-facing active docs.
-  - Fichier : `manifest*.config.ts`, `.github/workflows/*.yml`, `SHIPFLOW.md`, `ecosystem.config.cjs`, `site/package.json`, `site/package-lock.json`, active technical/editorial/workflow docs.
+  - Fichier : `manifest*.config.ts`, `.github/workflows/*.yml`, `shipglows_data/workflow/tauri-mobile.md`, `ecosystem.config.cjs`, `site/package.json`, `site/package-lock.json`, active technical/editorial/workflow docs.
   - Action : Update display names, release labels, artifact labels, public package names and current instructions; retain technical IDs and historical artifact references explicitly.
   - User story link : makes every distribution surface recognizable as CommunityGlows.
   - Depends on : Tâche 3, Tâche 5 and Tâche 6.

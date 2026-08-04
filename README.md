@@ -108,8 +108,8 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 ## Stack technique
 
-- **App Windows/Tauri** : Vue 3, Reka UI, wrappers SocialGlowz, tokens CSS sémantiques, Notivue, Pinia
-- **Surfaces extension historiques** : Vue 3 avec des consommateurs PrimeVue/PrimeFlex/PrimeIcons encore conservés selon l'entrée; PrimeVue n'est plus chargé par le runtime Windows/Tauri
+- **App Windows/Tauri** : Vue 3, Reka UI, wrappers SocialGlowz, tokens CSS sémantiques, Notivue, Pinia; PrimeIcons reste chargé comme compatibilité visuelle temporaire, tandis que PrimeFlex n'est plus importé par cette entrée
+- **Surfaces extension historiques** : Vue 3 avec des consommateurs PrimeVue/PrimeFlex/PrimeIcons encore conservés selon l'entrée; les composants et le bootstrap PrimeVue ne sont plus chargés par le runtime Windows/Tauri
 - **Site** : Astro/Tailwind avec un porteur de tokens distinct; l'identité est commune mais les tokens ne sont pas encore générés depuis une source unique
 - **Auth** : Convex Auth (`@auth/core`, `@convex-dev/auth`)
 - **Backend** : Convex (serverless)

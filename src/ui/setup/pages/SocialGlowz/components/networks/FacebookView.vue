@@ -27,7 +27,7 @@
                   <SocialAvatar 
                     :user="story.author"
                     size="normal"
-                    :border-color="story.viewed ? 'var(--surface-border)' : 'var(--primary-color)'"
+                    :border-color="story.viewed ? 'var(--sg-color-border)' : 'var(--sg-color-action)'"
                     border-width="3px"
                   />
                   <span class="story-author">{{ story.author.name }}</span>
@@ -171,7 +171,7 @@ const togglePostComments = (postId: string) => {
 <style scoped>
 .facebook-view {
   height: var(--sg-size-100pct);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   padding-top: var(--sg-space-4rem);
 }
 
@@ -193,7 +193,7 @@ const togglePostComments = (postId: string) => {
 }
 
 .stories-section {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
 }
@@ -258,7 +258,7 @@ const togglePostComments = (postId: string) => {
 }
 
 .right-sidebar {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
   height: var(--sg-size-fitneg-content);
@@ -273,7 +273,7 @@ const togglePostComments = (postId: string) => {
 .online-friends h4 {
   margin: var(--sg-space-0-0-0d5rem);
   padding-bottom: var(--sg-space-0d5rem);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .friend-item {
@@ -286,7 +286,7 @@ const togglePostComments = (postId: string) => {
 }
 
 .friend-item:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .friend-name {

@@ -4,7 +4,7 @@ import { pinia } from "@/utils/pinia"
 import { appRouter } from "@/utils/router"
 import { createApp } from "vue"
 import App from "./app.vue"
-import "@/assets/base.css"
+import "@/ui/extension-tokens.css"
 import "./index.scss"
 import { applyDisableCopyProtection } from "@/utils/disableCopyProtection"
 

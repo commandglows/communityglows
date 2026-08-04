@@ -36,7 +36,7 @@
           v-if="showLikes && comment.likes > 0"
           class="likes-count"
         >
-          <i class="pi pi-thumbs-up"></i>
+          <SgIcon icon="pi pi-thumbs-up" />
           <span>{{ comment.likes }}</span>
         </div>
       </div>
@@ -171,7 +171,7 @@ const handleReply = () => {
 }
 
 .comment-bubble {
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-radius-18px);
   padding: var(--sg-space-0d75rem-1rem);
   margin-bottom: var(--sg-space-0d25rem);
@@ -196,7 +196,7 @@ const handleReply = () => {
 }
 
 .comment-time {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d85rem);
 }
 
@@ -205,7 +205,7 @@ const handleReply = () => {
   right: 0;
   bottom: 0;
   transform: translateY(50%);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-1rem);
   padding: var(--sg-space-0d25rem-0d5rem);
   font-size: var(--sg-font-size-0d85rem);
@@ -215,8 +215,8 @@ const handleReply = () => {
   box-shadow: var(--card-shadow);
 }
 
-.likes-count i {
-  color: var(--primary-color);
+.likes-count :deep(.sg-icon) {
+  color: var(--sg-color-action);
 }
 
 .is-reply {

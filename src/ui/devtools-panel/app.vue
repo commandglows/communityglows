@@ -3,10 +3,10 @@ import { Notivue, Notification } from 'notivue'
 </script>
 
 <template>
-  <div>
+  <div class="ext-root-shell">
     <AppHeader />
 
-    <div class="p-4 prose">
+    <div class="ext-page-shell ext-prose">
       <RouterView />
     </div>
 

@@ -43,14 +43,18 @@ function createTask(input: Parameters<typeof tasksStore.create>[0]) {
 </script>
 
 <template>
-  <section class="task-capture-panel">
-    <div class="task-capture-heading">
+  <section class="ext-task-capture-panel">
+    <div class="ext-task-capture-heading">
       <div>
         <h2>Créer une tâche depuis cet onglet</h2>
         <p>Seule l’URL HTTPS est capturée après ton clic. Aucun contenu de page n’est lu.</p>
       </div>
-      <button class="btn btn-secondary" type="button" @click="capture">
-        <i class="pi pi-link" />
+      <button
+        class="ext-btn ext-btn--small ext-btn--secondary"
+        type="button"
+        @click="capture"
+      >
+        <SgIcon icon="pi pi-link" />
         Utiliser l’onglet actif
       </button>
     </div>
@@ -63,23 +67,35 @@ function createTask(input: Parameters<typeof tasksStore.create>[0]) {
       @cancel="formVisible = false"
     />
 
-    <p v-if="message" class="task-capture-message" role="status">{{ message }}</p>
-    <p v-if="error" class="task-capture-error" role="alert">{{ error }}</p>
+    <p
+      v-if="message"
+      class="ext-task-capture-message"
+      role="status"
+    >
+      {{ message }}
+    </p>
+    <p
+      v-if="error"
+      class="ext-task-capture-error"
+      role="alert"
+    >
+      {{ error }}
+    </p>
   </section>
 </template>
 
 <style scoped>
-.task-capture-panel {
+.ext-task-capture-panel {
   display: flex;
   flex-direction: column;
   gap: var(--sg-sidebar-form-gap);
   padding: var(--sg-crm-toolbar-padding);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-crm-card-radius);
 }
 
-.task-capture-heading {
+.ext-task-capture-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -87,19 +103,19 @@ function createTask(input: Parameters<typeof tasksStore.create>[0]) {
   gap: var(--sg-sidebar-form-gap);
 }
 
-.task-capture-heading h2,
-.task-capture-heading p,
-.task-capture-message,
-.task-capture-error {
+.ext-task-capture-heading h2,
+.ext-task-capture-heading p,
+.ext-task-capture-message,
+.ext-task-capture-error {
   margin: 0;
 }
 
-.task-capture-heading p,
-.task-capture-message,
-.task-capture-error {
-  color: var(--text-color-secondary);
+.ext-task-capture-heading p,
+.ext-task-capture-message,
+.ext-task-capture-error {
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-crm-secondary-copy-size);
 }
 
-.task-capture-error { color: var(--red-500); }
+.ext-task-capture-error { color: var(--sg-color-danger); }
 </style>

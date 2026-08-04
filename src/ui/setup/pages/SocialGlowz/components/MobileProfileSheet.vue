@@ -28,7 +28,7 @@
                 class="sheet-close-btn"
                 @click="closeSheet"
               >
-                <i class="pi pi-times" />
+                <SgIcon icon="pi pi-times" />
               </button>
             </div>
           </div>
@@ -55,9 +55,9 @@
                   v-else
                   class="sheet-avatar-emoji"
                 >{{ profile.emoji }}</span>
-                <i
+                <SgIcon
                   v-if="profile.id === profilesStore.activeProfileId"
-                  class="pi pi-check sheet-avatar-check"
+                  icon="pi pi-check sheet-avatar-check"
                 />
               </div>
 
@@ -93,21 +93,21 @@
                   :title="$t('profile.rename_action')"
                   @click.stop="startEdit(profile)"
                 >
-                  <i class="pi pi-pencil" />
+                  <SgIcon icon="pi pi-pencil" />
                 </button>
                 <button
                   class="sheet-action"
                   :title="$t('profile.avatar_action')"
                   @click.stop="pickAvatar(profile.id)"
                 >
-                  <i class="pi pi-camera" />
+                  <SgIcon icon="pi pi-camera" />
                 </button>
                 <button
                   class="sheet-action"
                   :title="$t('profile.clear_cookies_action')"
                   @click.stop="clearCookiesProfileId = clearCookiesProfileId === profile.id ? null : profile.id"
                 >
-                  <i class="pi pi-eraser" />
+                  <SgIcon icon="pi pi-eraser" />
                 </button>
                 <button
                   v-if="profilesStore.profiles.length > 1"
@@ -115,7 +115,7 @@
                   :title="$t('common.delete')"
                   @click.stop="deleteProfile(profile.id)"
                 >
-                  <i class="pi pi-trash" />
+                  <SgIcon icon="pi pi-trash" />
                 </button>
               </div>
             </div>
@@ -127,14 +127,14 @@
             class="clear-cookies-section"
           >
             <div class="clear-cookies-header">
-              <i class="pi pi-trash" />
+              <SgIcon icon="pi pi-trash" />
               <span>{{ $t('profile.clear_cookies_header', { name: profilesStore.profiles.find(p => p.id === clearCookiesProfileId)?.name }) }}</span>
               <button
                 class="sheet-close-btn"
                 style="margin-left:auto;"
                 @click="clearCookiesProfileId = null"
               >
-                <i class="pi pi-times" />
+                <SgIcon icon="pi pi-times" />
               </button>
             </div>
             <div class="clear-cookies-list">
@@ -164,9 +164,9 @@
                   size="0.9rem"
                   class="clear-cookie-icon"
                 />
-                <i
+                <SgIcon
                   v-else
-                  :class="nw.icon"
+                  :icon="nw.icon"
                   class="clear-cookie-icon"
                 />
                 <span class="clear-cookie-label">{{ nw.label }}</span>
@@ -174,11 +174,11 @@
                   v-if="clearedNetworks[`${clearCookiesProfileId}:${nw.id}`]"
                   class="clear-cookie-done"
                 >
-                  <i class="pi pi-check" />
+                  <SgIcon icon="pi pi-check" />
                 </span>
-                <i
+                <SgIcon
                   v-else
-                  class="pi pi-eraser clear-cookie-action"
+                  icon="pi pi-eraser clear-cookie-action"
                 />
               </button>
             </div>
@@ -202,13 +202,13 @@
                 class="add-confirm-btn"
                 @click="confirmAdd"
               >
-                <i class="pi pi-check" />
+                <SgIcon icon="pi pi-check" />
               </button>
               <button
                 class="add-cancel-btn"
                 @click="cancelAdd"
               >
-                <i class="pi pi-times" />
+                <SgIcon icon="pi pi-times" />
               </button>
             </div>
             <button
@@ -216,7 +216,7 @@
               class="add-profile-btn"
               @click="startAdd"
             >
-              <i class="pi pi-plus" />
+              <SgIcon icon="pi pi-plus" />
               <span>{{ $t('profile.add_new_button') }}</span>
             </button>
           </div>
@@ -318,7 +318,7 @@ let dragResetTimer: number | null = null
 
 const sheetStyle = computed(() => ({
   '--sheet-drag-offset': `${dragOffset.value}px`,
-  transition: isDragging.value ? 'none' : 'transform 250ms ease',
+  transition: isDragging.value ? 'none' : 'var(--sg-mobile-sheet-drag-motion)',
 }))
 
 function clearDragResetTimer() {
@@ -529,18 +529,18 @@ onUnmounted(() => {
 .sheet-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 1000;
+  background: var(--sg-color-scrim-45);
+  z-index: var(--sg-layer-1000);
   display: flex;
   align-items: flex-end;
 }
 
 .profile-sheet {
-  width: 100%;
-  background: var(--surface-card);
-  border-radius: 20px 20px 0 0;
+  width: var(--sg-size-100pct);
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-nudge-sheet-radius);
   padding-bottom: env(safe-area-inset-bottom, 16px);
-  max-height: 85vh;
+  max-height: var(--sg-nudge-sheet-max-height);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -548,11 +548,11 @@ onUnmounted(() => {
 }
 
 .sheet-handle {
-  width: 2.5rem;
-  height: 4px;
-  background: var(--surface-border);
-  border-radius: 2px;
-  margin: 0.75rem auto 0;
+  width: var(--sg-nudge-handle-width);
+  height: var(--sg-nudge-handle-height);
+  background: var(--sg-color-border);
+  border-radius: var(--sg-nudge-handle-radius);
+  margin: var(--sg-space-0d75rem) auto 0;
   flex-shrink: 0;
 }
 
@@ -566,84 +566,84 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem 0.5rem;
+  padding: var(--sg-space-0d75rem-1d25rem-0d5rem);
   flex-shrink: 0;
 }
 
 .sheet-title {
-  font-size: 1rem;
+  font-size: var(--sg-font-size-1rem);
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .sheet-close-btn {
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border: none;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  border-radius: var(--sg-radius-50pct);
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-color-secondary);
-  font-size: 0.75rem;
-  transition: background-color 0.12s;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d75rem);
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .sheet-close-btn:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 /* Profile list */
 .sheet-profiles {
   flex: 1;
   overflow-y: auto;
-  padding: 0 0.75rem;
+  padding: 0 var(--sg-space-0d75rem);
 }
 
 .sheet-profile-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0.5rem;
-  border-radius: 12px;
-  transition: background-color 0.12s;
-  margin-bottom: 0.25rem;
+  gap: var(--sg-space-0d75rem);
+  padding: var(--sg-space-0d6rem) var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-12px);
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
+  margin-bottom: var(--sg-space-0d25rem);
 }
 
 .sheet-profile-row:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .sheet-profile-row--active {
-  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  background: color-mix(in srgb, var(--sg-color-action) 8%, transparent);
 }
 
 .sheet-avatar {
   position: relative;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background: var(--surface-ground);
+  width: var(--sg-avatar-size-lg);
+  height: var(--sg-avatar-size-lg);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-surface-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   cursor: pointer;
   overflow: hidden;
-  font-size: 1.4rem;
+  font-size: var(--sg-font-size-1d4rem);
 }
 
 .sheet-avatar-img {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   object-fit: cover;
 }
 
 .sheet-avatar-emoji {
-  font-size: 1.4rem;
-  line-height: 1;
+  font-size: var(--sg-font-size-1d4rem);
+  line-height: var(--sg-line-height-1);
 }
 
 .sheet-avatar-check {
@@ -652,52 +652,52 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--primary-color) 75%, transparent);
-  color: #fff;
-  font-size: 0.9rem;
-  border-radius: 50%;
+  background: color-mix(in srgb, var(--sg-color-action) 75%, transparent);
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-font-size-0d9rem);
+  border-radius: var(--sg-radius-50pct);
 }
 
 .sheet-profile-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: var(--sg-space-0d1rem);
   cursor: pointer;
   overflow: hidden;
 }
 
 .sheet-profile-name {
-  font-size: 0.95rem;
+  font-size: var(--sg-font-size-0d95rem);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .active-label {
-  font-size: 0.7rem;
-  color: var(--primary-color);
+  font-size: var(--sg-font-size-0d7rem);
+  color: var(--sg-color-action);
   font-weight: 600;
 }
 
 .name-edit-input {
   flex: 1;
-  font-size: 0.9rem;
-  background: var(--surface-ground);
-  border: 1.5px solid var(--primary-color);
-  border-radius: 6px;
-  padding: 0.3rem 0.5rem;
-  color: var(--text-color);
+  font-size: var(--sg-font-size-0d9rem);
+  background: var(--sg-color-surface-muted);
+  border: 1.5px solid var(--sg-color-action);
+  border-radius: var(--sg-radius-6px);
+  padding: var(--sg-space-0d3rem) var(--sg-space-0d5rem);
+  color: var(--sg-color-text);
   outline: none;
-  width: 100%;
+  width: var(--sg-size-100pct);
 }
 
 /* Action buttons */
 .sheet-profile-actions {
   display: flex;
-  gap: 0.15rem;
+  gap: var(--sg-space-0d15rem);
   flex-shrink: 0;
 }
 
@@ -705,158 +705,158 @@ onUnmounted(() => {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-color-secondary);
-  padding: 0.4rem;
-  border-radius: 8px;
+  color: var(--sg-color-text-muted);
+  padding: var(--sg-space-0d4rem);
+  border-radius: var(--sg-radius-8px);
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
-  transition: color 0.12s, background-color 0.12s;
+  font-size: var(--sg-font-size-0d85rem);
+  transition: var(--sg-motion-color-0d12s-backgroundneg-color-0d12s);
 }
 
 .sheet-action:active {
-  background: var(--surface-hover);
-  color: var(--text-color);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
 }
 
 .sheet-action--danger:active {
-  color: #ef4444;
+  color: var(--sg-color-danger);
 }
 
 /* Clear cookies section */
 .clear-cookies-section {
-  border-top: 1px solid var(--surface-border);
-  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--sg-color-border);
+  padding: var(--sg-space-0d5rem-0d75rem);
 }
 
 .clear-cookies-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
+  gap: var(--sg-space-0d5rem);
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 600;
-  color: var(--text-color);
-  padding: 0.25rem 0.25rem 0.5rem;
+  color: var(--sg-color-text);
+  padding: var(--sg-space-0d25rem) var(--sg-space-0d25rem) var(--sg-space-0d5rem);
 }
 
 .clear-cookies-header i:first-child {
-  font-size: 0.85rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d85rem);
+  color: var(--sg-color-text-muted);
 }
 
 .clear-cookies-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.35rem;
+  gap: var(--sg-space-0d35rem);
 }
 
 .clear-cookie-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.6rem;
-  background: var(--surface-ground);
-  border: 1px solid var(--surface-border);
-  border-radius: 10px;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d5rem) var(--sg-space-0d6rem);
+  background: var(--sg-color-surface-muted);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-10px);
   cursor: pointer;
-  transition: background-color 0.12s;
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .clear-cookie-row:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .clear-cookie-icon {
-  font-size: 0.9rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d9rem);
+  color: var(--sg-color-text-muted);
 }
 
 .clear-cookie-label {
   flex: 1;
-  font-size: 0.78rem;
+  font-size: var(--sg-font-size-0d78rem);
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   text-align: left;
 }
 
 .clear-cookie-action {
-  font-size: 0.75rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d75rem);
+  color: var(--sg-color-text-muted);
 }
 
 .clear-cookie-done {
-  color: #22c55e;
-  font-size: 0.8rem;
+  color: var(--sg-color-success);
+  font-size: var(--sg-font-size-0d8rem);
 }
 
 /* Footer */
 .sheet-footer {
-  border-top: 1px solid var(--surface-border);
-  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--sg-color-border);
+  padding: var(--sg-space-0d6rem) var(--sg-space-0d75rem);
   flex-shrink: 0;
 }
 
 .add-profile-form {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--sg-space-0d4rem);
 }
 
 .add-profile-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.7rem 0.75rem;
+  gap: var(--sg-space-0d5rem);
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d7rem) var(--sg-space-0d75rem);
   background: none;
-  border: 1.5px dashed var(--surface-border);
-  border-radius: 10px;
+  border: 1.5px dashed var(--sg-color-border);
+  border-radius: var(--sg-radius-10px);
   cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--text-color-secondary);
-  transition: background-color 0.12s, color 0.12s, border-color 0.12s;
+  font-size: var(--sg-font-size-0d9rem);
+  color: var(--sg-color-text-muted);
+  transition: var(--sg-motion-color-0d12s-backgroundneg-color-0d12s), border-color 0.12s;
 }
 
 .add-profile-btn:active {
-  background: var(--surface-hover);
-  color: var(--text-color);
-  border-color: var(--primary-color);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
+  border-color: var(--sg-color-action);
 }
 
 .add-confirm-btn,
 .add-cancel-btn {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 8px;
+  width: var(--sg-size-2d2rem);
+  height: var(--sg-size-2d2rem);
+  border-radius: var(--sg-radius-8px);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   flex-shrink: 0;
 }
 
 .add-confirm-btn {
-  background: var(--primary-color);
-  color: #fff;
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
 }
 
 .add-cancel-btn {
-  background: var(--surface-ground);
-  color: var(--text-color-secondary);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
 }
 
 /* ─── Sheet transition ───────────────────────────────────────── */
 
 .sheet-enter-active,
 .sheet-leave-active {
-  transition: opacity 0.25s ease;
+  transition: var(--sg-motion-opacity-0d25s-ease);
 }
 
 .sheet-enter-active .profile-sheet,
 .sheet-leave-active .profile-sheet {
-  transition: transform 0.25s ease;
+  transition: var(--sg-motion-transform-0d25s-ease);
 }
 
 .sheet-enter-from,

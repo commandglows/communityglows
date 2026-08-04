@@ -16,6 +16,7 @@ declare module 'vue' {
     BackupRestore: typeof import('./../components/BackupRestore.vue')['default']
     BillingAccessPanel: typeof import('./../components/BillingAccessPanel.vue')['default']
     CreatePost: typeof import('./../components/feed/CreatePost.vue')['default']
+    CrmSidebarWidget: typeof import('./../components/CrmSidebarWidget.vue')['default']
     CrmToolbar: typeof import('./../components/CrmToolbar.vue')['default']
     DashboardFilters: typeof import('./../components/DashboardFilters.vue')['default']
     DesktopControlBar: typeof import('./../components/DesktopControlBar.vue')['default']

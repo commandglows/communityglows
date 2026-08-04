@@ -21,13 +21,10 @@
       >
         {{ profilesStore.activeProfile?.name ?? 'No profile' }}
       </span>
-      <i
+      <SgIcon
         v-if="!iconsOnly"
-        class="pi chevron"
-        :class="[
-          menuDirection === 'up' ? 'pi-chevron-up' : 'pi-chevron-down',
-          { rotated: menuVisible },
-        ]"
+        icon="pi"
+        :class="[ menuDirection === 'up' ? 'pi-chevron-up' : 'pi-chevron-down', { rotated: menuVisible }, ]"
       />
     </div>
 
@@ -79,7 +76,7 @@
             aria-label="Rename profile"
             @click.stop="startEdit(profile)"
           >
-            <i class="pi pi-pencil" />
+            <SgIcon icon="pi pi-pencil" />
           </button>
           <button
             v-if="profilesStore.profiles.length > 1"
@@ -87,7 +84,7 @@
             aria-label="Delete profile"
             @click.stop="deleteProfile(profile.id)"
           >
-            <i class="pi pi-trash" />
+            <SgIcon icon="pi pi-trash" />
           </button>
         </div>
       </div>
@@ -112,7 +109,7 @@
           class="add-profile-btn"
           @click="startAdd"
         >
-          <i class="pi pi-plus" />
+          <SgIcon icon="pi pi-plus" />
           <span>Add profile</span>
         </button>
       </div>
@@ -235,12 +232,12 @@ onUnmounted(() => {
 .profile-switcher {
   position: relative;
   padding: var(--sg-space-0d5rem-0d5rem-0d75rem);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
   margin-bottom: var(--sg-space-0d5rem);
 }
 
 .profile-switcher.menu-up {
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   border-bottom: 0;
   margin-top: var(--sg-space-0d5rem);
   margin-bottom: 0;
@@ -260,7 +257,7 @@ onUnmounted(() => {
 
 .profile-trigger:hover,
 .profile-trigger.active {
-  background-color: var(--surface-hover);
+  background-color: var(--sg-color-surface-hover);
 }
 
 .profile-emoji {
@@ -281,7 +278,7 @@ onUnmounted(() => {
 .chevron {
   font-size: var(--sg-font-size-0d7rem);
   transition: var(--sg-motion-transform-0d2s);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .chevron.rotated {
@@ -294,8 +291,8 @@ onUnmounted(() => {
   top: var(--sg-position-calc-100pct-4px);
   left: var(--sg-position-0d5rem);
   right: var(--sg-position-0d5rem);
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
   box-shadow: var(--sg-shadow-0-8px-24px-rgba-0-0-0-0d15);
   z-index: var(--sg-layer-200);
@@ -320,7 +317,7 @@ onUnmounted(() => {
   font-weight: 700;
   letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .profile-option {
@@ -333,16 +330,16 @@ onUnmounted(() => {
 }
 
 .profile-option:hover {
-  background-color: var(--surface-hover);
+  background-color: var(--sg-color-surface-hover);
 }
 
 .profile-option--active {
-  background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  background-color: color-mix(in srgb, var(--sg-color-action) 10%, transparent);
 }
 
 .profile-option--active .profile-option-name {
   font-weight: 700;
-  color: var(--primary-color);
+  color: var(--sg-color-action);
 }
 
 .profile-option-emoji {
@@ -362,11 +359,11 @@ onUnmounted(() => {
 .profile-edit-input {
   flex: 1;
   font-size: var(--sg-font-size-0d88rem);
-  background: var(--surface-ground);
-  border: 1px solid var(--primary-color);
+  background: var(--sg-color-surface-muted);
+  border: 1px solid var(--sg-color-action);
   border-radius: var(--sg-radius-4px);
   padding: var(--sg-space-0d2rem-0d4rem);
-  color: var(--text-color);
+  color: var(--sg-color-text);
   outline: none;
 }
 
@@ -385,7 +382,7 @@ onUnmounted(() => {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   padding: var(--sg-space-0d2rem);
   border-radius: var(--sg-radius-4px);
   display: flex;
@@ -395,8 +392,8 @@ onUnmounted(() => {
 }
 
 .action-btn:hover {
-  background-color: var(--surface-hover);
-  color: var(--text-color);
+  background-color: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
 }
 
 .action-btn--danger:hover {
@@ -405,7 +402,7 @@ onUnmounted(() => {
 
 /* Footer */
 .profile-menu-footer {
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding: var(--sg-space-0d4rem-0d5rem);
 }
 
@@ -420,13 +417,13 @@ onUnmounted(() => {
   padding: var(--sg-space-0d5rem-0d75rem);
   border-radius: var(--sg-radius-6px);
   font-size: var(--sg-font-size-0d85rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   transition: var(--sg-motion-backgroundneg-color-0d12s-color-0d12s);
 }
 
 .add-profile-btn:hover {
-  background-color: var(--surface-hover);
-  color: var(--text-color);
+  background-color: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
 }
 
 .add-profile-row {

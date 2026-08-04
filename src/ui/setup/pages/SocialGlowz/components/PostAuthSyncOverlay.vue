@@ -4,7 +4,7 @@
       <div
         v-if="feedback.visible"
         class="sync-overlay"
-        :class="{ 'is-dark': themeStore.isDarkMode }"
+        :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile': isPostAuthSyncNarrow }"
         role="alertdialog"
         aria-modal="true"
         aria-live="polite"
@@ -14,9 +14,9 @@
           :class="`is-${feedback.mode}`"
         >
           <div class="sync-icon-wrap">
-            <i
-              class="pi sync-icon"
-              :class="iconClass"
+            <SgIcon
+              class="sync-icon"
+              :icon="iconClass"
             />
           </div>
 
@@ -31,9 +31,9 @@
               class="sync-step"
               :class="`is-${step.status}`"
             >
-              <i
-                class="pi sync-step-icon"
-                :class="step.icon"
+              <SgIcon
+                class="sync-step-icon"
+                :icon="step.icon"
               />
               <span>{{ t(step.labelKey) }}</span>
             </div>
@@ -48,6 +48,8 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useThemeStore } from "@/stores/theme";
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import {
   postAuthSyncFeedback as feedback,
   type PostAuthSyncStage,
@@ -110,56 +112,58 @@ const steps = computed(() =>
     };
   }),
 );
+
+const isPostAuthSyncNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.postAuthSyncCompact}px)`);
 </script>
 
 <style scoped>
 .sync-overlay {
-  --sync-overlay-top-gap: 1.25rem;
-  --sync-overlay-bottom-gap: 1.25rem;
+  --sync-overlay-top-gap: var(--sg-space-1d25rem);
+  --sync-overlay-bottom-gap: var(--sg-space-1d25rem);
   --sync-backdrop-tint: rgba(59, 130, 246, 0.18);
   --sync-backdrop-base: rgba(15, 23, 42, 0.42);
   --sync-card-bg-start: rgba(255, 255, 255, 0.96);
   --sync-card-bg-end: rgba(248, 250, 252, 0.94);
   --sync-card-border: rgba(255, 255, 255, 0.58);
-  --sync-card-shadow: 0 28px 70px rgba(15, 23, 42, 0.22);
+  --sync-card-shadow: var(--sg-shadow-0-28px-70px-rgba-15-23-42-0d22);
   --sync-card-glow: rgba(59, 130, 246, 0.12);
-  --sync-icon-bg: color-mix(in srgb, var(--primary-color) 14%, white 86%);
-  --sync-step-bg: color-mix(in srgb, var(--surface-card) 88%, var(--surface-ground) 12%);
-  --sync-step-done-bg: color-mix(in srgb, var(--primary-color) 6%, var(--surface-card) 94%);
-  --sync-step-current-bg: color-mix(in srgb, var(--primary-color) 10%, var(--surface-card) 90%);
-  --sync-step-border: var(--surface-border);
-  --sync-step-current-border: color-mix(in srgb, var(--primary-color) 30%, var(--surface-border) 70%);
-  --sync-step-done-border: color-mix(in srgb, var(--primary-color) 20%, var(--surface-border) 80%);
+  --sync-icon-bg: color-mix(in srgb, var(--sg-color-action) 14%, white 86%);
+  --sync-step-bg: color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-surface-muted) 12%);
+  --sync-step-done-bg: color-mix(in srgb, var(--sg-color-action) 6%, var(--sg-color-surface-raised) 94%);
+  --sync-step-current-bg: color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
+  --sync-step-border: var(--sg-color-border);
+  --sync-step-current-border: color-mix(in srgb, var(--sg-color-action) 30%, var(--sg-color-border) 70%);
+  --sync-step-done-border: color-mix(in srgb, var(--sg-color-action) 20%, var(--sg-color-border) 80%);
   position: fixed;
   inset: 0;
-  z-index: 10050;
+  z-index: var(--sg-layer-10050);
   display: flex;
   align-items: center;
   justify-content: center;
   padding:
     var(--sync-overlay-top-gap)
-    1.25rem
+    var(--sg-space-1d25rem)
     var(--sync-overlay-bottom-gap);
   background:
     radial-gradient(circle at top, var(--sync-backdrop-tint), transparent 42%),
     var(--sync-backdrop-base);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--sg-size-10px));
 }
 
 .sync-card {
   position: relative;
-  width: min(100%, 26rem);
-  max-height: min(34rem, calc(100dvh - 2.5rem));
+  width: var(--sg-size-min-100pct-26rem);
+  max-height: min(var(--sg-size-34rem), calc(var(--sg-size-100dvh) - var(--sg-size-2d5rem)));
   overflow: auto;
   overscroll-behavior: contain;
-  padding: 1.35rem 1.2rem 1.15rem;
-  border-radius: 24px;
-  border: 1px solid var(--sync-card-border);
+  padding: var(--sg-space-1d35rem) var(--sg-space-1d2rem) var(--sg-space-1d15rem);
+  border-radius: var(--sg-radius-24px);
+  border: var(--sg-border-1px) solid var(--sync-card-border);
   background:
     radial-gradient(circle at top right, var(--sync-card-glow), transparent 42%),
     linear-gradient(180deg, var(--sync-card-bg-start), var(--sync-card-bg-end));
   box-shadow: var(--sync-card-shadow);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .sync-overlay.is-dark,
@@ -170,99 +174,99 @@ const steps = computed(() =>
   --sync-card-bg-start: rgba(24, 24, 27, 0.96);
   --sync-card-bg-end: rgba(9, 9, 11, 0.94);
   --sync-card-border: rgba(82, 82, 91, 0.76);
-  --sync-card-shadow: 0 28px 70px rgba(2, 6, 23, 0.56);
+  --sync-card-shadow: var(--sg-shadow-0-28px-70px-rgba-2-6-23-0d56);
   --sync-card-glow: rgba(91, 168, 245, 0.16);
-  --sync-icon-bg: color-mix(in srgb, var(--primary-color) 22%, rgba(9, 9, 11, 0.94) 78%);
-  --sync-step-bg: color-mix(in srgb, var(--surface-card) 84%, rgba(255, 255, 255, 0.02) 16%);
-  --sync-step-done-bg: color-mix(in srgb, var(--primary-color) 10%, var(--surface-card) 90%);
-  --sync-step-current-bg: color-mix(in srgb, var(--primary-color) 14%, var(--surface-card) 86%);
-  --sync-step-border: color-mix(in srgb, var(--surface-border) 88%, rgba(255, 255, 255, 0.03) 12%);
-  --sync-step-current-border: color-mix(in srgb, var(--primary-color) 38%, var(--surface-border) 62%);
-  --sync-step-done-border: color-mix(in srgb, var(--primary-color) 26%, var(--surface-border) 74%);
+  --sync-icon-bg: color-mix(in srgb, var(--sg-color-action) 22%, rgba(9, 9, 11, 0.94) 78%);
+  --sync-step-bg: color-mix(in srgb, var(--sg-color-surface-raised) 84%, var(--sg-color-white-alpha-02) 16%);
+  --sync-step-done-bg: color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
+  --sync-step-current-bg: color-mix(in srgb, var(--sg-color-action) 14%, var(--sg-color-surface-raised) 86%);
+  --sync-step-border: color-mix(in srgb, var(--sg-color-border) 88%, var(--sg-color-white-alpha-003) 12%);
+  --sync-step-current-border: color-mix(in srgb, var(--sg-color-action) 38%, var(--sg-color-border) 62%);
+  --sync-step-done-border: color-mix(in srgb, var(--sg-color-action) 26%, var(--sg-color-border) 74%);
 }
 
 .sync-card.is-success {
-  border-color: color-mix(in srgb, var(--primary-color) 24%, rgba(255, 255, 255, 0.1));
+  border-color: color-mix(in srgb, var(--sg-color-action) 24%, rgba(255, 255, 255, 0.1));
 }
 
 .sync-icon-wrap {
-  width: 3rem;
-  height: 3rem;
+  width: var(--sg-size-3rem);
+  height: var(--sg-size-3rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  margin-bottom: 0.9rem;
+  border-radius: var(--sg-radius-999px);
+  margin-bottom: var(--sg-space-0d9rem);
   background: var(--sync-icon-bg);
-  color: var(--primary-color);
+  color: var(--sg-color-action);
 }
 
 .sync-icon {
-  font-size: 1.3rem;
+  font-size: var(--sg-font-size-1d3rem);
 }
 
 .sync-kicker {
-  margin: 0 0 0.35rem;
-  color: var(--primary-color);
-  font-size: 0.74rem;
+  margin: 0 0 var(--sg-space-0d35rem);
+  color: var(--sg-color-action);
+  font-size: var(--sg-font-size-0d74rem);
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--sg-letter-spacing-0d08em);
   text-transform: uppercase;
 }
 
 .sync-title {
   margin: 0;
-  color: var(--text-color);
-  font-size: 1.35rem;
-  line-height: 1.15;
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-1d35rem);
+  line-height: var(--sg-line-height-1d15);
 }
 
 .sync-copy {
-  margin: 0.55rem 0 1rem;
-  color: var(--text-color-secondary);
-  font-size: 0.92rem;
-  line-height: 1.5;
+  margin: var(--sg-space-0d55rem) 0 var(--sg-space-1rem);
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d92rem);
+  line-height: var(--sg-line-height-1d5);
 }
 
 .sync-steps {
   display: grid;
-  gap: 0.55rem;
+  gap: var(--sg-space-0d55rem);
 }
 
 .sync-step {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.72rem 0.8rem;
-  border-radius: 14px;
-  border: 1px solid var(--sync-step-border);
+  gap: var(--sg-space-0d65rem);
+  padding: var(--sg-space-0d72rem) var(--sg-space-0d8rem);
+  border-radius: var(--sg-radius-14px);
+  border: var(--sg-border-1px) solid var(--sync-step-border);
   background: var(--sync-step-bg);
-  color: var(--text-color-secondary);
-  font-size: 0.9rem;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 600;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: var(--sg-shadow-inset-0-1px-0-rgba-255-255-255-0d04);
 }
 
 .sync-step.is-current {
   border-color: var(--sync-step-current-border);
   background: var(--sync-step-current-bg);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .sync-step.is-done {
   border-color: var(--sync-step-done-border);
   background: var(--sync-step-done-bg);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .sync-step-icon {
-  font-size: 1rem;
-  color: var(--primary-color);
+  font-size: var(--sg-font-size-1rem);
+  color: var(--sg-color-action);
 }
 
 .sync-overlay-enter-active,
 .sync-overlay-leave-active {
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition: var(--sg-motion-opacity-180ms-ease), var(--sg-motion-transform-180ms-ease);
 }
 
 .sync-overlay-enter-from,
@@ -272,31 +276,29 @@ const steps = computed(() =>
 
 .sync-overlay-enter-from .sync-card,
 .sync-overlay-leave-to .sync-card {
-  transform: translateY(10px) scale(0.98);
+  transform: translateY(var(--sg-size-10px)) var(--sg-transform-scale-0d98);
 }
 
-@media (max-width: 640px) {
-  .sync-overlay {
-    --sync-overlay-top-gap: max(1rem, env(safe-area-inset-top));
-    --sync-overlay-bottom-gap: max(4.75rem, calc(env(safe-area-inset-bottom) + 1rem));
-    align-items: center;
-    padding-inline: 0.9rem;
-  }
+.sync-overlay.is-mobile {
+  --sync-overlay-top-gap: max(var(--sg-space-1rem), env(safe-area-inset-top));
+  --sync-overlay-bottom-gap: max(var(--sg-size-4d75rem), calc(env(safe-area-inset-bottom) + var(--sg-space-1rem)));
+  align-items: center;
+  padding-inline: var(--sg-space-0d9rem);
+}
 
-  .sync-card {
-    width: 100%;
-    max-height: calc(
-      100dvh
-      - var(--sync-overlay-top-gap)
-      - var(--sync-overlay-bottom-gap)
-      - 1.5rem
-    );
-    border-radius: 24px;
-    padding: 1.15rem 1rem 1rem;
-  }
+.sync-overlay.is-mobile .sync-card {
+  width: var(--sg-size-100pct);
+  max-height: calc(
+    var(--sg-size-100dvh)
+    - var(--sync-overlay-top-gap)
+    - var(--sync-overlay-bottom-gap)
+    - var(--sg-size-1d5rem)
+  );
+  border-radius: var(--sg-radius-24px);
+  padding: var(--sg-space-1d15rem) var(--sg-space-1rem) var(--sg-space-1rem);
+}
 
-  .sync-title {
-    font-size: 1.2rem;
-  }
+.sync-overlay.is-mobile .sync-title {
+  font-size: var(--sg-font-size-1d2rem);
 }
 </style>

@@ -18,7 +18,7 @@
           <div class="sidebar-main">
             <div
               class="sidebar-header"
-              :class="{ 'justify-content-center': iconsOnly, 'justify-content-between': !iconsOnly }"
+              :class="iconsOnly ? 'sidebar-header--centered' : 'sidebar-header--spaced'"
             >
               <Button
                 v-sg-tooltip.right="'Toggle left sidebar'"
@@ -38,156 +38,156 @@
             <div class="sidebar-scrollable-content">
               <!-- Réseaux sociaux -->
               <div class="menu-section">
-              <div
-                v-if="!iconsOnly"
-                class="section-header"
-              >
-                <h3>{{ $t('sidebar.networks_section') }}</h3>
-              </div>
-              <div class="menu-items">
                 <div
-                  v-for="item in menuItems"
-                  :key="item.id"
-                  class="menu-item-group"
+                  v-if="!iconsOnly"
+                  class="section-header"
                 >
+                  <h3>{{ $t('sidebar.networks_section') }}</h3>
+                </div>
+                <div class="menu-items">
                   <div
-                    class="network-row"
-                    :class="{ active: isNetworkActive(item) }"
+                    v-for="item in menuItems"
+                    :key="item.id"
+                    class="menu-item-group"
                   >
-                    <Button
-                      :icon="undefined"
-                      :label="iconsOnly ? undefined : item.label"
-                      :tooltip="iconsOnly ? item.label : undefined"
-                      :tooltip-options="{ position: 'right' }"
-                      text
-                      :class="[
-                        'network-btn',
-                        iconsOnly ? 'justify-content-center' : 'justify-content-start',
-                        { 'network-btn--active': isNetworkActive(item) }
-                      ]"
-                      @click="navigateToNetwork(item)"
+                    <div
+                      class="network-row"
+                      :class="{ active: isNetworkActive(item) }"
                     >
-                      <template #icon>
-                        <NetworkBrandIcon
-                          :network-id="item.route.slice(1)"
-                          :fallback-icon="item.icon"
-                        />
-                      </template>
-                    </Button>
+                      <Button
+                        :icon="undefined"
+                        :label="iconsOnly ? undefined : item.label"
+                        :tooltip="iconsOnly ? item.label : undefined"
+                        :tooltip-options="{ position: 'right' }"
+                        text
+                        :class="[
+                          'network-btn',
+                          iconsOnly ? 'network-btn--centered' : 'network-btn--leading',
+                          { 'network-btn--active': isNetworkActive(item) }
+                        ]"
+                        @click="navigateToNetwork(item)"
+                      >
+                        <template #icon>
+                          <NetworkBrandIcon
+                            :network-id="item.route.slice(1)"
+                            :fallback-icon="item.icon"
+                          />
+                        </template>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Filtre Amis -->
-            <div class="friends-section friends-section--hidden">
-              <div
-                v-if="!iconsOnly"
-                class="section-header"
-              >
-                <h3>{{ $t('sidebar.friends_section') }}</h3>
-                <Button
-                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                  icon="pi pi-users"
-                  text
-                  size="small"
-                  :aria-label="$t('friends_filter.manage_button')"
-                  @click="showFriendsPanel = true"
-                />
+              <!-- Filtre Amis -->
+              <div class="friends-section friends-section--hidden">
+                <div
+                  v-if="!iconsOnly"
+                  class="section-header"
+                >
+                  <h3>{{ $t('sidebar.friends_section') }}</h3>
+                  <Button
+                    v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
+                    icon="pi pi-users"
+                    text
+                    size="small"
+                    :aria-label="$t('friends_filter.manage_button')"
+                    @click="showFriendsPanel = true"
+                  />
+                </div>
+                <div
+                  class="friends-toggle"
+                  :class="{ 'friends-toggle--centered': iconsOnly }"
+                >
+                  <Button
+                    v-sg-tooltip.right="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
+                    :label="iconsOnly ? undefined : (filterEnabled ? $t('friends_filter.friends_only') : $t('friends_filter.see_all'))"
+                    :aria-label="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
+                    :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
+                    :aria-pressed="filterEnabled"
+                    class="friends-filter-button"
+                    @click="setFilterEnabled"
+                  />
+                  <Button
+                    v-if="iconsOnly"
+                    v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
+                    icon="pi pi-users"
+                    text
+                    size="small"
+                    class="friends-manage-btn"
+                    :aria-label="$t('friends_filter.manage_button')"
+                    @click="showFriendsPanel = true"
+                  />
+                </div>
               </div>
-              <div
-                class="friends-toggle"
-                :class="{ 'friends-toggle--centered': iconsOnly }"
-              >
-                <Button
-                  v-sg-tooltip.right="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
-                  :label="iconsOnly ? undefined : (filterEnabled ? $t('friends_filter.friends_only') : $t('friends_filter.see_all'))"
-                  :aria-label="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
-                  :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
-                  :aria-pressed="filterEnabled"
-                  class="friends-filter-button"
-                  @click="setFilterEnabled"
-                />
-                <Button
-                  v-if="iconsOnly"
-                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                  icon="pi pi-users"
-                  text
-                  size="small"
-                  class="friends-manage-btn"
-                  :aria-label="$t('friends_filter.manage_button')"
-                  @click="showFriendsPanel = true"
-                />
-              </div>
-            </div>
 
-            <FriendsPanel
-              v-model="showFriendsPanel"
-              :network-id="webviewStore.activeNetworkId ?? 'twitter'"
-            />
+              <FriendsPanel
+                v-model="showFriendsPanel"
+                :network-id="webviewStore.activeNetworkId ?? 'twitter'"
+              />
 
-            <!-- Custom Links -->
-            <div
-              v-if="customLinkItems.length || !iconsOnly"
-              class="custom-links-section"
-            >
+              <!-- Custom Links -->
               <div
-                v-if="!iconsOnly"
-                class="section-header"
-              >
-                <h3>{{ $t('sidebar.custom_links_section') }}</h3>
-                <Button
-                  v-sg-tooltip.right="$t('links.add_tooltip')"
-                  icon="pi pi-plus"
-                  text
-                  size="small"
-                  type="button"
-                  :aria-label="$t('links.add_button')"
-                  @mouseenter="setAddLinkTooltipOverlay(true)"
-                  @mouseleave="setAddLinkTooltipOverlay(false)"
-                  @click="openAddLinkDialog"
-                />
-              </div>
-              <div
-                v-if="customLinkItems.length"
-                class="menu-items"
+                v-if="customLinkItems.length || !iconsOnly"
+                class="custom-links-section"
               >
                 <div
-                  v-for="item in customLinkItems"
-                  :key="item.id"
-                  class="menu-item-group"
+                  v-if="!iconsOnly"
+                  class="section-header"
+                >
+                  <h3>{{ $t('sidebar.custom_links_section') }}</h3>
+                  <Button
+                    v-sg-tooltip.right="$t('links.add_tooltip')"
+                    icon="pi pi-plus"
+                    text
+                    size="small"
+                    type="button"
+                    :aria-label="$t('links.add_button')"
+                    @mouseenter="setAddLinkTooltipOverlay(true)"
+                    @mouseleave="setAddLinkTooltipOverlay(false)"
+                    @click="openAddLinkDialog"
+                  />
+                </div>
+                <div
+                  v-if="customLinkItems.length"
+                  class="menu-items"
                 >
                   <div
-                    class="network-row"
-                    :class="{ active: isNetworkActive(item) }"
+                    v-for="item in customLinkItems"
+                    :key="item.id"
+                    class="menu-item-group"
                   >
-                    <Button
-                      :icon="item.icon"
-                      :label="iconsOnly ? undefined : item.label"
-                      :tooltip="iconsOnly ? item.label : undefined"
-                      :tooltip-options="{ position: 'right' }"
-                      text
-                      :class="[
-                        'network-btn',
-                        iconsOnly ? 'justify-content-center' : 'justify-content-start',
-                        { 'network-btn--active': isNetworkActive(item) }
-                      ]"
-                      @click="navigateToNetwork(item)"
-                    />
-                    <Button
-                      v-if="!iconsOnly"
-                      icon="pi pi-times"
-                      text
-                      rounded
-                      size="small"
-                      severity="danger"
-                      class="custom-link-delete"
-                      :aria-label="$t('common.delete')"
-                      @click="removeCustomLink(item.route.slice(1))"
-                    />
+                    <div
+                      class="network-row"
+                      :class="{ active: isNetworkActive(item) }"
+                    >
+                      <Button
+                        :icon="item.icon"
+                        :label="iconsOnly ? undefined : item.label"
+                        :tooltip="iconsOnly ? item.label : undefined"
+                        :tooltip-options="{ position: 'right' }"
+                        text
+                        :class="[
+                          'network-btn',
+                          iconsOnly ? 'network-btn--centered' : 'network-btn--leading',
+                          { 'network-btn--active': isNetworkActive(item) }
+                        ]"
+                        @click="navigateToNetwork(item)"
+                      />
+                      <Button
+                        v-if="!iconsOnly"
+                        icon="pi pi-times"
+                        text
+                        rounded
+                        size="small"
+                        severity="danger"
+                        class="custom-link-delete"
+                        :aria-label="$t('common.delete')"
+                        @click="removeCustomLink(item.route.slice(1))"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
                 <Button
                   v-if="iconsOnly"
                   v-sg-tooltip.right="$t('links.add_tooltip')"
@@ -201,36 +201,35 @@
                   @mouseleave="setAddLinkTooltipOverlay(false)"
                   @click="openAddLinkDialog"
                 />
-            </div>
-
-            <SgDialog
-              v-model="showAddLinkDialog"
-              :title="$t('links.add_dialog_title')"
-              variant="sidebar"
-            >
-              <div class="add-link-form">
-                <input
-                  v-model="newLinkLabel"
-                  :placeholder="$t('links.name_placeholder')"
-                  class="add-link-input"
-                  @keydown.enter="addCustomLink"
-                >
-                <input
-                  v-model="newLinkUrl"
-                  type="url"
-                  :placeholder="$t('links.url_placeholder')"
-                  class="add-link-input"
-                  @keydown.enter="addCustomLink"
-                >
-                <Button
-                  :label="$t('common.add')"
-                  icon="pi pi-plus"
-                  :disabled="!newLinkLabel.trim() || !newLinkUrl.trim()"
-                  @click="addCustomLink"
-                />
               </div>
-            </SgDialog>
 
+              <SgDialog
+                v-model="showAddLinkDialog"
+                :title="$t('links.add_dialog_title')"
+                variant="sidebar"
+              >
+                <div class="add-link-form">
+                  <input
+                    v-model="newLinkLabel"
+                    :placeholder="$t('links.name_placeholder')"
+                    class="add-link-input"
+                    @keydown.enter="addCustomLink"
+                  >
+                  <input
+                    v-model="newLinkUrl"
+                    type="url"
+                    :placeholder="$t('links.url_placeholder')"
+                    class="add-link-input"
+                    @keydown.enter="addCustomLink"
+                  >
+                  <Button
+                    :label="$t('common.add')"
+                    icon="pi pi-plus"
+                    :disabled="!newLinkLabel.trim() || !newLinkUrl.trim()"
+                    @click="addCustomLink"
+                  />
+                </div>
+              </SgDialog>
             </div>
           </div>
 
@@ -407,8 +406,8 @@ onUnmounted(() => {
 
 <style scoped>
 .sidebar {
-  background-color: var(--surface-card);
-  border-right: 1px solid var(--surface-border);
+  background-color: var(--sg-color-surface-raised);
+  border-right: 1px solid var(--sg-color-border);
   height: var(--sg-sidebar-viewport-height);
   margin-top: 0;
   transition: var(--sg-sidebar-transition);
@@ -474,9 +473,17 @@ onUnmounted(() => {
   padding: var(--sg-sidebar-control-padding);
 }
 
+.sidebar-header--centered {
+  justify-content: center;
+}
+
+.sidebar-header--spaced {
+  justify-content: space-between;
+}
+
 .app-title {
   margin: 0;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   font-size: var(--sg-sidebar-app-title-size);
   white-space: nowrap;
 }
@@ -512,8 +519,8 @@ onUnmounted(() => {
 }
 
 .network-row.active {
-  background-color: var(--surface-hover);
-  border-left: var(--sg-sidebar-active-indicator-width) solid var(--primary-color);
+  background-color: var(--sg-color-surface-hover);
+  border-left: var(--sg-sidebar-active-indicator-width) solid var(--sg-color-action);
 }
 
 .network-btn {
@@ -528,17 +535,19 @@ onUnmounted(() => {
   height: var(--sg-sidebar-network-row-height);
 }
 
-.network-btn.justify-content-start {
+.network-btn--leading {
+  justify-content: flex-start;
   padding: 0 var(--sg-sidebar-network-row-padding-inline);
 }
 
-.network-btn.justify-content-center {
+.network-btn--centered {
+  justify-content: center;
   padding: 0;
 }
 
 .network-btn:hover,
 .network-row:hover {
-  background-color: var(--surface-hover);
+  background-color: var(--sg-color-surface-hover);
 }
 
 
@@ -556,12 +565,12 @@ onUnmounted(() => {
 .section-header h3 {
   margin: 0;
   font-size: var(--sg-sidebar-section-title-size);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .friends-section {
   margin-bottom: var(--sg-sidebar-subsection-spacing);
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-sidebar-subsection-spacing);
 }
 
@@ -584,7 +593,7 @@ onUnmounted(() => {
 }
 
 .custom-links-section {
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-sidebar-subsection-spacing);
   margin-bottom: var(--sg-sidebar-subsection-spacing);
 }
@@ -622,7 +631,7 @@ onUnmounted(() => {
   }
 }
 
-.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--surface-border); transition: var(--sg-sidebar-gutter-transition); }
-.sidebar-resize-handle:hover { background: var(--primary-color); }
-.sidebar-resize-handle:focus-visible { background: var(--primary-color); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--sg-color-border); transition: var(--sg-sidebar-gutter-transition); }
+.sidebar-resize-handle:hover { background: var(--sg-color-action); }
+.sidebar-resize-handle:focus-visible { background: var(--sg-color-action); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 </style> 

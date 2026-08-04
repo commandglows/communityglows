@@ -6,9 +6,10 @@
     aria-hidden="true"
     focusable="false"
   />
-  <i
+  <SgIcon
     v-else
-    :class="fallbackIcon"
+    :icon="fallbackIcon"
+    class="network-brand-icon"
     aria-hidden="true"
   />
 </template>

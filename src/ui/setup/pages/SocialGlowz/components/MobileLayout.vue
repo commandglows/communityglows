@@ -32,7 +32,7 @@
         :aria-label="$t('common.settings')"
         @click="settingsVisible = true"
       >
-        <i class="pi pi-cog" />
+        <SgIcon icon="pi pi-cog" />
         <span>{{ $t('common.settings') }}</span>
       </button>
     </div>
@@ -45,20 +45,20 @@
         @click="notificationsVisible = !notificationsVisible"
       >
         <span class="quick-action-icon">
-          <i class="pi pi-bell" />
+          <SgIcon icon="pi pi-bell" />
           <span
             v-if="notificationCount > 0"
             class="notif-badge"
           >{{ notificationCount }}</span>
         </span>
         <span class="quick-action-label">{{ $t('common.notifications') }}</span>
-        <i class="pi pi-chevron-right quick-action-arrow" />
+        <SgIcon icon="pi pi-chevron-right quick-action-arrow" />
       </button>
 
       <!-- Friends filter toggle -->
       <div class="friends-filter-row friends-filter-row--hidden">
         <span class="friends-filter-label">
-          <i class="pi pi-users" />
+          <SgIcon icon="pi pi-users" />
           {{ $t('friends_filter.friends_only') }}
         </span>
         <button
@@ -86,7 +86,7 @@
         </button>
       </div>
       <div class="notif-empty">
-        <i class="pi pi-bell-slash" />
+        <SgIcon icon="pi pi-bell-slash" />
         <span>{{ $t('notif.empty_state') }}</span>
       </div>
     </div>
@@ -114,31 +114,35 @@
           >
             <span
               class="network-icon-wrap"
-              :style="{ background: getNetworkColor(item) ?? 'var(--surface-hover)' }"
+              :style="{ background: getNetworkColor(item) ?? `var(--sg-color-surface-hover)` }"
             >
               <ThreadsIcon
                 v-if="item.route === '/threads'"
-                size="1.35rem"
-                color="#fff"
+                class="social-brand-icon"
+                size="var(--sg-font-size-1d25rem)"
+                :color="'var(--sg-color-text-on-action)'"
               />
               <SnapchatIcon
                 v-else-if="item.route === '/snapchat'"
-                size="1.35rem"
-                color="#fff"
+                class="social-brand-icon"
+                size="var(--sg-font-size-1d25rem)"
+                :color="'var(--sg-color-text-on-action)'"
               />
               <NextdoorIcon
                 v-else-if="item.route === '/nextdoor'"
-                size="1.35rem"
-                color="#fff"
+                class="social-brand-icon"
+                size="var(--sg-font-size-1d25rem)"
+                :color="'var(--sg-color-text-on-action)'"
               />
               <QuoraIcon
                 v-else-if="item.route === '/quora'"
-                size="1.35rem"
-                color="#fff"
+                class="social-brand-icon"
+                size="var(--sg-font-size-1d25rem)"
+                :color="'var(--sg-color-text-on-action)'"
               />
-              <i
+              <SgIcon
                 v-else
-                :class="item.icon"
+                :icon="item.icon"
               />
             </span>
             <span class="network-name">{{ item.label }}</span>
@@ -153,7 +157,7 @@
               v-if="networkEditMode && item.route.startsWith('/custom-')"
               class="custom-delete-badge"
             >
-              <i class="pi pi-times" />
+              <SgIcon icon="pi pi-times" />
             </span>
           </button>
 
@@ -165,9 +169,9 @@
           >
             <span
               class="network-icon-wrap"
-              style="background: var(--surface-hover)"
+              :style="{ background: 'var(--sg-color-surface-hover)' }"
             >
-              <i class="pi pi-plus" />
+              <SgIcon icon="pi pi-plus" />
             </span>
             <span class="network-name">{{ $t('common.add') }}</span>
           </button>
@@ -237,9 +241,9 @@
       <div class="profile-info">
         <span class="profile-name">{{ profilesStore.activeProfile?.name ?? $t('profile.default_name') }}</span>
         <span class="profile-sub">
-          <i
-            class="pi pi-th-large"
-            style="font-size:0.65rem; margin-right:0.3rem;"
+          <SgIcon
+            icon="pi pi-th-large"
+            class="profile-net-icon"
           />
           {{ $t('profile.networks_count', { count: visibleMenuItems.length }) }} · {{ $t('profile.tap_to_manage') }}
         </span>
@@ -248,11 +252,11 @@
             v-for="item in visibleMenuItems.slice(0, 5)"
             :key="item.id"
             class="profile-pill"
-            :style="{ background: pillColor(item) || 'var(--surface-hover)' }"
+            :style="{ background: pillColor(item) || 'var(--sg-color-surface-hover)' }"
           />
         </div>
       </div>
-      <i class="pi pi-chevron-up profile-chevron" />
+      <SgIcon icon="pi pi-chevron-up profile-chevron" />
     </div>
   </div>
 
@@ -438,7 +442,7 @@ const networkColors: Record<string, string> = builtInSocialNetworks.reduce((acc,
   return acc
 }, {} as Record<string, string>)
 
-const KANBAN_COLOR = 'var(--primary-color)'
+const KANBAN_COLOR = 'var(--sg-color-action)'
 
 const getNetworkColor = (item: MenuItem) => {
   if (item.route.startsWith('/custom-')) return null
@@ -452,14 +456,14 @@ const isNetworkActive = (item: MenuItem) =>
 const pillColor = (item: MenuItem) => {
   const c = getNetworkColor(item)
   if (!c) return undefined
-  return c.startsWith('linear') ? '#e6683c' : c
+  return c.startsWith('linear') ? 'var(--sg-color-instagram-coral)' : c
 }
 
 const tileBg = (item: MenuItem) => {
   const c = getNetworkColor(item)
   if (!c) return undefined
-  const solid = c.startsWith('linear') ? '#e6683c' : c
-  return `color-mix(in srgb, ${solid} 7%, var(--surface-card))`
+  const solid = c.startsWith('linear') ? 'var(--sg-color-instagram-coral)' : c
+  return `color-mix(in srgb, ${solid} 7%, var(--sg-color-surface-raised))`
 }
 
 // ─── Navigation ───────────────────────────────────────────────
@@ -489,13 +493,13 @@ const navigateToNetwork = (network: MenuItem) => {
 /* ─── Webview screen ─────────────────────────────────────────── */
 
 .mobile-webview-screen {
-  height: 100vh;
-  width: 100%;
+  height: var(--sg-size-100vh);
+  width: var(--sg-size-100pct);
 }
 
 .mobile-webview-host {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
 }
 
 /* ─── Home screen ────────────────────────────────────────────── */
@@ -503,17 +507,17 @@ const navigateToNetwork = (network: MenuItem) => {
 .mobile-home {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: var(--sg-size-100pct);
   overflow: hidden;
-  background: var(--surface-ground);
-  padding-top: env(safe-area-inset-top, 24px);
+  background: var(--sg-color-surface-muted);
+  padding-top: env(safe-area-inset-top, var(--sg-space-24px));
 }
 
 .mobile-home-scroll {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  padding-bottom: 0.5rem;
+  padding-bottom: var(--sg-space-0d5rem);
 }
 
 /* ─── Top app bar ────────────────────────────────────────────── */
@@ -522,23 +526,23 @@ const navigateToNetwork = (network: MenuItem) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--sg-space-3);
   flex-shrink: 0;
-  padding: 0.75rem 1rem 0.6rem;
+  padding: var(--sg-space-3) var(--sg-space-4) var(--sg-space-0d6rem);
 }
 
 .mobile-brand {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: var(--sg-space-0d7rem);
   min-width: 0;
 }
 
 .mobile-app-icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 14px;
-  background: var(--primary-color);
+  width: var(--sg-size-2d75rem);
+  height: var(--sg-size-2d75rem);
+  border-radius: var(--sg-radius-14px);
+  background: var(--sg-color-action);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -546,9 +550,9 @@ const navigateToNetwork = (network: MenuItem) => {
 }
 
 .mobile-app-icon img {
-  width: 1.95rem;
-  height: 1.95rem;
-  border-radius: 9px;
+  width: var(--sg-size-1d95rem);
+  height: var(--sg-size-1d95rem);
+  border-radius: var(--sg-radius-8px);
   display: block;
 }
 
@@ -559,17 +563,17 @@ const navigateToNetwork = (network: MenuItem) => {
 }
 
 .mobile-app-name {
-  font-size: 1.05rem;
-  line-height: 1.2;
+  font-size: var(--sg-font-size-1d1rem);
+  line-height: var(--sg-line-height-1d2);
   font-weight: 800;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .mobile-app-subtitle {
-  margin-top: 0.1rem;
-  font-size: 0.72rem;
-  line-height: 1.2;
-  color: var(--text-color-secondary);
+  margin-top: var(--sg-space-0d1rem);
+  font-size: var(--sg-font-size-0d72rem);
+  line-height: var(--sg-line-height-1d2);
+  color: var(--sg-color-text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -579,28 +583,28 @@ const navigateToNetwork = (network: MenuItem) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
   flex-shrink: 0;
-  min-height: 2.45rem;
-  padding: 0 0.75rem;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
-  border-radius: 999px;
-  color: var(--text-color);
+  min-height: var(--sg-size-2d45rem);
+  padding: 0 var(--sg-space-0d75rem);
+  background: var(--sg-color-surface-raised);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-999px);
+  color: var(--sg-color-text);
   cursor: pointer;
-  box-shadow: var(--card-shadow);
-  font-size: 0.82rem;
+  box-shadow: var(--sg-shadow-control);
+  font-size: var(--sg-font-size-0d82rem);
   font-weight: 600;
-  transition: background-color 0.12s, transform 0.1s;
+  transition: var(--sg-motion-backgroundneg-color-0d12s), transform var(--sg-motion-transform);
 }
 
 .settings-topbar-btn:active {
-  background: var(--surface-hover);
-  transform: scale(0.98);
+  background: var(--sg-color-surface-hover);
+  transform: var(--sg-transform-scale-0d98);
 }
 
-.settings-topbar-btn i {
-  font-size: 1rem;
+.settings-topbar-btn .sg-icon {
+  font-size: var(--sg-font-size-1rem);
 }
 
 /* ─── Profile card ───────────────────────────────────────────── */
@@ -609,23 +613,23 @@ const navigateToNetwork = (network: MenuItem) => {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 1rem;
-  margin: 1rem;
-  padding: 1rem 1.1rem;
-  background: var(--surface-card);
-  border-radius: 18px;
-  border: 1px solid var(--surface-border);
+  gap: var(--sg-space-4);
+  margin: var(--sg-space-4);
+  padding: var(--sg-space-4) var(--sg-space-4) var(--sg-space-1d1rem);
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-18px);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   cursor: pointer;
-  box-shadow: var(--card-shadow);
-  transition: background-color 0.15s;
+  box-shadow: var(--sg-shadow-control);
+  transition: var(--sg-motion-backgroundneg-color-0d15s);
 }
 
 .profile-card--bottom {
-  margin: 0.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  margin: var(--sg-space-2) var(--sg-space-4) calc(var(--sg-space-2) + env(safe-area-inset-bottom, 0px));
 }
 
 .profile-card:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .profile-avatar-wrap {
@@ -634,30 +638,30 @@ const navigateToNetwork = (network: MenuItem) => {
 }
 
 .profile-avatar {
-  font-size: 2.2rem;
-  line-height: 1;
-  width: 3.4rem;
-  height: 3.4rem;
+  font-size: var(--sg-font-size-2d2rem);
+  line-height: var(--sg-line-height-1);
+  width: var(--sg-size-3d4rem);
+  height: var(--sg-size-3d4rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-ground);
-  border-radius: 50%;
+  background: var(--sg-color-surface-muted);
+  border-radius: var(--sg-radius-50pct);
   overflow: hidden;
 }
 
 .profile-avatar-img {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: var(--sg-radius-50pct);
 }
 
 .profile-avatar-ring {
   position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 2.5px solid var(--primary-color);
+  inset: var(--sg-space-3px);
+  border-radius: var(--sg-radius-50pct);
+  border: 2.5px solid var(--sg-color-action);
   opacity: 0.6;
 }
 
@@ -665,72 +669,78 @@ const navigateToNetwork = (network: MenuItem) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: var(--sg-space-0d15rem);
   overflow: hidden;
 }
 
 .profile-name {
   font-weight: 700;
-  font-size: 1.05rem;
-  color: var(--text-color);
+  font-size: var(--sg-font-size-1d1rem);
+  color: var(--sg-color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .profile-sub {
-  font-size: 0.72rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d72rem);
+  color: var(--sg-color-text-muted);
   display: flex;
   align-items: center;
 }
 
 .profile-pills {
   display: flex;
-  gap: 0.3rem;
-  margin-top: 0.35rem;
+  gap: var(--sg-space-0d3rem);
+  margin-top: var(--sg-space-0d35rem);
 }
 
 .profile-pill {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
+  width: var(--sg-size-0d55rem);
+  height: var(--sg-size-0d55rem);
+  border-radius: var(--sg-radius-50pct);
   opacity: 0.85;
 }
 
 .profile-chevron {
-  font-size: 0.75rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d75rem);
+  color: var(--sg-color-text-muted);
   flex-shrink: 0;
+}
+
+.profile-net-icon {
+  font-size: var(--sg-font-size-0d65rem);
+  margin-right: var(--sg-space-0d3rem);
+  color: var(--sg-color-text-muted);
 }
 
 /* ─── Quick actions ──────────────────────────────────────────── */
 
 .quick-actions {
   flex-shrink: 0;
-  margin: 0 1rem 0.5rem;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
-  border-radius: 16px;
+  margin: 0 var(--sg-space-4) var(--sg-space-2);
+  background: var(--sg-color-surface-raised);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-16px);
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--sg-shadow-control);
 }
 
 .quick-action-btn {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.85rem 1rem;
+  gap: var(--sg-space-3);
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d85rem) var(--sg-space-4);
   background: none;
   border: none;
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: var(--sg-border-1px) solid var(--sg-color-border);
   cursor: pointer;
-  transition: background-color 0.12s;
+  transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .quick-action-btn:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .quick-action-btn--hidden {
@@ -739,56 +749,56 @@ const navigateToNetwork = (network: MenuItem) => {
 
 .quick-action-icon {
   position: relative;
-  width: 2rem;
-  height: 2rem;
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-ground);
-  border-radius: 8px;
+  background: var(--sg-color-surface-muted);
+  border-radius: var(--sg-radius-8px);
   flex-shrink: 0;
 }
 
-.quick-action-icon i {
-  font-size: 1rem;
-  color: var(--text-color);
+.quick-action-icon .sg-icon {
+  font-size: var(--sg-font-size-1rem);
+  color: var(--sg-color-text);
 }
 
 .notif-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #ef4444;
-  color: #fff;
-  font-size: 0.6rem;
+  top: var(--sg-position-neg-4px);
+  right: var(--sg-position-neg-4px);
+  background: var(--sg-color-danger);
+  color: var(--sg-color-text-on-action);
+  font-size: var(--sg-font-size-0d6rem);
   font-weight: 700;
-  min-width: 1rem;
-  height: 1rem;
-  border-radius: 0.5rem;
+  min-width: var(--sg-size-1rem);
+  height: var(--sg-size-1rem);
+  border-radius: var(--sg-radius-0d5rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 0.2rem;
+  padding: 0 var(--sg-space-0d2rem);
 }
 
 .quick-action-label {
   flex: 1;
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   text-align: left;
 }
 
 .quick-action-arrow {
-  font-size: 0.7rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-0d7rem);
+  color: var(--sg-color-text-muted);
 }
 
 .friends-filter-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
+  gap: var(--sg-space-3);
+  padding: var(--sg-space-0d85rem) var(--sg-space-4);
 }
 
 .friends-filter-row--hidden {
@@ -799,66 +809,66 @@ const navigateToNetwork = (network: MenuItem) => {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.9rem;
+  gap: var(--sg-space-0d6rem);
+  font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
-.friends-filter-label i {
-  font-size: 1rem;
-  width: 2rem;
-  height: 2rem;
+.friends-filter-label .sg-icon {
+  font-size: var(--sg-font-size-1rem);
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-ground);
-  border-radius: 8px;
+  background: var(--sg-color-surface-muted);
+  border-radius: var(--sg-radius-8px);
 }
 
 .friends-toggle-pill {
   position: relative;
-  width: 2.8rem;
-  height: 1.6rem;
-  border-radius: 1rem;
+  width: var(--sg-size-2d8rem);
+  height: var(--sg-size-1d6rem);
+  border-radius: var(--sg-radius-1rem);
   border: none;
-  background: var(--surface-border);
+  background: var(--sg-color-border);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: var(--sg-motion-backgroundneg-color-0d2s);
   flex-shrink: 0;
   padding: 0;
 }
 
 .friends-toggle-pill.enabled {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
 }
 
 .toggle-thumb {
   position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  top: var(--sg-space-3px);
+  left: var(--sg-space-3px);
+  width: var(--sg-size-1d1rem);
+  height: var(--sg-size-1d1rem);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-text-on-action);
+  box-shadow: var(--sg-shadow-control);
+  transition: var(--sg-motion-transform-0d2s);
 }
 
 .friends-toggle-pill.enabled .toggle-thumb {
-  transform: translateX(1.2rem);
+  transform: translateX(var(--sg-space-0d85rem));
 }
 
 /* ─── Notifications panel ────────────────────────────────────── */
 
 .notif-panel {
   flex-shrink: 0;
-  margin: 0 1rem 0.5rem;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
-  border-radius: 16px;
+  margin: 0 var(--sg-space-4) var(--sg-space-2);
+  background: var(--sg-color-surface-raised);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-16px);
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--sg-shadow-control);
 }
 
 .notif-panel--hidden {
@@ -869,23 +879,23 @@ const navigateToNetwork = (network: MenuItem) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--surface-border);
+  padding: var(--sg-space-3) var(--sg-space-4);
+  border-bottom: var(--sg-border-1px) solid var(--sg-color-border);
 }
 
 .notif-title {
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--sg-letter-spacing-0d05em);
 }
 
 .notif-clear {
   background: none;
   border: none;
-  font-size: 0.8rem;
-  color: var(--primary-color);
+  font-size: var(--sg-font-size-0d8rem);
+  color: var(--sg-color-action);
   cursor: pointer;
   padding: 0;
   font-weight: 500;
@@ -895,14 +905,14 @@ const navigateToNetwork = (network: MenuItem) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem;
-  color: var(--text-color-secondary);
-  font-size: 0.85rem;
+  gap: var(--sg-space-2);
+  padding: var(--sg-space-1d5rem);
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d85rem);
 }
 
-.notif-empty i {
-  font-size: 1.5rem;
+.notif-empty .sg-icon {
+  font-size: var(--sg-font-size-1d5rem);
   opacity: 0.4;
 }
 
@@ -910,22 +920,22 @@ const navigateToNetwork = (network: MenuItem) => {
 
 .networks-section {
   flex: 1;
-  padding: 0 0.75rem 0.5rem;
+  padding: 0 var(--sg-space-0d75rem) var(--sg-space-2);
 }
 
 .section-title {
-  margin: 0.25rem 0 0.5rem 0.25rem;
-  font-size: 0.72rem;
+  margin: var(--sg-space-0d25rem) 0 var(--sg-space-2) var(--sg-space-0d25rem);
+  font-size: var(--sg-font-size-0d72rem);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .network-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: var(--sg-space-2);
 }
 
 .network-tile {
@@ -933,53 +943,58 @@ const navigateToNetwork = (network: MenuItem) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: var(--sg-space-0d45rem);
   position: relative;
   aspect-ratio: 1;
   min-width: 0;
-  padding: 0.5rem 0.35rem;
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
-  border-radius: 14px;
+  padding: var(--sg-space-0d5rem) var(--sg-space-0d35rem);
+  background: var(--sg-color-surface-raised);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-14px);
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.1s;
-  box-shadow: var(--card-shadow);
+  transition: var(--sg-motion-backgroundneg-color-0d15s), var(--sg-motion-transform-0d2s);
+  box-shadow: var(--sg-shadow-control);
 }
 
 .network-tile:active {
   transform: scale(0.96);
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .network-tile.active {
-  border-color: var(--primary-color);
-  background: color-mix(in srgb, var(--primary-color) 6%, var(--surface-card));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 35%, transparent), var(--card-shadow);
+  border-color: var(--sg-color-action);
+  background: color-mix(in srgb, var(--sg-color-action) 6%, var(--sg-color-surface-raised));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--sg-color-action) 35%, transparent), var(--sg-shadow-control);
 }
 
 .network-icon-wrap {
-  width: 2.45rem;
-  height: 2.45rem;
-  border-radius: 999px;
+  width: var(--sg-size-2d45rem);
+  height: var(--sg-size-2d45rem);
+  border-radius: var(--sg-radius-999px);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.network-icon-wrap i {
-  font-size: 1.2rem;
-  color: #fff;
+.network-icon-wrap .sg-icon {
+  font-size: var(--sg-font-size-1d2rem);
+  color: var(--sg-color-text-on-action);
+}
+
+.social-brand-icon {
+  width: var(--sg-font-size-0d72rem);
+  height: var(--sg-font-size-0d72rem);
 }
 
 .network-name {
-  width: 100%;
+  width: var(--sg-size-100pct);
   min-width: 0;
-  font-size: 0.68rem;
+  font-size: var(--sg-font-size-0d68rem);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--sg-color-text);
   text-align: center;
-  line-height: 1.12;
+  line-height: var(--sg-line-height-1d12);
   overflow: hidden;
   overflow-wrap: anywhere;
   display: -webkit-box;
@@ -990,138 +1005,138 @@ const navigateToNetwork = (network: MenuItem) => {
 /* ─── Network edit mode (long press) ────────────────────────── */
 
 .network-tile.edit-mode {
-  animation: tile-wiggle 0.3s ease;
+  animation: tile-wiggle var(--sg-motion-all-0d3s-ease);
 }
 
 .network-toggle {
   position: absolute;
-  top: 0.35rem;
-  right: 0.35rem;
-  width: 1.75rem;
-  height: 1rem;
-  border-radius: 0.75rem;
-  background: var(--primary-color);
+  top: var(--sg-space-0d35rem);
+  right: var(--sg-space-0d35rem);
+  width: var(--sg-size-1d75rem);
+  height: var(--sg-size-1rem);
+  border-radius: var(--sg-radius-0d75rem);
+  background: var(--sg-color-action);
   flex-shrink: 0;
-  transition: background-color 0.2s;
+  transition: var(--sg-motion-backgroundneg-color-0d2s);
 }
 
 .network-toggle.hidden {
-  background: var(--surface-border);
+  background: var(--sg-color-border);
 }
 
 .network-toggle-thumb {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  top: var(--sg-space-0d2rem);
+  right: var(--sg-space-0d2rem);
+  width: var(--sg-size-0d75rem);
+  height: var(--sg-size-0d75rem);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-text-on-action);
+  box-shadow: var(--sg-shadow-control);
+  transition: var(--sg-motion-transform-0d2s);
 }
 
 .network-toggle.hidden .network-toggle-thumb {
-  transform: translateX(-0.75rem);
+  transform: translateX(var(--sg-position-neg-5px));
 }
 
 .edit-hint {
   text-align: center;
-  font-size: 0.72rem;
-  color: var(--text-color-secondary);
-  margin: 0.5rem 0 0;
+  font-size: var(--sg-font-size-0d72rem);
+  color: var(--sg-color-text-muted);
+  margin: var(--sg-space-2) 0 0;
   font-style: italic;
 }
 
 .custom-delete-badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #ef4444;
-  color: #fff;
+  top: var(--sg-space-neg-0d4rem);
+  right: var(--sg-space-neg-0d4rem);
+  width: var(--sg-size-1d25rem);
+  height: var(--sg-size-1d25rem);
+  border-radius: var(--sg-radius-50pct);
+  background: var(--sg-color-danger);
+  color: var(--sg-color-text-on-action);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
+  font-size: var(--sg-font-size-0d6rem);
 }
 
 .add-custom-tile {
-  border: 2px dashed var(--surface-border);
+  border: var(--sg-border-2px) dashed var(--sg-color-border);
   background: transparent;
 }
 
 .add-link-sheet {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--sg-color-surface-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
+  z-index: var(--sg-layer-200);
+  padding: var(--sg-space-4);
 }
 
 .add-link-card {
-  background: var(--surface-card);
-  border-radius: 16px;
-  padding: 1.25rem;
-  width: 100%;
-  max-width: 20rem;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-16px);
+  padding: var(--sg-space-1d25rem);
+  width: var(--sg-size-100pct);
+  max-width: var(--sg-size-20rem);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sg-space-0d75rem);
 }
 
 .add-link-title {
   margin: 0;
   font-weight: 600;
-  font-size: 1rem;
-  color: var(--text-color);
+  font-size: var(--sg-font-size-1rem);
+  color: var(--sg-color-text);
 }
 
 .add-link-input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--surface-border);
-  border-radius: 10px;
-  background: var(--surface-ground);
-  color: var(--text-color);
-  font-size: 0.9rem;
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d6rem) var(--sg-space-0d75rem);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-10px);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d9rem);
   outline: none;
   box-sizing: border-box;
 }
 
 .add-link-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--sg-color-action);
 }
 
 .add-link-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-2);
   justify-content: flex-end;
 }
 
 .add-link-cancel,
 .add-link-confirm {
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
+  padding: var(--sg-space-2) var(--sg-space-4);
+  border-radius: var(--sg-radius-10px);
   border: none;
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   font-weight: 600;
   cursor: pointer;
 }
 
 .add-link-cancel {
-  background: var(--surface-hover);
-  color: var(--text-color);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
 }
 
 .add-link-confirm {
-  background: var(--primary-color);
-  color: #fff;
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
 }
 
 .add-link-confirm:disabled {

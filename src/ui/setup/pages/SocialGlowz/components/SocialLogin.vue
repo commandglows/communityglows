@@ -59,7 +59,7 @@ const connectWithGoogle = async () => {
   max-width: var(--sg-size-400px);
   margin: var(--sg-space-2rem-auto);
   padding: var(--sg-space-2rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   box-shadow: var(--card-shadow);
 }

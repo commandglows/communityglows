@@ -1,5 +1,8 @@
 <template>
-  <div class="filters-wrapper">
+  <div
+    class="filters-wrapper"
+    :class="{ 'is-compact': isFiltersCompact }"
+  >
     <div class="filters-group">
       <!-- Date Range Picker -->
       <div class="date-range-fields">
@@ -85,6 +88,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import type { MenuItem } from '../types'
 import SgButton from './ui/SgButton.vue'
 import SgMultiSelect from './ui/SgMultiSelect.vue'
@@ -118,6 +123,8 @@ const quickDateFilters: FilterOption[] = [
   { label: '30 jours', value: 'month' },
   { label: 'Cette année', value: 'year' }
 ]
+
+const isFiltersCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.filtersCompact}px)`)
 
 const filterOptions: FilterOption[] = [
   { label: 'Publications', value: 'posts' },
@@ -252,18 +259,16 @@ watch(filters, (newFilters) => {
 .date-input:focus-visible, .sort-select:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sort-select:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 
-@media (max-width: 1200px) {
-  .filters-wrapper {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.filters-wrapper.is-compact {
+  flex-direction: column;
+  align-items: stretch;
+}
 
-  .search-container {
-    min-width: var(--sg-size-unset);
-  }
+.filters-wrapper.is-compact .search-container {
+  min-width: var(--sg-size-unset);
+}
 
-  .filters-group {
-    flex-wrap: wrap;
-  }
+.filters-wrapper.is-compact .filters-group {
+  flex-wrap: wrap;
 }
 </style>

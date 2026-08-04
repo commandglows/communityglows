@@ -1,14 +1,14 @@
 ---
 artifact: branding_system
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: socialglowz
 created: "2026-04-26"
 status: active
 source_skill: sf-docs
 scope: brand
 owner: "Diane"
-updated: "2026-04-26"
+updated: "2026-08-03"
 confidence: medium
 risk_level: low
 security_impact: low
@@ -34,7 +34,7 @@ SocialGlowz positions itself as a **pragmatic productivity interface** for socia
 
 ## Visual direction
 
-- Maintain the current Vue + PrimeVue look foundation while avoiding style fragmentation.
+- Maintain the current Windows information architecture and visual appearance while using Reka UI for maintained interaction behavior and SocialGlowz wrappers/tokens for visual authority.
 - Prioritize contrast, legibility, and minimal chrome.
 - Keep interface actions visually stable across desktop and mobile.
 - App icon: compact "social flow" mark with connected nodes, dark calm base, teal/aqua/blue accents, and high small-size readability.
@@ -53,7 +53,7 @@ SocialGlowz positions itself as a **pragmatic productivity interface** for socia
 
 ## UI consistency rules
 
-1. Preserve existing component ecosystem (PrimeVue/DaisyUI + Tailwind utilities).
+1. Preserve the SocialGlowz semantic-token and wrapper ecosystem; do not reintroduce a styled provider theme as a competing visual authority.
 2. Prefer established navigation rhythm over heavy visual churn.
 3. Keep copy aligned with current user journeys (`Network`, `Profiles`, `Settings`, `Auth`).
 4. Never introduce branding motifs that conflict with social network readability.

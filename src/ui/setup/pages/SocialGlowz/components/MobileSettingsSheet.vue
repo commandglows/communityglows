@@ -9,7 +9,7 @@
         <div
           ref="sheetRef"
           class="profile-sheet settings-sheet"
-          :class="{ 'is-dark': themeStore.isDarkMode }"
+          :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile-compact': isMobileSettingsNarrow }"
           :style="sheetStyle"
         >
           <div
@@ -26,7 +26,7 @@
                 class="sheet-close-btn"
                 @click="closeSheet"
               >
-                <i class="pi pi-times" />
+                <SgIcon icon="pi pi-times" />
               </button>
             </div>
           </div>
@@ -64,8 +64,8 @@
                   <span>
                     {{ syncInfoExpanded ? $t('account.sync_less') : $t('account.sync_more') }}
                   </span>
-                  <i
-                    class="pi"
+                  <SgIcon
+                    icon="pi"
                     :class="syncInfoExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"
                   />
                 </button>
@@ -76,11 +76,11 @@
                 class="settings-sync-info-box"
               >
                 <div class="settings-sync-info-row">
-                  <i class="pi pi-cloud" />
+                  <SgIcon icon="pi pi-cloud" />
                   <p>{{ $t('account.sync_info') }}</p>
                 </div>
                 <div class="settings-sync-warning-row">
-                  <i class="pi pi-info-circle" />
+                  <SgIcon icon="pi pi-info-circle" />
                   <p>{{ $t('account.cookies_info') }}</p>
                 </div>
               </div>
@@ -88,7 +88,7 @@
               <template v-if="isSignedIn && nudge.hasEmailAccount.value">
                 <div class="settings-field">
                   <label class="settings-label">
-                    <i class="pi pi-envelope" />
+                    <SgIcon icon="pi pi-envelope" />
                     {{ $t('account.signed_in_as') }}
                   </label>
                   <span class="settings-email-display">{{ settingsEmail }}</span>
@@ -97,7 +97,7 @@
                   class="nudge-cta sign-out-btn"
                   @click="handleSignOut"
                 >
-                  <i class="pi pi-sign-out" />
+                  <SgIcon icon="pi pi-sign-out" />
                   {{ $t('account.sign_out') }}
                 </button>
               </template>
@@ -133,8 +133,8 @@
                         class="signup-error-btn"
                         @click="copySignupError"
                       >
-                        <i
-                          class="pi"
+                        <SgIcon
+                          icon="pi"
                           :class="signupErrorCopied ? 'pi-check' : 'pi-copy'"
                         />
                         {{ signupErrorCopied ? $t('common.copied') : $t('common.copy') }}
@@ -155,9 +155,9 @@
                       class="nudge-cta"
                       :disabled="signupLoading"
                     >
-                      <i
+                      <SgIcon
                         v-if="signupLoading && authAction === 'signIn'"
-                        class="pi pi-spin pi-spinner"
+                        icon="pi pi-spin pi-spinner"
                       />
                       {{ signupLoading && authAction === 'signIn' ? '' : $t('account.sign_in_button') }}
                     </button>
@@ -167,9 +167,9 @@
                       :disabled="signupLoading"
                       @click="handleAccountAuth('signUp')"
                     >
-                      <i
+                      <SgIcon
                         v-if="signupLoading && authAction === 'signUp'"
-                        class="pi pi-spin pi-spinner"
+                        icon="pi pi-spin pi-spinner"
                       />
                       {{ signupLoading && authAction === 'signUp' ? '' : $t('account.create_button') }}
                     </button>
@@ -200,8 +200,8 @@
                   class="settings-sync-toggle"
                   @click="copyDiagnostics"
                 >
-                  <i
-                    class="pi"
+                  <SgIcon
+                    icon="pi"
                     :class="diagnosticsCopied ? 'pi-check' : 'pi-copy'"
                   />
                   <span>{{ diagnosticsCopied ? $t('common.copied') : $t('common.copy') }}</span>
@@ -214,7 +214,7 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-moon" />
+                <SgIcon icon="pi pi-moon" />
                 {{ $t('theme.mode_label') }}
               </span>
             </div>
@@ -239,7 +239,7 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-window-maximize" />
+                <SgIcon icon="pi pi-window-maximize" />
                 Position de la barre de contrôles
               </span>
             </div>
@@ -258,7 +258,7 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-palette" />
+                <SgIcon icon="pi pi-palette" />
                 {{ $t('theme.focus_mode') }}
               </span>
               <button
@@ -272,7 +272,7 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-mobile" />
+                <SgIcon icon="pi pi-mobile" />
                 {{ $t('settings.haptic_feedback') }}
               </span>
               <button
@@ -286,7 +286,7 @@
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-volume-up" />
+                <SgIcon icon="pi pi-volume-up" />
                 {{ $t('settings.tap_sound') }}
               </span>
               <button
@@ -299,7 +299,7 @@
             </div>
             <div class="settings-sound-variant-row">
               <span class="settings-label settings-sound-variant-label">
-                <i class="pi pi-sliders-h" />
+                <SgIcon icon="pi pi-sliders-h" />
                 {{ $t('settings.tap_sound_variant') }}
               </span>
               <div class="settings-sound-variant-options">
@@ -320,7 +320,7 @@
             <!-- Text zoom -->
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
-                <i class="pi pi-search-plus" />
+                <SgIcon icon="pi pi-search-plus" />
                 {{ $t('settings.text_zoom') }}
               </span>
               <span class="text-zoom-value">{{ textZoomLevel }}%</span>
@@ -342,7 +342,7 @@
               class="settings-replay-btn"
               @click="replayOnboarding"
             >
-              <i class="pi pi-info-circle" />
+              <SgIcon icon="pi pi-info-circle" />
               {{ $t('onboarding.replay_button') }}
             </button>
           </div>
@@ -381,10 +381,12 @@ import {
   TEXT_ZOOM_STEP,
   normalizeTextZoomLevel,
 } from '../utils/textZoom'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
 import KeyboardShortcuts from './KeyboardShortcuts.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
@@ -410,6 +412,7 @@ const autoThemeHint = computed(() => {
     : 'theme.auto_source_system'
   return `${t('theme.auto_helper')} ${t(sourceKey)}`
 })
+const isMobileSettingsNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.mobileSettingsCompact}px)`)
 
 function setThemeMode(mode: ThemeMode) {
   void themeStore.setThemeMode(mode, { allowPrompt: mode === 'auto' })
@@ -769,7 +772,7 @@ onUnmounted(() => {
 
 .profile-sheet {
   width: var(--sg-size-100pct);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-20px-20px-0-0);
   padding-bottom: var(--sg-space-env-safeneg-areaneg-insetneg-bottom-16px);
   max-height: var(--sg-size-85vh);
@@ -782,35 +785,35 @@ onUnmounted(() => {
 .settings-sheet {
   --settings-account-card-bg: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--surface-card) 88%, var(--primary-color) 12%),
-    color-mix(in srgb, var(--surface-card) 94%, var(--surface-ground) 6%)
+    color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-action) 12%),
+    color-mix(in srgb, var(--sg-color-surface-raised) 94%, var(--sg-color-surface-muted) 6%)
   );
   --settings-account-card-border:
-    color-mix(in srgb, var(--surface-border) 68%, var(--primary-color) 32%);
+    color-mix(in srgb, var(--sg-color-border) 68%, var(--sg-color-action) 32%);
   --settings-account-card-shadow: 0 18px 38px var(--sg-color-slate-alpha-08);
   --settings-account-status-bg: var(--sg-color-slate-alpha-18);
-  --settings-account-status-color: var(--text-color-secondary);
+  --settings-account-status-color: var(--sg-color-text-muted);
   --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--primary-color) 14%, var(--sg-color-white-transparent) 86%);
-  --settings-account-status-connected-color: var(--primary-color);
+    color-mix(in srgb, var(--sg-color-action) 14%, var(--sg-color-white-transparent) 86%);
+  --settings-account-status-connected-color: var(--sg-color-action);
   --settings-sync-info-bg: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--surface-ground) 90%, var(--primary-color) 10%),
-    color-mix(in srgb, var(--surface-card) 88%, var(--surface-ground) 12%)
+    color-mix(in srgb, var(--sg-color-surface-muted) 90%, var(--sg-color-action) 10%),
+    color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-surface-muted) 12%)
   );
   --settings-sync-info-border:
-    color-mix(in srgb, var(--surface-border) 80%, var(--primary-color) 20%);
+    color-mix(in srgb, var(--sg-color-border) 80%, var(--sg-color-action) 20%);
   --settings-sync-warning-icon:
-    color-mix(in srgb, var(--primary-color) 55%, var(--sg-palette-amber-500) 45%);
+    color-mix(in srgb, var(--sg-color-action) 55%, var(--sg-palette-amber-500) 45%);
   --settings-cta-gradient-start:
-    color-mix(in srgb, var(--primary-color) 88%, var(--sg-color-white) 12%);
+    color-mix(in srgb, var(--sg-color-action) 88%, var(--sg-color-white) 12%);
   --settings-cta-gradient-end:
-    color-mix(in srgb, var(--sg-palette-blue-600) 72%, var(--primary-color) 28%);
+    color-mix(in srgb, var(--sg-palette-blue-600) 72%, var(--sg-color-action) 28%);
   --settings-cta-shadow: 0 14px 28px var(--sg-color-blue-alpha-20);
   --settings-secondary-auth-bg:
-    color-mix(in srgb, var(--primary-color) 10%, var(--surface-card) 90%);
+    color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
   --settings-secondary-auth-border:
-    color-mix(in srgb, var(--primary-color) 22%, var(--surface-border) 78%);
+    color-mix(in srgb, var(--sg-color-action) 22%, var(--sg-color-border) 78%);
   --settings-danger-bg: var(--sg-color-danger-alpha-04);
   --settings-danger-border: var(--sg-color-danger-alpha-36);
   --settings-danger-color: var(--sg-palette-red-600);
@@ -818,7 +821,7 @@ onUnmounted(() => {
   --settings-error-border: var(--sg-color-danger-alpha-108);
   --settings-error-text: var(--sg-palette-red-600);
   --settings-error-btn-bg:
-    color-mix(in srgb, var(--surface-card) 92%, var(--sg-color-white-alpha-08) 8%);
+    color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-white-alpha-08) 8%);
   --settings-error-btn-border: var(--sg-color-danger-alpha-20);
   --settings-error-btn-text: var(--sg-palette-red-700);
   --settings-backup-divider: var(--sg-color-slate-alpha-18);
@@ -829,36 +832,36 @@ onUnmounted(() => {
 :global(.dark) .settings-sheet {
   --settings-account-card-bg: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--surface-card) 92%, var(--primary-color) 8%),
-    color-mix(in srgb, var(--surface-card) 96%, var(--sg-palette-slate-950) 4%)
+    color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-action) 8%),
+    color-mix(in srgb, var(--sg-color-surface-raised) 96%, var(--sg-palette-slate-950) 4%)
   );
   --settings-account-card-border:
-    color-mix(in srgb, var(--surface-border) 76%, var(--primary-color) 24%);
+    color-mix(in srgb, var(--sg-color-border) 76%, var(--sg-color-action) 24%);
   --settings-account-card-shadow: 0 24px 48px var(--sg-color-slate-scrim-38);
   --settings-account-status-bg: var(--sg-color-white-alpha-06);
   --settings-account-status-color:
-    color-mix(in srgb, var(--text-color-secondary) 88%, white 12%);
+    color-mix(in srgb, var(--sg-color-text-muted) 88%, white 12%);
   --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--primary-color) 20%, var(--sg-color-slate-overlay-60) 80%);
+    color-mix(in srgb, var(--sg-color-action) 20%, var(--sg-color-slate-overlay-60) 80%);
   --settings-account-status-connected-color: var(--sg-palette-blue-300);
   --settings-sync-info-bg: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--surface-ground) 64%, var(--surface-card) 36%),
-    color-mix(in srgb, var(--surface-card) 90%, var(--sg-palette-slate-950) 10%)
+    color-mix(in srgb, var(--sg-color-surface-muted) 64%, var(--sg-color-surface-raised) 36%),
+    color-mix(in srgb, var(--sg-color-surface-raised) 90%, var(--sg-palette-slate-950) 10%)
   );
   --settings-sync-info-border:
-    color-mix(in srgb, var(--surface-border) 78%, var(--primary-color) 22%);
+    color-mix(in srgb, var(--sg-color-border) 78%, var(--sg-color-action) 22%);
   --settings-sync-warning-icon:
-    color-mix(in srgb, var(--sg-palette-amber-500) 74%, var(--primary-color) 26%);
+    color-mix(in srgb, var(--sg-palette-amber-500) 74%, var(--sg-color-action) 26%);
   --settings-cta-gradient-start:
-    color-mix(in srgb, var(--primary-color) 92%, white 8%);
+    color-mix(in srgb, var(--sg-color-action) 92%, white 8%);
   --settings-cta-gradient-end:
-    color-mix(in srgb, var(--sg-palette-sky-500) 72%, var(--primary-color) 28%);
+    color-mix(in srgb, var(--sg-palette-sky-500) 72%, var(--sg-color-action) 28%);
   --settings-cta-shadow: 0 18px 32px var(--sg-color-slate-scrim-42);
   --settings-secondary-auth-bg:
-    color-mix(in srgb, var(--surface-card) 86%, var(--primary-color) 14%);
+    color-mix(in srgb, var(--sg-color-surface-raised) 86%, var(--sg-color-action) 14%);
   --settings-secondary-auth-border:
-    color-mix(in srgb, var(--surface-border) 72%, var(--primary-color) 28%);
+    color-mix(in srgb, var(--sg-color-border) 72%, var(--sg-color-action) 28%);
   --settings-danger-bg: var(--sg-color-danger-alpha-10);
   --settings-danger-border: var(--sg-color-danger-light-alpha-32);
   --settings-danger-color: var(--sg-palette-red-300);
@@ -866,7 +869,7 @@ onUnmounted(() => {
   --settings-error-border: var(--sg-color-danger-light-alpha-22);
   --settings-error-text: var(--sg-palette-red-200);
   --settings-error-btn-bg:
-    color-mix(in srgb, var(--surface-card) 86%, var(--sg-color-danger-light-alpha-12) 14%);
+    color-mix(in srgb, var(--sg-color-surface-raised) 86%, var(--sg-color-danger-light-alpha-12) 14%);
   --settings-error-btn-border: var(--sg-color-danger-light-alpha-22);
   --settings-error-btn-text: var(--sg-palette-red-300);
   --settings-backup-divider: var(--sg-color-neutral-alpha-16);
@@ -875,7 +878,7 @@ onUnmounted(() => {
 .sheet-handle {
   width: var(--sg-size-2d5rem);
   height: var(--sg-size-4px);
-  background: var(--surface-border);
+  background: var(--sg-color-border);
   border-radius: var(--sg-radius-2px);
   margin: var(--sg-space-0d75rem-auto-0);
   flex-shrink: 0;
@@ -898,11 +901,11 @@ onUnmounted(() => {
 .sheet-title {
   font-size: var(--sg-font-size-1rem);
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .sheet-close-btn {
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border: none;
   border-radius: var(--sg-radius-50pct);
   width: var(--sg-size-2rem);
@@ -911,13 +914,13 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d75rem);
   transition: var(--sg-motion-backgroundneg-color-0d12s);
 }
 
 .sheet-close-btn:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .sheet-close-btn:disabled {
@@ -959,7 +962,7 @@ onUnmounted(() => {
   font-weight: 700;
   letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .settings-sound-variant-row {
@@ -983,18 +986,18 @@ onUnmounted(() => {
   min-height: var(--sg-size-2d4rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
-  border: 1px solid var(--surface-border);
-  background: var(--surface-ground);
-  color: var(--text-color);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
   font-size: var(--sg-font-size-0d8rem);
   font-weight: 600;
   transition: var(--sg-motion-borderneg-color-0d15s-backgroundneg-color-0d15s-color-0d15s-opacity-0d15s);
 }
 
 .settings-sound-variant-btn.active {
-  background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-card) 88%);
-  border-color: color-mix(in srgb, var(--primary-color) 42%, var(--surface-border) 58%);
-  color: var(--primary-color);
+  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
+  border-color: color-mix(in srgb, var(--sg-color-action) 42%, var(--sg-color-border) 58%);
+  color: var(--sg-color-action);
 }
 
 .settings-sound-variant-btn.disabled {
@@ -1011,7 +1014,7 @@ onUnmounted(() => {
   gap: var(--sg-space-0d5rem);
   font-size: var(--sg-font-size-0d8rem);
   font-weight: 500;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   margin-bottom: var(--sg-space-0d35rem);
 }
 
@@ -1023,22 +1026,22 @@ onUnmounted(() => {
   width: var(--sg-size-100pct);
   padding: var(--sg-space-0d6rem-0d75rem);
   font-size: var(--sg-font-size-0d9rem);
-  background: var(--surface-ground);
-  border: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-muted);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
-  color: var(--text-color);
+  color: var(--sg-color-text);
   outline: none;
   transition: var(--sg-motion-borderneg-color-0d15s);
   box-sizing: border-box;
 }
 
 .settings-input:focus {
-  border-color: var(--primary-color);
+  border-color: var(--sg-color-action);
 }
 
 .settings-account-hint {
   font-size: var(--sg-font-size-0d82rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   line-height: var(--sg-line-height-1d45);
   margin: 0;
 }
@@ -1093,7 +1096,7 @@ onUnmounted(() => {
   border: none;
   border-radius: var(--sg-radius-999px);
   background: transparent;
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-size: var(--sg-font-size-0d78rem);
   font-weight: 700;
   cursor: pointer;
@@ -1117,7 +1120,7 @@ onUnmounted(() => {
 }
 
 .settings-sync-info-row i {
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-size: var(--sg-font-size-0d95rem);
   margin-top: var(--sg-space-0d15rem);
 }
@@ -1133,7 +1136,7 @@ onUnmounted(() => {
   margin: 0;
   font-size: var(--sg-font-size-0d8rem);
   line-height: var(--sg-line-height-1d45);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .settings-signup-form {
@@ -1178,7 +1181,7 @@ onUnmounted(() => {
 
 .secondary-auth-btn {
   background: var(--settings-secondary-auth-bg);
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   border: 1px solid var(--settings-secondary-auth-border);
   box-shadow: var(--sg-shadow-none);
 }
@@ -1232,7 +1235,7 @@ onUnmounted(() => {
 
 .settings-email-display {
   font-size: var(--sg-font-size-0d85rem);
-  color: var(--text-color);
+  color: var(--sg-color-text);
   font-weight: 500;
 }
 
@@ -1248,7 +1251,7 @@ onUnmounted(() => {
   margin: 0;
   font-size: var(--sg-font-size-0d8rem);
   line-height: var(--sg-line-height-1d45);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .settings-toggle-row {
@@ -1256,7 +1259,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: var(--sg-space-0d65rem-0);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .settings-toggle-row:last-child {
@@ -1276,25 +1279,25 @@ onUnmounted(() => {
   min-height: var(--sg-size-2d45rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
-  border: 1px solid var(--surface-border);
-  background: var(--surface-ground);
-  color: var(--text-color-secondary);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d8rem);
   font-weight: 700;
   transition: var(--sg-motion-borderneg-color-0d15s-backgroundneg-color-0d15s-color-0d15s);
 }
 
 .settings-theme-mode-btn.active {
-  background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-card) 88%);
-  border-color: color-mix(in srgb, var(--primary-color) 42%, var(--surface-border) 58%);
-  color: var(--primary-color);
+  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
+  border-color: color-mix(in srgb, var(--sg-color-action) 42%, var(--sg-color-border) 58%);
+  color: var(--sg-color-action);
 }
 
 .settings-theme-hint {
   margin: var(--sg-space-neg-0d3rem-0-0d8rem);
   font-size: var(--sg-font-size-0d78rem);
   line-height: var(--sg-line-height-1d4);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .settings-toggle-label {
@@ -1303,7 +1306,7 @@ onUnmounted(() => {
   gap: var(--sg-space-0d6rem);
   font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .settings-toggle-label i {
@@ -1318,7 +1321,7 @@ onUnmounted(() => {
   height: var(--sg-size-1d6rem);
   border-radius: var(--sg-radius-1rem);
   border: none;
-  background: var(--surface-border);
+  background: var(--sg-color-border);
   cursor: pointer;
   transition: var(--sg-motion-backgroundneg-color-0d2s);
   flex-shrink: 0;
@@ -1326,7 +1329,7 @@ onUnmounted(() => {
 }
 
 .friends-toggle-pill.enabled {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
 }
 
 .toggle-thumb {
@@ -1347,7 +1350,7 @@ onUnmounted(() => {
 
 .text-zoom-value {
   font-size: var(--sg-font-size-0d85rem);
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-weight: 600;
   min-width: var(--sg-size-3rem);
   text-align: right;
@@ -1356,7 +1359,7 @@ onUnmounted(() => {
 .text-zoom-slider {
   width: var(--sg-size-100pct);
   margin: var(--sg-space-0-0-0d75rem);
-  accent-color: var(--primary-color);
+  accent-color: var(--sg-color-action);
 }
 
 .settings-replay-btn {
@@ -1364,9 +1367,9 @@ onUnmounted(() => {
   padding: var(--sg-space-0d75rem-1rem);
   margin-top: var(--sg-space-0d5rem);
   border-radius: var(--sg-radius-10px);
-  border: 1px solid var(--surface-border);
-  background: var(--surface-card);
-  color: var(--text-color-secondary);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
   display: flex;
   align-items: center;
@@ -1375,7 +1378,7 @@ onUnmounted(() => {
 }
 
 .settings-replay-btn:active {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 /* ─── Sheet transition ───────────────────────────────────────── */
@@ -1411,19 +1414,17 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 420px) {
-  .settings-account-card {
-    gap: var(--sg-space-0d75rem);
-    padding: var(--sg-space-0d8rem);
-  }
+ .settings-sheet.is-mobile-compact .settings-account-card {
+  gap: var(--sg-space-0d75rem);
+  padding: var(--sg-space-0d8rem);
+}
 
-  .settings-account-actions-row {
+  .settings-sheet.is-mobile-compact .settings-account-actions-row {
     gap: var(--sg-space-0d5rem);
   }
 
-  .settings-account-status,
-  .settings-sync-toggle {
-    font-size: var(--sg-font-size-0d72rem);
-  }
+.settings-sheet.is-mobile-compact .settings-account-status,
+.settings-sheet.is-mobile-compact .settings-sync-toggle {
+  font-size: var(--sg-font-size-0d72rem);
 }
 </style>

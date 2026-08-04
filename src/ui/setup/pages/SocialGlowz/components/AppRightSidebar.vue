@@ -13,7 +13,7 @@
         :default-size="SIDEBAR_EXPANDED_SIZE"
         :min-size="5"
         class="sidebar"
-        :class="{ 'icons-only': iconsOnly }"
+        :class="{ 'is-mobile': isSidebarMobile, 'icons-only': iconsOnly }"
       >
         <div
           class="sidebar-content"
@@ -21,7 +21,7 @@
         >
           <div
             class="sidebar-header"
-            :class="{ 'sidebar-header--compact': iconsOnly, 'justify-content-between': !iconsOnly }"
+            :class="{ 'sidebar-header--compact': iconsOnly, 'sidebar-header--spaced': !iconsOnly }"
           >
             <div
               class="sidebar-actions"
@@ -31,7 +31,7 @@
                 v-sg-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
                 :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
                 text
-                :class="['sidebar-header-button', iconsOnly ? 'w-full' : 'justify-content-center']"
+                :class="['sidebar-header-button', { 'w-full': iconsOnly }]"
                 :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
                 @click="copyDiagnostics"
               />
@@ -39,7 +39,7 @@
                 v-sg-tooltip.left="$t('common.settings')"
                 icon="pi pi-cog"
                 text
-                :class="['sidebar-header-button', iconsOnly ? 'w-full' : 'justify-content-center']"
+                :class="['sidebar-header-button', { 'w-full': iconsOnly }]"
                 :aria-label="$t('common.settings')"
                 @click="emit('open-settings')"
               />
@@ -90,7 +90,7 @@
               :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
               :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'feed')"
             />
             <Button
@@ -98,7 +98,7 @@
               :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
               :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'profile')"
             />
             <Button
@@ -106,7 +106,7 @@
               :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
               :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'friends')"
             />
             <Button
@@ -115,7 +115,7 @@
               :aria-label="iconsOnly ? $t('common.notifications') : undefined"
               :badge="'3'"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'notifications')"
             />
             <Button
@@ -123,7 +123,7 @@
               :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
               :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'saved')"
             />
             <Button
@@ -131,7 +131,7 @@
               :label="iconsOnly ? undefined : $t('sidebar.events_button')"
               :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'justify-content-center' : 'justify-content-start']"
+              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
               @click="emit('open-rightpanel-section', 'events')"
             />
           </div>
@@ -154,7 +154,9 @@
                 <span class="sidebar-widget__state">
                   {{ isKanbanCollapsed ? 'Replié' : 'Déplié' }}
                 </span>
-                <i :class="['pi', isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']" />
+                <SgIcon
+                  :icon="['pi', isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']"
+                />
               </button>
               <div
                 class="sidebar-widget__body sidebar-widget__body--kanban"
@@ -181,7 +183,9 @@
                 <span class="sidebar-widget__state">
                   {{ isCrmCollapsed ? 'Replié' : 'Déplié' }}
                 </span>
-                <i :class="['pi', isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']" />
+                <SgIcon
+                  :icon="['pi', isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']"
+                />
               </button>
               <div
                 class="sidebar-widget__body sidebar-widget__body--crm"
@@ -206,6 +210,7 @@ import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
 import Button from './ui/SgButton.vue'
 import Avatar from './ui/SgAvatar.vue'
 import { useProfilesStore } from '@/stores/profiles'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import ProfileSwitcher from './ProfileSwitcher.vue'
 import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
 import { getPlatformCapabilities } from '@/platform/capabilities'
@@ -213,6 +218,7 @@ import { useWebviewStore } from '@/stores/webviewState'
 import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
 import KanbanSidebar from './kanban/KanbanSidebar.vue'
 import CrmSidebarWidget from './CrmSidebarWidget.vue'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
 const props = defineProps<{
   modelValue: boolean
@@ -225,6 +231,7 @@ const emit = defineEmits<{
 }>()
 
 const webviewStore = useWebviewStore()
+const isSidebarMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
 const diagnosticsCopied = ref(false)
 
 const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
@@ -315,8 +322,8 @@ const handleResize = (sizes: number[]) => {
 
 <style scoped>
 .sidebar {
-  background-color: var(--surface-card);
-  border-left: 1px solid var(--surface-border);
+  background-color: var(--sg-color-surface-raised);
+  border-left: 1px solid var(--sg-color-border);
   height: var(--sg-right-sidebar-viewport-height);
   margin-top: 0;
   transition: var(--sg-right-sidebar-transition);
@@ -342,6 +349,10 @@ const handleResize = (sizes: number[]) => {
   gap: var(--sg-sidebar-control-gap);
   min-height: var(--sg-sidebar-header-height);
   margin-bottom: var(--sg-sidebar-section-gap);
+}
+
+.sidebar-header--spaced {
+  justify-content: space-between;
 }
 
 .sidebar-header--compact {
@@ -394,7 +405,7 @@ const handleResize = (sizes: number[]) => {
 .profile-section {
   text-align: center;
   padding-bottom: var(--sg-right-sidebar-profile-spacing);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
   margin-bottom: var(--sg-right-sidebar-profile-spacing);
 }
 
@@ -404,7 +415,7 @@ const handleResize = (sizes: number[]) => {
 }
 
 .profile-section p {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   margin: 0;
   font-size: var(--sg-right-sidebar-profile-copy-size);
 }
@@ -420,18 +431,20 @@ const handleResize = (sizes: number[]) => {
   position: relative;
 }
 
-.menu-section :deep(.sg-button.justify-content-start) {
+.menu-section :deep(.sg-button.menu-button--leading) {
+  justify-content: flex-start;
   padding: 0 var(--sg-right-sidebar-menu-padding-inline);
 }
 
-.menu-section :deep(.sg-button.justify-content-center) {
+.menu-section :deep(.sg-button.menu-button--centered) {
+  justify-content: center;
   padding: 0;
   display: flex;
   align-items: center;
 }
 
 .menu-section :deep(.sg-button:hover) {
-  background-color: var(--surface-hover);
+  background-color: var(--sg-color-surface-hover);
 }
 
 .menu-section :deep(.sg-button__badge) {
@@ -454,7 +467,7 @@ const handleResize = (sizes: number[]) => {
   background: transparent;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-sm);
   overflow: hidden;
 }
@@ -468,14 +481,14 @@ const handleResize = (sizes: number[]) => {
   justify-content: space-between;
   gap: var(--sg-sidebar-control-gap);
   padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
-  background: var(--surface-card);
-  color: var(--text-color);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
   cursor: pointer;
   font: inherit;
 }
 
 .sidebar-widget__toggle:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .sidebar-widget__toggle:focus-visible {
@@ -486,14 +499,14 @@ const handleResize = (sizes: number[]) => {
 .sidebar-widget__title {
   font-size: var(--sg-sidebar-section-title-size);
   font-weight: 600;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .sidebar-widget__state {
   margin-left: auto;
   margin-right: var(--sg-sidebar-control-gap);
   font-size: var(--sg-font-size-0d8rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .sidebar-widget__body {
@@ -524,16 +537,14 @@ const handleResize = (sizes: number[]) => {
   height: var(--sg-right-sidebar-badge-size);
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    width: var(--sg-sidebar-fill-size);
-    background-color: var(--surface-overlay);
-  }
+.sidebar.is-mobile {
+  width: var(--sg-sidebar-fill-size);
+  background-color: var(--sg-color-surface-overlay);
 }
 
-.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--surface-border); transition: var(--sg-right-sidebar-gutter-transition); }
-.sidebar-resize-handle:hover { background: var(--primary-color); }
-.sidebar-resize-handle:focus-visible { background: var(--primary-color); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--sg-color-border); transition: var(--sg-right-sidebar-gutter-transition); }
+.sidebar-resize-handle:hover { background: var(--sg-color-action); }
+.sidebar-resize-handle:focus-visible { background: var(--sg-color-action); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar,

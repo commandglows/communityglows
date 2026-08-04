@@ -375,7 +375,7 @@ declare global {
   export type { Profile } from '../../../../../stores/profiles'
   import('../../../../../stores/profiles')
   // @ts-ignore
-  export type { ShortcutAction, AppShortcut } from '../../../../../stores/shortcuts'
+  export type { CoreShortcutAction, NetworkShortcutAction, ProfileShortcutAction, RightPanelShortcutAction, ShortcutAction, AppShortcut } from '../../../../../stores/shortcuts'
   import('../../../../../stores/shortcuts')
   // @ts-ignore
   export type { ThemeMode, AutoThemeSource, AutoThemeResolution } from '../../../../../utils/themeAuto'

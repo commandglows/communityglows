@@ -9,13 +9,13 @@
           class="snap-card"
         >
           <div class="snap-placeholder">
-            <i class="pi pi-camera"></i>
+            <SgIcon icon="pi pi-camera" />
           </div>
           <div class="snap-info">
             <p class="snap-title">Snap #{{ i }}</p>
             <div class="snap-stats">
-              <span><i class="pi pi-eye"></i> {{ Math.floor(Math.random() * 500) }}</span>
-              <span><i class="pi pi-replay"></i> {{ Math.floor(Math.random() * 50) }}</span>
+              <span><SgIcon icon="pi pi-eye" /> {{ Math.floor(Math.random() * 500) }}</span>
+              <span><SgIcon icon="pi pi-replay" /> {{ Math.floor(Math.random() * 50) }}</span>
             </div>
           </div>
         </div>
@@ -26,33 +26,33 @@
 
 <style scoped>
 .snapchat-content {
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 .snap-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .snap-card {
-  background: var(--surface-card);
-  border-radius: 8px;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-8px);
   overflow: hidden;
 }
 
 .snap-placeholder {
   aspect-ratio: 9/16;
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  color: var(--text-color-secondary);
+  font-size: var(--sg-font-size-2rem);
+  color: var(--sg-color-text-muted);
 }
 
 .snap-info {
-  padding: 0.8rem;
+  padding: var(--sg-space-0d8rem);
 }
 
 .snap-title {
@@ -62,14 +62,14 @@
 
 .snap-stats {
   display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  color: var(--text-color-secondary);
+  gap: var(--sg-space-1rem);
+  margin-top: var(--sg-space-0d5rem);
+  color: var(--sg-color-text-muted);
 }
 
 .snap-stats span {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: var(--sg-space-0d3rem);
 }
 </style>

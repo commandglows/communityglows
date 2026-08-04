@@ -9,7 +9,7 @@
       class="launch-error"
       role="alert"
     >
-      <i class="pi pi-exclamation-triangle" />
+      <SgIcon icon="pi pi-exclamation-triangle" />
       <p>Impossible d'ouvrir {{ webviewStore.activeNetworkId }}.</p>
       <div class="launch-error-actions">
         <Button
@@ -34,9 +34,7 @@
       class="dev-placeholder"
     >
       <div class="placeholder-content">
-        <i
-          class="pi pi-desktop placeholder-icon"
-        />
+        <SgIcon icon="pi pi-desktop placeholder-icon" />
         <p><strong>{{ webviewStore.activeNetworkId }}</strong></p>
         <p>{{ profilesStore.activeProfile?.emoji }} {{ profilesStore.activeProfile?.name ?? 'No profile' }}</p>
         <p class="hint">Native webview renders here in the Tauri desktop app.</p>
@@ -213,8 +211,8 @@ watch(
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  color: var(--text-color-secondary);
-  background: var(--surface-ground);
+  color: var(--sg-color-text-muted);
+  background: var(--sg-color-surface-muted);
 }
 
 .launch-error p {
@@ -233,7 +231,7 @@ watch(
   align-items: center;
   justify-content: center;
   height: var(--sg-size-100pct);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .placeholder-content {

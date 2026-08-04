@@ -1,6 +1,6 @@
 <template>
   <div class="unauthorized">
-    <i class="pi pi-lock unauthorized-icon" />
+    <SgIcon icon="pi pi-lock unauthorized-icon" />
     <h1>Accès non autorisé</h1>
     <p>Vous n'avez pas les permissions nécessaires pour accéder à cette page.</p>
     <Button
@@ -32,19 +32,19 @@ const router = useRouter()
 
 .unauthorized-icon {
   font-size: var(--sg-font-size-3rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   opacity: 0.5;
 }
 
 .unauthorized h1 {
   margin: 0;
   font-size: var(--sg-font-size-1d5rem);
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 
 .unauthorized p {
   margin: 0;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   max-width: var(--sg-size-400px);
 }
 </style>

@@ -4,10 +4,10 @@
       v-if="loading"
       class="loading-state"
     >
-      <i
-        class="pi pi-spin pi-spinner"
+      <SgIcon
+        icon="pi pi-spin pi-spinner"
         style="font-size: var(--sg-font-size-2rem)"
-      ></i>
+      />
       <p>Chargement du Kanban...</p>
     </div>
 
@@ -45,7 +45,7 @@
               @dragend="handleDragEnd"
             >
               <div class="item-header">
-                <i :class="getItemIcon(item.type)"></i>
+                <SgIcon :icon="getItemIcon(item.type)" />
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
@@ -152,7 +152,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: var(--sg-size-100pct);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .columns-container {
@@ -165,7 +165,7 @@ onMounted(() => {
 .kanban-column {
   flex: 1;
   min-width: var(--sg-size-300px);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-radius-8px);
   display: flex;
   flex-direction: column;
@@ -173,7 +173,7 @@ onMounted(() => {
 
 .column-header {
   padding: var(--sg-space-1rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px-8px-0-0);
   display: flex;
   justify-content: space-between;
@@ -186,7 +186,7 @@ onMounted(() => {
 }
 
 .item-count {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   padding: var(--sg-space-0d2rem-0d6rem);
   border-radius: var(--sg-radius-1rem);
@@ -200,7 +200,7 @@ onMounted(() => {
 }
 
 .kanban-item {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-6px);
   padding: var(--sg-space-1rem);
   margin-bottom: var(--sg-space-0d5rem);
@@ -232,7 +232,7 @@ onMounted(() => {
 
 .item-description {
   margin: var(--sg-space-0d5rem-0);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 
@@ -245,7 +245,7 @@ onMounted(() => {
 }
 
 .item-date {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .item-labels {
@@ -254,7 +254,7 @@ onMounted(() => {
 }
 
 .label {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   padding: var(--sg-space-0d2rem-0d4rem);
   border-radius: var(--sg-radius-4px);

@@ -35,7 +35,7 @@
         :key="friend"
         class="friend-row"
       >
-        <i class="pi pi-user friend-icon" />
+        <SgIcon icon="pi pi-user friend-icon" />
         <span class="friend-name">{{ friend }}</span>
         <Button
           icon="pi pi-times"
@@ -53,13 +53,13 @@
       v-else
       class="empty-state"
     >
-      <i class="pi pi-users empty-state-icon" />
+      <SgIcon icon="pi pi-users empty-state-icon" />
       <p>{{ $t('friends_filter.empty_state') }}</p>
       <p class="hint">{{ $t('friends_filter.empty_hint') }}</p>
     </div>
 
     <div class="footer-note">
-      <i class="pi pi-info-circle" />
+      <SgIcon icon="pi pi-info-circle" />
       {{ $t('friends_filter.footer_note') }}
     </div>
   </SgDialog>
@@ -136,7 +136,7 @@ const removeFriend = (name: string) => {
 <style scoped>
 .hint {
   font-size: var(--sg-friends-hint-size);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   margin: 0 0 var(--sg-space-4);
   line-height: var(--sg-friends-hint-line-height);
 }
@@ -169,11 +169,11 @@ const removeFriend = (name: string) => {
 }
 
 .friend-row:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .friend-icon {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-friends-icon-size);
 }
 
@@ -187,7 +187,7 @@ const removeFriend = (name: string) => {
   flex-direction: column;
   align-items: center;
   padding: var(--sg-friends-empty-padding);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   gap: var(--sg-space-2);
   text-align: center;
 }
@@ -203,6 +203,6 @@ const removeFriend = (name: string) => {
   align-items: center;
   gap: var(--sg-space-2);
   font-size: var(--sg-friends-footer-size);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 </style>

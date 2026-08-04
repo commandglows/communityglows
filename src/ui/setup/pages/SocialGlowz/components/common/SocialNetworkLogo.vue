@@ -35,26 +35,26 @@ const getDomain = (network: string): string => {
 
 <style scoped>
 .network-logo-facebook {
-  --logo-color: #1877F2;
+  --logo-color: var(--sg-color-facebook);
 }
 
 .network-logo-twitter {
-  --logo-color: #1DA1F2;
+  --logo-color: var(--sg-color-twitter);
 }
 
 .network-logo-linkedin {
-  --logo-color: #0A66C2;
+  --logo-color: var(--sg-color-linkedin);
 }
 
 .network-logo-reddit {
-  --logo-color: #FF4500;
+  --logo-color: var(--sg-color-reddit);
 }
 
 .network-logo-instagram {
-  --logo-color: #E4405F;
+  --logo-color: var(--sg-color-instagram-red);
 }
 
 .network-logo-discord {
-  --logo-color: #5865F2;
+  --logo-color: var(--sg-color-discord);
 }
 </style> 

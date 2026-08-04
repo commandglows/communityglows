@@ -116,10 +116,13 @@ const subreddits = ref([
 ])
 
 const connectReddit = () => {
+  const authWindowWidth = 500
+  const authWindowHeight = 600
+  const authWindowFeatures = `width=${authWindowWidth},height=${authWindowHeight},scrollbars=yes`
   const authWindow = window.open(
     '/api/auth/reddit',
     'Reddit Auth',
-    'width=500,height=600,scrollbars=yes'
+    authWindowFeatures
   )
 
   window.addEventListener('message', async (event) => {
@@ -144,7 +147,7 @@ const connectReddit = () => {
   margin: var(--sg-space-2rem-auto);
   text-align: center;
   padding: var(--sg-space-2rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
 }
 
@@ -154,7 +157,7 @@ const connectReddit = () => {
 
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .reddit-content {
@@ -164,7 +167,7 @@ const connectReddit = () => {
 }
 
 .subreddits-sidebar {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
 }
@@ -179,13 +182,13 @@ const connectReddit = () => {
 }
 
 .subreddit-item:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .members {
   margin-left: auto;
   font-size: var(--sg-font-size-0d8rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .posts-section {
@@ -197,7 +200,7 @@ const connectReddit = () => {
 .post-card {
   display: flex;
   gap: var(--sg-space-1rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
 }
@@ -206,7 +209,7 @@ const connectReddit = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .post-content {
@@ -222,19 +225,19 @@ const connectReddit = () => {
 
 .subreddit {
   font-weight: bold;
-  color: var(--primary-color);
+  color: var(--sg-color-action);
 }
 
 .post-meta {
   font-size: var(--sg-font-size-0d9rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .post-actions {
   display: flex;
   gap: var(--sg-space-1rem);
   margin-top: var(--sg-space-1rem);
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-space-0d8rem);
 }
 

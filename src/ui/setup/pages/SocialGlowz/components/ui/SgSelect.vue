@@ -11,16 +11,16 @@
           v-if="selectedOption"
           class="sg-select__value"
         >
-          <i
-            v-if="selectedOption.icon"
-            :class="selectedOption.icon"
+          <SgIcon
+            v-if="selectedOption?.icon"
+            :icon="selectedOption.icon"
             aria-hidden="true"
           />
           {{ selectedOption.label }}
         </span>
       </SelectValue>
       <SelectIcon aria-hidden="true">
-        <i class="pi pi-chevron-down" />
+        <SgIcon icon="pi pi-chevron-down" />
       </SelectIcon>
     </SelectTrigger>
 
@@ -39,17 +39,17 @@
           >
             <SelectItemText>
               <span class="sg-select__value">
-                <i
+                <SgIcon
                   v-if="option.icon"
-                  :class="option.icon"
+                  :icon="option.icon"
                   aria-hidden="true"
                 />
                 {{ option.label }}
               </span>
             </SelectItemText>
             <SelectItemIndicator class="sg-select__indicator">
-              <i
-                class="pi pi-check"
+              <SgIcon
+                icon="pi pi-check"
                 aria-hidden="true"
               />
             </SelectItemIndicator>
@@ -74,6 +74,7 @@ import {
   SelectValue,
   SelectViewport,
 } from 'reka-ui'
+import SgIcon from './SgIcon.vue'
 
 defineOptions({ inheritAttrs: false })
 

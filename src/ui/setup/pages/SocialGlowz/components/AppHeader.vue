@@ -1,5 +1,8 @@
 <template>
-  <header class="header">
+  <header
+    class="header"
+    :class="{ 'is-narrow': isHeaderNarrow, 'is-compact': isHeaderCompact }"
+  >
     <div class="header-start">
       <Button
         v-sg-tooltip.bottom="'Toggle left sidebar'"
@@ -14,7 +17,7 @@
     <div class="header-center">
       <div class="search-container">
         <span class="search-field">
-          <i class="pi pi-search" />
+          <SgIcon icon="pi pi-search" />
           <SgInput
             placeholder="Rechercher..."
             aria-label="Rechercher"
@@ -58,6 +61,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import { useRoute } from 'vue-router'
 import Button from './ui/SgButton.vue'
 import SgInput from './ui/SgInput.vue'
@@ -91,6 +96,8 @@ const route = useRoute()
 const profilesStore = useProfilesStore()
 const webviewStore = useWebviewStore()
 const diagnosticsCopied = ref(false)
+const isHeaderNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.headerWide}px)`)
+const isHeaderCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
 const currentNetwork = computed<MenuItem | null>(() => {
   if (route.path === '/' || route.path === '/login') return null
 
@@ -157,8 +164,8 @@ async function copyDiagnostics() {
   right: 0;
   height: auto;
   min-height: var(--sg-size-4rem);
-  background: var(--surface-card);
-  border-bottom: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border-bottom: 1px solid var(--sg-color-border);
   display: flex;
   align-items: center;
   padding: var(--sg-space-0-1rem);
@@ -217,29 +224,25 @@ async function copyDiagnostics() {
 .app-title {
   margin: 0;
   font-size: var(--sg-font-size-1d5rem);
-  color: var(--primary-color);
+  color: var(--sg-color-action);
 }
 
-@media (max-width: 1200px) {
-  .header-center {
-    flex-direction: column;
-    gap: var(--sg-space-1rem);
-  }
-
-  .search-container,
-  .filters-container {
-    max-width: var(--sg-size-100pct);
-  }
+.header.is-narrow .header-center {
+  flex-direction: column;
+  gap: var(--sg-space-1rem);
 }
 
-@media (max-width: 768px) {
-  .header {
-    height: var(--sg-size-4rem);
-    min-height: var(--sg-size-4rem);
-  }
+.header.is-narrow .search-container,
+.header.is-narrow .filters-container {
+  max-width: var(--sg-size-100pct);
+}
 
-  .header-center {
-    display: none;
-  }
+.header.is-compact {
+  height: var(--sg-size-4rem);
+  min-height: var(--sg-size-4rem);
+}
+
+.header.is-compact .header-center {
+  display: none;
 }
 </style> 

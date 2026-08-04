@@ -1,5 +1,5 @@
 <template>
-  <div class="twitter-view">
+  <div class="twitter-view" :class="{ 'is-tablet': isTwitterCompact }">
     <template v-if="isConnected">
       <div class="header">
         <SocialNetworkLogo 
@@ -175,6 +175,8 @@ import Button from '../ui/SgButton.vue'
 import SgTextarea from '../ui/SgTextarea.vue'
 import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
 const store = useSocialNetworksStore()
 const isConnected = computed(() => store.isConnected('twitter'))
@@ -195,6 +197,7 @@ const trends = ref([
   { id: 4, category: 'Technologies', tag: '#OpenSource', tweets: '32.1K' },
   { id: 5, category: 'Business', tag: '#Tech', tweets: '85.7K' }
 ])
+const isTwitterCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.twitterCompact}px)`)
 
 const tweets = ref([
   {
@@ -222,10 +225,13 @@ const tweets = ref([
 ])
 
 const connectTwitter = () => {
+  const authWindowWidth = 500
+  const authWindowHeight = 600
+  const authWindowFeatures = `width=${authWindowWidth},height=${authWindowHeight},scrollbars=yes`
   const authWindow = window.open(
     '/api/auth/twitter',
     'Twitter Auth',
-    'width=500,height=600,scrollbars=yes'
+    authWindowFeatures
   )
 
   window.addEventListener('message', async (event) => {
@@ -250,7 +256,7 @@ const connectTwitter = () => {
   margin: var(--sg-space-2rem-auto);
   text-align: center;
   padding: var(--sg-space-2rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
 }
 
@@ -260,7 +266,7 @@ const connectTwitter = () => {
 
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .twitter-content {
@@ -269,16 +275,14 @@ const connectTwitter = () => {
   gap: var(--sg-space-2rem);
 }
 
-@media (max-width: 900px) {
-  .twitter-content {
-    grid-template-columns: 1fr;
-  }
+.twitter-view.is-tablet .twitter-content {
+  grid-template-columns: 1fr;
+}
 
-  .profile-sidebar {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--sg-space-1rem);
-  }
+.twitter-view.is-tablet .profile-sidebar {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--sg-space-1rem);
 }
 
 .profile-sidebar {
@@ -288,7 +292,7 @@ const connectTwitter = () => {
 }
 
 .profile-card {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-16px);
   padding: var(--sg-space-1d5rem);
   text-align: center;
@@ -299,7 +303,7 @@ const connectTwitter = () => {
 }
 
 .handle {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   margin-bottom: var(--sg-space-1rem);
 }
 
@@ -307,7 +311,7 @@ const connectTwitter = () => {
   display: flex;
   justify-content: space-around;
   margin-top: var(--sg-space-1rem);
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-space-1rem);
 }
 
@@ -323,18 +327,18 @@ const connectTwitter = () => {
 
 .stat-item span {
   font-size: var(--sg-font-size-0d9rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .trends {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-16px);
   padding: var(--sg-space-1rem);
 }
 
 .trend-item {
   padding: var(--sg-space-1rem);
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .trend-item:last-child {
@@ -343,18 +347,18 @@ const connectTwitter = () => {
 
 .category {
   font-size: var(--sg-font-size-0d8rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .tweets {
   font-size: var(--sg-font-size-0d9rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .compose-tweet {
   display: flex;
   gap: var(--sg-space-1rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-16px);
   padding: var(--sg-space-1rem);
   margin-bottom: var(--sg-space-1rem);
@@ -385,7 +389,7 @@ const connectTwitter = () => {
 .tweet-card {
   display: flex;
   gap: var(--sg-space-1rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-16px);
   padding: var(--sg-space-1rem);
 }
@@ -406,7 +410,7 @@ const connectTwitter = () => {
 }
 
 .author-handle, .tweet-time {
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .tweet-text {

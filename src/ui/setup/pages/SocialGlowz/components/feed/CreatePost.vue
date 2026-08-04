@@ -302,7 +302,7 @@ const submitPost = () => {
 
 <style scoped>
 .create-post {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
   margin-bottom: var(--sg-space-1rem);
@@ -321,15 +321,15 @@ const submitPost = () => {
   width: var(--sg-size-100pct);
   justify-content: flex-start;
   margin-bottom: var(--sg-space-0d5rem);
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-radius-2rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .post-types {
   display: flex;
   gap: var(--sg-space-0d5rem);
-  border-top: 1px solid var(--surface-border);
+  border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-space-1rem);
 }
 
@@ -391,7 +391,7 @@ const submitPost = () => {
 }
 
 .add-to-post {
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
   margin-top: var(--sg-space-1rem);
@@ -399,7 +399,7 @@ const submitPost = () => {
 
 .add-to-post h5 {
   margin: var(--sg-space-0-0-0d5rem);
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
 }
 
 .post-tools {

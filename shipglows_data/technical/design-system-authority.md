@@ -1,7 +1,7 @@
 ---
 artifact: design_system_authority
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.2.2"
 project: "socialglowz"
 created: "2026-06-12"
 updated: "2026-08-03"
@@ -36,7 +36,7 @@ evidence:
   - "The site has a separate Tailwind token carrier in `site/src/styles/global.css`; matching names do not prove a shared token pipeline."
   - "Reka UI is the maintained headless primitive layer for migrated desktop controls; SocialGlowz wrappers own visual composition."
   - "The Windows source, generated declarations, and clean Tauri bundle contain zero PrimeVue runtime references; automated tests, core typecheck, lint, Tauri frontend build, and diff checks passed on 2026-08-03."
-  - "The design drift scan reports ten documented protocol exceptions: seven media-query breakpoints and three window.open feature strings."
+  - "The migration diff reported ten documented protocol exceptions: seven media-query breakpoints and three window.open feature strings; this is changed-file evidence, not a clean full-runtime inventory."
 next_review: "2026-09-03"
 next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
 ---
@@ -54,8 +54,10 @@ next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
   - `src/assets/base.css` (legacy global base styles; it must consume, not redefine, desktop semantic intent)
   - `src/ui/setup/pages/SocialGlowz/components/ui/` (SocialGlowz wrappers: visual composition and token consumption)
   - `reka-ui` (maintained semantics, focus, keyboard, and overlay behavior for complex migrated controls)
-- Legacy extension surfaces:
-  - PrimeVue, PrimeFlex and PrimeIcons remain installed/consumed where historical extension entries still require them; they are not loaded by the Windows/Tauri entry and are not a Windows visual authority.
+- Compatibility dependencies:
+  - PrimeVue remains installed for historical extension entries and is not loaded by the Windows/Tauri entry.
+  - PrimeIcons is still imported by the Windows/Tauri entry for icon compatibility; it does not provide component behavior or semantic token authority.
+  - PrimeFlex remains installed for historical extension consumers but is no longer imported or consumed by the Windows/Tauri entry; equivalent sidebar alignment is owned locally without changing layout.
 - Site:
   - `site/src/styles/global.css` (`@theme inline` variables and shared animation/prose utility tokens)
 - Brand contract:
@@ -106,18 +108,20 @@ design_system_authority:
 - Windows/Tauri source inventory: zero PrimeVue runtime imports or bootstrap configuration.
 - Generated Tauri declarations: zero PrimeVue components.
 - Clean Tauri bundle: zero PrimeVue or `@primeuix` runtime markers.
-- PrimeVue is not removed globally: its package and related PrimeFlex/PrimeIcons assets remain for legacy extension surfaces until those entries are migrated separately.
+- PrimeVue is not removed globally because historical extension entries still consume it. PrimeIcons remains a direct Windows compatibility dependency until its active icon consumers are migrated without visual regression. PrimeFlex has zero Windows entry imports and consumers.
 - Automated proof passed: lint of the migration surface, `typecheck:core`, 107 tests, clean Tauri frontend build and `git diff --check`.
 - Manual executable proof remains pending for Windows focus/keyboard behavior, notifications, themes, splitters, sidebars and native WebViews.
 
-## Platform And Protocol Exceptions
+## Drift Evidence And Exceptions
 
-The drift scanner's ten remaining values are accepted, non-tokenizable protocol boundaries rather than visual-authority bypasses:
+The migration's changed-file drift scan ended with ten accepted, non-tokenizable protocol boundaries rather than visual-authority bypasses:
 
 - Seven responsive breakpoints inside `@media` conditions. CSS custom properties cannot be used as media-query condition values.
 - Three `window.open` feature strings. Their dimensions are browser API protocol text, not rendered component design values.
 
 Any additional drift finding requires a semantic token or a separately documented platform/protocol exception.
+
+This result applies to the migration diff only. A full scan of the pre-existing runtime is a debt inventory and can include both actionable literals and structural false positives such as full-width dimensions. It must not be summarized as "ten remaining values" without naming the scanned scope.
 
 ## Governing Rule
 
@@ -138,4 +142,4 @@ For app or site visual changes:
 
 ## Maintenance Rule
 
-If a shared token pipeline is introduced (for example a JSON token source with generated Vue and Tailwind outputs), update this artifact before accepting a cross-surface parity claim. The Windows/Tauri inventory is already at zero PrimeVue runtime; PrimeVue remains a package dependency only for legacy extension surfaces and must not be removed globally until their independent consumer inventory reaches zero.
+If a shared token pipeline is introduced (for example a JSON token source with generated Vue and Tailwind outputs), update this artifact before accepting a cross-surface parity claim. The Windows/Tauri inventory is already at zero PrimeVue component runtime and zero PrimeFlex usage; both packages remain available for legacy extension surfaces. PrimeIcons remains active in Windows and must not be removed until its consumer inventory reaches zero.

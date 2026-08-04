@@ -43,7 +43,7 @@
           :aria-label="`Channel: ${channel.name}`"
           @keydown.enter.space.prevent="() => {}"
         >
-          <i :class="channel.icon"></i>
+          <SgIcon :icon="channel.icon" />
           <span>{{ channel.name }}</span>
           <span class="member-count">{{ channel.members }}</span>
         </div>
@@ -97,7 +97,7 @@ const channels = ref([
   flex-direction: column;
   gap: var(--sg-space-1rem);
   padding: var(--sg-space-1rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
 }
 
@@ -125,7 +125,7 @@ const channels = ref([
   position: absolute;
   bottom: 0;
   right: var(--sg-position-neg-5px);
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   border-radius: var(--sg-radius-50pct);
   width: var(--sg-size-20px);
@@ -138,7 +138,7 @@ const channels = ref([
 
 .channels-section {
   flex: 1;
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-8px);
   padding: var(--sg-space-1rem);
 }
@@ -153,12 +153,12 @@ const channels = ref([
 }
 
 .channel-item:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 .member-count {
   margin-left: auto;
-  color: var(--text-color-secondary);
+  color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);
 }
 </style> 

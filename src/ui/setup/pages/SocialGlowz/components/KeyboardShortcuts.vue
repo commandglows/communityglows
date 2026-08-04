@@ -2,7 +2,7 @@
   <section class="shortcuts-section">
     <div class="shortcuts-heading">
       <div>
-        <h3><i class="pi pi-keyboard" /> Raccourcis clavier</h3>
+        <h3><SgIcon icon="pi pi-keyboard" /> Raccourcis clavier</h3>
         <p>Personnalisez les commandes rapides de l'application.</p>
       </div>
       <button
@@ -10,8 +10,8 @@
         class="shortcuts-reset"
         @click="shortcutsStore.reset"
       >
-        <i
-          class="pi pi-refresh"
+        <SgIcon
+          icon="pi pi-refresh"
           aria-hidden="true"
         />
         Réinitialiser
@@ -176,15 +176,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown, true))
 .shortcuts-heading, .shortcut-row { justify-content: space-between; gap: var(--sg-shortcuts-row-gap); }
 .shortcuts-heading h3 { margin: 0; font-size: var(--sg-shortcuts-title-size); }
 .shortcuts-heading h3 i { margin-right: var(--sg-shortcuts-icon-gap); }
-.shortcuts-heading p, .shortcut-label small { color: var(--text-color-secondary); }
+.shortcuts-heading p, .shortcut-label small { color: var(--sg-color-text-muted); }
 .shortcuts-heading p { margin: var(--sg-shortcuts-description-margin-block-start) 0 0; font-size: var(--sg-shortcuts-description-size); }
 .shortcut-list { display: grid; gap: var(--sg-shortcuts-list-gap); margin-top: var(--sg-shortcuts-list-margin-block-start); }
-.shortcut-row { padding: var(--sg-shortcuts-row-padding-block) 0; border-bottom: 1px solid var(--surface-border); }
+.shortcut-row { padding: var(--sg-shortcuts-row-padding-block) 0; border-bottom: 1px solid var(--sg-color-border); }
 .shortcut-label { display: grid; gap: var(--sg-shortcuts-label-gap); }
 .shortcut-label small { font-size: var(--sg-shortcuts-label-size); }
 .shortcut-controls { gap: var(--sg-shortcuts-controls-gap); }
-.shortcut-capture { min-width: var(--sg-shortcuts-capture-min-width); padding: var(--sg-shortcuts-capture-padding-block) var(--sg-shortcuts-capture-padding-inline); border: 1px solid var(--surface-border); border-radius: var(--border-radius); background: var(--surface-ground); color: var(--text-color); cursor: pointer; }
-.shortcut-capture.recording { border-color: var(--primary-color); color: var(--primary-color); }
+.shortcut-capture { min-width: var(--sg-shortcuts-capture-min-width); padding: var(--sg-shortcuts-capture-padding-block) var(--sg-shortcuts-capture-padding-inline); border: 1px solid var(--sg-color-border); border-radius: var(--border-radius); background: var(--sg-color-surface-muted); color: var(--sg-color-text); cursor: pointer; }
+.shortcut-capture.recording { border-color: var(--sg-color-action); color: var(--sg-color-action); }
 .shortcuts-reset { display: inline-flex; align-items: center; gap: var(--sg-shortcuts-icon-gap); border: 0; border-radius: var(--sg-radius-sm); background: transparent; color: var(--sg-color-action); cursor: pointer; font: inherit; }
 .shortcuts-reset:hover { background: var(--sg-color-surface-hover); }
 .shortcuts-reset:focus-visible, .shortcut-capture:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }

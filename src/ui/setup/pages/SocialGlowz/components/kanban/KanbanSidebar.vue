@@ -36,7 +36,7 @@
               @dragend="handleDragEnd"
             >
               <div class="item-header">
-                <i :class="getItemIcon(item.type)"></i>
+                <SgIcon :icon="getItemIcon(item.type)" />
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
@@ -122,7 +122,7 @@ const deleteItem = (itemId: string) => {
   height: var(--sg-size-100pct);
   display: flex;
   flex-direction: column;
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-muted);
 }
 
 .kanban-header {
@@ -130,7 +130,7 @@ const deleteItem = (itemId: string) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .kanban-header h3 {
@@ -139,7 +139,7 @@ const deleteItem = (itemId: string) => {
 }
 
 .item-count {
-  background: var(--primary-color);
+  background: var(--sg-color-action);
   color: white;
   padding: var(--sg-space-0d2rem-0d6rem);
   border-radius: var(--sg-radius-1rem);
@@ -161,7 +161,7 @@ const deleteItem = (itemId: string) => {
   align-items: center;
   justify-content: space-between;
   padding: var(--sg-space-0d5rem);
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-6px);
   margin-bottom: var(--sg-space-0d5rem);
 }
@@ -172,8 +172,8 @@ const deleteItem = (itemId: string) => {
 }
 
 .section-count {
-  background: var(--surface-hover);
-  color: var(--text-color);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
   padding: var(--sg-space-0d1rem-0d4rem);
   border-radius: var(--sg-radius-0d5rem);
   font-size: var(--sg-font-size-0d8rem);
@@ -186,7 +186,7 @@ const deleteItem = (itemId: string) => {
 }
 
 .kanban-item {
-  background: var(--surface-card);
+  background: var(--sg-color-surface-raised);
   border-radius: var(--sg-radius-4px);
   padding: var(--sg-space-0d5rem);
   cursor: move;

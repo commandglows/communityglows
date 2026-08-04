@@ -4,7 +4,13 @@
       <DialogOverlay class="sg-dialog__overlay" />
       <DialogContent
         class="sg-dialog__content"
-        :class="`sg-dialog__content--${variant}`"
+        :class="[
+          `sg-dialog__content--${variant}`,
+          {
+            'sg-dialog__content--settings-mobile': isSettingsMedium,
+            'sg-dialog__content--settings-small': isSettingsSmall,
+          },
+        ]"
         v-bind="description ? {} : { 'aria-describedby': undefined }"
         @close-auto-focus="restoreFocus"
       >
@@ -14,10 +20,7 @@
             class="sg-dialog__close"
             aria-label="Fermer"
           >
-            <i
-              class="pi pi-times"
-              aria-hidden="true"
-            />
+            <SgIcon icon="pi pi-times" />
           </DialogClose>
         </header>
         <DialogDescription
@@ -34,6 +37,9 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import SgIcon from './SgIcon.vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import {
   DialogClose,
   DialogContent,
@@ -58,6 +64,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
+const isSettingsMedium = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.dialogSettingsWide}px)`)
+const isSettingsSmall = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.dialogSettingsNarrow}px)`)
 const lastFocusedElement = ref<HTMLElement | null>(null)
 const open = computed({
   get: () => props.modelValue,
@@ -108,8 +116,17 @@ function restoreFocus(event: Event) {
 .sg-dialog__content--post { width: min(var(--sg-dialog-post-width), calc(100vw - var(--sg-space-6))); }
 .sg-dialog__content--post-wide { width: min(var(--sg-dialog-post-wide-width), calc(100vw - var(--sg-space-6))); }
 
-@media (max-width: 960px) { .sg-dialog__content--settings { width: min(75vw, var(--sg-dialog-width)); } }
-@media (max-width: 641px) { .sg-dialog__content--settings { width: min(90vw, var(--sg-dialog-width)); } }
+.sg-dialog__content--settings {
+  width: min(50vw, var(--sg-dialog-width));
+}
+
+.sg-dialog__content--settings-mobile {
+  width: min(75vw, var(--sg-dialog-width));
+}
+
+.sg-dialog__content--settings-small {
+  width: min(90vw, var(--sg-dialog-width));
+}
 
 .sg-dialog__header {
   display: flex;

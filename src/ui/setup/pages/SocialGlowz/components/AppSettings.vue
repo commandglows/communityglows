@@ -4,11 +4,14 @@
     :title="$t('common.settings')"
     variant="settings"
   >
-    <div class="settings-container">
+    <div
+      class="settings-container"
+      :class="{ 'is-desktop-grid': isSettingsDesktop }"
+    >
       <!-- Language -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-globe mr-2"></i>
+          <SgIcon icon="pi pi-globe mr-2" />
           <span>{{ $t('settings.language') }}</span>
         </div>
         <select
@@ -26,7 +29,7 @@
       <!-- Theme Toggle -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-moon mr-2"></i>
+          <SgIcon icon="pi pi-moon mr-2" />
           <span>{{ $t('theme.mode_label') }}</span>
         </div>
         <div class="theme-mode-group">
@@ -55,7 +58,7 @@
       <!-- Grayscale / focus mode -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-palette mr-2"></i>
+          <SgIcon icon="pi pi-palette mr-2" />
           <span>{{ $t('theme.focus_mode') }}</span>
         </div>
         <SgSwitch
@@ -70,7 +73,7 @@
       <!-- Other settings -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-bell mr-2"></i>
+          <SgIcon icon="pi pi-bell mr-2" />
           <span>{{ $t('common.notifications') }}</span>
         </div>
         <SgSwitch
@@ -84,14 +87,14 @@
       <!-- Replay onboarding -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-info-circle mr-2"></i>
+          <SgIcon icon="pi pi-info-circle mr-2" />
           <span>{{ $t('onboarding.replay_button') }}</span>
         </div>
         <button
           class="replay-btn"
           @click="replayOnboarding"
         >
-          <i class="pi pi-refresh" />
+          <SgIcon icon="pi pi-refresh" />
         </button>
       </div>
 
@@ -100,7 +103,7 @@
       <!-- Text zoom -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-search-plus mr-2"></i>
+          <SgIcon icon="pi pi-search-plus mr-2" />
           <span>{{ $t('settings.text_zoom') }}</span>
         </div>
         <span class="text-zoom-value">{{ textZoomLevel }}%</span>
@@ -132,7 +135,7 @@
       <!-- Backup / Restore -->
       <div class="setting-item">
         <div class="setting-label">
-          <i class="pi pi-database mr-2"></i>
+          <SgIcon icon="pi pi-database mr-2" />
           <span>{{ $t('backup.section_title') }}</span>
         </div>
       </div>
@@ -148,6 +151,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale } from '@/utils/i18n'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import {
   TEXT_ZOOM_DEFAULT,
   TEXT_ZOOM_MAX,
@@ -156,6 +160,7 @@ import {
   normalizeTextZoomLevel,
 } from '../utils/textZoom'
 import { useThemeStore } from '@/stores/theme'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import { useOnboardingStore } from '@/stores/onboarding'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
@@ -169,6 +174,7 @@ const { locale, t } = useI18n()
 const visible = ref(false)
 const notifications = ref(true)
 const currentLocale = ref(locale.value)
+const isSettingsDesktop = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsDesktop}px)`)
 
 const themeStore = useThemeStore()
 const onboardingStore = useOnboardingStore()
@@ -235,32 +241,30 @@ defineExpose({
   scrollbar-gutter: stable;
 }
 
-@media (min-width: 980px) {
-  .settings-container {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--sg-space-1rem);
-    row-gap: var(--sg-settings-item-spacing);
-  }
-
-  .setting-item,
-  .theme-mode-hint,
-  .settings-full-row,
-  .settings-divider {
-    grid-column: span 1;
-  }
-
-  .settings-full-row,
-  .theme-mode-hint {
-    grid-column: 1 / -1;
-  }
-
-  .settings-divider {
-    width: 100%;
-  }
+.settings-container.is-desktop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sg-space-1rem);
+  row-gap: var(--sg-settings-item-spacing);
 }
 
-.settings-divider { border: 0; border-top: 1px solid var(--surface-border); margin: var(--sg-settings-item-spacing) 0; }
+.settings-container.is-desktop-grid .setting-item,
+.settings-container.is-desktop-grid .theme-mode-hint,
+.settings-container.is-desktop-grid .settings-full-row,
+.settings-container.is-desktop-grid .settings-divider {
+  grid-column: span 1;
+}
+
+.settings-container.is-desktop-grid .settings-full-row,
+.settings-container.is-desktop-grid .theme-mode-hint {
+  grid-column: 1 / -1;
+}
+
+.settings-container.is-desktop-grid .settings-divider {
+  width: var(--sg-size-100pct);
+}
+
+.settings-divider { border: 0; border-top: 1px solid var(--sg-color-border); margin: var(--sg-settings-item-spacing) 0; }
 
 .settings-container::-webkit-scrollbar {
   width: var(--sg-settings-scrollbar-width);
@@ -342,28 +346,28 @@ defineExpose({
 
 .text-zoom-value {
   font-size: var(--sg-settings-control-copy-size);
-  color: var(--primary-color);
+  color: var(--sg-color-action);
   font-weight: 600;
 }
 
 .text-zoom-slider {
   width: var(--sg-sidebar-fill-size);
   margin: var(--sg-settings-slider-margin-block-start) 0 var(--sg-settings-slider-margin-block-end);
-  accent-color: var(--primary-color);
+  accent-color: var(--sg-color-action);
 }
 
 .replay-btn {
   padding: var(--sg-settings-theme-button-padding-block) var(--sg-settings-theme-button-padding-inline);
   border-radius: var(--sg-settings-control-radius);
-  border: 1px solid var(--surface-border);
-  background: var(--surface-card);
-  color: var(--text-color-secondary);
+  border: 1px solid var(--sg-color-border);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text-muted);
   cursor: pointer;
   transition: var(--sg-settings-transition);
 }
 
 .replay-btn:hover {
-  background: var(--surface-hover);
+  background: var(--sg-color-surface-hover);
 }
 
 :global(.dark) .locale-select {

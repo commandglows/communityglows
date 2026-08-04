@@ -7,7 +7,7 @@
       v-if="showInfo"
       class="backup-info"
     >
-      <i class="pi pi-info-circle" />
+      <SgIcon icon="pi pi-info-circle" />
       <p>{{ $t('backup.info_text') }}</p>
     </div>
 
@@ -17,7 +17,7 @@
         :disabled="busy"
         @click="startExport"
       >
-        <i class="pi pi-lock" />
+        <SgIcon icon="pi pi-lock" />
         {{ $t('backup.export_button') }}
       </button>
       <button
@@ -25,7 +25,7 @@
         :disabled="busy"
         @click="startImport"
       >
-        <i class="pi pi-lock-open" />
+        <SgIcon icon="pi pi-lock-open" />
         {{ $t('backup.import_button') }}
       </button>
     </div>
@@ -59,7 +59,7 @@
                   class="toggle-password"
                   @click="showPassword = !showPassword"
                 >
-                  <i :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" />
+                  <SgIcon :icon="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" />
                 </button>
               </div>
 
@@ -90,9 +90,9 @@
                   :disabled="busy || !canConfirm"
                   @click="confirm"
                 >
-                  <i
+                  <SgIcon
                     v-if="busy"
-                    class="pi pi-spin pi-spinner"
+                    icon="pi pi-spin pi-spinner"
                   />
                   {{ busy ? $t('common.loading') : (mode === 'export' ? $t('backup.export_button') : $t('backup.import_button')) }}
                 </button>
@@ -102,7 +102,7 @@
             <!-- ───── Step 2: Result — Success ───── -->
             <template v-else-if="step === 'success'">
               <div class="result-icon result-success">
-                <i class="pi pi-check-circle" />
+                <SgIcon icon="pi pi-check-circle" />
               </div>
 
               <h3 class="result-title">
@@ -112,7 +112,7 @@
               <!-- Export success details -->
               <template v-if="mode === 'export'">
                 <div class="result-detail">
-                  <i class="pi pi-file" />
+                  <SgIcon icon="pi pi-file" />
                   <span class="result-path">{{ friendlyPath }}</span>
                 </div>
                 <div class="result-instructions">
@@ -124,7 +124,7 @@
                   </ol>
                 </div>
                 <div class="result-tip">
-                  <i class="pi pi-shield" />
+                  <SgIcon icon="pi pi-shield" />
                   <span>{{ $t('backup.export_tip') }}</span>
                 </div>
               </template>
@@ -133,7 +133,7 @@
               <template v-else>
                 <p class="result-message">{{ $t('backup.import_done_message') }}</p>
                 <div class="result-countdown">
-                  <i class="pi pi-spin pi-spinner" />
+                  <SgIcon icon="pi pi-spin pi-spinner" />
                   <span>{{ $t('backup.import_reloading', { seconds: countdown }) }}</span>
                 </div>
               </template>
@@ -151,7 +151,7 @@
             <!-- ───── Step 2: Result — Error ───── -->
             <template v-else-if="step === 'error'">
               <div class="result-icon result-error">
-                <i class="pi pi-times-circle" />
+                <SgIcon icon="pi pi-times-circle" />
               </div>
 
               <h3 class="result-title result-title-error">
@@ -164,7 +164,7 @@
                   class="copy-error-btn"
                   @click="copyError"
                 >
-                  <i :class="copied ? 'pi pi-check' : 'pi pi-copy'" />
+                  <SgIcon :icon="copied ? 'pi pi-check' : 'pi pi-copy'" />
                   {{ copied ? $t('common.copied') : $t('common.copy') }}
                 </button>
               </div>
@@ -368,122 +368,126 @@ async function confirm() {
 
 <style scoped>
 .backup-section {
-  --backup-info-bg: rgba(59, 130, 246, 0.08);
-  --backup-info-border: rgba(59, 130, 246, 0.2);
-  --backup-info-text: var(--text-color, #333);
-  --backup-info-icon: #3b82f6;
-  --backup-btn-bg: var(--surface-card, #fff);
-  --backup-btn-border: var(--surface-border, #ddd);
-  --backup-btn-text: var(--text-color, #333);
-  --backup-btn-hover: var(--surface-hover, #f5f5f5);
-  width: 100%;
+  --backup-gap-sm: var(--sg-space-0d6rem);
+  --backup-gap-md: var(--sg-space-0d75rem);
+  --backup-space-sm: var(--sg-space-0d5rem);
+  --backup-space-md: var(--sg-space-0d75rem);
+  --backup-space-lg: var(--sg-space-1rem);
+  --backup-space-xl: calc(var(--sg-space-1rem) + var(--sg-space-0d25rem));
+  --backup-radius-sm: var(--sg-radius-sm);
+  --backup-radius-md: var(--sg-radius-lg);
+  --backup-info-bg: color-mix(in srgb, var(--sg-color-info) 8%, transparent);
+  --backup-info-border: color-mix(in srgb, var(--sg-color-info) 24%, transparent);
+  --backup-info-text: var(--sg-color-text);
+  --backup-info-icon: var(--sg-color-info);
+  --backup-btn-bg: var(--sg-color-surface-muted);
+  --backup-btn-border: var(--sg-color-border);
+  --backup-btn-text: var(--sg-color-text);
+  --backup-btn-hover: var(--sg-color-surface-hover);
+  width: var(--sg-size-full);
 }
 
 .backup-dialog-overlay {
-  --backup-overlay-bg: rgba(0, 0, 0, 0.5);
-  --backup-dialog-bg: var(--surface-card, #fff);
-  --backup-dialog-border: color-mix(in srgb, var(--surface-border, #ddd) 82%, white 18%);
-  --backup-dialog-text: var(--text-color, #333);
-  --backup-dialog-muted: color-mix(in srgb, var(--text-color, #333) 72%, transparent);
-  --backup-dialog-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --backup-input-bg: var(--surface-ground, #f8f8f8);
-  --backup-input-border: var(--surface-border, #ddd);
-  --backup-input-text: var(--text-color, #333);
-  --backup-input-placeholder: color-mix(in srgb, var(--text-color-secondary, #666) 78%, transparent);
-  --backup-result-detail-bg: var(--surface-ground, #f5f5f5);
-  --backup-result-detail-text: var(--text-color, #333);
-  --backup-result-tip-bg: rgba(39, 174, 96, 0.08);
-  --backup-result-tip-border: rgba(39, 174, 96, 0.2);
-  --backup-result-tip-text: #27ae60;
-  --backup-result-message: color-mix(in srgb, var(--text-color, #333) 82%, transparent);
-  --backup-result-countdown: color-mix(in srgb, var(--text-color, #333) 72%, transparent);
-  --backup-error-bg: rgba(231, 76, 60, 0.08);
-  --backup-error-border: rgba(231, 76, 60, 0.2);
-  --backup-error-text: #c0392b;
-  --backup-copy-btn-border: rgba(231, 76, 60, 0.3);
-  --backup-copy-btn-text: #c0392b;
-  --backup-copy-btn-hover: rgba(231, 76, 60, 0.08);
-  --backup-cancel-bg: var(--surface-ground, #eee);
-  --backup-cancel-text: var(--text-color, #333);
-  --backup-primary-bg: #3b82f6;
-  --backup-primary-bg-hover: #2563eb;
-  --backup-primary-text: #fff;
-  --backup-toggle-color: color-mix(in srgb, var(--text-color, #333) 62%, transparent);
+  --backup-overlay-bg: color-mix(in srgb, var(--sg-color-slate-overlay-60) 100%, transparent);
+  --backup-dialog-bg: var(--sg-color-surface-raised);
+  --backup-dialog-border: var(--sg-color-border);
+  --backup-dialog-text: var(--sg-color-text);
+  --backup-dialog-muted: color-mix(in srgb, var(--sg-color-text-muted) 72%, transparent);
+  --backup-dialog-shadow: var(--sg-shadow-modal);
+  --backup-input-bg: var(--sg-color-surface-muted);
+  --backup-input-border: var(--sg-color-border);
+  --backup-input-text: var(--sg-color-text);
+  --backup-input-placeholder: color-mix(in srgb, var(--sg-color-text-muted) 78%, transparent);
+  --backup-result-detail-bg: var(--sg-color-surface-muted);
+  --backup-result-detail-text: var(--sg-color-text);
+  --backup-result-tip-bg: color-mix(in srgb, var(--sg-color-success) 10%, transparent);
+  --backup-result-tip-border: color-mix(in srgb, var(--sg-color-success) 24%, transparent);
+  --backup-result-tip-text: color-mix(in srgb, var(--sg-color-success) 92%, var(--sg-color-text));
+  --backup-result-message: color-mix(in srgb, var(--sg-color-text) 82%, transparent);
+  --backup-result-countdown: color-mix(in srgb, var(--sg-color-text) 72%, transparent);
+  --backup-error-bg: color-mix(in srgb, var(--sg-color-danger) 10%, transparent);
+  --backup-error-border: color-mix(in srgb, var(--sg-color-danger) 24%, transparent);
+  --backup-error-text: var(--sg-color-danger-text);
+  --backup-copy-btn-border: color-mix(in srgb, var(--sg-color-danger) 30%, transparent);
+  --backup-copy-btn-text: var(--sg-color-danger);
+  --backup-copy-btn-hover: var(--sg-color-danger-soft);
+  --backup-cancel-bg: var(--sg-color-surface-muted);
+  --backup-cancel-text: var(--sg-color-text);
+  --backup-primary-bg: var(--sg-color-action);
+  --backup-primary-bg-hover: var(--sg-color-action-hover);
+  --backup-primary-text: var(--sg-color-text-on-action);
+  --backup-toggle-color: color-mix(in srgb, var(--sg-color-text) 62%, transparent);
   position: fixed;
-  width: 100%;
+  width: var(--sg-size-full);
 }
 
 .backup-section.is-dark,
 .backup-dialog-overlay.is-dark {
-  --backup-info-bg: rgba(91, 168, 245, 0.12);
-  --backup-info-border: rgba(91, 168, 245, 0.28);
-  --backup-info-text: #d4d4d8;
-  --backup-info-icon: #93c5fd;
-  --backup-btn-bg: color-mix(in srgb, var(--surface-card, #18181b) 92%, rgba(91, 168, 245, 0.08) 8%);
-  --backup-btn-border: color-mix(in srgb, var(--surface-border, #27272a) 80%, var(--primary-color) 20%);
-  --backup-btn-text: #e4e4e7;
-  --backup-btn-hover: color-mix(in srgb, var(--surface-card, #18181b) 80%, var(--primary-color) 20%);
-  --backup-overlay-bg: rgba(2, 6, 23, 0.76);
-  --backup-dialog-bg: linear-gradient(
-    180deg,
-    rgba(24, 24, 27, 0.98),
-    rgba(9, 9, 11, 0.96)
-  );
-  --backup-dialog-border: rgba(82, 82, 91, 0.72);
-  --backup-dialog-text: #e4e4e7;
-  --backup-dialog-muted: #a1a1aa;
-  --backup-dialog-shadow: 0 28px 70px rgba(2, 6, 23, 0.56);
-  --backup-input-bg: color-mix(in srgb, var(--surface-card, #18181b) 84%, rgba(255, 255, 255, 0.04) 16%);
-  --backup-input-border: color-mix(in srgb, var(--surface-border, #27272a) 84%, rgba(255, 255, 255, 0.02) 16%);
-  --backup-input-text: #f4f4f5;
-  --backup-input-placeholder: #71717a;
-  --backup-result-detail-bg: color-mix(in srgb, var(--surface-card, #18181b) 88%, rgba(255, 255, 255, 0.04) 12%);
-  --backup-result-detail-text: #d4d4d8;
-  --backup-result-tip-bg: rgba(22, 101, 52, 0.24);
-  --backup-result-tip-border: rgba(74, 222, 128, 0.22);
-  --backup-result-tip-text: #86efac;
-  --backup-result-message: #d4d4d8;
-  --backup-result-countdown: #a1a1aa;
-  --backup-error-bg: rgba(127, 29, 29, 0.28);
-  --backup-error-border: rgba(248, 113, 113, 0.24);
-  --backup-error-text: #fecaca;
-  --backup-copy-btn-border: rgba(248, 113, 113, 0.26);
-  --backup-copy-btn-text: #fca5a5;
-  --backup-copy-btn-hover: rgba(248, 113, 113, 0.14);
-  --backup-cancel-bg: color-mix(in srgb, var(--surface-card, #18181b) 88%, rgba(255, 255, 255, 0.04) 12%);
-  --backup-cancel-text: #e4e4e7;
-  --backup-primary-bg: #5BA8F5;
-  --backup-primary-bg-hover: #3b82f6;
-  --backup-primary-text: #020617;
-  --backup-toggle-color: #a1a1aa;
+  --backup-info-bg: color-mix(in srgb, var(--sg-color-blue-alpha-20) 100%, transparent);
+  --backup-info-border: color-mix(in srgb, var(--sg-color-blue-alpha-20) 50%, transparent);
+  --backup-info-text: var(--sg-color-text);
+  --backup-info-icon: var(--sg-palette-blue-300);
+  --backup-btn-bg: color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-blue-alpha-20) 8%);
+  --backup-btn-border: color-mix(in srgb, var(--sg-color-border) 80%, var(--sg-color-action) 20%);
+  --backup-btn-text: var(--sg-color-text);
+  --backup-btn-hover: color-mix(in srgb, var(--sg-color-surface-raised) 80%, var(--sg-color-action) 20%);
+  --backup-overlay-bg: color-mix(in srgb, var(--sg-color-slate-scrim-42) 84%, transparent);
+  --backup-dialog-bg: color-mix(in srgb, var(--sg-color-surface-raised) 84%, var(--sg-color-overlay) 16%);
+  --backup-dialog-border: color-mix(in srgb, var(--sg-color-border) 72%, transparent);
+  --backup-dialog-text: var(--sg-color-text);
+  --backup-dialog-muted: var(--sg-color-text-muted);
+  --backup-dialog-shadow: var(--sg-shadow-modal);
+  --backup-input-bg: color-mix(in srgb, var(--sg-color-surface-raised) 84%, var(--sg-color-white-alpha-06) 16%);
+  --backup-input-border: color-mix(in srgb, var(--sg-color-border) 84%, var(--sg-color-white-alpha-08) 16%);
+  --backup-input-text: var(--sg-color-text);
+  --backup-input-placeholder: var(--sg-color-text-muted);
+  --backup-result-detail-bg: color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-white-alpha-06) 12%);
+  --backup-result-detail-text: var(--sg-color-text);
+  --backup-result-tip-bg: color-mix(in srgb, var(--sg-color-success) 18%, transparent);
+  --backup-result-tip-border: color-mix(in srgb, var(--sg-color-success) 30%, transparent);
+  --backup-result-tip-text: color-mix(in srgb, var(--sg-color-success) 82%, var(--sg-color-text));
+  --backup-result-message: var(--sg-color-text);
+  --backup-result-countdown: var(--sg-color-text-muted);
+  --backup-error-bg: var(--sg-color-danger-dark-alpha-26);
+  --backup-error-border: color-mix(in srgb, var(--sg-color-danger) 24%, transparent);
+  --backup-error-text: var(--sg-color-danger-light-alpha-22);
+  --backup-copy-btn-border: color-mix(in srgb, var(--sg-color-danger) 26%, transparent);
+  --backup-copy-btn-text: var(--sg-color-danger);
+  --backup-copy-btn-hover: var(--sg-color-danger-light-alpha-12);
+  --backup-cancel-bg: color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-white-alpha-06) 12%);
+  --backup-cancel-text: var(--sg-color-text);
+  --backup-primary-bg: var(--sg-color-action);
+  --backup-primary-bg-hover: var(--sg-color-action-hover);
+  --backup-primary-text: var(--sg-color-text-on-action);
+  --backup-toggle-color: var(--sg-color-text-muted);
 }
 
 .backup-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
+  gap: var(--backup-gap-sm);
 }
 
 .backup-info {
   display: flex;
-  gap: 0.6rem;
+  gap: var(--backup-gap-sm);
   align-items: flex-start;
-  padding: 0.6rem 0.75rem;
-  margin-bottom: 0.75rem;
-  border-radius: 8px;
+  padding: var(--sg-space-0d6rem) var(--sg-space-0d75rem);
+  margin-bottom: var(--backup-space-md);
+  border-radius: var(--backup-radius-sm);
   background: var(--backup-info-bg);
   border: 1px solid var(--backup-info-border);
-  font-size: 0.8rem;
-  line-height: 1.4;
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d4);
   color: var(--backup-info-text);
   opacity: 0.85;
 }
 
-.backup-info .pi-info-circle {
+.backup-info :deep(.sg-icon) {
   color: var(--backup-info-icon);
-  font-size: 1rem;
+  font-size: var(--sg-font-size-1rem);
   flex-shrink: 0;
-  margin-top: 0.1rem;
+  margin-top: var(--sg-space-0d25rem);
 }
 
 .backup-info p {
@@ -494,17 +498,17 @@ async function confirm() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  width: 100%;
-  padding: 0.65rem 0.8rem;
-  border-radius: 10px;
+  gap: var(--sg-space-0d4rem);
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d65rem-0);
+  border-radius: var(--sg-radius-sm);
   border: 1px solid var(--backup-btn-border);
   background: var(--backup-btn-bg);
   color: var(--backup-btn-text);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   font-weight: 600;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  transition: var(--sg-motion-all-0d2s-ease);
 }
 
 .backup-btn:hover:not(:disabled) {
@@ -519,58 +523,58 @@ async function confirm() {
 /* Dialog overlay */
 .backup-dialog-overlay {
   inset: 0;
-  z-index: 10000;
+  z-index: var(--sg-layer-1000);
   background: var(--backup-overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
   backdrop-filter: blur(10px);
 }
 
 .backup-dialog {
   background: var(--backup-dialog-bg);
   color: var(--backup-dialog-text);
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 420px;
+  border-radius: var(--sg-radius-lg);
+  padding: var(--sg-space-1d5rem);
+  width: var(--sg-size-100pct);
+  max-width: var(--sg-dialog-width);
   box-shadow: var(--backup-dialog-shadow);
   border: 1px solid var(--backup-dialog-border);
 }
 
 .backup-dialog h3 {
-  margin: 0 0 0.25rem;
-  font-size: 1.1rem;
+  margin: 0 0 var(--sg-space-0d25rem);
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .dialog-hint {
-  margin: 0 0 1rem;
-  font-size: 0.85rem;
+  margin: 0 0 var(--sg-space-1rem);
+  font-size: var(--sg-font-size-0d85rem);
   color: var(--backup-dialog-muted);
 }
 
 .dialog-field {
   position: relative;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--backup-space-md);
 }
 
 .dialog-field label {
   display: block;
-  font-size: 0.8rem;
+  font-size: var(--sg-font-size-0d8rem);
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--sg-space-0d25rem);
   color: var(--backup-dialog-muted);
 }
 
 .dialog-field input {
-  width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-  border-radius: 8px;
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d5rem) var(--sg-space-2rem) var(--sg-space-0d5rem) var(--sg-space-0d75rem);
+  border-radius: var(--sg-radius-sm);
   border: 1px solid var(--backup-input-border);
   background: var(--backup-input-bg);
   color: var(--backup-input-text);
-  font-size: 0.9rem;
+  font-size: var(--sg-font-size-0d9rem);
   box-sizing: border-box;
 }
 
@@ -580,8 +584,8 @@ async function confirm() {
 
 .toggle-password {
   position: absolute;
-  right: 0.5rem;
-  bottom: 0.45rem;
+  right: var(--sg-space-0d5rem);
+  bottom: var(--sg-space-0d45rem);
   background: none;
   border: none;
   cursor: pointer;
@@ -591,46 +595,46 @@ async function confirm() {
 /* ─── Result screens ─── */
 .result-icon {
   text-align: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--backup-space-md);
 }
 
-.result-icon i {
-  font-size: 3rem;
+.result-icon :deep(.sg-icon) {
+  font-size: var(--sg-font-size-3rem);
 }
 
-.result-success i {
-  color: #27ae60;
+.result-success :deep(.sg-icon) {
+  color: var(--sg-color-success);
 }
 
-.result-error i {
-  color: #e74c3c;
+.result-error :deep(.sg-icon) {
+  color: var(--sg-color-danger);
 }
 
 .result-title {
   text-align: center;
-  margin: 0 0 1rem;
-  font-size: 1.15rem;
+  margin: 0 0 var(--sg-space-1rem);
+  font-size: var(--sg-font-size-1d1rem);
 }
 
 .result-title-error {
-  color: #e74c3c;
+  color: var(--sg-color-danger);
 }
 
 .result-detail {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d6rem) var(--sg-space-0d75rem);
+  border-radius: var(--sg-radius-sm);
   background: var(--backup-result-detail-bg);
-  margin-bottom: 1rem;
-  font-size: 0.8rem;
+  margin-bottom: var(--sg-space-1rem);
+  font-size: var(--sg-font-size-0d8rem);
   word-break: break-all;
   color: var(--backup-result-detail-text);
 }
 
-.result-detail .pi-file {
-  color: #3b82f6;
+.result-detail :deep(.sg-icon) {
+  color: var(--sg-color-info);
   flex-shrink: 0;
 }
 
@@ -640,44 +644,44 @@ async function confirm() {
 }
 
 .result-instructions {
-  margin-bottom: 1rem;
-  font-size: 0.82rem;
-  line-height: 1.5;
+  margin-bottom: var(--sg-space-1rem);
+  font-size: var(--sg-font-size-0d82rem);
+  line-height: var(--sg-line-height-1d5);
 }
 
 .result-instructions-title {
   font-weight: 600;
-  margin: 0 0 0.4rem;
-  font-size: 0.85rem;
+  margin: 0 0 var(--sg-space-0d4rem);
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .result-instructions ol,
 .result-instructions ul {
   margin: 0;
-  padding-left: 1.2rem;
+  padding-left: var(--sg-space-1rem);
 }
 
 .result-instructions li {
-  margin-bottom: 0.25rem;
+  margin-bottom: var(--sg-space-0d25rem);
 }
 
 .result-tip {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d5rem) var(--sg-space-0d75rem);
+  border-radius: var(--sg-radius-sm);
   background: var(--backup-result-tip-bg);
   border: 1px solid var(--backup-result-tip-border);
-  font-size: 0.78rem;
-  margin-bottom: 1rem;
+  font-size: var(--sg-font-size-0d78rem);
+  margin-bottom: var(--sg-space-1rem);
   color: var(--backup-result-tip-text);
 }
 
 .result-message {
   text-align: center;
-  font-size: 0.9rem;
-  margin: 0 0 1rem;
+  font-size: var(--sg-font-size-0d9rem);
+  margin: 0 0 var(--sg-space-1rem);
   color: var(--backup-result-message);
 }
 
@@ -685,19 +689,19 @@ async function confirm() {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
+  gap: var(--sg-space-0d5rem);
+  margin-bottom: var(--sg-space-1rem);
+  font-size: var(--sg-font-size-0d85rem);
   color: var(--backup-result-countdown);
 }
 
 .error-box {
-  padding: 0.75rem;
-  border-radius: 8px;
+  padding: var(--sg-space-0d75rem);
+  border-radius: var(--sg-radius-sm);
   background: var(--backup-error-bg);
   border: 1px solid var(--backup-error-border);
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
+  font-size: var(--sg-font-size-0d85rem);
+  margin-bottom: var(--sg-space-1rem);
   color: var(--backup-error-text);
 }
 
@@ -708,16 +712,16 @@ async function confirm() {
 .copy-error-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  margin-top: 0.5rem;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
+  gap: var(--sg-space-0d25rem);
+  margin-top: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d25rem) var(--sg-space-0d5rem);
+  border-radius: var(--sg-radius-sm);
   border: 1px solid var(--backup-copy-btn-border);
   background: transparent;
   color: var(--backup-copy-btn-text);
-  font-size: 0.78rem;
+  font-size: var(--sg-font-size-0d78rem);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: var(--sg-motion-backgroundneg-color-0d15s);
 }
 
 .copy-error-btn:hover {
@@ -727,22 +731,22 @@ async function confirm() {
 /* ─── Actions ─── */
 .dialog-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sg-space-0d5rem);
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: var(--sg-space-1rem);
 }
 
 .dialog-btn {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: var(--sg-space-0d5rem) var(--sg-space-1rem);
+  border-radius: var(--sg-radius-sm);
   border: none;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--sg-font-size-0d85rem);
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  transition: opacity 0.2s;
+  gap: var(--sg-space-0d4rem);
+  transition: var(--sg-motion-opacity-0d15s);
 }
 
 .dialog-btn:disabled {
@@ -767,7 +771,7 @@ async function confirm() {
 /* Transitions */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s;
+  transition: var(--sg-motion-opacity-0d15s);
 }
 
 .fade-enter-from,

@@ -16,7 +16,7 @@
         class="instagram-item"
       >
         <div class="image-placeholder">
-          <i class="pi pi-image"></i>
+          <SgIcon icon="pi pi-image" />
         </div>
       </div>
     </div>
@@ -31,8 +31,8 @@ import { SocialNetworkLogo } from '../common'
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 0 1rem;
+  margin-bottom: var(--sg-space-1rem);
+  padding: var(--sg-space-0-1rem);
 }
 
 .header h2 {
@@ -42,25 +42,25 @@ import { SocialNetworkLogo } from '../common'
 .instagram-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  padding: 1rem;
+  gap: var(--sg-space-1rem);
+  padding: var(--sg-space-1rem);
 }
 
 .instagram-item {
   aspect-ratio: 1;
-  background: var(--surface-card);
-  border-radius: 8px;
+  background: var(--sg-color-surface-raised);
+  border-radius: var(--sg-radius-8px);
   overflow: hidden;
 }
 
 .image-placeholder {
-  width: 100%;
-  height: 100%;
+  width: var(--sg-size-100pct);
+  height: var(--sg-size-100pct);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-ground);
-  color: var(--text-color-secondary);
-  font-size: 2rem;
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-2rem);
 }
 </style> 
