@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SocialGlowz Design Token Source Schema",
+  "type": "object",
+  "required": [
+    "artifact_version",
+    "created_at",
+    "updated_at",
+    "notes",
+    "tokens",
+    "android_mappings"
+  ],
+  "properties": {
+    "artifact_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["windows", "site", "android"],
+      "properties": {
+        "windows": {
+          "$ref": "#/definitions/surface"
+        },
+        "site": {
+          "$ref": "#/definitions/surface"
+        },
+        "android": {
+          "$ref": "#/definitions/surface"
+        }
+      },
+      "additionalProperties": false
+    },
+    "android_mappings": {
+      "type": "object",
+      "required": ["color", "dimension"],
+      "properties": {
+        "color": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/androidResource" }
+        },
+        "dimension": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/androidResource" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "cssMode": {
+      "type": "object",
+      "required": ["root"],
+      "properties": {
+        "root": {
+          "$ref": "#/definitions/tokenMap"
+        },
+        "theme": {
+          "$ref": "#/definitions/tokenMap"
+        }
+      },
+      "additionalProperties": false
+    },
+    "surface": {
+      "type": "object",
+      "required": ["light"],
+      "properties": {
+        "light": {
+          "$ref": "#/definitions/cssMode"
+        },
+        "dark": {
+          "$ref": "#/definitions/cssMode"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tokenMap": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^--[a-z0-9][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "androidResource": {
+      "type": "object",
+      "required": ["name", "token"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "token": {
+          "type": "string",
+          "pattern": "^--[a-z0-9][a-z0-9-]*$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

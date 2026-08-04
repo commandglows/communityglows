@@ -64,6 +64,9 @@ jobs:
       - name: Run unit tests
         run: pnpm test:once
 
+      - name: Check generated design tokens
+        run: pnpm run design:tokens:check
+
       - name: Run TypeScript checks
         run: pnpm typecheck
 

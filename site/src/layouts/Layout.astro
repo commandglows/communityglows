@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css'
+import '../styles/generated/tokens.css'
 import { SITE_URL, siteUrl } from '../config/site'
 
 interface Props {
@@ -113,7 +114,7 @@ const allSchemas = [...defaultSchemas, ...jsonLd]
     <title>{title}</title>
   </head>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-lg focus:text-sm focus:font-medium">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-lg focus:text-sm focus:font-medium">
       Skip to content
     </a>
     <div class="noise-overlay" aria-hidden="true"></div>

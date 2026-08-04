@@ -45,7 +45,7 @@ next_step: "/sf-docs update shipglows_data/technical/design-system-authority.md"
 
 ## Purpose
 
-`socialglowz` has a Vue/Tauri runtime and a marketing site. The intended identity is shared, but the current token implementation is not generated from one cross-surface source. This document is the authority for that distinction: the Vue desktop semantic layer is canonical for the Windows application, while the site mapping remains a tracked convergence task rather than an assumed fact.
+`socialglowz` has a Vue/Tauri runtime and a marketing site. The editable cross-surface token source is now `design/tokens/reference.json`; generated Windows and site carriers are imported after their legacy CSS so they are the effective runtime authority without changing the baseline values. Android resources are generated but native chrome consumption remains a tracked migration slice.
 
 ## Surface Carriers
 
@@ -71,16 +71,18 @@ design_system_authority:
   brand_contract: /home/claude/socialglowz/shipglows_data/business/branding.md
   technology_carriers:
     - src/ui/setup/pages/SocialGlowz/assets/main.css
-  canonical_source: src/ui/setup/pages/SocialGlowz/assets/main.css
+  canonical_source: design/tokens/reference.json
   governed_contract: /home/claude/socialglowz/shipglows_data/technical/design-system-authority.md
   component_bridge:
     interaction_owner: reka-ui for migrated complex controls
     visual_owner: src/ui/setup/pages/SocialGlowz/components/ui/
     forbidden: copied vendor implementations, provider theme overrides, arbitrary style/class escape hatches
   cross_surface_mapping:
-    status: incomplete
-    site_carrier: site/src/styles/global.css
-    rule: no app/site token-parity claim without a generated source or a documented resolved-value mapping
+    status: partial
+    windows_carrier: src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css
+    site_carrier: site/src/styles/generated/tokens.css
+    android_carrier: src-tauri/plugins/android-webview/android/src/main/res/values/socialglowz_tokens.xml
+    rule: generated Windows and site carriers are active; Android native chrome must consume its generated carrier before a full parity claim.
   mandatory_scope:
     - color
     - typography
@@ -107,6 +109,10 @@ design_system_authority:
 ```
 
 ## Runtime Migration Status
+
+- Windows/Tauri and site load generated token carriers after legacy styles, preserving current resolved values while making canonical changes effective.
+- `pnpm run design:tokens:check` is part of the quality workflow and generated headers are stable across supported Node versions.
+- Android day/night resources are generated, but `NativeWebViewPlugin.kt` still contains product-chrome literals and must be migrated before cross-platform parity is claimed.
 
 - Windows/Tauri source inventory: zero PrimeVue runtime imports or bootstrap configuration.
 - Generated Tauri declarations: zero PrimeVue components.

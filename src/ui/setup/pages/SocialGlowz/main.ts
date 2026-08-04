@@ -23,6 +23,7 @@ import { startCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
 import '@/assets/base.css'
 import './assets/main.css'
+import './assets/generated/tokens.css'
 
 function renderAuthBootstrapError(message: string) {
   const root = document.getElementById('app')
