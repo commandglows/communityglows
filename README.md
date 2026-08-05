@@ -213,3 +213,10 @@ Voir [shipglows_data/workflow/tauri-mobile.md](shipglows_data/workflow/tauri-mob
 
 ### Extensions
 Les fichiers `.zip` sont générés dans `dist/` pour upload sur le Chrome Web Store et Firefox Add-ons.
+
+### Windows
+
+La dernière version de test Windows est disponible directement ici :
+[Télécharger CommunityGlows pour Windows (.exe)](https://github.com/commandglows/communityglows/releases/download/windows-latest/CommunityGlows-Windows-latest.exe).
+
+Ce fichier est remplacé automatiquement après chaque exécution réussie du workflow manuel Windows.

@@ -1,4 +1,4 @@
-name: SocialGlowz - Manual Build - Android
+name: CommunityGlows - Manual Build - Android
 
 on:
   workflow_dispatch:
@@ -63,22 +63,15 @@ jobs:
       - name: Initialize Android target
         run: pnpm exec tauri android init --ci
 
-      - name: Fetch runtime secrets
-        uses: dopplerhq/secrets-fetch-action@v2.0.0
-        id: doppler
-        with:
-          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
-          inject-env-vars: true
-
       - name: Build Android APK
         env:
-          VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
+          VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
         run: pnpm exec tauri android build --ci --${{ inputs.build_type }} --apk -t aarch64
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v7
         with:
-          name: socialglowz-android-${{ inputs.build_type }}-${{ github.sha }}
+          name: communityglows-android-${{ inputs.build_type }}-${{ github.sha }}
           path: src-tauri/gen/android/app/build/outputs/**/*.apk
           if-no-files-found: error
           retention-days: 7
