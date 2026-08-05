@@ -19,16 +19,16 @@ import { appUrl } from '../config/site'
     <!-- Headline -->
     <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground mb-6" style="font-family: var(--font-cal-sans);">
       <span class="block overflow-hidden">
-        <span class="block animate-text-reveal">All Your Social Networks.</span>
+        <span class="block animate-text-reveal">Your social work,</span>
       </span>
       <span class="block overflow-hidden">
-        <span class="block animate-text-reveal delay-100 text-muted-foreground">One Calm Workspace.</span>
+        <span class="block animate-text-reveal delay-100 text-muted-foreground">without the tab chaos.</span>
       </span>
     </h1>
 
     <!-- Subtitle -->
     <p class="animate-fade-up delay-500 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-      CommunityGlows brings X, Instagram, Facebook, LinkedIn, TikTok, Discord, Reddit, Gmail and more into one profile-aware app. Switch contexts fast, keep sessions isolated, and reduce feed noise without rebuilding your workflow.
+      CommunityGlows gives you one calm place to move between accounts, networks, and daily social tasks. Keep every context separate, stay focused, and pick up where you left off.
     </p>
 
     <!-- CTAs -->
@@ -37,7 +37,7 @@ import { appUrl } from '../config/site'
         href={appUrl()}
         class="shimmer-btn inline-flex items-center gap-2 bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-8 h-12 text-base font-medium shadow-lg shadow-white/10 transition-colors"
       >
-        Start with CommunityGlows
+        Start free
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </a>
       <a
@@ -50,18 +50,10 @@ import { appUrl } from '../config/site'
 
     <!-- Social Proof -->
     <div class="animate-fade-up delay-700 flex flex-col items-center gap-4">
-      <div class="flex items-center -space-x-3">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div class={`animate-scale-in delay-${700 + i * 100}`}>
-            <div class="w-10 h-10 rounded-full border-2 border-background bg-gradient-to-br from-foreground/20 to-foreground/5 flex items-center justify-center text-xs font-medium text-foreground/60">
-              {String.fromCharCode(64 + i)}
-            </div>
-          </div>
-        ))}
+      <div class="flex items-center gap-2 text-sm text-muted-foreground">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+        <span>Built for creators, operators, and small teams</span>
       </div>
-      <p class="text-sm text-muted-foreground">
-        Built for creators, operators, and small teams
-      </p>
     </div>
   </div>
 </section>
