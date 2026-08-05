@@ -743,7 +743,14 @@
           "--input": "var(--sg-color-border)",
           "--ring": "var(--sg-color-border-strong)",
           "--radius": "1rem",
-          "--noise-opacity": "0.015"
+          "--noise-opacity": "0.015",
+          "--site-nav-inline-inset": "2rem",
+          "--site-nav-pill-height": "2.25rem",
+          "--site-hero-glow-width": "50rem",
+          "--site-hero-glow-height": "37.5rem",
+          "--site-feature-preview-width": "16.25rem",
+          "--site-marquee-item-width": "10rem",
+          "--site-microcopy-size": "0.625rem"
         },
         "theme": {
           "--font-sans": "var(--font-sans)",

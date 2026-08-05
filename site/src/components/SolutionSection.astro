@@ -1,48 +1,30 @@
 ---
-const solutions = [
-  {
-    icon: '✨',
-    title: 'Keep every context separate',
-    description: 'Create dedicated spaces for personal, work, clients, and projects. Each session stays tied to the profile where it belongs.',
-  },
-  {
-    icon: '🏛️',
-    title: 'Move through your workflow',
-    description: 'Open the networks and custom links you use every day from one focused app shell instead of rebuilding your setup in new tabs.',
-  },
-  {
-    icon: '🚫',
-    title: 'Make social work quieter',
-    description: 'Use grayscale, media mute, appearance, and text controls to reduce the noise around the task you came to complete.',
-  },
-  {
-    icon: '📅',
-    title: 'Keep the next action close',
-    description: 'Use custom links and the Kanban board to keep ideas, follow-ups, and publishing tasks next to the networks where they happen.',
-  },
-]
+import { getTranslations, type Locale } from '../i18n'
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props
+const t = getTranslations(lang)
 ---
 
 <section id="benefits" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
     <div class="text-center mb-12 sm:mb-16" data-reveal>
-      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">The calmer way to work</p>
+      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">{t.solution.label}</p>
       <h2
         class="animate-fade-up delay-100 text-3xl sm:text-4xl font-bold text-foreground mb-4"
         style="font-family: var(--font-instrument-sans);"
       >
-        One workspace, four ways to stay in control
+        {t.solution.title}
       </h2>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-reveal>
-      {solutions.map((solution, index) => (
+      {t.solution.items.map((solution, index) => (
         <div
           class={`animate-fade-up delay-${(index + 1) * 100} group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:-translate-y-1 transition-all duration-300 text-center`}
         >
           <span class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-muted text-4xl sm:text-5xl mb-5">{solution.icon}</span>
           <h3 class="text-xl font-semibold text-foreground mb-3">{solution.title}</h3>
-          <p class="text-base text-muted-foreground leading-relaxed">{solution.description}</p>
+          <p class="text-base text-muted-foreground leading-relaxed">{solution.desc}</p>
         </div>
       ))}
     </div>

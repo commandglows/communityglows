@@ -1,64 +1,40 @@
 ---
 import { appUrl } from '../config/site'
-
-const plans = [
-  {
-    name: 'Free',
-    description: 'Perfect for getting started',
-    monthly: 0,
-    yearly: 0,
-    annual: 0,
-    features: ['2 isolated profiles', '5 social networks', 'Grayscale mode', '3 custom links', 'Local session storage', 'Community support'],
-    cta: 'Get Started',
-    highlighted: false,
-  },
-  {
-    name: 'Pro',
-    description: 'For serious social operators',
-    monthly: 9,
-    yearly: 6,
-    annual: 72,
-    features: ['Unlimited profiles', '18+ social networks', 'Focus controls', 'Unlimited custom links', 'Kanban board', 'Backup and restore', 'Priority email support'],
-    cta: 'Start Free Trial',
-    highlighted: true,
-  },
-  {
-    name: 'Team',
-    description: 'For small teams and client work',
-    monthly: 19,
-    yearly: 15,
-    annual: 180,
-    features: ['Everything in Pro', 'Profile sharing', 'Team management', 'Priority support', 'Future cloud features'],
-    cta: 'Contact Sales',
-    highlighted: false,
-  },
-]
+import { getTranslations, type Locale } from '../i18n'
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props
+const t = getTranslations(lang)
+const plans = t.pricing.plans
 ---
 
 <section id="pricing" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
     <div class="text-center mb-12" data-reveal>
       <h2 class="animate-fade-up text-3xl sm:text-4xl font-bold text-foreground mb-4" style="font-family: var(--font-instrument-sans);">
-        Simple, Transparent Pricing
+        {t.pricing.title}
       </h2>
       <p class="animate-fade-up delay-100 text-muted-foreground max-w-2xl mx-auto mb-8">
-        Start free, upgrade when you need more profiles, networks, and workflow depth.
+        {t.pricing.subtitle}
       </p>
 
       <!-- Billing Toggle -->
       <div class="inline-flex items-center p-1 rounded-full bg-card border border-border" id="billing-toggle">
         <button
+          type="button"
           data-cycle="monthly"
+          aria-pressed="true"
           class="billing-btn relative px-4 py-2 text-sm font-medium rounded-full transition-colors text-foreground bg-muted"
         >
-          Monthly
+          {t.pricing.monthly}
         </button>
         <button
+          type="button"
           data-cycle="yearly"
+          aria-pressed="false"
           class="billing-btn relative px-4 py-2 text-sm font-medium rounded-full transition-colors text-muted-foreground"
         >
-          Yearly
-              <span class="ml-2 px-2 py-0.5 text-xs bg-emerald-500/20 text-emerald-400 rounded-full">-33%</span>
+          {t.pricing.yearly}
+              <span class="ml-2 px-2 py-0.5 text-xs bg-emerald-500/20 text-emerald-400 rounded-full">{t.pricing.yearlyDiscount}</span>
         </button>
       </div>
     </div>
@@ -67,12 +43,12 @@ const plans = [
       {plans.map((plan, index) => (
         <div
           class={`animate-fade-up-slow delay-${300 + index * 100} relative p-6 rounded-2xl border transition-all duration-300 hover:scale-[1.02] ${
-            plan.highlighted
+            'highlighted' in plan && plan.highlighted
               ? 'bg-card border-foreground/30'
               : 'bg-card/70 border-border hover:border-foreground/25'
           }`}
         >
-          {plan.highlighted && (
+          {'highlighted' in plan && plan.highlighted && (
             <div class="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
               <div
                 class="absolute w-24 h-24 bg-white/20 blur-xl border-beam"
@@ -81,27 +57,27 @@ const plans = [
             </div>
           )}
 
-          {plan.highlighted && (
+          {'highlighted' in plan && plan.highlighted && (
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-foreground text-background text-xs font-medium rounded-full">
-              Most Popular
+              {t.pricing.mostPopular}
             </div>
           )}
 
           <div class="mb-6">
             <h3 class="text-xl font-semibold text-foreground mb-2">{plan.name}</h3>
-            <p class="text-muted-foreground text-sm">{plan.description}</p>
+            <p class="text-muted-foreground text-sm">{plan.desc}</p>
           </div>
 
           <div class="mb-6">
             <div class="flex items-baseline gap-1">
-              <span class="text-4xl font-bold text-foreground price-amount" data-monthly={plan.monthly} data-yearly={plan.yearly}>
+              <span class="text-4xl font-bold text-foreground price-amount" data-monthly={plan.monthly} data-yearly={Math.round(plan.yearly / 12)}>
                 €{plan.monthly}
               </span>
-              {plan.monthly > 0 && <span class="text-muted-foreground text-sm">/month</span>}
+              {plan.monthly > 0 && <span class="text-muted-foreground text-sm">{t.pricing.perMonth}</span>}
             </div>
-            {plan.annual > 0 && (
+            {plan.yearly > 0 && (
               <p class="text-xs text-muted-foreground mt-1 yearly-note hidden">
-                Billed annually (€{plan.annual}/year)
+                {t.pricing.billedAnnually.replace('{price}', `€${plan.yearly}`)}
               </p>
             )}
           </div>
@@ -118,7 +94,7 @@ const plans = [
           <a
             href={appUrl()}
             class={`block w-full text-center rounded-full py-3 text-sm font-medium transition-colors ${
-              plan.highlighted
+              'highlighted' in plan && plan.highlighted
                 ? 'shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200'
                 : 'bg-card text-foreground hover:bg-muted border border-border'
             }`}
@@ -129,7 +105,7 @@ const plans = [
       ))}
     </div>
     <div class="mt-10 max-w-2xl mx-auto px-4 py-4 rounded-xl bg-card/50 border border-border text-sm text-muted-foreground" data-reveal>
-      <p><span class="font-medium text-foreground">Why subscriptions?</span> CommunityGlows has to keep browser, desktop, mobile, and social-network integrations stable as platforms change. Subscription pricing keeps maintenance, compatibility work, and support sustainable.</p>
+      <p><span class="font-medium text-foreground">{t.pricing.whyTitle}</span> {t.pricing.whyBody}</p>
     </div>
   </div>
 </section>
@@ -150,6 +126,7 @@ const plans = [
         b.classList.toggle('bg-muted', isActive)
         b.classList.toggle('text-muted-foreground', !isActive)
         b.classList.remove(isActive ? 'text-muted-foreground' : 'bg-muted')
+        b.setAttribute('aria-pressed', String(isActive))
       })
 
       prices.forEach((el) => {

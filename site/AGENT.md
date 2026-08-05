@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "tubeflow-site"
 created: "2026-04-26"
-updated: "2026-05-11"
+updated: "2026-08-05"
 status: "reviewed"
 source_skill: "300-sg-docs"
 scope: "file"
@@ -55,8 +55,8 @@ This repository is the public marketing site for TubeFlow. It is an Astro site w
 
 ## Core entrypoints
 
-- `src/pages/index.astro`: English landing page assembled from shared components
-- `src/pages/fr/index.astro`: French landing page implemented inline rather than through the shared component set
+- `src/pages/index.astro`: English landing page assembled from shared, locale-aware components
+- `src/pages/fr/index.astro`: French landing page assembled from the same shared, locale-aware components
 - `src/pages/features.astro`: feature marketing page
 - `src/pages/pricing.astro`: pricing and FAQ page
 - `src/pages/compare.astro`: comparison page positioning TubeFlow against YouTube
@@ -72,11 +72,9 @@ This repository is the public marketing site for TubeFlow. It is an Astro site w
 - Preserve canonical URLs, `hreflang`, Open Graph tags, and JSON-LD when editing pages.
 - Do not add Sentry browser instrumentation just to satisfy the monorepo observability default while the site remains static.
 - Add Sentry, or revisit this exception, as soon as the site gains authentication, account state, protected routes, checkout/payment flows, form submissions with server handling, or other user-specific runtime behavior.
-- Keep English and French experiences aligned intentionally. Today they are implemented differently:
-  - English home uses shared components.
-  - French home is a separate, largely duplicated page.
+- Keep English and French experiences aligned through the shared landing component tree and locale dictionaries in `src/i18n/`.
 - Blog content lives in `src/content/blog/*.md` and must satisfy the schema in `src/content.config.ts`.
-- Prefer editing shared components when changing the English homepage.
+- Prefer editing shared components when changing either homepage, and update both locale dictionaries when copy changes.
 - Expect some marketing claims to be copy assumptions unless they are traceable to the product app.
 
 ## Commands
@@ -87,6 +85,6 @@ This repository is the public marketing site for TubeFlow. It is an Astro site w
 
 ## Known risks for future agents
 
-- French and English homepages can drift because they are not generated from the same component tree.
+- French and English copy can still drift when locale dictionaries are updated independently; review both locales together.
 - Many conversion links assume `/videos` is the stable app entrypoint.
 - Pricing, feature, and security claims are marketing copy in this repo; verify them against the product before strengthening them.

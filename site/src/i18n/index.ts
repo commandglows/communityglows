@@ -4,7 +4,7 @@ import fr from './fr'
 const translations = { en, fr } as const
 
 export type Locale = keyof typeof translations
-export type Translations = typeof en
+export type Translations = (typeof translations)[Locale]
 
 export function getTranslations(locale: string = 'en'): Translations {
   return translations[locale as Locale] ?? translations.en

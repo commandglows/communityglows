@@ -1,9 +1,20 @@
+---
+import { getTranslations, type Locale } from '../i18n'
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props
+const t = getTranslations(lang)
+const features = t.features.items
+const previewLabels = lang === 'fr'
+  ? ['Client A / LinkedIn', 'Personnel / X', 'Client B / Instagram', 'Équipe / Gmail', 'Marque / TikTok']
+  : ['Client A / LinkedIn', 'Personal / X', 'Client B / Instagram', 'Team / Gmail', 'Brand / TikTok']
+---
+
 <section id="features" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
     <div class="text-center mb-12 sm:mb-16" data-reveal>
-      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">Features</p>
+      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">{t.features.label}</p>
       <h2 class="animate-fade-up delay-100 text-3xl sm:text-4xl font-bold text-foreground mb-4" style="font-family: var(--font-instrument-sans);">
-        The details that keep the workflow moving
+        {t.features.title}
       </h2>
     </div>
 
@@ -12,102 +23,100 @@
       <div class="md:col-span-2 animate-fade-up group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300 overflow-hidden">
         <div class="flex items-start justify-between">
           <div>
-            <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">A home for every workflow</h3>
+            <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[0].title}</h3>
             <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-              Keep the right links, accounts, and next actions together for each client, project, or personal workspace.
+              {features[0].desc}
             </p>
           </div>
           <!-- Profile organizer animation -->
-          <div class="hidden sm:block w-[260px] shrink-0" id="playlist-organizer">
+          <div class="site-feature-preview hidden sm:block shrink-0" id="playlist-organizer">
             <div class="flex flex-col gap-1" id="playlist-unsorted">
               <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
                 <div class="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-500"></div>
-                <span class="text-[10px] text-muted-foreground truncate">Client A / LinkedIn</span>
+                <span class="site-microcopy text-muted-foreground truncate">{previewLabels[0]}</span>
               </div>
               <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
                 <div class="w-1.5 h-1.5 rounded-full shrink-0 bg-purple-500"></div>
-                <span class="text-[10px] text-muted-foreground truncate">Personal / X</span>
+                <span class="site-microcopy text-muted-foreground truncate">{previewLabels[1]}</span>
               </div>
               <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
                 <div class="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-500"></div>
-                <span class="text-[10px] text-muted-foreground truncate">Client B / Instagram</span>
+                <span class="site-microcopy text-muted-foreground truncate">{previewLabels[2]}</span>
               </div>
               <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
                 <div class="w-1.5 h-1.5 rounded-full shrink-0 bg-purple-500"></div>
-                <span class="text-[10px] text-muted-foreground truncate">Team / Gmail</span>
+                <span class="site-microcopy text-muted-foreground truncate">{previewLabels[3]}</span>
               </div>
               <div class="flex items-center gap-2 px-2 py-1 rounded-md bg-muted/50">
                 <div class="w-1.5 h-1.5 rounded-full shrink-0 bg-blue-500"></div>
-                <span class="text-[10px] text-muted-foreground truncate">Brand / TikTok</span>
+                <span class="site-microcopy text-muted-foreground truncate">{previewLabels[4]}</span>
               </div>
             </div>
           </div>
         </div>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm mt-2">Less setup between tasks</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm mt-2">{features[0].tag}</span>
       </div>
 
       <!-- Network Dashboard -->
       <div class="animate-fade-up delay-100 group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300">
-        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">Your network, your starting point</h3>
+        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[1].title}</h3>
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Open the networks you already use from one launch point, with room for custom links when your workflow goes beyond social.
+          {features[1].desc}
         </p>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">Start where the work is</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">{features[1].tag}</span>
       </div>
 
       <!-- Fast Switching -->
       <div class="animate-fade-up delay-200 group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300">
-        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">Shortcuts for repeat work</h3>
+        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[2].title}</h3>
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Keep the actions you repeat every day within reach, so changing context does not mean starting over.
+          {features[2].desc}
         </p>
         <div class="flex items-center gap-1 mb-4" id="kbd-container">
           <kbd class="kbd-key px-2 py-1 text-xs bg-muted border border-border rounded text-foreground/80 font-mono transition-transform duration-100">⌘</kbd>
           <kbd class="kbd-key px-2 py-1 text-xs bg-muted border border-border rounded text-foreground/80 font-mono transition-transform duration-100">K</kbd>
         </div>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">Make momentum easier</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">{features[2].tag}</span>
       </div>
 
       <!-- Anti-Distraction Mode -->
       <div class="animate-fade-up delay-300 group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300">
-        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">Tune each surface</h3>
+        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[3].title}</h3>
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Set the appearance, media, and text preferences that help each network feel useful instead of overwhelming.
+          {features[3].desc}
         </p>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">Design for attention</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">{features[3].tag}</span>
       </div>
 
       <!-- Cross-Device Sync -->
       <div class="animate-fade-up delay-400 group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300">
-        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">Pick up where you left off</h3>
+        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[4].title}</h3>
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Your setup follows your account across supported devices, so your workspace feels familiar wherever you open it.
+          {features[4].desc}
         </p>
         <svg viewBox="0 0 100 70" class="w-full h-24">
           <defs>
             <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="rgb(255,255,255)" stop-opacity="0.2" />
-              <stop offset="100%" stop-color="rgb(255,255,255)" stop-opacity="0" />
+              <stop offset="0%" stop-color="currentColor" stop-opacity="0.2" />
+              <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
             </linearGradient>
           </defs>
           <path d="M 0 60 L 20 45 L 40 55 L 60 30 L 80 40 L 100 15 L 100 70 L 0 70 Z" fill="url(#chartGradient)" class="opacity-50" />
-          <path d="M 0 60 L 20 45 L 40 55 L 60 30 L 80 40 L 100 15" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" class="draw-line" />
+          <path d="M 0 60 L 20 45 L 40 55 L 60 30 L 80 40 L 100 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="draw-line" />
         </svg>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">Continue without reset</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">{features[4].tag}</span>
       </div>
 
       <!-- Privacy-First -->
       <div class="animate-fade-up delay-500 group relative p-6 rounded-2xl bg-card border border-border hover:border-foreground/25 hover:scale-[1.02] transition-all duration-300">
-        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">Keep live sessions local</h3>
+        <h3 class="text-lg sm:text-xl font-semibold text-foreground mb-2">{features[5].title}</h3>
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
-          Connected sessions stay on the device unless you explicitly move them with an encrypted backup export.
+          {features[5].desc}
         </p>
         <div class="flex items-center gap-2 mb-4">
-          <span class="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">Local</span>
-          <span class="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">Encrypted backup</span>
-          <span class="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">Profile scoped</span>
+          {('badges' in features[5] ? features[5].badges : []).map((badge) => <span class="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">{badge}</span>)}
         </div>
-        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">Control what travels</span>
+        <span class="inline-block bg-foreground/10 text-foreground rounded-full px-3 py-1 text-sm">{features[5].tag}</span>
       </div>
     </div>
   </div>

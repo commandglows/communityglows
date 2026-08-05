@@ -25,6 +25,10 @@ const {
 
 const canonicalUrl = siteUrl(path)
 const ogImageUrl = image.startsWith('http') ? image : siteUrl(image)
+const skipLabel = lang === 'fr' ? 'Aller au contenu principal' : 'Skip to content'
+const schemaDescription = lang === 'fr'
+  ? 'Gérez vos réseaux sociaux dans un espace unifié avec des profils séparés.'
+  : 'Manage social networks in one isolated profile-aware workspace.'
 
 const defaultSchemas = [
   {
@@ -32,7 +36,7 @@ const defaultSchemas = [
     "@type": "WebSite",
     name: "CommunityGlows",
     url: SITE_URL,
-    description: "All your social networks in one app.",
+    description: schemaDescription,
   },
   {
     "@context": "https://schema.org",
@@ -49,7 +53,7 @@ const defaultSchemas = [
     url: SITE_URL,
     applicationCategory: "SocialNetworkingApplication",
     operatingSystem: "Web",
-    description: "Manage social networks in one isolated profile-aware workspace.",
+    description: schemaDescription,
     offers: {
       "@type": "Offer",
       price: "0",
@@ -115,7 +119,7 @@ const allSchemas = [...defaultSchemas, ...jsonLd]
   </head>
   <body>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-foreground focus:text-background focus:rounded-lg focus:text-sm focus:font-medium">
-      Skip to content
+      {skipLabel}
     </a>
     <div class="noise-overlay" aria-hidden="true"></div>
     <slot />

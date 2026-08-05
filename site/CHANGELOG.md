@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026-08-05]
+
+### Changed
+
+- Reworked the English and French homepages around one shared, locale-aware component structure with a clearer outcome-led narrative and a consistent centered-card visual system.
+- Reframed unsupported testimonial-style content as honest use cases and aligned landing copy, navigation, pricing labels, newsletter feedback, metadata, and calls to action across both locales.
+- Added canonical landing layout tokens and preserved reduced-motion behavior across entrance and marquee animations.
+
+### Fixed
+
+- Made the supported-platform marquee loop over two equal tracks so horizontal motion no longer reaches an empty region.
+- Added localized accessible names and state announcements for the mobile menu, newsletter field, and monthly/yearly pricing controls.
+
 ## [2026-05-10]
 
 ### Security

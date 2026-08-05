@@ -1,0 +1,24 @@
+.site-nav-shell {
+  width: calc(100% - var(--site-nav-inline-inset));
+}
+
+.site-nav-pill {
+  height: var(--site-nav-pill-height);
+}
+
+.site-hero-glow {
+  width: var(--site-hero-glow-width);
+  height: var(--site-hero-glow-height);
+}
+
+.site-feature-preview {
+  width: var(--site-feature-preview-width);
+}
+
+.site-marquee-item {
+  min-width: var(--site-marquee-item-width);
+}
+
+.site-microcopy {
+  font-size: var(--site-microcopy-size);
+}
