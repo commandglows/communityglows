@@ -2,7 +2,7 @@
 artifact: content_map
 metadata_schema_version: "1.0"
 artifact_version: "1.2.1"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
@@ -47,7 +47,7 @@ content_surfaces:
 
 ## Purpose
 
-`shipglows_data/editorial/content-map.md` defines where SocialGlowz content and product truth should live so future repurposing does not drift from implementation.
+`shipglows_data/editorial/content-map.md` defines where CommunityGlows content and product truth should live so future repurposing does not drift from implementation.
 
 ## Content Surfaces
 
@@ -60,7 +60,7 @@ content_surfaces:
 
 ### Front-end and product surfaces
 
-- `src/ui/setup/pages/SocialGlowz/` — primary application surface.
+- `src/ui/setup/pages/CommunityGlows/` — primary application surface.
 - `src-tauri/` — desktop and packaging surface.
 - `en/` and `fr/` — public landing/content pages.
 - `site/src/content/blog/` with `site/src/pages/blog/` — public blog/article surface using the Astro content schema in `site/src/content.config.ts`.

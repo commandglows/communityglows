@@ -2,7 +2,7 @@
 artifact: technical_module_context
 metadata_schema_version: "1.0"
 artifact_version: "1.2.1"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-23"
 updated: "2026-08-04"
 status: reviewed
@@ -21,11 +21,11 @@ linked_systems:
   - "shipglows_data/workflow/specs/android-webview-pooling-fast-switching.md"
   - "shipglows_data/technical/public-webview-platform-boundary.md"
   - "src/config/socialNetworks.ts"
-  - "src/ui/setup/pages/SocialGlowz/composables/useNetworkWebview.ts"
-  - "src/ui/setup/pages/SocialGlowz/composables/useWebviewPreload.ts"
+  - "src/ui/setup/pages/CommunityGlows/composables/useNetworkWebview.ts"
+  - "src/ui/setup/pages/CommunityGlows/composables/useWebviewPreload.ts"
   - "src-tauri/src/lib.rs"
   - "src-tauri/plugins/android-webview/src/mobile.rs"
-  - "src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt"
+  - "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
 depends_on:
   - "shipglows_data/technical/context.md"
   - "shipglows_data/technical/code-docs-map.md"
@@ -41,18 +41,18 @@ next_step: "/300-sg-docs audit shipglows_data/technical/android-webview-session-
 
 ## Purpose
 
-Ce document décrit le contrat actif d'isolation et de pooling des sessions WebView Android pour SocialGlowz. Il couvre les sessions de réseaux intégrés affichés dans le plugin Android WebView, pas l'auth Convex de l'application hôte.
+Ce document décrit le contrat actif d'isolation et de pooling des sessions WebView Android pour CommunityGlows. Il couvre les sessions de réseaux intégrés affichés dans le plugin Android WebView, pas l'auth Convex de l'application hôte.
 
 L'isolation de session n'autorise pas une automatisation ou une modification des pages tierces. Le contrat public de plateforme est documenté séparément dans `shipglows_data/technical/public-webview-platform-boundary.md`.
 
 ## Owned Files
 
 - `src/config/socialNetworks.ts` déclare la politique d'isolation par réseau, les origins additionnelles, et les limites non couvertes.
-- `src/ui/setup/pages/SocialGlowz/composables/useNetworkWebview.ts` transmet les origins d'isolation lors de l'ouverture d'une WebView.
-- `src/ui/setup/pages/SocialGlowz/composables/useWebviewPreload.ts` transmet les mêmes origins lors du preload.
+- `src/ui/setup/pages/CommunityGlows/composables/useNetworkWebview.ts` transmet les origins d'isolation lors de l'ouverture d'une WebView.
+- `src/ui/setup/pages/CommunityGlows/composables/useWebviewPreload.ts` transmet les mêmes origins lors du preload.
 - `src-tauri/src/lib.rs` valide et relaie les paramètres Android vers le plugin natif.
 - `src-tauri/plugins/android-webview/src/mobile.rs` expose le pont mobile Tauri.
-- `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt` applique l'isolation cookies/localStorage côté Android.
+- `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt` applique l'isolation cookies/localStorage côté Android.
 
 ## Entrypoints
 
@@ -65,7 +65,7 @@ L'isolation de session n'autorise pas une automatisation ou une modification des
 
 ## Isolation Contract
 
-SocialGlowz isole par défaut les sessions Android WebView par profil et réseau avec la clé `${profileId}-${networkId}`. Cette clé ne doit pas être remplacée par un bucket global, même en mode dégradé.
+CommunityGlows isole par défaut les sessions Android WebView par profil et réseau avec la clé `${profileId}-${networkId}`. Cette clé ne doit pas être remplacée par un bucket global, même en mode dégradé.
 
 Quand Android WebKit expose `WebViewFeature.MULTI_PROFILE`, cette clé est convertie en nom de profil WebKit déterministe et non sensible. La WebView de session reçoit ce profil via `WebViewCompat.setProfile` immédiatement après sa construction, avant toute configuration ou navigation. Ce mode permet de garder plusieurs WebViews chaudes dans un pool LRU borné sans partager le `CookieManager` global.
 
@@ -120,12 +120,12 @@ Le fallback par snapshots ne couvre pas:
 - Vérifier la matrice côté front:
   `rg -n "NETWORK_ISOLATION|storageOrigins|getNetworkIsolationOrigins" src/config/socialNetworks.ts`
 - Vérifier le passage des origins:
-  `rg -n "storageOrigins|storageOriginsByNetwork" src/ui/setup/pages/SocialGlowz src-tauri/src/lib.rs`
+  `rg -n "storageOrigins|storageOriginsByNetwork" src/ui/setup/pages/CommunityGlows src-tauri/src/lib.rs`
 - Vérifier les hooks natifs:
-  `rg -n "MULTI_PROFILE|ProfileStore|setProfile|DOCUMENT_START_SCRIPT|WEB_MESSAGE_LISTENER|localStorage|restoreCookiesForSession|loadUrl|degraded" src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
+  `rg -n "MULTI_PROFILE|ProfileStore|setProfile|DOCUMENT_START_SCRIPT|WEB_MESSAGE_LISTENER|localStorage|restoreCookiesForSession|loadUrl|degraded" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
 - Vérifier le pooling Android:
-  `rg -n "SessionWebViewHost|MAX_WARM|showWebView|hideWebView|destroyHost|shown" src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt src-tauri/src/lib.rs src-tauri/plugins/android-webview/src/mobile.rs`
-- Tester Android depuis l'APK CI GitHub Actions / Blacksmith, artifact `socialglowz-android-debug`.
+  `rg -n "SessionWebViewHost|MAX_WARM|showWebView|hideWebView|destroyHost|shown" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt src-tauri/src/lib.rs src-tauri/plugins/android-webview/src/mobile.rs`
+- Tester Android depuis l'APK CI GitHub Actions / Blacksmith, artifact `communityglows-android-debug`.
 
 ## Reader Checklist
 

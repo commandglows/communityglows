@@ -2,7 +2,7 @@
 artifact: gtm_context
 metadata_schema_version: "1.0"
 artifact_version: "1.0.2"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
@@ -41,7 +41,7 @@ proof_points: "shared multi-platform build pipeline, Convex-backed profile/sessi
 
 ## Offer
 
-- SocialGlowz is positioned as a unified social operations workspace, not another fragmented extension or single-surface tool.
+- CommunityGlows is positioned as a unified social operations workspace, not another fragmented extension or single-surface tool.
 - The practical promise is consistency: one interface and one codebase behavior across browser extension, desktop, and web.
 
 ## Positioning

@@ -107,535 +107,535 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows': RouteRecordInfo<
+      '/setup/CommunityGlows',
+      '/setup/CommunityGlows',
+      Record<never, never>,
+      Record<never, never>,
+      | '/setup/CommunityGlows/App'
+      | '/setup/CommunityGlows/components/AppHeader'
+      | '/setup/CommunityGlows/components/AppRightSidebar'
+      | '/setup/CommunityGlows/components/AppSettings'
+      | '/setup/CommunityGlows/components/AppSidebar'
+      | '/setup/CommunityGlows/components/BackupRestore'
+      | '/setup/CommunityGlows/components/BillingAccessPanel'
+      | '/setup/CommunityGlows/components/CrmSidebarWidget'
+      | '/setup/CommunityGlows/components/CrmToolbar'
+      | '/setup/CommunityGlows/components/DashboardFilters'
+      | '/setup/CommunityGlows/components/DesktopControlBar'
+      | '/setup/CommunityGlows/components/ExtensionParitySurface'
+      | '/setup/CommunityGlows/components/FriendsPanel'
+      | '/setup/CommunityGlows/components/KeyboardShortcuts'
+      | '/setup/CommunityGlows/components/MobileLayout'
+      | '/setup/CommunityGlows/components/MobileProfileSheet'
+      | '/setup/CommunityGlows/components/MobileSettingsSheet'
+      | '/setup/CommunityGlows/components/NetworkBrandIcon'
+      | '/setup/CommunityGlows/components/NetworkWebviewHost'
+      | '/setup/CommunityGlows/components/OnboardingFlow'
+      | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
+      | '/setup/CommunityGlows/components/ProfileSwitcher'
+      | '/setup/CommunityGlows/components/SignupNudge'
+      | '/setup/CommunityGlows/components/SocialLogin'
+      | '/setup/CommunityGlows/components/Unauthorized'
+      | '/setup/CommunityGlows/components/common/NetworkLogo'
+      | '/setup/CommunityGlows/components/common/SocialNetworkLogo'
+      | '/setup/CommunityGlows/components/feed/CreatePost'
+      | '/setup/CommunityGlows/components/feed/SocialAvatar'
+      | '/setup/CommunityGlows/components/feed/SocialComment'
+      | '/setup/CommunityGlows/components/feed/SocialPost'
+      | '/setup/CommunityGlows/components/icons/NextdoorIcon'
+      | '/setup/CommunityGlows/components/icons/QuoraIcon'
+      | '/setup/CommunityGlows/components/icons/SnapchatIcon'
+      | '/setup/CommunityGlows/components/icons/ThreadsIcon'
+      | '/setup/CommunityGlows/components/kanban/KanbanBoard'
+      | '/setup/CommunityGlows/components/kanban/KanbanSidebar'
+      | '/setup/CommunityGlows/components/networks/DiscordView'
+      | '/setup/CommunityGlows/components/networks/FacebookView'
+      | '/setup/CommunityGlows/components/networks/GmailView'
+      | '/setup/CommunityGlows/components/networks/InstagramView'
+      | '/setup/CommunityGlows/components/networks/LinkedInView'
+      | '/setup/CommunityGlows/components/networks/RedditView'
+      | '/setup/CommunityGlows/components/networks/SnapchatView'
+      | '/setup/CommunityGlows/components/networks/ThreadsView'
+      | '/setup/CommunityGlows/components/networks/TikTokView'
+      | '/setup/CommunityGlows/components/networks/TwitterView'
+      | '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture'
+      | '/setup/CommunityGlows/components/tasks/TaskBoard'
+      | '/setup/CommunityGlows/components/tasks/TaskForm'
+      | '/setup/CommunityGlows/components/ui/SgAvatar'
+      | '/setup/CommunityGlows/components/ui/SgBadge'
+      | '/setup/CommunityGlows/components/ui/SgButton'
+      | '/setup/CommunityGlows/components/ui/SgDialog'
+      | '/setup/CommunityGlows/components/ui/SgIcon'
+      | '/setup/CommunityGlows/components/ui/SgInput'
+      | '/setup/CommunityGlows/components/ui/SgMultiSelect'
+      | '/setup/CommunityGlows/components/ui/SgPassword'
+      | '/setup/CommunityGlows/components/ui/SgSelect'
+      | '/setup/CommunityGlows/components/ui/SgSpinner'
+      | '/setup/CommunityGlows/components/ui/SgSwitch'
+      | '/setup/CommunityGlows/components/ui/SgTextarea'
+      | '/setup/CommunityGlows/views/LoginView'
+      | '/setup/CommunityGlows/views/SessionLockView'
+      | '/setup/CommunityGlows/views/TasksView'
+    >,
+    '/setup/CommunityGlows/App': RouteRecordInfo<
+      '/setup/CommunityGlows/App',
+      '/setup/CommunityGlows/App',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/AppHeader': RouteRecordInfo<
+      '/setup/CommunityGlows/components/AppHeader',
+      '/setup/CommunityGlows/components/AppHeader',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/AppRightSidebar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/AppRightSidebar',
+      '/setup/CommunityGlows/components/AppRightSidebar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/AppSettings': RouteRecordInfo<
+      '/setup/CommunityGlows/components/AppSettings',
+      '/setup/CommunityGlows/components/AppSettings',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/AppSidebar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/AppSidebar',
+      '/setup/CommunityGlows/components/AppSidebar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/BackupRestore': RouteRecordInfo<
+      '/setup/CommunityGlows/components/BackupRestore',
+      '/setup/CommunityGlows/components/BackupRestore',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/BillingAccessPanel': RouteRecordInfo<
+      '/setup/CommunityGlows/components/BillingAccessPanel',
+      '/setup/CommunityGlows/components/BillingAccessPanel',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/common/NetworkLogo': RouteRecordInfo<
+      '/setup/CommunityGlows/components/common/NetworkLogo',
+      '/setup/CommunityGlows/components/common/NetworkLogo',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/common/SocialNetworkLogo': RouteRecordInfo<
+      '/setup/CommunityGlows/components/common/SocialNetworkLogo',
+      '/setup/CommunityGlows/components/common/SocialNetworkLogo',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/CrmSidebarWidget': RouteRecordInfo<
+      '/setup/CommunityGlows/components/CrmSidebarWidget',
+      '/setup/CommunityGlows/components/CrmSidebarWidget',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/CrmToolbar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/CrmToolbar',
+      '/setup/CommunityGlows/components/CrmToolbar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/DashboardFilters': RouteRecordInfo<
+      '/setup/CommunityGlows/components/DashboardFilters',
+      '/setup/CommunityGlows/components/DashboardFilters',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/DesktopControlBar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/DesktopControlBar',
+      '/setup/CommunityGlows/components/DesktopControlBar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ExtensionParitySurface': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ExtensionParitySurface',
+      '/setup/CommunityGlows/components/ExtensionParitySurface',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/feed/CreatePost': RouteRecordInfo<
+      '/setup/CommunityGlows/components/feed/CreatePost',
+      '/setup/CommunityGlows/components/feed/CreatePost',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/feed/SocialAvatar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/feed/SocialAvatar',
+      '/setup/CommunityGlows/components/feed/SocialAvatar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/feed/SocialComment': RouteRecordInfo<
+      '/setup/CommunityGlows/components/feed/SocialComment',
+      '/setup/CommunityGlows/components/feed/SocialComment',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/feed/SocialPost': RouteRecordInfo<
+      '/setup/CommunityGlows/components/feed/SocialPost',
+      '/setup/CommunityGlows/components/feed/SocialPost',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/FriendsPanel': RouteRecordInfo<
+      '/setup/CommunityGlows/components/FriendsPanel',
+      '/setup/CommunityGlows/components/FriendsPanel',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/icons/NextdoorIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/icons/NextdoorIcon',
+      '/setup/CommunityGlows/components/icons/NextdoorIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/icons/QuoraIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/icons/QuoraIcon',
+      '/setup/CommunityGlows/components/icons/QuoraIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/icons/SnapchatIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/icons/SnapchatIcon',
+      '/setup/CommunityGlows/components/icons/SnapchatIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/icons/ThreadsIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/icons/ThreadsIcon',
+      '/setup/CommunityGlows/components/icons/ThreadsIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/kanban/KanbanBoard': RouteRecordInfo<
+      '/setup/CommunityGlows/components/kanban/KanbanBoard',
+      '/setup/CommunityGlows/components/kanban/KanbanBoard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/kanban/KanbanSidebar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/kanban/KanbanSidebar',
+      '/setup/CommunityGlows/components/kanban/KanbanSidebar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/KeyboardShortcuts': RouteRecordInfo<
+      '/setup/CommunityGlows/components/KeyboardShortcuts',
+      '/setup/CommunityGlows/components/KeyboardShortcuts',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/MobileLayout': RouteRecordInfo<
+      '/setup/CommunityGlows/components/MobileLayout',
+      '/setup/CommunityGlows/components/MobileLayout',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/MobileProfileSheet': RouteRecordInfo<
+      '/setup/CommunityGlows/components/MobileProfileSheet',
+      '/setup/CommunityGlows/components/MobileProfileSheet',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/MobileSettingsSheet': RouteRecordInfo<
+      '/setup/CommunityGlows/components/MobileSettingsSheet',
+      '/setup/CommunityGlows/components/MobileSettingsSheet',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/NetworkBrandIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/NetworkBrandIcon',
+      '/setup/CommunityGlows/components/NetworkBrandIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/DiscordView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/DiscordView',
+      '/setup/CommunityGlows/components/networks/DiscordView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/FacebookView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/FacebookView',
+      '/setup/CommunityGlows/components/networks/FacebookView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/GmailView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/GmailView',
+      '/setup/CommunityGlows/components/networks/GmailView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/InstagramView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/InstagramView',
+      '/setup/CommunityGlows/components/networks/InstagramView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/LinkedInView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/LinkedInView',
+      '/setup/CommunityGlows/components/networks/LinkedInView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/RedditView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/RedditView',
+      '/setup/CommunityGlows/components/networks/RedditView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/SnapchatView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/SnapchatView',
+      '/setup/CommunityGlows/components/networks/SnapchatView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/ThreadsView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/ThreadsView',
+      '/setup/CommunityGlows/components/networks/ThreadsView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/TikTokView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/TikTokView',
+      '/setup/CommunityGlows/components/networks/TikTokView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/networks/TwitterView': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/TwitterView',
+      '/setup/CommunityGlows/components/networks/TwitterView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/NetworkWebviewHost': RouteRecordInfo<
+      '/setup/CommunityGlows/components/NetworkWebviewHost',
+      '/setup/CommunityGlows/components/NetworkWebviewHost',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/OnboardingFlow': RouteRecordInfo<
+      '/setup/CommunityGlows/components/OnboardingFlow',
+      '/setup/CommunityGlows/components/OnboardingFlow',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/PostAuthSyncOverlay': RouteRecordInfo<
+      '/setup/CommunityGlows/components/PostAuthSyncOverlay',
+      '/setup/CommunityGlows/components/PostAuthSyncOverlay',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ProfileSwitcher': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ProfileSwitcher',
+      '/setup/CommunityGlows/components/ProfileSwitcher',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/SignupNudge': RouteRecordInfo<
+      '/setup/CommunityGlows/components/SignupNudge',
+      '/setup/CommunityGlows/components/SignupNudge',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/SocialLogin': RouteRecordInfo<
+      '/setup/CommunityGlows/components/SocialLogin',
+      '/setup/CommunityGlows/components/SocialLogin',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture': RouteRecordInfo<
+      '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture',
+      '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/tasks/TaskBoard': RouteRecordInfo<
+      '/setup/CommunityGlows/components/tasks/TaskBoard',
+      '/setup/CommunityGlows/components/tasks/TaskBoard',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/tasks/TaskForm': RouteRecordInfo<
+      '/setup/CommunityGlows/components/tasks/TaskForm',
+      '/setup/CommunityGlows/components/tasks/TaskForm',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgAvatar': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgAvatar',
+      '/setup/CommunityGlows/components/ui/SgAvatar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgBadge': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgBadge',
+      '/setup/CommunityGlows/components/ui/SgBadge',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgButton': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgButton',
+      '/setup/CommunityGlows/components/ui/SgButton',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgDialog': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgDialog',
+      '/setup/CommunityGlows/components/ui/SgDialog',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgIcon': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgIcon',
+      '/setup/CommunityGlows/components/ui/SgIcon',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgInput': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgInput',
+      '/setup/CommunityGlows/components/ui/SgInput',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgMultiSelect': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgMultiSelect',
+      '/setup/CommunityGlows/components/ui/SgMultiSelect',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgPassword': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgPassword',
+      '/setup/CommunityGlows/components/ui/SgPassword',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgSelect': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgSelect',
+      '/setup/CommunityGlows/components/ui/SgSelect',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgSpinner': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgSpinner',
+      '/setup/CommunityGlows/components/ui/SgSpinner',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgSwitch': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgSwitch',
+      '/setup/CommunityGlows/components/ui/SgSwitch',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgTextarea': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgTextarea',
+      '/setup/CommunityGlows/components/ui/SgTextarea',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/Unauthorized': RouteRecordInfo<
+      '/setup/CommunityGlows/components/Unauthorized',
+      '/setup/CommunityGlows/components/Unauthorized',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/views/LoginView': RouteRecordInfo<
+      '/setup/CommunityGlows/views/LoginView',
+      '/setup/CommunityGlows/views/LoginView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/views/SessionLockView': RouteRecordInfo<
+      '/setup/CommunityGlows/views/SessionLockView',
+      '/setup/CommunityGlows/views/SessionLockView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/views/TasksView': RouteRecordInfo<
+      '/setup/CommunityGlows/views/TasksView',
+      '/setup/CommunityGlows/views/TasksView',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/install': RouteRecordInfo<
       '/setup/install',
       '/setup/install',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz': RouteRecordInfo<
-      '/setup/SocialGlowz',
-      '/setup/SocialGlowz',
-      Record<never, never>,
-      Record<never, never>,
-      | '/setup/SocialGlowz/App'
-      | '/setup/SocialGlowz/components/AppHeader'
-      | '/setup/SocialGlowz/components/AppRightSidebar'
-      | '/setup/SocialGlowz/components/AppSettings'
-      | '/setup/SocialGlowz/components/AppSidebar'
-      | '/setup/SocialGlowz/components/BackupRestore'
-      | '/setup/SocialGlowz/components/BillingAccessPanel'
-      | '/setup/SocialGlowz/components/CrmSidebarWidget'
-      | '/setup/SocialGlowz/components/CrmToolbar'
-      | '/setup/SocialGlowz/components/DashboardFilters'
-      | '/setup/SocialGlowz/components/DesktopControlBar'
-      | '/setup/SocialGlowz/components/ExtensionParitySurface'
-      | '/setup/SocialGlowz/components/FriendsPanel'
-      | '/setup/SocialGlowz/components/KeyboardShortcuts'
-      | '/setup/SocialGlowz/components/MobileLayout'
-      | '/setup/SocialGlowz/components/MobileProfileSheet'
-      | '/setup/SocialGlowz/components/MobileSettingsSheet'
-      | '/setup/SocialGlowz/components/NetworkBrandIcon'
-      | '/setup/SocialGlowz/components/NetworkWebviewHost'
-      | '/setup/SocialGlowz/components/OnboardingFlow'
-      | '/setup/SocialGlowz/components/PostAuthSyncOverlay'
-      | '/setup/SocialGlowz/components/ProfileSwitcher'
-      | '/setup/SocialGlowz/components/SignupNudge'
-      | '/setup/SocialGlowz/components/SocialLogin'
-      | '/setup/SocialGlowz/components/Unauthorized'
-      | '/setup/SocialGlowz/components/common/NetworkLogo'
-      | '/setup/SocialGlowz/components/common/SocialNetworkLogo'
-      | '/setup/SocialGlowz/components/feed/CreatePost'
-      | '/setup/SocialGlowz/components/feed/SocialAvatar'
-      | '/setup/SocialGlowz/components/feed/SocialComment'
-      | '/setup/SocialGlowz/components/feed/SocialPost'
-      | '/setup/SocialGlowz/components/icons/NextdoorIcon'
-      | '/setup/SocialGlowz/components/icons/QuoraIcon'
-      | '/setup/SocialGlowz/components/icons/SnapchatIcon'
-      | '/setup/SocialGlowz/components/icons/ThreadsIcon'
-      | '/setup/SocialGlowz/components/kanban/KanbanBoard'
-      | '/setup/SocialGlowz/components/kanban/KanbanSidebar'
-      | '/setup/SocialGlowz/components/networks/DiscordView'
-      | '/setup/SocialGlowz/components/networks/FacebookView'
-      | '/setup/SocialGlowz/components/networks/GmailView'
-      | '/setup/SocialGlowz/components/networks/InstagramView'
-      | '/setup/SocialGlowz/components/networks/LinkedInView'
-      | '/setup/SocialGlowz/components/networks/RedditView'
-      | '/setup/SocialGlowz/components/networks/SnapchatView'
-      | '/setup/SocialGlowz/components/networks/ThreadsView'
-      | '/setup/SocialGlowz/components/networks/TikTokView'
-      | '/setup/SocialGlowz/components/networks/TwitterView'
-      | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
-      | '/setup/SocialGlowz/components/tasks/TaskBoard'
-      | '/setup/SocialGlowz/components/tasks/TaskForm'
-      | '/setup/SocialGlowz/components/ui/SgAvatar'
-      | '/setup/SocialGlowz/components/ui/SgBadge'
-      | '/setup/SocialGlowz/components/ui/SgButton'
-      | '/setup/SocialGlowz/components/ui/SgDialog'
-      | '/setup/SocialGlowz/components/ui/SgIcon'
-      | '/setup/SocialGlowz/components/ui/SgInput'
-      | '/setup/SocialGlowz/components/ui/SgMultiSelect'
-      | '/setup/SocialGlowz/components/ui/SgPassword'
-      | '/setup/SocialGlowz/components/ui/SgSelect'
-      | '/setup/SocialGlowz/components/ui/SgSpinner'
-      | '/setup/SocialGlowz/components/ui/SgSwitch'
-      | '/setup/SocialGlowz/components/ui/SgTextarea'
-      | '/setup/SocialGlowz/views/LoginView'
-      | '/setup/SocialGlowz/views/SessionLockView'
-      | '/setup/SocialGlowz/views/TasksView'
-    >,
-    '/setup/SocialGlowz/App': RouteRecordInfo<
-      '/setup/SocialGlowz/App',
-      '/setup/SocialGlowz/App',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/AppHeader': RouteRecordInfo<
-      '/setup/SocialGlowz/components/AppHeader',
-      '/setup/SocialGlowz/components/AppHeader',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/AppRightSidebar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/AppRightSidebar',
-      '/setup/SocialGlowz/components/AppRightSidebar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/AppSettings': RouteRecordInfo<
-      '/setup/SocialGlowz/components/AppSettings',
-      '/setup/SocialGlowz/components/AppSettings',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/AppSidebar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/AppSidebar',
-      '/setup/SocialGlowz/components/AppSidebar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/BackupRestore': RouteRecordInfo<
-      '/setup/SocialGlowz/components/BackupRestore',
-      '/setup/SocialGlowz/components/BackupRestore',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/BillingAccessPanel': RouteRecordInfo<
-      '/setup/SocialGlowz/components/BillingAccessPanel',
-      '/setup/SocialGlowz/components/BillingAccessPanel',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/common/NetworkLogo': RouteRecordInfo<
-      '/setup/SocialGlowz/components/common/NetworkLogo',
-      '/setup/SocialGlowz/components/common/NetworkLogo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/common/SocialNetworkLogo': RouteRecordInfo<
-      '/setup/SocialGlowz/components/common/SocialNetworkLogo',
-      '/setup/SocialGlowz/components/common/SocialNetworkLogo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/CrmSidebarWidget': RouteRecordInfo<
-      '/setup/SocialGlowz/components/CrmSidebarWidget',
-      '/setup/SocialGlowz/components/CrmSidebarWidget',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/CrmToolbar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/CrmToolbar',
-      '/setup/SocialGlowz/components/CrmToolbar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/DashboardFilters': RouteRecordInfo<
-      '/setup/SocialGlowz/components/DashboardFilters',
-      '/setup/SocialGlowz/components/DashboardFilters',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/DesktopControlBar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/DesktopControlBar',
-      '/setup/SocialGlowz/components/DesktopControlBar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ExtensionParitySurface': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ExtensionParitySurface',
-      '/setup/SocialGlowz/components/ExtensionParitySurface',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/feed/CreatePost': RouteRecordInfo<
-      '/setup/SocialGlowz/components/feed/CreatePost',
-      '/setup/SocialGlowz/components/feed/CreatePost',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/feed/SocialAvatar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/feed/SocialAvatar',
-      '/setup/SocialGlowz/components/feed/SocialAvatar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/feed/SocialComment': RouteRecordInfo<
-      '/setup/SocialGlowz/components/feed/SocialComment',
-      '/setup/SocialGlowz/components/feed/SocialComment',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/feed/SocialPost': RouteRecordInfo<
-      '/setup/SocialGlowz/components/feed/SocialPost',
-      '/setup/SocialGlowz/components/feed/SocialPost',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/FriendsPanel': RouteRecordInfo<
-      '/setup/SocialGlowz/components/FriendsPanel',
-      '/setup/SocialGlowz/components/FriendsPanel',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/icons/NextdoorIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/icons/NextdoorIcon',
-      '/setup/SocialGlowz/components/icons/NextdoorIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/icons/QuoraIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/icons/QuoraIcon',
-      '/setup/SocialGlowz/components/icons/QuoraIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/icons/SnapchatIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/icons/SnapchatIcon',
-      '/setup/SocialGlowz/components/icons/SnapchatIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/icons/ThreadsIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/icons/ThreadsIcon',
-      '/setup/SocialGlowz/components/icons/ThreadsIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/kanban/KanbanBoard': RouteRecordInfo<
-      '/setup/SocialGlowz/components/kanban/KanbanBoard',
-      '/setup/SocialGlowz/components/kanban/KanbanBoard',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/kanban/KanbanSidebar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/kanban/KanbanSidebar',
-      '/setup/SocialGlowz/components/kanban/KanbanSidebar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/KeyboardShortcuts': RouteRecordInfo<
-      '/setup/SocialGlowz/components/KeyboardShortcuts',
-      '/setup/SocialGlowz/components/KeyboardShortcuts',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/MobileLayout': RouteRecordInfo<
-      '/setup/SocialGlowz/components/MobileLayout',
-      '/setup/SocialGlowz/components/MobileLayout',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/MobileProfileSheet': RouteRecordInfo<
-      '/setup/SocialGlowz/components/MobileProfileSheet',
-      '/setup/SocialGlowz/components/MobileProfileSheet',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/MobileSettingsSheet': RouteRecordInfo<
-      '/setup/SocialGlowz/components/MobileSettingsSheet',
-      '/setup/SocialGlowz/components/MobileSettingsSheet',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/NetworkBrandIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/NetworkBrandIcon',
-      '/setup/SocialGlowz/components/NetworkBrandIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/DiscordView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/DiscordView',
-      '/setup/SocialGlowz/components/networks/DiscordView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/FacebookView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/FacebookView',
-      '/setup/SocialGlowz/components/networks/FacebookView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/GmailView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/GmailView',
-      '/setup/SocialGlowz/components/networks/GmailView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/InstagramView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/InstagramView',
-      '/setup/SocialGlowz/components/networks/InstagramView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/LinkedInView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/LinkedInView',
-      '/setup/SocialGlowz/components/networks/LinkedInView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/RedditView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/RedditView',
-      '/setup/SocialGlowz/components/networks/RedditView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/SnapchatView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/SnapchatView',
-      '/setup/SocialGlowz/components/networks/SnapchatView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/ThreadsView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/ThreadsView',
-      '/setup/SocialGlowz/components/networks/ThreadsView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/TikTokView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/TikTokView',
-      '/setup/SocialGlowz/components/networks/TikTokView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/networks/TwitterView': RouteRecordInfo<
-      '/setup/SocialGlowz/components/networks/TwitterView',
-      '/setup/SocialGlowz/components/networks/TwitterView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/NetworkWebviewHost': RouteRecordInfo<
-      '/setup/SocialGlowz/components/NetworkWebviewHost',
-      '/setup/SocialGlowz/components/NetworkWebviewHost',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/OnboardingFlow': RouteRecordInfo<
-      '/setup/SocialGlowz/components/OnboardingFlow',
-      '/setup/SocialGlowz/components/OnboardingFlow',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/PostAuthSyncOverlay': RouteRecordInfo<
-      '/setup/SocialGlowz/components/PostAuthSyncOverlay',
-      '/setup/SocialGlowz/components/PostAuthSyncOverlay',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ProfileSwitcher': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ProfileSwitcher',
-      '/setup/SocialGlowz/components/ProfileSwitcher',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/SignupNudge': RouteRecordInfo<
-      '/setup/SocialGlowz/components/SignupNudge',
-      '/setup/SocialGlowz/components/SignupNudge',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/SocialLogin': RouteRecordInfo<
-      '/setup/SocialGlowz/components/SocialLogin',
-      '/setup/SocialGlowz/components/SocialLogin',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture': RouteRecordInfo<
-      '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture',
-      '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/tasks/TaskBoard': RouteRecordInfo<
-      '/setup/SocialGlowz/components/tasks/TaskBoard',
-      '/setup/SocialGlowz/components/tasks/TaskBoard',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/tasks/TaskForm': RouteRecordInfo<
-      '/setup/SocialGlowz/components/tasks/TaskForm',
-      '/setup/SocialGlowz/components/tasks/TaskForm',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgAvatar': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgAvatar',
-      '/setup/SocialGlowz/components/ui/SgAvatar',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgBadge': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgBadge',
-      '/setup/SocialGlowz/components/ui/SgBadge',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgButton': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgButton',
-      '/setup/SocialGlowz/components/ui/SgButton',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgDialog': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgDialog',
-      '/setup/SocialGlowz/components/ui/SgDialog',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgIcon': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgIcon',
-      '/setup/SocialGlowz/components/ui/SgIcon',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgInput': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgInput',
-      '/setup/SocialGlowz/components/ui/SgInput',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgMultiSelect': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgMultiSelect',
-      '/setup/SocialGlowz/components/ui/SgMultiSelect',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgPassword': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgPassword',
-      '/setup/SocialGlowz/components/ui/SgPassword',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgSelect': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgSelect',
-      '/setup/SocialGlowz/components/ui/SgSelect',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgSpinner': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgSpinner',
-      '/setup/SocialGlowz/components/ui/SgSpinner',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgSwitch': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgSwitch',
-      '/setup/SocialGlowz/components/ui/SgSwitch',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/ui/SgTextarea': RouteRecordInfo<
-      '/setup/SocialGlowz/components/ui/SgTextarea',
-      '/setup/SocialGlowz/components/ui/SgTextarea',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/components/Unauthorized': RouteRecordInfo<
-      '/setup/SocialGlowz/components/Unauthorized',
-      '/setup/SocialGlowz/components/Unauthorized',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/views/LoginView': RouteRecordInfo<
-      '/setup/SocialGlowz/views/LoginView',
-      '/setup/SocialGlowz/views/LoginView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/views/SessionLockView': RouteRecordInfo<
-      '/setup/SocialGlowz/views/SessionLockView',
-      '/setup/SocialGlowz/views/SessionLockView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/SocialGlowz/views/TasksView': RouteRecordInfo<
-      '/setup/SocialGlowz/views/TasksView',
-      '/setup/SocialGlowz/views/TasksView',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -739,470 +739,470 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/ui/setup/pages/install.vue': {
+    'src/ui/setup/pages/CommunityGlows.vue': {
       routes:
-        | '/setup/install'
-      views:
-        | never
-    }
-    'src/ui/setup/pages/SocialGlowz.vue': {
-      routes:
-        | '/setup/SocialGlowz'
-        | '/setup/SocialGlowz/App'
-        | '/setup/SocialGlowz/components/AppHeader'
-        | '/setup/SocialGlowz/components/AppRightSidebar'
-        | '/setup/SocialGlowz/components/AppSettings'
-        | '/setup/SocialGlowz/components/AppSidebar'
-        | '/setup/SocialGlowz/components/BackupRestore'
-        | '/setup/SocialGlowz/components/BillingAccessPanel'
-        | '/setup/SocialGlowz/components/CrmSidebarWidget'
-        | '/setup/SocialGlowz/components/CrmToolbar'
-        | '/setup/SocialGlowz/components/DashboardFilters'
-        | '/setup/SocialGlowz/components/DesktopControlBar'
-        | '/setup/SocialGlowz/components/ExtensionParitySurface'
-        | '/setup/SocialGlowz/components/FriendsPanel'
-        | '/setup/SocialGlowz/components/KeyboardShortcuts'
-        | '/setup/SocialGlowz/components/MobileLayout'
-        | '/setup/SocialGlowz/components/MobileProfileSheet'
-        | '/setup/SocialGlowz/components/MobileSettingsSheet'
-        | '/setup/SocialGlowz/components/NetworkBrandIcon'
-        | '/setup/SocialGlowz/components/NetworkWebviewHost'
-        | '/setup/SocialGlowz/components/OnboardingFlow'
-        | '/setup/SocialGlowz/components/PostAuthSyncOverlay'
-        | '/setup/SocialGlowz/components/ProfileSwitcher'
-        | '/setup/SocialGlowz/components/SignupNudge'
-        | '/setup/SocialGlowz/components/SocialLogin'
-        | '/setup/SocialGlowz/components/Unauthorized'
-        | '/setup/SocialGlowz/components/common/NetworkLogo'
-        | '/setup/SocialGlowz/components/common/SocialNetworkLogo'
-        | '/setup/SocialGlowz/components/feed/CreatePost'
-        | '/setup/SocialGlowz/components/feed/SocialAvatar'
-        | '/setup/SocialGlowz/components/feed/SocialComment'
-        | '/setup/SocialGlowz/components/feed/SocialPost'
-        | '/setup/SocialGlowz/components/icons/NextdoorIcon'
-        | '/setup/SocialGlowz/components/icons/QuoraIcon'
-        | '/setup/SocialGlowz/components/icons/SnapchatIcon'
-        | '/setup/SocialGlowz/components/icons/ThreadsIcon'
-        | '/setup/SocialGlowz/components/kanban/KanbanBoard'
-        | '/setup/SocialGlowz/components/kanban/KanbanSidebar'
-        | '/setup/SocialGlowz/components/networks/DiscordView'
-        | '/setup/SocialGlowz/components/networks/FacebookView'
-        | '/setup/SocialGlowz/components/networks/GmailView'
-        | '/setup/SocialGlowz/components/networks/InstagramView'
-        | '/setup/SocialGlowz/components/networks/LinkedInView'
-        | '/setup/SocialGlowz/components/networks/RedditView'
-        | '/setup/SocialGlowz/components/networks/SnapchatView'
-        | '/setup/SocialGlowz/components/networks/ThreadsView'
-        | '/setup/SocialGlowz/components/networks/TikTokView'
-        | '/setup/SocialGlowz/components/networks/TwitterView'
-        | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
-        | '/setup/SocialGlowz/components/tasks/TaskBoard'
-        | '/setup/SocialGlowz/components/tasks/TaskForm'
-        | '/setup/SocialGlowz/components/ui/SgAvatar'
-        | '/setup/SocialGlowz/components/ui/SgBadge'
-        | '/setup/SocialGlowz/components/ui/SgButton'
-        | '/setup/SocialGlowz/components/ui/SgDialog'
-        | '/setup/SocialGlowz/components/ui/SgIcon'
-        | '/setup/SocialGlowz/components/ui/SgInput'
-        | '/setup/SocialGlowz/components/ui/SgMultiSelect'
-        | '/setup/SocialGlowz/components/ui/SgPassword'
-        | '/setup/SocialGlowz/components/ui/SgSelect'
-        | '/setup/SocialGlowz/components/ui/SgSpinner'
-        | '/setup/SocialGlowz/components/ui/SgSwitch'
-        | '/setup/SocialGlowz/components/ui/SgTextarea'
-        | '/setup/SocialGlowz/views/LoginView'
-        | '/setup/SocialGlowz/views/SessionLockView'
-        | '/setup/SocialGlowz/views/TasksView'
+        | '/setup/CommunityGlows'
+        | '/setup/CommunityGlows/App'
+        | '/setup/CommunityGlows/components/AppHeader'
+        | '/setup/CommunityGlows/components/AppRightSidebar'
+        | '/setup/CommunityGlows/components/AppSettings'
+        | '/setup/CommunityGlows/components/AppSidebar'
+        | '/setup/CommunityGlows/components/BackupRestore'
+        | '/setup/CommunityGlows/components/BillingAccessPanel'
+        | '/setup/CommunityGlows/components/CrmSidebarWidget'
+        | '/setup/CommunityGlows/components/CrmToolbar'
+        | '/setup/CommunityGlows/components/DashboardFilters'
+        | '/setup/CommunityGlows/components/DesktopControlBar'
+        | '/setup/CommunityGlows/components/ExtensionParitySurface'
+        | '/setup/CommunityGlows/components/FriendsPanel'
+        | '/setup/CommunityGlows/components/KeyboardShortcuts'
+        | '/setup/CommunityGlows/components/MobileLayout'
+        | '/setup/CommunityGlows/components/MobileProfileSheet'
+        | '/setup/CommunityGlows/components/MobileSettingsSheet'
+        | '/setup/CommunityGlows/components/NetworkBrandIcon'
+        | '/setup/CommunityGlows/components/NetworkWebviewHost'
+        | '/setup/CommunityGlows/components/OnboardingFlow'
+        | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
+        | '/setup/CommunityGlows/components/ProfileSwitcher'
+        | '/setup/CommunityGlows/components/SignupNudge'
+        | '/setup/CommunityGlows/components/SocialLogin'
+        | '/setup/CommunityGlows/components/Unauthorized'
+        | '/setup/CommunityGlows/components/common/NetworkLogo'
+        | '/setup/CommunityGlows/components/common/SocialNetworkLogo'
+        | '/setup/CommunityGlows/components/feed/CreatePost'
+        | '/setup/CommunityGlows/components/feed/SocialAvatar'
+        | '/setup/CommunityGlows/components/feed/SocialComment'
+        | '/setup/CommunityGlows/components/feed/SocialPost'
+        | '/setup/CommunityGlows/components/icons/NextdoorIcon'
+        | '/setup/CommunityGlows/components/icons/QuoraIcon'
+        | '/setup/CommunityGlows/components/icons/SnapchatIcon'
+        | '/setup/CommunityGlows/components/icons/ThreadsIcon'
+        | '/setup/CommunityGlows/components/kanban/KanbanBoard'
+        | '/setup/CommunityGlows/components/kanban/KanbanSidebar'
+        | '/setup/CommunityGlows/components/networks/DiscordView'
+        | '/setup/CommunityGlows/components/networks/FacebookView'
+        | '/setup/CommunityGlows/components/networks/GmailView'
+        | '/setup/CommunityGlows/components/networks/InstagramView'
+        | '/setup/CommunityGlows/components/networks/LinkedInView'
+        | '/setup/CommunityGlows/components/networks/RedditView'
+        | '/setup/CommunityGlows/components/networks/SnapchatView'
+        | '/setup/CommunityGlows/components/networks/ThreadsView'
+        | '/setup/CommunityGlows/components/networks/TikTokView'
+        | '/setup/CommunityGlows/components/networks/TwitterView'
+        | '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture'
+        | '/setup/CommunityGlows/components/tasks/TaskBoard'
+        | '/setup/CommunityGlows/components/tasks/TaskForm'
+        | '/setup/CommunityGlows/components/ui/SgAvatar'
+        | '/setup/CommunityGlows/components/ui/SgBadge'
+        | '/setup/CommunityGlows/components/ui/SgButton'
+        | '/setup/CommunityGlows/components/ui/SgDialog'
+        | '/setup/CommunityGlows/components/ui/SgIcon'
+        | '/setup/CommunityGlows/components/ui/SgInput'
+        | '/setup/CommunityGlows/components/ui/SgMultiSelect'
+        | '/setup/CommunityGlows/components/ui/SgPassword'
+        | '/setup/CommunityGlows/components/ui/SgSelect'
+        | '/setup/CommunityGlows/components/ui/SgSpinner'
+        | '/setup/CommunityGlows/components/ui/SgSwitch'
+        | '/setup/CommunityGlows/components/ui/SgTextarea'
+        | '/setup/CommunityGlows/views/LoginView'
+        | '/setup/CommunityGlows/views/SessionLockView'
+        | '/setup/CommunityGlows/views/TasksView'
       views:
         | 'default'
     }
-    'src/ui/setup/pages/SocialGlowz/App.vue': {
+    'src/ui/setup/pages/CommunityGlows/App.vue': {
       routes:
-        | '/setup/SocialGlowz/App'
+        | '/setup/CommunityGlows/App'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/AppHeader.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/AppHeader.vue': {
       routes:
-        | '/setup/SocialGlowz/components/AppHeader'
+        | '/setup/CommunityGlows/components/AppHeader'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/AppRightSidebar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/AppRightSidebar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/AppRightSidebar'
+        | '/setup/CommunityGlows/components/AppRightSidebar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/AppSettings.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/AppSettings.vue': {
       routes:
-        | '/setup/SocialGlowz/components/AppSettings'
+        | '/setup/CommunityGlows/components/AppSettings'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/AppSidebar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/AppSidebar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/AppSidebar'
+        | '/setup/CommunityGlows/components/AppSidebar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/BackupRestore.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/BackupRestore.vue': {
       routes:
-        | '/setup/SocialGlowz/components/BackupRestore'
+        | '/setup/CommunityGlows/components/BackupRestore'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/BillingAccessPanel.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue': {
       routes:
-        | '/setup/SocialGlowz/components/BillingAccessPanel'
+        | '/setup/CommunityGlows/components/BillingAccessPanel'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/common/NetworkLogo.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/common/NetworkLogo.vue': {
       routes:
-        | '/setup/SocialGlowz/components/common/NetworkLogo'
+        | '/setup/CommunityGlows/components/common/NetworkLogo'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/common/SocialNetworkLogo.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/common/SocialNetworkLogo.vue': {
       routes:
-        | '/setup/SocialGlowz/components/common/SocialNetworkLogo'
+        | '/setup/CommunityGlows/components/common/SocialNetworkLogo'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/CrmSidebarWidget.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/CrmSidebarWidget.vue': {
       routes:
-        | '/setup/SocialGlowz/components/CrmSidebarWidget'
+        | '/setup/CommunityGlows/components/CrmSidebarWidget'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/CrmToolbar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/CrmToolbar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/CrmToolbar'
+        | '/setup/CommunityGlows/components/CrmToolbar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/DashboardFilters.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/DashboardFilters.vue': {
       routes:
-        | '/setup/SocialGlowz/components/DashboardFilters'
+        | '/setup/CommunityGlows/components/DashboardFilters'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/DesktopControlBar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/DesktopControlBar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/DesktopControlBar'
+        | '/setup/CommunityGlows/components/DesktopControlBar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ExtensionParitySurface.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ExtensionParitySurface.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ExtensionParitySurface'
+        | '/setup/CommunityGlows/components/ExtensionParitySurface'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/feed/CreatePost.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/feed/CreatePost.vue': {
       routes:
-        | '/setup/SocialGlowz/components/feed/CreatePost'
+        | '/setup/CommunityGlows/components/feed/CreatePost'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/feed/SocialAvatar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/feed/SocialAvatar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/feed/SocialAvatar'
+        | '/setup/CommunityGlows/components/feed/SocialAvatar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/feed/SocialComment.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/feed/SocialComment.vue': {
       routes:
-        | '/setup/SocialGlowz/components/feed/SocialComment'
+        | '/setup/CommunityGlows/components/feed/SocialComment'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/feed/SocialPost.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/feed/SocialPost.vue': {
       routes:
-        | '/setup/SocialGlowz/components/feed/SocialPost'
+        | '/setup/CommunityGlows/components/feed/SocialPost'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/FriendsPanel.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/FriendsPanel.vue': {
       routes:
-        | '/setup/SocialGlowz/components/FriendsPanel'
+        | '/setup/CommunityGlows/components/FriendsPanel'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/icons/NextdoorIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/icons/NextdoorIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/icons/NextdoorIcon'
+        | '/setup/CommunityGlows/components/icons/NextdoorIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/icons/QuoraIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/icons/QuoraIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/icons/QuoraIcon'
+        | '/setup/CommunityGlows/components/icons/QuoraIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/icons/SnapchatIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/icons/SnapchatIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/icons/SnapchatIcon'
+        | '/setup/CommunityGlows/components/icons/SnapchatIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/icons/ThreadsIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/icons/ThreadsIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/icons/ThreadsIcon'
+        | '/setup/CommunityGlows/components/icons/ThreadsIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/kanban/KanbanBoard.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/kanban/KanbanBoard.vue': {
       routes:
-        | '/setup/SocialGlowz/components/kanban/KanbanBoard'
+        | '/setup/CommunityGlows/components/kanban/KanbanBoard'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/kanban/KanbanSidebar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/kanban/KanbanSidebar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/kanban/KanbanSidebar'
+        | '/setup/CommunityGlows/components/kanban/KanbanSidebar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/KeyboardShortcuts.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/KeyboardShortcuts.vue': {
       routes:
-        | '/setup/SocialGlowz/components/KeyboardShortcuts'
+        | '/setup/CommunityGlows/components/KeyboardShortcuts'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/MobileLayout.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/MobileLayout.vue': {
       routes:
-        | '/setup/SocialGlowz/components/MobileLayout'
+        | '/setup/CommunityGlows/components/MobileLayout'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/MobileProfileSheet.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/MobileProfileSheet.vue': {
       routes:
-        | '/setup/SocialGlowz/components/MobileProfileSheet'
+        | '/setup/CommunityGlows/components/MobileProfileSheet'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/MobileSettingsSheet.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/MobileSettingsSheet.vue': {
       routes:
-        | '/setup/SocialGlowz/components/MobileSettingsSheet'
+        | '/setup/CommunityGlows/components/MobileSettingsSheet'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/NetworkBrandIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/NetworkBrandIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/NetworkBrandIcon'
+        | '/setup/CommunityGlows/components/NetworkBrandIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/DiscordView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/DiscordView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/DiscordView'
+        | '/setup/CommunityGlows/components/networks/DiscordView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/FacebookView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/FacebookView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/FacebookView'
+        | '/setup/CommunityGlows/components/networks/FacebookView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/GmailView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/GmailView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/GmailView'
+        | '/setup/CommunityGlows/components/networks/GmailView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/InstagramView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/InstagramView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/InstagramView'
+        | '/setup/CommunityGlows/components/networks/InstagramView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/LinkedInView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/LinkedInView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/LinkedInView'
+        | '/setup/CommunityGlows/components/networks/LinkedInView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/RedditView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/RedditView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/RedditView'
+        | '/setup/CommunityGlows/components/networks/RedditView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/SnapchatView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/SnapchatView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/SnapchatView'
+        | '/setup/CommunityGlows/components/networks/SnapchatView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/ThreadsView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/ThreadsView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/ThreadsView'
+        | '/setup/CommunityGlows/components/networks/ThreadsView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/TikTokView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/TikTokView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/TikTokView'
+        | '/setup/CommunityGlows/components/networks/TikTokView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/networks/TwitterView.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/networks/TwitterView.vue': {
       routes:
-        | '/setup/SocialGlowz/components/networks/TwitterView'
+        | '/setup/CommunityGlows/components/networks/TwitterView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/NetworkWebviewHost.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/NetworkWebviewHost.vue': {
       routes:
-        | '/setup/SocialGlowz/components/NetworkWebviewHost'
+        | '/setup/CommunityGlows/components/NetworkWebviewHost'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/OnboardingFlow.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/OnboardingFlow.vue': {
       routes:
-        | '/setup/SocialGlowz/components/OnboardingFlow'
+        | '/setup/CommunityGlows/components/OnboardingFlow'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/PostAuthSyncOverlay.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/PostAuthSyncOverlay.vue': {
       routes:
-        | '/setup/SocialGlowz/components/PostAuthSyncOverlay'
+        | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ProfileSwitcher.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ProfileSwitcher.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ProfileSwitcher'
+        | '/setup/CommunityGlows/components/ProfileSwitcher'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/SignupNudge.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/SignupNudge.vue': {
       routes:
-        | '/setup/SocialGlowz/components/SignupNudge'
+        | '/setup/CommunityGlows/components/SignupNudge'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/SocialLogin.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/SocialLogin.vue': {
       routes:
-        | '/setup/SocialGlowz/components/SocialLogin'
+        | '/setup/CommunityGlows/components/SocialLogin'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/tasks/ExtensionTaskCapture.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/tasks/ExtensionTaskCapture.vue': {
       routes:
-        | '/setup/SocialGlowz/components/tasks/ExtensionTaskCapture'
+        | '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/tasks/TaskBoard.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/tasks/TaskBoard.vue': {
       routes:
-        | '/setup/SocialGlowz/components/tasks/TaskBoard'
+        | '/setup/CommunityGlows/components/tasks/TaskBoard'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/tasks/TaskForm.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/tasks/TaskForm.vue': {
       routes:
-        | '/setup/SocialGlowz/components/tasks/TaskForm'
+        | '/setup/CommunityGlows/components/tasks/TaskForm'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgAvatar.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgAvatar.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgAvatar'
+        | '/setup/CommunityGlows/components/ui/SgAvatar'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgBadge.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgBadge.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgBadge'
+        | '/setup/CommunityGlows/components/ui/SgBadge'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgButton.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgButton.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgButton'
+        | '/setup/CommunityGlows/components/ui/SgButton'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgDialog.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgDialog.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgDialog'
+        | '/setup/CommunityGlows/components/ui/SgDialog'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgIcon.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgIcon.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgIcon'
+        | '/setup/CommunityGlows/components/ui/SgIcon'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgInput.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgInput.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgInput'
+        | '/setup/CommunityGlows/components/ui/SgInput'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgMultiSelect.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgMultiSelect.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgMultiSelect'
+        | '/setup/CommunityGlows/components/ui/SgMultiSelect'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgPassword.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgPassword.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgPassword'
+        | '/setup/CommunityGlows/components/ui/SgPassword'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgSelect.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgSelect.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgSelect'
+        | '/setup/CommunityGlows/components/ui/SgSelect'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgSpinner.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgSpinner.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgSpinner'
+        | '/setup/CommunityGlows/components/ui/SgSpinner'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgSwitch.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgSwitch.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgSwitch'
+        | '/setup/CommunityGlows/components/ui/SgSwitch'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/ui/SgTextarea.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgTextarea.vue': {
       routes:
-        | '/setup/SocialGlowz/components/ui/SgTextarea'
+        | '/setup/CommunityGlows/components/ui/SgTextarea'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/components/Unauthorized.vue': {
+    'src/ui/setup/pages/CommunityGlows/components/Unauthorized.vue': {
       routes:
-        | '/setup/SocialGlowz/components/Unauthorized'
+        | '/setup/CommunityGlows/components/Unauthorized'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/views/LoginView.vue': {
+    'src/ui/setup/pages/CommunityGlows/views/LoginView.vue': {
       routes:
-        | '/setup/SocialGlowz/views/LoginView'
+        | '/setup/CommunityGlows/views/LoginView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/views/SessionLockView.vue': {
+    'src/ui/setup/pages/CommunityGlows/views/SessionLockView.vue': {
       routes:
-        | '/setup/SocialGlowz/views/SessionLockView'
+        | '/setup/CommunityGlows/views/SessionLockView'
       views:
         | never
     }
-    'src/ui/setup/pages/SocialGlowz/views/TasksView.vue': {
+    'src/ui/setup/pages/CommunityGlows/views/TasksView.vue': {
       routes:
-        | '/setup/SocialGlowz/views/TasksView'
+        | '/setup/CommunityGlows/views/TasksView'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/install.vue': {
+      routes:
+        | '/setup/install'
       views:
         | never
     }

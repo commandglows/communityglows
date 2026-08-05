@@ -2,7 +2,7 @@
 artifact: branding_system
 metadata_schema_version: "1.0"
 artifact_version: "1.1.0"
-project: socialglowz
+project: communityglows
 created: "2026-04-26"
 status: active
 source_skill: 300-sg-docs
@@ -17,7 +17,7 @@ depends_on: []
 evidence:
   - "README.md"
   - "package.json"
-  - "src/ui/setup/pages/SocialGlowz/App.vue"
+  - "src/ui/setup/pages/CommunityGlows/App.vue"
 supersedes: []
 next_step: "/300-sg-docs audit shipglows_data/business/branding.md"
 ---
@@ -26,7 +26,7 @@ next_step: "/300-sg-docs audit shipglows_data/business/branding.md"
 
 ## Brand positioning
 
-SocialGlowz positions itself as a **pragmatic productivity interface** for social media professionals:
+CommunityGlows positions itself as a **pragmatic productivity interface** for social media professionals:
 
 - Calm, efficient, and trustworthy
 - Built for speed across platforms
@@ -54,7 +54,7 @@ SocialGlowz positions itself as a **pragmatic productivity interface** for socia
 
 ## UI consistency rules
 
-1. Preserve the SocialGlowz semantic-token and wrapper ecosystem; do not reintroduce a styled provider theme as a competing visual authority.
+1. Preserve the CommunityGlows semantic-token and wrapper ecosystem; do not reintroduce a styled provider theme as a competing visual authority.
 2. Prefer established navigation rhythm over heavy visual churn.
 3. Keep copy aligned with current user journeys (`Network`, `Profiles`, `Settings`, `Auth`).
 4. Never introduce branding motifs that conflict with social network readability.

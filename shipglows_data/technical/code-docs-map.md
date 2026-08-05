@@ -2,13 +2,13 @@
 artifact: documentation
 metadata_schema_version: "1.0"
 artifact_version: "1.3.1"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-14"
 updated: "2026-08-04"
 status: active
 source_skill: 300-sg-docs
 scope: code_docs_map
-owner: "socialglowz-team"
+owner: "communityglows-team"
 confidence: medium
 risk_level: medium
 security_impact: yes
@@ -16,19 +16,19 @@ docs_impact: yes
 linked_systems:
   - "README.md"
   - "shipglows_data/technical/context.md"
-  - "src/ui/setup/pages/SocialGlowz/main.ts"
-  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
-  - "src/ui/setup/pages/SocialGlowz/components/ui/"
-  - "src/ui/setup/pages/SocialGlowz/directives/tooltip.ts"
+  - "src/ui/setup/pages/CommunityGlows/main.ts"
+  - "src/ui/setup/pages/CommunityGlows/assets/main.css"
+  - "src/ui/setup/pages/CommunityGlows/components/ui/"
+  - "src/ui/setup/pages/CommunityGlows/directives/tooltip.ts"
   - "src/utils/notifications.ts"
-  - "src/ui/setup/pages/SocialGlowz/views/SessionLockView.vue"
+  - "src/ui/setup/pages/CommunityGlows/views/SessionLockView.vue"
   - "src/lib/convexAuth.ts"
   - "src/lib/convexAuth.test.ts"
   - "convex/billing.ts"
   - "convex/billing.test.ts"
-  - "scripts/importSocialGlowzActivationCodes.ts"
+  - "scripts/importCommunityGlowsActivationCodes.ts"
   - "src/composables/useBillingAccess.ts"
-  - "src/ui/setup/pages/SocialGlowz/components/BillingAccessPanel.vue"
+  - "src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue"
   - "src-tauri/src/lib.rs"
   - "src-tauri/Cargo.toml"
   - "src-tauri/capabilities/default.json"
@@ -39,7 +39,7 @@ supersedes: []
 evidence:
   - "src-tauri/src/lib.rs"
   - "src-tauri/plugins/android-webview/src/mobile.rs"
-  - "src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt"
+  - "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
   - "shipglows_data/technical/android-webview-session-isolation.md"
   - "shipglows_data/technical/design-system-authority.md"
 next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
@@ -50,16 +50,16 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ## Windows/Tauri component and design-system runtime
 
 - Code:
-  - `src/ui/setup/pages/SocialGlowz/main.ts`
-  - `src/ui/setup/pages/SocialGlowz/App.vue`
-  - `src/ui/setup/pages/SocialGlowz/assets/main.css`
-  - `src/ui/setup/pages/SocialGlowz/components/ui/`
-  - `src/ui/setup/pages/SocialGlowz/directives/tooltip.ts`
+  - `src/ui/setup/pages/CommunityGlows/main.ts`
+  - `src/ui/setup/pages/CommunityGlows/App.vue`
+  - `src/ui/setup/pages/CommunityGlows/assets/main.css`
+  - `src/ui/setup/pages/CommunityGlows/components/ui/`
+  - `src/ui/setup/pages/CommunityGlows/directives/tooltip.ts`
   - `src/utils/notifications.ts`
   - `vite.tauri.config.ts`
 - Behavior:
   - Reka UI owns maintained keyboard, focus, overlay and splitter behavior for composite Windows controls.
-  - SocialGlowz wrappers own visible composition and consume generated semantic tokens; `design/tokens/reference.json` is the editable cross-platform authority, while `main.css` provides composition and compatibility aliases.
+  - CommunityGlows wrappers own visible composition and consume generated semantic tokens; `design/tokens/reference.json` is the editable cross-platform authority, while `main.css` provides composition and compatibility aliases.
   - Notivue owns notification transport/rendering through the carrier mounted by `App.vue`; `v-sg-tooltip` owns accessible tooltips.
   - The Windows/Tauri source, generated declarations and clean bundle contain no PrimeVue runtime. PrimeVue/PrimeFlex/PrimeIcons remain scoped to legacy extension consumers where applicable.
 - Docs:
@@ -80,30 +80,30 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - `convex/schema.ts`
   - `convex/billing.ts`
   - `convex/billing.test.ts`
-  - `scripts/importSocialGlowzActivationCodes.ts`
-  - `scripts/importSocialGlowzActivationCodes.test.ts`
+  - `scripts/importCommunityGlowsActivationCodes.ts`
+  - `scripts/importCommunityGlowsActivationCodes.test.ts`
   - `src/composables/useBillingAccess.ts`
   - `src/composables/useBillingAccess.test.ts`
-  - `src/ui/setup/pages/SocialGlowz/components/BillingAccessPanel.vue`
-  - `src/ui/setup/pages/SocialGlowz/components/AppSettings.vue`
-  - `src/ui/setup/pages/SocialGlowz/components/MobileSettingsSheet.vue`
+  - `src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue`
+  - `src/ui/setup/pages/CommunityGlows/components/AppSettings.vue`
+  - `src/ui/setup/pages/CommunityGlows/components/MobileSettingsSheet.vue`
   - `site/src/config/site.ts`
   - `site/src/pages/pricing.astro`
   - `site/src/pages/purchase/success.astro`
   - `site/src/pages/purchase/cancel.astro`
 - Behavior:
-  - SocialGlowz lit l’accès produit via le bridge suite WinFlowz ; les tables locales `entitlements`/`redemptionCodes`/`billingEvents` ne sont plus des sources de vérité, elles servent au passage/compatibilité de migration.
-  - `billing.redeemCode` permet à un user authentifié d’activer un code Lifetime Deal, early-bird, partner, ou manual dans l’entitlement ledger suite (`productId=socialglowz`, `plan=lifetime_deal` par défaut).
-  - `billing.adminUpsertRedemptionCode` est protégé par `SOCIALGLOWZ_BILLING_ADMIN_SECRET` et réservé aux imports/ops serveur.
-  - `scripts/importSocialGlowzActivationCodes.ts` importe des batches JSON/JSONL/CSV de codes Lifetime Deal ou early-bird via l'action admin existante, redige les codes dans la sortie, et ne contourne pas le bridge suite.
+  - CommunityGlows lit l’accès produit via le bridge suite WinFlowz ; les tables locales `entitlements`/`redemptionCodes`/`billingEvents` ne sont plus des sources de vérité, elles servent au passage/compatibilité de migration.
+  - `billing.redeemCode` permet à un user authentifié d’activer un code Lifetime Deal, early-bird, partner, ou manual dans l’entitlement ledger suite (`productId=communityglows`, `plan=lifetime_deal` par défaut).
+  - `billing.adminUpsertRedemptionCode` est protégé par `COMMUNITYGLOWS_BILLING_ADMIN_SECRET` et réservé aux imports/ops serveur.
+  - `scripts/importCommunityGlowsActivationCodes.ts` importe des batches JSON/JSONL/CSV de codes Lifetime Deal ou early-bird via l'action admin existante, redige les codes dans la sortie, et ne contourne pas le bridge suite.
   - `billing.getProductAccess` renvoie une réponse suite-driven et retourne un état sûr si le bridge est indisponible ou mal configuré.
   - `billingEvents` records redemption/admin events for auditability without coupling the app UI to AppSumo, Lemon Squeezy, Polar, Stripe, Paddle, or another provider.
   - `BillingAccessPanel.vue` exposes redemption from both desktop and mobile settings, while `useBillingAccess.ts` keeps raw codes in component/composable memory and maps backend errors to safe i18n keys.
 - Docs:
-  - `shipglows_data/workflow/specs/socialglowz-billing-entitlements-foundation.md`
-  - `shipglows_data/workflow/specs/socialglowz-redemption-ui.md`
-  - `shipglows_data/workflow/specs/socialglowz-suite-entitlement-adapter.md`
-  - `shipglows_data/workflow/specs/socialglowz-processor-agnostic-ltd-commerce.md`
+  - `shipglows_data/workflow/specs/communityglows-billing-entitlements-foundation.md`
+  - `shipglows_data/workflow/specs/communityglows-redemption-ui.md`
+  - `shipglows_data/workflow/specs/communityglows-suite-entitlement-adapter.md`
+  - `shipglows_data/workflow/specs/communityglows-processor-agnostic-ltd-commerce.md`
   - `shipglows_data/technical/billing-activation-code-import.md`
   - `shipglows_data/technical/platforms/lemonsqueezy.md`
   - `shipglows_data/technical/context.md`
@@ -111,7 +111,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ## Auth/session hardening (Android)
 
 - Code:
-  - `src/ui/setup/pages/SocialGlowz/views/SessionLockView.vue`
+  - `src/ui/setup/pages/CommunityGlows/views/SessionLockView.vue`
   - `src/lib/convexAuth.ts`
   - `src/lib/convexAuth.test.ts`
 - Behavior:
@@ -126,14 +126,14 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ## Android deep-link OAuth callback validation
 
 - Code:
-  - `src/ui/setup/pages/SocialGlowz/main.ts`
+  - `src/ui/setup/pages/CommunityGlows/main.ts`
   - `src-tauri/src/lib.rs`
   - `src-tauri/Cargo.toml`
   - `src-tauri/capabilities/default.json`
   - `src-tauri/tauri.conf.json`
 - Behavior:
   - Tauri deep-link plugin registered at native runtime.
-  - Frontend records pending OAuth requests through `socialglowz:android-oauth-request-started`.
+  - Frontend records pending OAuth requests through `communityglows:android-oauth-request-started`.
   - Frontend listens to deep-link URLs and forwards callback validation to Rust command `validate_android_oauth_callback` only when the callback `state` matches a pending request.
   - Validation enforces callback allowlist, state/nonce checks against the pending request, TTL and replay protection.
   - Rejected callbacks emit an anonymized Sentry message when a runtime Sentry SDK is available.
@@ -144,7 +144,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ## Security rendering guard
 
 - Code:
-  - `src/ui/setup/pages/SocialGlowz/main.ts`
+  - `src/ui/setup/pages/CommunityGlows/main.ts`
 - Behavior:
   - Auth bootstrap error screen message is rendered with `textContent`, not interpolated `innerHTML`.
 - Docs:
@@ -154,11 +154,11 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 
 - Code:
   - `src/config/socialNetworks.ts`
-  - `src/ui/setup/pages/SocialGlowz/composables/useNetworkWebview.ts`
-  - `src/ui/setup/pages/SocialGlowz/composables/useWebviewPreload.ts`
+  - `src/ui/setup/pages/CommunityGlows/composables/useNetworkWebview.ts`
+  - `src/ui/setup/pages/CommunityGlows/composables/useWebviewPreload.ts`
   - `src-tauri/src/lib.rs`
   - `src-tauri/plugins/android-webview/src/mobile.rs`
-  - `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
+  - `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
 - Behavior:
   - Quand Android WebKit `MULTI_PROFILE` est disponible, le plugin rattache chaque WebView de session `${profileId}-${networkId}` à un profil WebKit natif distinct via `WebViewCompat.setProfile`, avant toute configuration ou navigation.
   - Les hôtes WebView de session sont conservés dans un pool LRU borné pour accélérer les switches; `hide_webview`/`show_webview` Android reflètent maintenant ce contrat au lieu de détruire systématiquement la WebView.
@@ -175,8 +175,8 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 
 - Code:
   - `src-tauri/src/lib.rs`
-  - `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
-  - `src/ui/setup/pages/SocialGlowz/App.vue`
+  - `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
+  - `src/ui/setup/pages/CommunityGlows/App.vue`
 - Behavior:
   - The public build leaves third-party consent dialogs under user control and uses the actual WebView user agent.
   - It does not include anti-detection, consent/app-banner automation, desktop identity or viewport forcing, arbitrary desktop script injection, or friends-only feed filtering.

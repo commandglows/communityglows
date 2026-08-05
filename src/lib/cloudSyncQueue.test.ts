@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const STORAGE_KEY = "sfz_cloud_sync_queue_v1";
+const STORAGE_KEY = "communityglows_cloud_sync_queue_v1";
 const mocked = vi.hoisted(() => ({
   mutationMock: vi.fn(),
   isAuthenticated: { value: false },

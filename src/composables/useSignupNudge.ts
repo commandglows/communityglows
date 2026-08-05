@@ -13,10 +13,10 @@ import { isAuthenticated } from "@/lib/convexAuth";
 import { getConvexClient } from "@/lib/convex";
 import { api } from "../../convex/_generated/api";
 
-const FIRST_LAUNCH_KEY = "sfz_first_launch";
-const NUDGE_COUNT_KEY = "sfz_nudge_count";
-const NUDGE_LAST_KEY = "sfz_nudge_last";
-const NUDGE_PAUSED_KEY = "sfz_nudge_paused_until";
+const FIRST_LAUNCH_KEY = "communityglows_first_launch";
+const NUDGE_COUNT_KEY = "communityglows_nudge_count";
+const NUDGE_LAST_KEY = "communityglows_nudge_last";
+const NUDGE_PAUSED_KEY = "communityglows_nudge_paused_until";
 const NUDGE_COOLDOWN_DAYS = 30;
 const showNudge = ref(false);
 const hasEmailAccount = ref(false);

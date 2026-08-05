@@ -1,12 +1,12 @@
 ---
-title: "Getting Started with SocialGlowz Profiles"
+title: "Getting Started with CommunityGlows Profiles"
 description: "Set up clean profile isolation quickly and keep personal, work, and client accounts organized across your social workflows."
 date: "2026-01-15"
-author: "SocialGlowz Team"
+author: "CommunityGlows Team"
 tags: ["guide", "social", "profiles"]
 ---
 
-SocialGlowz is built for teams and creators who need separate social contexts. In a few minutes you can set up isolated profiles, keep account sessions separated, and reduce context switching across networks.
+CommunityGlows is built for teams and creators who need separate social contexts. In a few minutes you can set up isolated profiles, keep account sessions separated, and reduce context switching across networks.
 
 ## Why Profile Isolation Matters
 
@@ -46,4 +46,4 @@ Use the Kanban board to turn recurring daily actions into a repeatable system. I
 
 Once profiles are clean, every login, post, outreach, and research session becomes faster. You can switch contexts in seconds instead of rebuilding state from scratch.
 
-Get started with SocialGlowz and keep every social context isolated.
+Get started with CommunityGlows and keep every social context isolated.

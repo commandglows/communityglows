@@ -12,9 +12,9 @@ const JWT_KEY = "__convexAuthJWT";
 const REFRESH_TOKEN_KEY = "__convexAuthRefreshToken";
 const LEGACY_JWT_KEYS = ["sf_jwt", "__convexAuthJWT"];
 const LEGACY_REFRESH_KEYS = ["sf_refresh", "__convexAuthRefreshToken"];
-const SESSION_LAST_ACTIVITY_KEY = "sfz_session_last_activity_at";
-const SESSION_PIN_HASH_KEY = "sfz_session_pin_hash";
-const SESSION_PIN_SALT_KEY = "sfz_session_pin_salt";
+const SESSION_LAST_ACTIVITY_KEY = "communityglows_session_last_activity_at";
+const SESSION_PIN_HASH_KEY = "communityglows_session_pin_hash";
+const SESSION_PIN_SALT_KEY = "communityglows_session_pin_salt";
 const DEFAULT_SESSION_LOCK_IDLE_MS = 15 * 60 * 1000;
 
 function storageKey(key: string, namespace: string) {

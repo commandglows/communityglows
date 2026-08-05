@@ -37,7 +37,7 @@ export function recordDiagnosticEvent(event: Omit<DiagnosticEvent, "at">): void 
 export function buildDiagnosticsReport(context: Record<string, string> = {}): string {
   const lines = [
     ...buildIdentityHeader(),
-    "SocialGlowz diagnostics",
+    "CommunityGlows diagnostics",
     `app: ${__DISPLAY_NAME__}`,
     `version: ${__VERSION__}`,
     `git_commit: ${__GIT_COMMIT__ || "unknown"}`,
@@ -48,7 +48,7 @@ export function buildDiagnosticsReport(context: Record<string, string> = {}): st
     `viewport: ${window.innerWidth}x${window.innerHeight}`,
     `tauri: ${"__TAURI_INTERNALS__" in window ? "yes" : "no"}`,
     `locale: ${navigator.language || "unknown"}`,
-    `theme: ${localStorage.getItem("sfz_theme_mode") || "unknown"}`,
+    `theme: ${localStorage.getItem("communityglows_theme_mode") || "unknown"}`,
   ];
 
   for (const key of Object.keys(context)) {

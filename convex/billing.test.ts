@@ -29,10 +29,10 @@ function mockFetchResponse(status: number, body: unknown) {
 beforeEach(() => {
   authState.userId = "";
   authState.authenticated = true;
-  process.env.SOCIALGLOWZ_BILLING_ADMIN_SECRET = "test-secret";
-  process.env.SOCIALGLOWZ_SUITE_BRIDGE_SECRET = "suite-secret";
-  process.env.SOCIALGLOWZ_SUITE_BRIDGE_URL =
-    "https://suite.example/api/bridge/socialglowz";
+  process.env.COMMUNITYGLOWS_BILLING_ADMIN_SECRET = "test-secret";
+  process.env.COMMUNITYGLOWS_SUITE_BRIDGE_SECRET = "suite-secret";
+  process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL =
+    "https://suite.example/api/bridge/communityglows";
 
   fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
@@ -56,7 +56,7 @@ describe("billing bridge adapter", () => {
   });
 
   it("fails closed when suite bridge URL is missing", async () => {
-    delete process.env.SOCIALGLOWZ_SUITE_BRIDGE_URL;
+    delete process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL;
     const t = convexTest(schema, modules);
 
     await expect(
@@ -80,7 +80,7 @@ describe("billing bridge adapter", () => {
     const access = await t.action(api.billing.getProductAccess, {});
 
     expect(access).toMatchObject({
-      productId: "socialglowz",
+      productId: "communityglows",
       planId: "free",
       status: "free",
       source: "default",
@@ -104,7 +104,7 @@ describe("billing bridge adapter", () => {
     const access = await t.action(api.billing.getProductAccess, {});
 
     expect(access).toMatchObject({
-      productId: "socialglowz",
+      productId: "communityglows",
       planId: "lifetime_deal",
       status: "active",
       source: "manual",
@@ -245,7 +245,7 @@ describe("billing bridge adapter", () => {
       },
     });
     const grant = await t.action(
-      api.billing.adminManualGrantSocialGlowzAccess,
+      api.billing.adminManualGrantCommunityGlowsAccess,
       {
         adminSecret: "test-secret",
         providerAccountId: "provider-1",
@@ -260,7 +260,7 @@ describe("billing bridge adapter", () => {
         status: "already_revoked",
       },
     });
-    const revoke = await t.action(api.billing.adminRevokeSocialGlowzAccess, {
+    const revoke = await t.action(api.billing.adminRevokeCommunityGlowsAccess, {
       adminSecret: "test-secret",
       providerAccountId: "provider-1",
     });
@@ -272,7 +272,7 @@ describe("billing bridge adapter", () => {
         status: "ok",
       },
     });
-    const refund = await t.action(api.billing.adminRefundSocialGlowzAccess, {
+    const refund = await t.action(api.billing.adminRefundCommunityGlowsAccess, {
       adminSecret: "test-secret",
       providerAccountId: "provider-1",
     });
@@ -289,7 +289,7 @@ describe("billing bridge adapter", () => {
     await t.run((ctx) =>
       ctx.db.insert("entitlements", {
         userId,
-        productId: "socialglowz",
+        productId: "communityglows",
         planId: "lifetime_deal",
         status: "active",
         source: "manual",
@@ -302,7 +302,7 @@ describe("billing bridge adapter", () => {
     await t.run((ctx) =>
       ctx.db.insert("redemptionCodes", {
         code: "LTD-L1",
-        productId: "socialglowz",
+        productId: "communityglows",
         planId: "lifetime_deal",
         source: "manual",
         status: "available",
@@ -313,7 +313,7 @@ describe("billing bridge adapter", () => {
     await t.run((ctx) =>
       ctx.db.insert("billingEvents", {
         userId,
-        productId: "socialglowz",
+        productId: "communityglows",
         planId: "lifetime_deal",
         source: "manual",
         eventType: "relic_import",

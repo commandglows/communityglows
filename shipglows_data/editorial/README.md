@@ -2,7 +2,7 @@
 artifact: editorial_governance
 metadata_schema_version: "1.0"
 artifact_version: "0.1.0"
-project: socialglowz
+project: communityglows
 created: "2026-06-11"
 updated: "2026-06-11"
 status: draft
@@ -31,7 +31,7 @@ next_review: "2026-09-11"
 
 # Editorial Governance
 
-This folder defines the public/content governance surface for SocialGlowz.
+This folder defines the public/content governance surface for CommunityGlows.
 
 ## Scope
 

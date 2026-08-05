@@ -2,7 +2,7 @@
 artifact: design_system_authority
 metadata_schema_version: "1.0"
 artifact_version: "1.4.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-06-12"
 updated: "2026-08-04"
 status: "reviewed"
@@ -14,18 +14,18 @@ risk_level: high
 security_impact: none
 docs_impact: yes
 content_surfaces:
-  - "socialglowz"
-  - "socialglowz_site"
+  - "communityglows"
+  - "communityglows_site"
 linked_systems:
-  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
-  - "src/ui/setup/pages/SocialGlowz/components/ui/"
-  - "src/ui/setup/pages/SocialGlowz/directives/tooltip.ts"
+  - "src/ui/setup/pages/CommunityGlows/assets/main.css"
+  - "src/ui/setup/pages/CommunityGlows/components/ui/"
+  - "src/ui/setup/pages/CommunityGlows/directives/tooltip.ts"
   - "src/utils/notifications.ts"
   - "vite.tauri.config.ts"
   - "package.json"
   - "src/assets/base.css"
   - "site/src/styles/global.css"
-  - "/home/claude/socialglowz/shipglows_data/business/branding.md"
+  - "/home/claude/communityglows/shipglows_data/business/branding.md"
 depends_on:
   - artifact: "shipglows_data/business/branding.md"
     artifact_version: "1.0.0"
@@ -34,26 +34,26 @@ supersedes: []
 evidence:
   - "`design/tokens/reference.json` is the editable authority; the generator emits active Windows, site and Android carriers."
   - "`main.css` and `site/src/styles/global.css` compose layouts and compatibility aliases; they do not declare canonical visual values."
-  - "Reka UI is the maintained headless primitive layer for migrated desktop controls; SocialGlowz wrappers own visual composition."
+  - "Reka UI is the maintained headless primitive layer for migrated desktop controls; CommunityGlows wrappers own visual composition."
   - "The Windows source, generated declarations, and clean Tauri bundle contain zero PrimeVue runtime references; 109 tests, focused lint, Tauri frontend build, token validation and diff checks passed on 2026-08-04."
   - "Design token compliance is partial: the full scan on 2026-08-04 reports 160 candidates across legacy extension surfaces, un-migrated components and documented network-brand metadata."
 next_review: "2026-09-03"
 next_step: "/300-sg-docs update shipglows_data/technical/design-system-authority.md"
 ---
 
-# SocialGlowz Design-System Authority
+# CommunityGlows Design-System Authority
 
 ## Purpose
 
-`socialglowz` has a Vue/Tauri runtime and a marketing site. The public site's current dark-first language is the approved visual reference, while `design/tokens/reference.json` is the only editable cross-surface value authority. Generated Windows and site carriers are active; Windows and Android are converging on the canonical roles while preserving platform structure and interaction behavior.
+`communityglows` has a Vue/Tauri runtime and a marketing site. The public site's current dark-first language is the approved visual reference, while `design/tokens/reference.json` is the only editable cross-surface value authority. Generated Windows and site carriers are active; Windows and Android are converging on the canonical roles while preserving platform structure and interaction behavior.
 
 ## Surface Carriers
 
 - Windows/Tauri app runtime:
-  - `src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css` (generated semantic colors, surfaces, typography, spacing, radii, elevation, focus and modes)
-  - `src/ui/setup/pages/SocialGlowz/assets/main.css` (layout composition and compatibility aliases; not a value authority)
+  - `src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css` (generated semantic colors, surfaces, typography, spacing, radii, elevation, focus and modes)
+  - `src/ui/setup/pages/CommunityGlows/assets/main.css` (layout composition and compatibility aliases; not a value authority)
   - `src/assets/base.css` (legacy global base styles; it must consume, not redefine, desktop semantic intent)
-  - `src/ui/setup/pages/SocialGlowz/components/ui/` (SocialGlowz wrappers: visual composition and token consumption)
+  - `src/ui/setup/pages/CommunityGlows/components/ui/` (CommunityGlows wrappers: visual composition and token consumption)
   - `reka-ui` (maintained semantics, focus, keyboard, and overlay behavior for complex migrated controls)
 - Compatibility dependencies:
   - PrimeVue remains installed for historical extension entries and is not loaded by the Windows/Tauri entry.
@@ -63,30 +63,30 @@ next_step: "/300-sg-docs update shipglows_data/technical/design-system-authority
   - `site/src/styles/generated/tokens.css` (generated canonical roles and Tailwind mappings)
   - `site/src/styles/global.css` (component, animation and prose composition)
 - Brand contract:
-  - `/home/claude/socialglowz/shipglows_data/business/branding.md`
+  - `/home/claude/communityglows/shipglows_data/business/branding.md`
 
 ## Declaration
 
 ```yaml
 design_system_authority:
   status: declared
-  brand_contract: /home/claude/socialglowz/shipglows_data/business/branding.md
+  brand_contract: /home/claude/communityglows/shipglows_data/business/branding.md
   technology_carriers:
-    - src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css
+    - src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css
     - site/src/styles/generated/tokens.css
-    - src-tauri/plugins/android-webview/android/src/main/res/values/socialglowz_tokens.xml
-    - src-tauri/plugins/android-webview/android/src/main/res/values-night/socialglowz_tokens.xml
+    - src-tauri/plugins/android-webview/android/src/main/res/values/communityglows_tokens.xml
+    - src-tauri/plugins/android-webview/android/src/main/res/values-night/communityglows_tokens.xml
   canonical_source: design/tokens/reference.json
-  governed_contract: /home/claude/socialglowz/shipglows_data/technical/design-system-authority.md
+  governed_contract: /home/claude/communityglows/shipglows_data/technical/design-system-authority.md
   component_bridge:
     interaction_owner: reka-ui for migrated complex controls
-    visual_owner: src/ui/setup/pages/SocialGlowz/components/ui/
+    visual_owner: src/ui/setup/pages/CommunityGlows/components/ui/
     forbidden: copied vendor implementations, provider theme overrides, arbitrary style/class escape hatches
   cross_surface_mapping:
     status: generated-and-consumed
-    windows_carrier: src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css
+    windows_carrier: src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css
     site_carrier: site/src/styles/generated/tokens.css
-    android_carrier: src-tauri/plugins/android-webview/android/src/main/res/values/socialglowz_tokens.xml
+    android_carrier: src-tauri/plugins/android-webview/android/src/main/res/values/communityglows_tokens.xml
     rule: generated carriers are active on every target; rendered Windows and Android proof is still required before a full parity claim.
   mandatory_scope:
     - color
@@ -134,7 +134,7 @@ Accepted protocol boundaries remain:
 
 - Seven responsive breakpoints inside `@media` conditions. CSS custom properties cannot be used as media-query condition values.
 - Three `window.open` feature strings. Their dimensions are browser API protocol text, not rendered component design values.
-- The social-network brand registry. Its third-party brand colors and tile gradients are catalog metadata, not the SocialGlowz semantic UI palette.
+- The social-network brand registry. Its third-party brand colors and tile gradients are catalog metadata, not the CommunityGlows semantic UI palette.
 
 Any additional non-protocol drift finding requires a semantic token path or a separately documented platform/protocol exception.
 

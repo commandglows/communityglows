@@ -28,8 +28,8 @@
 
     <h2>Third-Party Services</h2>
     <p>
-      SocialGlowz may load supported social platforms as websites. Their terms
-      and policies continue to apply. SocialGlowz is not affiliated with those
+      CommunityGlows may load supported social platforms as websites. Their terms
+      and policies continue to apply. CommunityGlows is not affiliated with those
       providers, does not guarantee their availability, and does not make
       consent choices or automate their interface actions for you.
     </p>
@@ -52,10 +52,10 @@
     <p>
       If you have any questions about these terms, please contact us at:
       <a
-        href="mailto:legal@socialglowz.com"
+        href="mailto:legal@communityglows.com"
         class="text-primary"
       >
-        legal@socialglowz.com
+        legal@communityglows.com
       </a>
     </p>
   </div>

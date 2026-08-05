@@ -2,7 +2,7 @@
 artifact: technical_guidelines
 metadata_schema_version: "1.0"
 artifact_version: "1.1.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-12"
 updated: "2026-08-03"
 status: reviewed
@@ -41,9 +41,9 @@ evidence:
   - "vite.firefox.config.ts"
   - "vite.web.config.ts"
   - "vite.tauri.config.ts"
-  - "src/ui/setup/pages/SocialGlowz/main.ts"
-  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
-  - "src/ui/setup/pages/SocialGlowz/components/ui/"
+  - "src/ui/setup/pages/CommunityGlows/main.ts"
+  - "src/ui/setup/pages/CommunityGlows/assets/main.css"
+  - "src/ui/setup/pages/CommunityGlows/components/ui/"
   - "src-tauri/src/lib.rs"
   - "convex/schema.ts"
 supersedes: []
@@ -55,7 +55,7 @@ next_step: "/300-sg-docs update shipglows_data/technical/guidelines.md"
 
 ## Technical stack conventions
 
-- Windows/Tauri UI: Vue 3 + TypeScript + Pinia + Reka UI + wrappers/tokens SocialGlowz + Notivue; aucun runtime PrimeVue dans cette entrée.
+- Windows/Tauri UI: Vue 3 + TypeScript + Pinia + Reka UI + wrappers/tokens CommunityGlows + Notivue; aucun runtime PrimeVue dans cette entrée.
 - Legacy extension UI: preserve PrimeVue/PrimeFlex/PrimeIcons only where historical extension entries still consume them.
 - Backend: Convex Auth + Convex schema layer.
 - Native host: Tauri 2 (Rust + Kotlin/Swift), including Android WebView plugin.

@@ -48,7 +48,7 @@ const WINDOWS_SOURCE_CSS = resolve(
   "ui",
   "setup",
   "pages",
-  "SocialGlowz",
+  "CommunityGlows",
   "assets",
   "main.css",
 );
@@ -59,7 +59,7 @@ const WINDOWS_OUTPUT = resolve(
   "ui",
   "setup",
   "pages",
-  "SocialGlowz",
+  "CommunityGlows",
   "assets",
   "generated",
   "tokens.css",
@@ -75,7 +75,7 @@ const ANDROID_RES_VALUES = resolve(
   "main",
   "res",
   "values",
-  "socialglowz_tokens.xml",
+  "communityglows_tokens.xml",
 );
 const ANDROID_RES_VALUES_NIGHT = resolve(
   ROOT_DIR,
@@ -87,14 +87,14 @@ const ANDROID_RES_VALUES_NIGHT = resolve(
   "main",
   "res",
   "values-night",
-  "socialglowz_tokens.xml",
+  "communityglows_tokens.xml",
 );
 const ANDROID_MAPPINGS_PATH = resolve(TOKENS_DIR, "android-mappings.json");
 const WINDOWS_SOURCE_NAME = basename(WINDOWS_SOURCE_CSS);
 const SITE_SOURCE_NAME = basename(SITE_SOURCE_CSS);
 // Generated output must remain byte-for-byte stable across the Node versions
 // supported locally and in CI.
-const GENERATOR_ID = "socialglowz-design-tokens-generator@1.0.0";
+const GENERATOR_ID = "communityglows-design-tokens-generator@1.0.0";
 
 type ParsedCssTokens = {
   root: TokenMap;

@@ -1,6 +1,6 @@
-const DEFAULT_SITE_URL = 'https://socialglowz.com'
-const DEFAULT_APP_URL = 'https://github.com/dianedef/SocialGlowz/releases/latest'
-const DEFAULT_EMAIL_DOMAIN = 'socialglowz.com'
+const DEFAULT_SITE_URL = 'https://communityglows.com'
+const DEFAULT_APP_URL = 'https://github.com/dianedef/CommunityGlows/releases/latest'
+const DEFAULT_EMAIL_DOMAIN = 'communityglows.com'
 const DEFAULT_WINFLOWZ_CHECKOUT_URL = 'https://winflowz.com'
 
 function stripTrailingSlash(url: string): string {

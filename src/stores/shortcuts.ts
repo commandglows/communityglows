@@ -22,7 +22,7 @@ export interface AppShortcut {
   target?: string
 }
 
-const STORAGE_KEY = 'sfz_keyboard_shortcuts'
+const STORAGE_KEY = 'communityglows_keyboard_shortcuts'
 
 const defaults: AppShortcut[] = [
   { id: 'toggle-left-sidebar', action: 'toggle-left-sidebar', label: 'Afficher/masquer le panneau gauche', keys: 'Alt+L', enabled: true },

@@ -1,12 +1,12 @@
-# SocialGlowz
+# CommunityGlows
 
 Dashboard unifié pour gérer tous vos réseaux sociaux depuis une seule interface. Disponible en extension Chrome/Firefox, application desktop et application mobile.
 
 ## Product Registry
 
-SocialGlowz is a declared product and should always be documented as such in this repo.
+CommunityGlows is a declared product and should always be documented as such in this repo.
 
-- Product name: `SocialGlowz`
+- Product name: `CommunityGlows`
 - Role: unified social dashboard for browser, desktop, and mobile surfaces
 - Canonical product documentation: this repository README plus the product-facing docs in `shipglows_data/`
 - Delivery: digital product access through the app and related entitlement flows
@@ -46,7 +46,7 @@ nvm install 24.0.0 && nvm use 24.0.0
 ```
 Une seule codebase Vue.js → extension navigateur, desktop et mobile
 
-src/ui/setup/pages/SocialGlowz/    # App principale Windows/Tauri (Vue 3 + Reka UI)
+src/ui/setup/pages/CommunityGlows/    # App principale Windows/Tauri (Vue 3 + Reka UI)
 ├── main.ts                        # Entry point standalone
 ├── App.vue                        # Layout responsive (mobile/desktop)
 ├── router/                        # Vue Router (createWebHashHistory)
@@ -54,9 +54,9 @@ src/ui/setup/pages/SocialGlowz/    # App principale Windows/Tauri (Vue 3 + Reka 
 │   ├── networks/                  # Vues par réseau social
 │   ├── kanban/                    # Tableau Kanban
 │   ├── feed/                      # Feed unifié
-│   └── ui/                        # Wrappers SocialGlowz accessibles et tokenisés
+│   └── ui/                        # Wrappers CommunityGlows accessibles et tokenisés
 ├── assets/main.css                # Styles consommateurs Windows/Tauri
-├── directives/tooltip.ts          # Infobulles clavier/pointeur SocialGlowz
+├── directives/tooltip.ts          # Infobulles clavier/pointeur CommunityGlows
 ├── stores/                        # Pinia stores
 ├── composables/                   # Hooks Vue
 └── services/                      # Services API (Gmail, etc.)
@@ -82,7 +82,7 @@ Le gestionnaire de tâches `/tasks` permet de noter une intention humaine avec u
 
 ### Contexte
 
-SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préférences visuelles limitées (thème, niveaux de gris, muet, zoom texte) peuvent s'appliquer au rendu, sans automatiser les consentements ni les interfaces tierces. L'UI est écrite en Vue.js car le projet a démarré comme une extension Chrome.
+CommunityGlows affiche des réseaux sociaux dans des WebViews natives. Les préférences visuelles limitées (thème, niveaux de gris, muet, zoom texte) peuvent s'appliquer au rendu, sans automatiser les consentements ni les interfaces tierces. L'UI est écrite en Vue.js car le projet a démarré comme une extension Chrome.
 
 ### Décision : Tauri 2
 
@@ -121,7 +121,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 ## Stack technique
 
-- **App Windows/Tauri** : Vue 3, Reka UI, wrappers SocialGlowz, tokens CSS sémantiques, Notivue, Pinia; PrimeIcons reste chargé comme compatibilité visuelle temporaire, tandis que PrimeFlex n'est plus importé par cette entrée
+- **App Windows/Tauri** : Vue 3, Reka UI, wrappers CommunityGlows, tokens CSS sémantiques, Notivue, Pinia; PrimeIcons reste chargé comme compatibilité visuelle temporaire, tandis que PrimeFlex n'est plus importé par cette entrée
 - **Surfaces extension historiques** : Vue 3 avec des consommateurs PrimeVue/PrimeFlex/PrimeIcons encore conservés selon l'entrée; les composants et le bootstrap PrimeVue ne sont plus chargés par le runtime Windows/Tauri
 - **Site** : Astro/Tailwind avec un carrier de tokens généré depuis la même autorité `design/tokens/reference.json` que Windows et Android
 - **Auth** : Convex Auth (`@auth/core`, `@convex-dev/auth`)
@@ -132,7 +132,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 ## Contrat de parité extension (Chrome/Firefox)
 
-- Les surfaces extension actives (popup, side panel Chrome, options, setup install/update/dashboard) exposent un lanceur SocialGlowz réel basé sur le même catalogue réseaux et les mêmes profils.
+- Les surfaces extension actives (popup, side panel Chrome, options, setup install/update/dashboard) exposent un lanceur CommunityGlows réel basé sur le même catalogue réseaux et les mêmes profils.
 - Le mode extension ouvre les réseaux dans des onglets navigateur (`tabs.create`) au lieu de WebViews natives Tauri.
 - Les liens personnalisés sont validés strictement:
   - uniquement `https://`;
@@ -148,7 +148,7 @@ SocialGlowz affiche des réseaux sociaux dans des WebViews natives. Les préfér
 
 ## Sécurité auth Android (hardening)
 
-- Les callbacks OAuth Android sont traités uniquement via deep links autorisés (`socialglowz://auth-callback/oauth` et `https://socialglowz.com/auth/callback`).
+- Les callbacks OAuth Android sont traités uniquement via deep links autorisés (`communityglows://auth-callback/oauth` et `https://communityglows.com/auth/callback`).
 - Chaque callback passe par une validation native Rust (`validate_android_oauth_callback`) avant d'être accepté:
   - schéma + host allowlist,
   - `state` obligatoire et présent dans une requête OAuth pending créée par l'app,
@@ -178,8 +178,8 @@ VITE_GMAIL_CLIENT_ID=         # Google API (optionnel, Gmail)
 VITE_GMAIL_API_KEY=           # Google API (optionnel, Gmail)
 CONVEX_DEPLOYMENT=            # Déploiement Convex (local/dev), si utilisé
 VITE_CONVEX_SITE_URL=         # Site URL Convex (optionnel)
-SOCIALGLOWZ_SUITE_BRIDGE_URL= # Endpoint suite bridge (suite entitlement ledger)
-SOCIALGLOWZ_SUITE_BRIDGE_SECRET= # Secret serveur->serveur pour bridge suite
+COMMUNITYGLOWS_SUITE_BRIDGE_URL= # Endpoint suite bridge (suite entitlement ledger)
+COMMUNITYGLOWS_SUITE_BRIDGE_SECRET= # Secret serveur->serveur pour bridge suite
 ```
 
 ## Scripts

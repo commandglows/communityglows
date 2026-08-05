@@ -35,7 +35,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             #[cfg(mobile)]
             {
                 let handle = api.register_android_plugin(
-                    "com.socialglowz.webview",
+                    "com.communityglows.webview",
                     "NativeWebViewPlugin",
                 )?;
                 app.manage(AndroidWebview(handle));

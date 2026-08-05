@@ -1,15 +1,15 @@
-# SocialGlowz Site
+# CommunityGlows Site
 
-Marketing site for SocialGlowz, built with Astro.
+Marketing site for CommunityGlows, built with Astro.
 
 ## Environment
 
 Copy `.env.example` and override these values when the domains change:
 
 ```bash
-PUBLIC_SITE_URL=https://socialglowz.com
-PUBLIC_APP_URL=https://socialglowz.com
-PUBLIC_EMAIL_DOMAIN=socialglowz.com
+PUBLIC_SITE_URL=https://communityglows.com
+PUBLIC_APP_URL=https://communityglows.com
+PUBLIC_EMAIL_DOMAIN=communityglows.com
 PUBLIC_WINFLOWZ_CHECKOUT_URL=https://winflowz.com
 ```
 
@@ -19,7 +19,7 @@ All canonicals, structured data URLs, and marketing CTA links read from these va
 
 - `PUBLIC_WINFLOWZ_CHECKOUT_URL`: URL of the WinFlowz suite commerce endpoint used for direct LTD checkout redirects.
   - Default: `https://winflowz.com`
-  - Checkout CTA currently targets `/api/commerce/checkout?offerId=socialglowz/lifetime_deal`.
+  - Checkout CTA currently targets `/api/commerce/checkout?offerId=communityglows/lifetime_deal`.
 
 Required result pages:
 

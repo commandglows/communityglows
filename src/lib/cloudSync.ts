@@ -24,7 +24,7 @@ import {
   showPostAuthReadyFeedback,
 } from "@/lib/postAuthSyncFeedback";
 import type { ThemeMode } from "@/utils/themeAuto";
-import { normalizeTapSoundVariant } from "@/ui/setup/pages/SocialGlowz/utils/tapSound";
+import { normalizeTapSoundVariant } from "@/ui/setup/pages/CommunityGlows/utils/tapSound";
 import {
   canReuseLocalCloudState,
   isCloudSnapshotEmpty,
@@ -354,8 +354,8 @@ export function asCloudActiveAccounts(value: unknown): CloudActiveAccount[] {
 
 let hydratedUserId: string | null = null;
 let hydratePromise: Promise<void> | null = null;
-const REOPEN_SETTINGS_AFTER_AUTH_KEY = "sfz_reopen_settings_after_auth";
-const CLOUD_SYNC_USER_ID_KEY = "sfz_cloud_sync_user_id";
+const REOPEN_SETTINGS_AFTER_AUTH_KEY = "communityglows_reopen_settings_after_auth";
+const CLOUD_SYNC_USER_ID_KEY = "communityglows_cloud_sync_user_id";
 const AUTH_RELOAD_DELAY_MS = 3000;
 
 function canUseStorage() {
@@ -456,11 +456,11 @@ function clearCloudBackedLocalState() {
   localStorage.removeItem("user-locale");
   localStorage.removeItem("theme");
   localStorage.removeItem("grayscale");
-  localStorage.removeItem("sfz_haptic");
-  localStorage.removeItem("sfz_tap_sound");
-  localStorage.removeItem("sfz_tap_sound_variant");
-  localStorage.removeItem("sfz_text_zoom");
-  localStorage.removeItem("sfz_keyboard_shortcuts");
+  localStorage.removeItem("communityglows_haptic");
+  localStorage.removeItem("communityglows_tap_sound");
+  localStorage.removeItem("communityglows_tap_sound_variant");
+  localStorage.removeItem("communityglows_text_zoom");
+  localStorage.removeItem("communityglows_keyboard_shortcuts");
   clearCloudSyncQueue();
 }
 
@@ -495,10 +495,10 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       theme: themeStore.themeMode as ThemeMode,
       language: localStorage.getItem("user-locale") ?? "fr",
       grayscaleEnabled: themeStore.grayscaleEnabled,
-      textZoom: Number(localStorage.getItem("sfz_text_zoom") ?? "100"),
-      hapticEnabled: localStorage.getItem("sfz_haptic") !== "false",
-      tapSoundEnabled: localStorage.getItem("sfz_tap_sound") === "true",
-      tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("sfz_tap_sound_variant")),
+      textZoom: Number(localStorage.getItem("communityglows_text_zoom") ?? "100"),
+      hapticEnabled: localStorage.getItem("communityglows_haptic") !== "false",
+      tapSoundEnabled: localStorage.getItem("communityglows_tap_sound") === "true",
+      tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("communityglows_tap_sound_variant")),
       activeProfileId: profilesStore.activeProfileId || undefined,
       keyboardShortcuts: shortcutsStore.serializeForSync(),
       onboardingCompleted: onboardingStore.completed,
@@ -598,7 +598,7 @@ export function resetCloudSyncState() {
 export function resetSyncedLocalState() {
   clearCloudBackedLocalState();
 
-  localStorage.removeItem("sfz_email");
+  localStorage.removeItem("communityglows_email");
   localStorage.removeItem("sf_jwt");
   localStorage.removeItem("sf_refresh");
   localStorage.removeItem("__convexAuthJWT");
@@ -623,7 +623,7 @@ export async function finalizePasswordSignIn(options?: {
   beginPostAuthSyncFeedback();
 
   if (options?.email) {
-    localStorage.setItem("sfz_email", options.email);
+    localStorage.setItem("communityglows_email", options.email);
   }
 
   try {

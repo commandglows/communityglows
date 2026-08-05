@@ -5,13 +5,13 @@ import Footer from '../../components/Footer.astro'
 import { appUrl } from '../../config/site'
 
 const offerId = Astro.url.searchParams.get('offerId')
-const isLifetimeDeal = offerId === 'socialglowz/lifetime_deal'
+const isLifetimeDeal = offerId === 'communityglows/lifetime_deal'
 const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
 ---
 
 <Layout
-  title="Checkout Canceled - SocialGlowz"
-  description="Your SocialGlowz checkout was canceled. You can retry directly from pricing."
+  title="Checkout Canceled - CommunityGlows"
+  description="Your CommunityGlows checkout was canceled. You can retry directly from pricing."
   path="/purchase/cancel"
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
@@ -35,7 +35,7 @@ const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
           href={appUrl()}
           class="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground hover:bg-card"
         >
-          Open SocialGlowz
+          Open CommunityGlows
         </a>
       </div>
     </section>

@@ -2,7 +2,7 @@
 artifact: runbook
 metadata_schema_version: "1.0"
 artifact_version: "1.0.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-30"
 updated: "2026-05-30"
 status: active
@@ -14,12 +14,12 @@ risk_level: high
 security_impact: yes
 docs_impact: yes
 linked_systems:
-  - "scripts/importSocialGlowzActivationCodes.ts"
+  - "scripts/importCommunityGlowsActivationCodes.ts"
   - "convex/billing.ts"
   - "WinFlowz suite entitlement bridge"
-  - "SOCIALGLOWZ_BILLING_ADMIN_SECRET"
+  - "COMMUNITYGLOWS_BILLING_ADMIN_SECRET"
 depends_on:
-  - artifact: "shipglows_data/workflow/specs/socialglowz-suite-entitlement-adapter.md"
+  - artifact: "shipglows_data/workflow/specs/communityglows-suite-entitlement-adapter.md"
     artifact_version: "1.0.0"
     required_status: "ready"
   - artifact: "/home/claude/shipflow/skills/references/product-entitlements-playbook.md"
@@ -28,23 +28,23 @@ depends_on:
 supersedes: []
 evidence:
   - "convex/billing.ts exposes adminUpsertRedemptionCode and routes writes through the suite bridge."
-  - "scripts/importSocialGlowzActivationCodes.ts imports batches through the Convex admin action without writing local entitlement truth."
+  - "scripts/importCommunityGlowsActivationCodes.ts imports batches through the Convex admin action without writing local entitlement truth."
 next_step: "Run dry-run import with a real operator batch, then import against the target Convex deployment."
 ---
 
-# SocialGlowz Activation Code Import
+# CommunityGlows Activation Code Import
 
 This runbook is for direct Lifetime Deal, early-bird, partner, or manual activation-code batches that do not come from a payment provider webhook.
 
 The import path is intentionally provider-agnostic:
 
 1. Operator prepares a batch file.
-2. `scripts/importSocialGlowzActivationCodes.ts` validates and normalizes the batch.
+2. `scripts/importCommunityGlowsActivationCodes.ts` validates and normalizes the batch.
 3. The script calls `billing.adminUpsertRedemptionCode`.
 4. `convex/billing.ts` sends `operation=upsert_code` to the WinFlowz suite bridge.
 5. The suite entitlement ledger remains the durable source of truth.
 
-Do not write directly to SocialGlowz local `redemptionCodes` or `entitlements` tables. Those tables are migration/compat surfaces only.
+Do not write directly to CommunityGlows local `redemptionCodes` or `entitlements` tables. Those tables are migration/compat surfaces only.
 
 ## Required Environment
 
@@ -52,12 +52,12 @@ Set these only in an operator shell or server secret store:
 
 ```bash
 VITE_CONVEX_URL="https://<deployment>.convex.cloud"
-SOCIALGLOWZ_BILLING_ADMIN_SECRET="<operator-admin-secret>"
-SOCIALGLOWZ_SUITE_BRIDGE_URL="https://<suite-site>/api/bridge/socialglowz"
-SOCIALGLOWZ_SUITE_BRIDGE_SECRET="<suite-bridge-secret>"
+COMMUNITYGLOWS_BILLING_ADMIN_SECRET="<operator-admin-secret>"
+COMMUNITYGLOWS_SUITE_BRIDGE_URL="https://<suite-site>/api/bridge/communityglows"
+COMMUNITYGLOWS_SUITE_BRIDGE_SECRET="<suite-bridge-secret>"
 ```
 
-`SOCIALGLOWZ_BILLING_ADMIN_SECRET` must not be added to browser, mobile, public site, or client-side build environments.
+`COMMUNITYGLOWS_BILLING_ADMIN_SECRET` must not be added to browser, mobile, public site, or client-side build environments.
 
 ## Batch Formats
 
@@ -72,7 +72,7 @@ Optional fields:
 - `source`: `direct`, `partner`, `manual`, `appsumo`, or `legacy`. Default: `direct`.
 - `status`: `available` or `disabled`. Default: `available`.
 - `planId`: default `lifetime_deal`.
-- `productId`: must be `socialglowz` when present.
+- `productId`: must be `communityglows` when present.
 - `sourceRef`: internal campaign, partner, order, or batch reference.
 - `externalOrderId`: optional provider/order reference when applicable.
 - `note`: private operator note. Do not include secrets or raw customer data.
@@ -102,7 +102,7 @@ JSON example:
 Always parse first without importing:
 
 ```bash
-pnpm run billing:import-codes -- --file ./private/socialglowz-codes.csv --dry-run
+pnpm run billing:import-codes -- --file ./private/communityglows-codes.csv --dry-run
 ```
 
 Expected result:
@@ -116,7 +116,7 @@ Expected result:
 After the dry run passes:
 
 ```bash
-pnpm run billing:import-codes -- --file ./private/socialglowz-codes.csv
+pnpm run billing:import-codes -- --file ./private/communityglows-codes.csv
 ```
 
 Use `--continue-on-error` only when a partial import is acceptable and each failed row can be retried from the output summary.
@@ -135,15 +135,15 @@ Use `--continue-on-error` only when a partial import is acceptable and each fail
 Local validation:
 
 ```bash
-pnpm exec vitest run scripts/importSocialGlowzActivationCodes.test.ts convex/billing.test.ts
+pnpm exec vitest run scripts/importCommunityGlowsActivationCodes.test.ts convex/billing.test.ts
 ```
 
 Operator smoke after import:
 
 1. Pick one test code from the batch.
-2. Sign into SocialGlowz with a test account.
+2. Sign into CommunityGlows with a test account.
 3. Redeem the code in the billing/access panel.
-4. Verify `billing.getProductAccess` returns active `socialglowz/lifetime_deal`.
+4. Verify `billing.getProductAccess` returns active `communityglows/lifetime_deal`.
 5. Retry the same code on the same account and confirm idempotent success.
 6. Retry the same code on a second account and confirm reuse is rejected.
 
@@ -153,5 +153,5 @@ Update this runbook when:
 
 - allowed sources change;
 - the suite bridge contract changes;
-- SocialGlowz stops using Convex for billing actions;
+- CommunityGlows stops using Convex for billing actions;
 - the operator import script changes input format, output format, or environment variables.

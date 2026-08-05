@@ -10,7 +10,7 @@
     "warning": "Warning!"
   },
   "updated": "Updated",
-  "welcomeMessage": "Welcome to SocialGlowz!",
+  "welcomeMessage": "Welcome to CommunityGlows!",
   "common": {
     "settings": "Settings",
     "notifications": "Notifications",
@@ -88,7 +88,7 @@
     "import_done_title": "Restore complete!",
     "export_next_title": "What to do next:",
     "export_step_1": "Transfer the .sfbak file to your other device",
-    "export_step_2": "Install SocialGlowz on the new device",
+    "export_step_2": "Install CommunityGlows on the new device",
     "export_step_3": "Use \"Restore a backup\" with the same password",
     "export_tip": "Keep your password safe — it is required to restore your data.",
     "import_done_message": "All your profiles, accounts, and preferences have been restored.",
@@ -101,7 +101,7 @@
     "error_check_version": "Was the backup created with a compatible version?",
     "error_wrong_password": "Incorrect password. Please try again.",
     "error_no_file": "No file selected.",
-    "error_invalid_file": "This file does not appear to be a valid SocialGlowz backup.",
+    "error_invalid_file": "This file does not appear to be a valid CommunityGlows backup.",
     "try_again": "Try again"
   },
   "billing": {
@@ -126,10 +126,10 @@
     "unconfigured_hint": "Redemption is unavailable in this build because the Convex backend is not configured.",
     "signed_out_hint": "Sign in or create an account before redeeming an activation code.",
     "bridge_unavailable_hint": "Access check failed: the billing bridge is not reachable right now. Try again later.",
-    "loading_hint": "Checking your current SocialGlowz access.",
+    "loading_hint": "Checking your current CommunityGlows access.",
     "free_hint": "Redeem your Lifetime Deal or early-bird activation code to unlock lifetime access.",
     "lifetime_deal_active_hint": "Your Lifetime Deal access is active on this account.",
-    "active_hint": "Your SocialGlowz access is active on this account.",
+    "active_hint": "Your CommunityGlows access is active on this account.",
     "redeem_success": "Lifetime Deal access is now active.",
     "redeem_already_active": "This code is already active on your account.",
     "errors": {
@@ -254,12 +254,12 @@
   },
   "nudge": {
     "title": "Secure your data",
-    "promo_text": "Create your account now and get 1 free month of SocialGlowz Pro!",
+    "promo_text": "Create your account now and get 1 free month of CommunityGlows Pro!",
     "cta_button": "Create my account",
     "dismiss": "Not now"
   },
   "onboarding": {
-    "welcome_title": "Welcome to SocialGlowz",
+    "welcome_title": "Welcome to CommunityGlows",
     "welcome_desc": "All your social networks in one place. Let's set up your space in a few seconds.",
     "start_button": "Get started",
     "profile_title": "Create your profile",
@@ -303,7 +303,7 @@
     "auth_hint": "Sign in with an existing account or create one to sync your data across devices.",
     "sync_more": "More info",
     "sync_less": "Less info",
-    "sync_info": "The cloud syncs your SocialGlowz profiles, settings, accounts, friends filters, and custom links across your other devices.",
+    "sync_info": "The cloud syncs your CommunityGlows profiles, settings, accounts, friends filters, and custom links across your other devices.",
     "cookies_info": "We would also like to sync your logged-in sessions, but browsers and social networks forbid sending those cookies to third-party servers. To move your sessions to a new device, use the encrypted export below.",
     "sign_in_hint": "Sign in with your existing account to restore your synced data.",
     "already_exists_error": "An account already exists for this email. Use “Sign in” instead.",
@@ -316,14 +316,14 @@
       "popup_title": "Quick Launcher",
       "popup_description": "Open your social networks quickly from the toolbar popup.",
       "side_panel_title": "Side Panel Control Surface",
-      "side_panel_description": "Keep SocialGlowz open while browsing and launch networks in new tabs.",
+      "side_panel_description": "Keep CommunityGlows open while browsing and launch networks in new tabs.",
       "options_title": "Extension Settings",
       "options_description": "Configure profile, language, and launcher behavior for extension mode.",
-      "setup_title": "SocialGlowz Extension Dashboard",
+      "setup_title": "CommunityGlows Extension Dashboard",
       "setup_description": "Use this page for a larger launcher and profile control surface.",
-      "install_title": "SocialGlowz Installed",
+      "install_title": "CommunityGlows Installed",
       "install_description": "Finish setup and open your extension dashboard.",
-      "update_title": "SocialGlowz Updated",
+      "update_title": "CommunityGlows Updated",
       "update_description": "Review extension-mode capabilities after this update."
     },
     "profile": {
@@ -360,7 +360,7 @@
       }
     },
     "limitations": {
-      "session_isolation": "Extension mode uses regular browser tabs. It cannot isolate cookies and localStorage per SocialGlowz profile like native Tauri WebViews.",
+      "session_isolation": "Extension mode uses regular browser tabs. It cannot isolate cookies and localStorage per CommunityGlows profile like native Tauri WebViews.",
       "native_backup": "Native backup and restore workflows are unavailable in extension mode.",
       "native_haptics": "Haptics and Android bottom-bar controls are unavailable in extension mode."
     }
@@ -380,7 +380,7 @@
       "waitingServer": "We’re waiting for your server data so the app can restore the right state.",
       "dataReceived": "Your synced data just arrived from the cloud.",
       "dataApplied": "Your profiles, settings, and synced items have been applied to the app.",
-      "restarting": "We’re reloading SocialGlowz so it comes back with your synced state fully applied."
+      "restarting": "We’re reloading CommunityGlows so it comes back with your synced state fully applied."
     },
     "steps": {
       "waitingServer": "Waiting for server data",

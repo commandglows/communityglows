@@ -2,7 +2,7 @@
 artifact: claude_instructions
 metadata_schema_version: "1.0"
 artifact_version: "1.0.1"
-project: socialglowz
+project: communityglows
 created: "2026-04-26"
 status: active
 source_skill: 300-sg-docs
@@ -27,7 +27,7 @@ next_step: "/300-sg-docs audit CLAUDE.md"
 
 ## Purpose
 
-This repository is **SocialGlowz**, a multi-platform social networking dashboard built with **Vue 3 + Vite** and extended through **Tauri 2**.
+This repository is **CommunityGlows**, a multi-platform social networking dashboard built with **Vue 3 + Vite** and extended through **Tauri 2**.
 
 Primary goals for any agent:
 
@@ -41,12 +41,12 @@ Primary goals for any agent:
 - Prefer incremental edits; avoid broad refactors.
 - Keep environment-dependent behavior guarded (offline modes and optional integrations must not crash the app).
 - Never change runtime behavior of navigation or webview persistence without explicit intent.
-- Treat `SocialGlowz` as a declared product that must stay documented in repo-level product surfaces when marketing, checkout, or entitlement behavior changes.
+- Treat `CommunityGlows` as a declared product that must stay documented in repo-level product surfaces when marketing, checkout, or entitlement behavior changes.
 - Treat product claims as evidence-backed: if the claim cannot be tied to the registry, a live surface, or proof, do not consider it validated copy.
 
 ## Runtime structure
 
-- `src/ui/setup/pages/SocialGlowz/` contains the main app.
+- `src/ui/setup/pages/CommunityGlows/` contains the main app.
 - Platform variants are controlled by:
   - `vite.chrome.config.ts`
   - `vite.firefox.config.ts`

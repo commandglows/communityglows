@@ -7,7 +7,7 @@ describe('buildDiagnosticsReport', () => {
       __GIT_COMMIT__: 'test-commit',
       __BUILD_AT_PARIS__: '2026-08-03T10:00:00+02:00',
       __BUILD_AT_UTC__: '2026-08-03T08:00:00Z',
-      __DISPLAY_NAME__: 'SocialGlowz',
+      __DISPLAY_NAME__: 'CommunityGlows',
       __VERSION__: '0.0.1',
     })
     Object.defineProperty(globalThis, 'navigator', {

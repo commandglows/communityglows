@@ -2,7 +2,7 @@
 artifact: documentation
 metadata_schema_version: "1.0"
 artifact_version: "1.2.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
@@ -14,13 +14,13 @@ risk_level: medium
 security_impact: none
 docs_impact: yes
 evidence:
-  - "src/ui/setup/pages/SocialGlowz/main.ts"
-  - "src/ui/setup/pages/SocialGlowz/App.vue"
-  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
-  - "src/ui/setup/pages/SocialGlowz/components/ui/*.vue"
-  - "src/ui/setup/pages/SocialGlowz/directives/tooltip.ts"
+  - "src/ui/setup/pages/CommunityGlows/main.ts"
+  - "src/ui/setup/pages/CommunityGlows/App.vue"
+  - "src/ui/setup/pages/CommunityGlows/assets/main.css"
+  - "src/ui/setup/pages/CommunityGlows/components/ui/*.vue"
+  - "src/ui/setup/pages/CommunityGlows/directives/tooltip.ts"
   - "src/utils/notifications.ts"
-  - "src/ui/setup/pages/SocialGlowz/router/index.ts"
+  - "src/ui/setup/pages/CommunityGlows/router/index.ts"
   - "src/stores/*.ts"
   - "src/lib/*.ts"
   - "src-tauri/src/lib.rs"
@@ -43,11 +43,11 @@ next_step: "/300-sg-docs update shipglows_data/technical/context-function-tree.m
 
 ## Purpose
 
-Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
+Vue fonctionnelle du cœur de CommunityGlows sans lire tout le projet.
 
 ## Runtime Entry Points
 
-- `src/ui/setup/pages/SocialGlowz/main.ts`
+- `src/ui/setup/pages/CommunityGlows/main.ts`
   - Bootstrap Vue + Pinia + i18n + router + Notivue.
   - Enregistre `v-sg-tooltip`; ne charge plus PrimeVue dans le runtime Windows/Tauri.
   - Appelle `setupConvexAuth()` si `VITE_CONVEX_URL` est configuré.
@@ -63,7 +63,7 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
   - Entrée page paramètres navigateur.
 - `src-tauri/src/lib.rs`
   - Exécuteur Rust/Tauri et expose les commandes IPC.
-- `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt`
+- `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
   - Reçoit les intents Android (barre native, partage texte/URL, commandes webview) et relaie les événements vers Vue.
 - `src-tauri/src/main.rs`
   - Point d'entrée Rust.
@@ -72,23 +72,23 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 - `convex/users.ts`, `convex/socialAccounts.ts`, `convex/settings.ts`, `convex/profiles.ts`
   - Entrées backend métier.
 
-## App Lifecycle (SocialGlowz)
+## App Lifecycle (CommunityGlows)
 
-- `src/ui/setup/pages/SocialGlowz/main.ts`
-- `src/ui/setup/pages/SocialGlowz/App.vue`
+- `src/ui/setup/pages/CommunityGlows/main.ts`
+- `src/ui/setup/pages/CommunityGlows/App.vue`
   - Gère onboarding, thèmes, synchronisation cloud, nudge, événements Tauri.
-- `src/ui/setup/pages/SocialGlowz/router/index.ts`
+- `src/ui/setup/pages/CommunityGlows/router/index.ts`
   - Routes réseau + auth guard.
-- `src/ui/setup/pages/SocialGlowz/components/*`
+- `src/ui/setup/pages/CommunityGlows/components/*`
   - Layouts, vues réseau, sidebars, popups, overlays.
-- `src/ui/setup/pages/SocialGlowz/components/ui/*`
-  - Wrappers SocialGlowz pour boutons, formulaires, dialogues, sélecteurs, avatars, badges et chargement.
+- `src/ui/setup/pages/CommunityGlows/components/ui/*`
+  - Wrappers CommunityGlows pour boutons, formulaires, dialogues, sélecteurs, avatars, badges et chargement.
   - Reka UI porte la sémantique, le focus, le clavier, les overlays et les splitters complexes; les wrappers portent le rendu et les tokens.
 - `design/tokens/reference.json`
   - Source éditable unique des rôles sémantiques partagés et de leurs modes clair/sombre.
-- `src/ui/setup/pages/SocialGlowz/assets/generated/tokens.css`
+- `src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css`
   - Carrier généré Windows/Tauri; `assets/main.css` conserve la composition et les alias de compatibilité.
-- `src/ui/setup/pages/SocialGlowz/directives/tooltip.ts`
+- `src/ui/setup/pages/CommunityGlows/directives/tooltip.ts`
   - Directive d'infobulle accessible `v-sg-tooltip`: focus/pointeur, `aria-describedby`, `Escape`, mise à jour et nettoyage.
 - `src/utils/notifications.ts` + `App.vue`
   - Configuration Notivue, montage du carrier `Notivue`/`Notification` et rendu des notifications tokenisées.
@@ -103,8 +103,8 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
   - Construction du client Convex singleton.
 - `src/lib/convexAuth.ts`
   - Wrapper d'auth, token storage, signIn/signOut.
-- `src/lib/socialGlowzDeepLinks.ts`
-  - Parse les deeplinks applicatifs SocialGlowz, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
+- `src/lib/communityGlowsDeepLinks.ts`
+  - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
 - `src/lib/cloudSync*.ts`
   - Sync settings, queue de sync, feedback post-auth.
 - `src/utils/disableCopyProtection.ts`
@@ -172,15 +172,15 @@ Vue fonctionnelle du cœur de SocialGlowz sans lire tout le projet.
 
 - `src-tauri/src/lib.rs` et plugin Android: changements de commandes natives.
 - `src/stores/webviewState.ts`: impact direct sur comportement réseau multi-webview.
-- `src/ui/setup/pages/SocialGlowz/components/NetworkWebviewHost.vue` et `composables/useNetworkWebview.ts`: orchestration webview principale.
-- `src/ui/setup/pages/SocialGlowz/components/ui/`, `directives/tooltip.ts` et `assets/main.css`: contrats clavier/focus, composants visibles et autorité de tokens Windows.
-- `src/ui/setup/pages/SocialGlowz/main.ts`, `App.vue` et `src/utils/notifications.ts`: enregistrement de la directive et carrier global de notifications.
+- `src/ui/setup/pages/CommunityGlows/components/NetworkWebviewHost.vue` et `composables/useNetworkWebview.ts`: orchestration webview principale.
+- `src/ui/setup/pages/CommunityGlows/components/ui/`, `directives/tooltip.ts` et `assets/main.css`: contrats clavier/focus, composants visibles et autorité de tokens Windows.
+- `src/ui/setup/pages/CommunityGlows/main.ts`, `App.vue` et `src/utils/notifications.ts`: enregistrement de la directive et carrier global de notifications.
 - `convex/schema.ts`: changement de schéma de données.
 
 ## Validation Routes
 
 - Composants et raccourcis: `pnpm test:once` puis `pnpm run typecheck:core`.
-- Source Windows: inventaire ciblé des imports/configurations PrimeVue sous `src/ui/setup/pages/SocialGlowz/` et `vite.tauri.config.ts`.
+- Source Windows: inventaire ciblé des imports/configurations PrimeVue sous `src/ui/setup/pages/CommunityGlows/` et `vite.tauri.config.ts`.
 - Bundle Windows: `pnpm run tauri:build`, puis inventaire du bundle propre et des déclarations générées.
 - Tokens: `python3 "${SHIPGLOWS_ROOT:-$HOME/shipglows}/tools/design_system_drift_check.py" --changed --format markdown`.
 - Preuve finale: parcours manuel dans l'exécutable Windows pour clavier/focus, sidebars, thèmes, notifications et WebViews.

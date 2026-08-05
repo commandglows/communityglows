@@ -2,7 +2,7 @@
 artifact: technical_module_context
 metadata_schema_version: "1.0"
 artifact_version: "1.0.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-07-15"
 updated: "2026-07-15"
 status: reviewed
@@ -15,10 +15,10 @@ security_impact: yes
 docs_impact: yes
 linked_systems:
   - "src-tauri/src/lib.rs"
-  - "src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt"
+  - "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
   - "shipglows_data/technical/android-webview-session-isolation.md"
   - "shipglows_data/workflow/audits/2026-07-15-google-play-android-compliance.md"
-  - "shipglows_data/workflow/specs/socialglowz-public-webview-script-removal.md"
+  - "shipglows_data/workflow/specs/communityglows-public-webview-script-removal.md"
 depends_on:
   - "shipglows_data/technical/android-webview-session-isolation.md"
 supersedes: []
@@ -34,19 +34,19 @@ next_step: "Run physical-device and CI verification with the actual Android WebV
 ## Purpose
 
 This document defines the public-build boundary for third-party content loaded
-inside SocialGlowz WebViews. It is separate from session isolation: preserving a
-user's session does not authorize SocialGlowz to automate, disguise, or alter a
+inside CommunityGlows WebViews. It is separate from session isolation: preserving a
+user's session does not authorize CommunityGlows to automate, disguise, or alter a
 third-party service.
 
 ## Owned Files
 
 - `src-tauri/src/lib.rs` owns desktop WebView construction and the public Tauri IPC surface.
-- `src-tauri/plugins/android-webview/android/src/main/java/com/socialglowz/webview/NativeWebViewPlugin.kt` owns Android WebView setup and native visual preferences.
-- `src/ui/setup/pages/SocialGlowz/App.vue` must not register a third-party content-filter injection entry point.
+- `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt` owns Android WebView setup and native visual preferences.
+- `src/ui/setup/pages/CommunityGlows/App.vue` must not register a third-party content-filter injection entry point.
 
 ## Public-Build Contract
 
-- Third-party consent, privacy, and cookie dialogs remain under the user's direct control. SocialGlowz does not locate, dismiss, or click them.
+- Third-party consent, privacy, and cookie dialogs remain under the user's direct control. CommunityGlows does not locate, dismiss, or click them.
 - The public build uses the platform's actual WebView user agent. It does not remove WebView markers, impersonate desktop Chrome, patch browser APIs, or spoof fingerprint signals.
 - The public build does not force a desktop viewport, redirect app-install links to login pages, filter a platform's feed, or inject arbitrary scripts into a third-party page.
 - A platform that refuses the normal WebView is an incompatibility, not a reason to restore a hidden workaround. Resolve it through written platform authorization, an official API, Custom Tabs, or the external browser.

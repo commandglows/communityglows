@@ -10,7 +10,7 @@
     "warning": "Attention !"
   },
   "updated": "Mis à jour",
-  "welcomeMessage": "Bienvenue dans SocialGlowz !",
+  "welcomeMessage": "Bienvenue dans CommunityGlows !",
   "common": {
     "settings": "Paramètres",
     "notifications": "Notifications",
@@ -88,7 +88,7 @@
     "import_done_title": "Restauration terminée !",
     "export_next_title": "Prochaines étapes :",
     "export_step_1": "Transférez le fichier .sfbak sur votre autre appareil",
-    "export_step_2": "Installez SocialGlowz sur le nouvel appareil",
+    "export_step_2": "Installez CommunityGlows sur le nouvel appareil",
     "export_step_3": "Utilisez « Restaurer une sauvegarde » avec le même mot de passe",
     "export_tip": "Conservez votre mot de passe — il est indispensable pour restaurer vos données.",
     "import_done_message": "Tous vos profils, comptes et préférences ont été restaurés.",
@@ -101,7 +101,7 @@
     "error_check_version": "La sauvegarde a-t-elle été créée avec une version compatible ?",
     "error_wrong_password": "Mot de passe incorrect. Veuillez réessayer.",
     "error_no_file": "Aucun fichier sélectionné.",
-    "error_invalid_file": "Ce fichier ne semble pas être une sauvegarde SocialGlowz valide.",
+    "error_invalid_file": "Ce fichier ne semble pas être une sauvegarde CommunityGlows valide.",
     "try_again": "Réessayer"
   },
   "billing": {
@@ -126,10 +126,10 @@
     "unconfigured_hint": "L’activation est indisponible dans cette version car le backend Convex n’est pas configuré.",
     "signed_out_hint": "Connectez-vous ou créez un compte avant d’activer un code.",
     "bridge_unavailable_hint": "Le contrôle d’accès est indisponible pour le moment: le bridge de facturation n’est pas joignable.",
-    "loading_hint": "Vérification de votre accès SocialGlowz actuel.",
+    "loading_hint": "Vérification de votre accès CommunityGlows actuel.",
     "free_hint": "Activez votre code Lifetime Deal ou early bird pour débloquer l’accès à vie.",
     "lifetime_deal_active_hint": "Votre accès Lifetime Deal est actif sur ce compte.",
-    "active_hint": "Votre accès SocialGlowz est actif sur ce compte.",
+    "active_hint": "Votre accès CommunityGlows est actif sur ce compte.",
     "redeem_success": "L’accès Lifetime Deal est maintenant actif.",
     "redeem_already_active": "Ce code est déjà actif sur votre compte.",
     "errors": {
@@ -254,12 +254,12 @@
   },
   "nudge": {
     "title": "Sécurisez vos données",
-    "promo_text": "Créez votre compte maintenant et obtenez 1 mois offert sur SocialGlowz Pro !",
+    "promo_text": "Créez votre compte maintenant et obtenez 1 mois offert sur CommunityGlows Pro !",
     "cta_button": "Créer mon compte",
     "dismiss": "Pas maintenant"
   },
   "onboarding": {
-    "welcome_title": "Bienvenue sur SocialGlowz",
+    "welcome_title": "Bienvenue sur CommunityGlows",
     "welcome_desc": "Tous vos réseaux sociaux en un seul endroit. Configurons votre espace en quelques secondes.",
     "start_button": "Commencer",
     "profile_title": "Créez votre profil",
@@ -303,7 +303,7 @@
     "auth_hint": "Connectez-vous avec un compte existant ou créez-en un pour synchroniser vos données entre vos appareils.",
     "sync_more": "Plus d’infos",
     "sync_less": "Moins d’infos",
-    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes SocialGlowz, filtres amis et liens personnalisés sur vos autres appareils.",
+    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes CommunityGlows, filtres amis et liens personnalisés sur vos autres appareils.",
     "cookies_info": "Nous aimerions synchroniser aussi vos sessions connectées, mais les navigateurs et réseaux sociaux interdisent l’envoi de ces cookies vers des serveurs tiers. Pour transférer vos sessions sur un nouvel appareil, utilisez l’export chiffré ci-dessous.",
     "sign_in_hint": "Connectez-vous avec votre compte existant pour retrouver vos données synchronisées.",
     "already_exists_error": "Un compte existe déjà pour cet e-mail. Utilisez « Se connecter » à la place.",
@@ -316,14 +316,14 @@
       "popup_title": "Lanceur rapide",
       "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis le popup de la barre d’outils.",
       "side_panel_title": "Surface de contrôle du panneau latéral",
-      "side_panel_description": "Gardez SocialGlowz ouvert pendant la navigation et lancez les réseaux dans de nouveaux onglets.",
+      "side_panel_description": "Gardez CommunityGlows ouvert pendant la navigation et lancez les réseaux dans de nouveaux onglets.",
       "options_title": "Paramètres extension",
       "options_description": "Configurez le profil, la langue et le comportement du lanceur en mode extension.",
-      "setup_title": "Tableau de bord extension SocialGlowz",
+      "setup_title": "Tableau de bord extension CommunityGlows",
       "setup_description": "Utilisez cette page pour un lanceur plus large et la gestion des profils.",
-      "install_title": "SocialGlowz installé",
+      "install_title": "CommunityGlows installé",
       "install_description": "Terminez la configuration et ouvrez votre tableau de bord extension.",
-      "update_title": "SocialGlowz mis à jour",
+      "update_title": "CommunityGlows mis à jour",
       "update_description": "Vérifiez les capacités du mode extension après cette mise à jour."
     },
     "profile": {
@@ -360,7 +360,7 @@
       }
     },
     "limitations": {
-      "session_isolation": "Le mode extension utilise des onglets navigateur classiques. Il ne peut pas isoler cookies et localStorage par profil SocialGlowz comme les WebViews Tauri natives.",
+      "session_isolation": "Le mode extension utilise des onglets navigateur classiques. Il ne peut pas isoler cookies et localStorage par profil CommunityGlows comme les WebViews Tauri natives.",
       "native_backup": "Les workflows natifs de sauvegarde et restauration ne sont pas disponibles en mode extension.",
       "native_haptics": "Les vibrations et la barre Android native ne sont pas disponibles en mode extension."
     }
@@ -380,7 +380,7 @@
       "waitingServer": "On attend vos données serveur pour remettre l’application dans le bon état.",
       "dataReceived": "Les données synchronisées viennent d’arriver depuis le cloud.",
       "dataApplied": "Vos profils, paramètres et éléments synchronisés ont été appliqués à l’application.",
-      "restarting": "On relance SocialGlowz pour repartir proprement avec votre état synchronisé."
+      "restarting": "On relance CommunityGlows pour repartir proprement avec votre état synchronisé."
     },
     "steps": {
       "waitingServer": "En attente des données serveur",

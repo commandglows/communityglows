@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.socialglowz.webview"
+    namespace = "com.communityglows.webview"
     compileSdk = 35
 
     defaultConfig {

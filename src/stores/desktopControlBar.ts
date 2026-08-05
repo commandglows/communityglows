@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export type DesktopControlBarPosition = 'top' | 'bottom'
 
-const STORAGE_KEY = 'sfz_desktop_control_bar_position'
+const STORAGE_KEY = 'communityglows_desktop_control_bar_position'
 
 export function normalizeDesktopControlBarPosition(value: unknown): DesktopControlBarPosition {
   return value === 'bottom' ? 'bottom' : 'top'

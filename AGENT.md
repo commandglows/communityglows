@@ -2,7 +2,7 @@
 artifact: technical_guidelines
 metadata_schema_version: "1.0"
 artifact_version: "1.0.2"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
@@ -17,8 +17,8 @@ linked_systems:
   - "README.md"
   - "shipglows_data/technical/context.md"
   - "shipglows_data/technical/context-function-tree.md"
-  - "src/ui/setup/pages/SocialGlowz/main.ts"
-  - "src/ui/setup/pages/SocialGlowz/App.vue"
+  - "src/ui/setup/pages/CommunityGlows/main.ts"
+  - "src/ui/setup/pages/CommunityGlows/App.vue"
   - "src-tauri/src/lib.rs"
   - "convex/schema.ts"
   - "vite.config.ts"
@@ -30,9 +30,9 @@ supersedes: []
 evidence:
   - "README.md"
   - "package.json"
-  - "src/ui/setup/pages/SocialGlowz/main.ts"
-  - "src/ui/setup/pages/SocialGlowz/App.vue"
-  - "src/ui/setup/pages/SocialGlowz/router/index.ts"
+  - "src/ui/setup/pages/CommunityGlows/main.ts"
+  - "src/ui/setup/pages/CommunityGlows/App.vue"
+  - "src/ui/setup/pages/CommunityGlows/router/index.ts"
   - "convex/auth.config.ts"
   - "convex/schema.ts"
   - "src-tauri/src/lib.rs"
@@ -46,7 +46,7 @@ next_step: "/300-sg-docs audit AGENT.md"
 
 ## Purpose
 
-Ce fichier sert de point d'entrée rapide pour toute action dans `socialglowz`.
+Ce fichier sert de point d'entrée rapide pour toute action dans `communityglows`.
 Il permet de lire les bons documents avant de parcourir le code.
 
 ## Read Order
@@ -72,7 +72,7 @@ Il permet de lire les bons documents avant de parcourir le code.
   - un shell desktop Tauri 2 (Windows/Mac/Linux)
   - une build mobile Android via plugin Android WebView
 - L'authentification et le sync principal passent par Convex.
-- Le coeur métier social se trouve dans `src/` et `src/ui/setup/pages/SocialGlowz/`.
+- Le coeur métier social se trouve dans `src/` et `src/ui/setup/pages/CommunityGlows/`.
 
 ## Route by Task
 
@@ -87,10 +87,10 @@ Il permet de lire les bons documents avant de parcourir le code.
   - `src/content-script/index.ts`
   - `src/ui/*/index.ts`
   - puis `shipglows_data/technical/context-function-tree.md`
-- Si la tâche concerne la logique métier principale SocialGlowz :
-  - `src/ui/setup/pages/SocialGlowz/main.ts`
-  - `src/ui/setup/pages/SocialGlowz/App.vue`
-  - `src/ui/setup/pages/SocialGlowz/router/index.ts`
+- Si la tâche concerne la logique métier principale CommunityGlows :
+  - `src/ui/setup/pages/CommunityGlows/main.ts`
+  - `src/ui/setup/pages/CommunityGlows/App.vue`
+  - `src/ui/setup/pages/CommunityGlows/router/index.ts`
   - `src/stores`
   - `src/lib`
 - Si la tâche concerne un flow natif desktop/mobile :
@@ -114,22 +114,22 @@ Il permet de lire les bons documents avant de parcourir le code.
 
 - Le même store et utilitaires partagés restent la source de vérité métier.
 - Les métadonnées des réseaux webview intégrés côté UI se gèrent depuis `src/config/socialNetworks.ts`.
-- Pour ajouter un réseau intégré, utiliser la skill projet locale `.claude/skills/socialglowz-add-network/SKILL.md`.
+- Pour ajouter un réseau intégré, utiliser la skill projet locale `.claude/skills/communityglows-add-network/SKILL.md`.
 - Les invocations natives Tauri sont encapsulées dans `@tauri-apps/api/core.invoke` depuis le front.
 - Toute mutation du stockage de session passe par `convexAuth` / `cloudSync` ou les commandes Rust dédiées.
 - `convex` est le contrat de données synchronisées quand VITE_CONVEX_URL est configuré.
 
 ## Boundaries & Responsibilities
 
-- `src/ui/setup/pages/SocialGlowz/` : app principale SocialGlowz (routing, UI, vues réseaux).
+- `src/ui/setup/pages/CommunityGlows/` : app principale CommunityGlows (routing, UI, vues réseaux).
 - `src/` : services et stores partagés (état, auth, sync, utilitaires).
 - `src-tauri/` : orchestration WebView, commandes natives, plugins et persistance sessions.
-- `src/ui/*` (hors SocialGlowz) : shells historiques de l'extension.
+- `src/ui/*` (hors CommunityGlows) : shells historiques de l'extension.
 - `convex/` : schema, queries/mutations et auth backend.
 
 ## Editing Order
 
-- Changer un comportement d'app SocialGlowz → `src/ui/setup/pages/SocialGlowz/*` puis `src/stores/*`/`src/lib/*`.
-- Changer des services partagés → `src/services/*`, `src/utils/*`, `src/composables/*` puis mettre à jour SocialGlowz.
+- Changer un comportement d'app CommunityGlows → `src/ui/setup/pages/CommunityGlows/*` puis `src/stores/*`/`src/lib/*`.
+- Changer des services partagés → `src/services/*`, `src/utils/*`, `src/composables/*` puis mettre à jour CommunityGlows.
 - Modifier les commandes natives → `src-tauri/src/lib.rs` et tests manuels sur desktop/mobile après.
 - Changer des règles de sync/auth → `convex/*` + `src/lib/cloud*` + `src/lib/convexAuth.ts`.

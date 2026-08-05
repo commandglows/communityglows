@@ -14,8 +14,8 @@ declare const __BUILD_AT_UTC__: string
 declare const __GITHUB_URL__: string
 
 interface Window {
-  __sfzAutoThemeTimeout: number | null
-  __sfzAutoThemeMedia: MediaQueryList | null
-  __sfzAutoThemeMediaListener: ((event: MediaQueryListEvent) => void) | null
-  __sfzAutoThemeVisibilityListener: (() => void) | null
+  __communityglowsAutoThemeTimeout: number | null
+  __communityglowsAutoThemeMedia: MediaQueryList | null
+  __communityglowsAutoThemeMediaListener: ((event: MediaQueryListEvent) => void) | null
+  __communityglowsAutoThemeVisibilityListener: (() => void) | null
 }

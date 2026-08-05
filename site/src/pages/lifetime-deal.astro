@@ -4,10 +4,10 @@ import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
 import { siteUrl, winflowzCheckoutUrl } from '../config/site'
 
-const offerId = 'socialglowz/lifetime_deal'
+const offerId = 'communityglows/lifetime_deal'
 const checkoutUrl = winflowzCheckoutUrl(offerId, {
   source: 'direct',
-  sourceRef: 'socialglowz-site-lifetime-deal',
+  sourceRef: 'communityglows-site-lifetime-deal',
   successUrl: siteUrl(`/purchase/success?offerId=${encodeURIComponent(offerId)}`),
   cancelUrl: siteUrl(`/purchase/cancel?offerId=${encodeURIComponent(offerId)}`),
 })
@@ -31,7 +31,7 @@ const workflow = [
 ]
 
 const includes = [
-  'SocialGlowz Pro access under the published Lifetime Deal terms',
+  'CommunityGlows Pro access under the published Lifetime Deal terms',
   'Multi-profile social workspace for creators and operators',
   'Anti-distraction controls, custom links, Kanban workflow, backup and restore',
   'Desktop and mobile-oriented product direction as released builds mature',
@@ -48,12 +48,12 @@ const boundaries = [
 
 const faq = [
   {
-    q: 'Is this the real SocialGlowz checkout?',
-    a: 'Yes. The CTA uses the existing suite checkout route with the internal offer id socialglowz/lifetime_deal.',
+    q: 'Is this the real CommunityGlows checkout?',
+    a: 'Yes. The CTA uses the existing suite checkout route with the internal offer id communityglows/lifetime_deal.',
   },
   {
     q: 'Why does checkout go through WinFlowz?',
-    a: 'SocialGlowz access is fulfilled through the WinFlowz suite commerce bridge so payment events and entitlements stay centralized.',
+    a: 'CommunityGlows access is fulfilled through the WinFlowz suite commerce bridge so payment events and entitlements stay centralized.',
   },
   {
     q: 'Is this AppSumo pricing?',
@@ -69,9 +69,9 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: 'SocialGlowz Lifetime Deal',
-    description: 'Founder Lifetime Deal for SocialGlowz, a profile-aware social workspace for creators and operators.',
-    brand: { '@type': 'Brand', name: 'SocialGlowz' },
+    name: 'CommunityGlows Lifetime Deal',
+    description: 'Founder Lifetime Deal for CommunityGlows, a profile-aware social workspace for creators and operators.',
+    brand: { '@type': 'Brand', name: 'CommunityGlows' },
     offers: {
       '@type': 'Offer',
       availability: 'https://schema.org/InStock',
@@ -92,8 +92,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="SocialGlowz Lifetime Deal - Founder Access"
-  description="Get founder Lifetime Deal access to SocialGlowz, the focused social workspace for creators, operators, and small teams managing multiple social accounts."
+  title="CommunityGlows Lifetime Deal - Founder Access"
+  description="Get founder Lifetime Deal access to CommunityGlows, the focused social workspace for creators, operators, and small teams managing multiple social accounts."
   path="/lifetime-deal"
   jsonLd={jsonLd}
 >
@@ -111,7 +111,7 @@ const jsonLd = [
             Own the social workspace before the price climbs.
           </h1>
           <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            SocialGlowz brings your social accounts, profiles, focus controls, and lightweight execution workflow into one app so you can operate without tab sprawl.
+            CommunityGlows brings your social accounts, profiles, focus controls, and lightweight execution workflow into one app so you can operate without tab sprawl.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
@@ -133,7 +133,7 @@ const jsonLd = [
           <div class="rounded-xl border border-border bg-background p-5">
             <div class="flex items-center justify-between gap-4">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SocialGlowz</p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">CommunityGlows</p>
                 <p class="mt-1 text-lg font-semibold text-foreground">Founder workspace</p>
               </div>
               <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">Direct LTD</span>
@@ -174,7 +174,7 @@ const jsonLd = [
           <h2 class="mt-3 text-3xl font-bold text-foreground">A direct founder window for the product you can sell first.</h2>
         </div>
         <p class="text-lg leading-relaxed text-muted-foreground">
-          The Lifetime Deal gives early buyers a clear path into SocialGlowz while the product is still priced for founder adoption. It keeps the commercial story simple: one product, one direct offer, one checkout, and server-side access fulfillment.
+          The Lifetime Deal gives early buyers a clear path into CommunityGlows while the product is still priced for founder adoption. It keeps the commercial story simple: one product, one direct offer, one checkout, and server-side access fulfillment.
         </p>
       </div>
     </section>
@@ -200,7 +200,7 @@ const jsonLd = [
     <section id="offer" class="mx-auto grid max-w-6xl gap-8 px-4 py-16 lg:grid-cols-5">
       <div class="lg:col-span-2">
         <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">The offer</p>
-        <h2 class="mt-3 text-3xl font-bold text-foreground">SocialGlowz Lifetime Deal</h2>
+        <h2 class="mt-3 text-3xl font-bold text-foreground">CommunityGlows Lifetime Deal</h2>
         <p class="mt-4 text-muted-foreground">
           The exact public price can still be refined, but the page architecture and checkout path are ready for direct early-bird sales.
         </p>
@@ -266,7 +266,7 @@ const jsonLd = [
       <div class="rounded-2xl border border-foreground/20 bg-white p-8 text-zinc-950 sm:p-10">
         <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div class="max-w-2xl">
-            <h2 class="text-3xl font-bold">Open the SocialGlowz founder window.</h2>
+            <h2 class="text-3xl font-bold">Open the CommunityGlows founder window.</h2>
             <p class="mt-4 text-zinc-600">
               Use this page as the direct sales surface while final price, legal details, and Lemon Squeezy product setup are finalized.
             </p>

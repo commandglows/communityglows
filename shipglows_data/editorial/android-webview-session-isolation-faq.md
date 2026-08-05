@@ -2,7 +2,7 @@
 artifact: editorial_article_source
 metadata_schema_version: "1.0"
 artifact_version: "1.0.1"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-23"
 updated: "2026-08-04"
 status: reviewed
@@ -15,8 +15,8 @@ security_impact: yes
 docs_impact: yes
 business_intent: informational
 content_status: promoted_to_public_article
-target_audience: "utilisateurs technophiles et contributeurs SocialGlowz"
-primary_keyword: "isolation sessions Android WebView SocialGlowz"
+target_audience: "utilisateurs technophiles et contributeurs CommunityGlows"
+primary_keyword: "isolation sessions Android WebView CommunityGlows"
 depends_on:
   - artifact: "README.md"
     artifact_version: unknown
@@ -41,26 +41,26 @@ next_review: "2026-09-03"
 next_step: "Auditer l'article public avant ship si la surface blog est incluse dans le prochain release scope."
 ---
 
-# Comment SocialGlowz isole les sessions Android WebView par profil
+# Comment CommunityGlows isole les sessions Android WebView par profil
 
-Ce brouillon explique le modèle d'isolation Android WebView de SocialGlowz pour les utilisateurs technophiles et les contributeurs. Il décrit le comportement attendu sans élargir la promesse au-delà des mécanismes documentés dans le contexte technique et la spec Android WebView storage isolation.
+Ce brouillon explique le modèle d'isolation Android WebView de CommunityGlows pour les utilisateurs technophiles et les contributeurs. Il décrit le comportement attendu sans élargir la promesse au-delà des mécanismes documentés dans le contexte technique et la spec Android WebView storage isolation.
 
 ## Résumé court
 
-Sur Android, SocialGlowz isole les sessions WebView par profil et par réseau avec une clé de session de la forme `${profileId}-${networkId}`. Cette clé sert à séparer les cookies et les snapshots `localStorage` associés aux origines web chargées dans les WebViews natives.
+Sur Android, CommunityGlows isole les sessions WebView par profil et par réseau avec une clé de session de la forme `${profileId}-${networkId}`. Cette clé sert à séparer les cookies et les snapshots `localStorage` associés aux origines web chargées dans les WebViews natives.
 
 Le cas CinderReels a déclenché ce durcissement parce que son authentification repose sur `localStorage`, pas uniquement sur les cookies. Les autres réseaux suivent le même principe global d'isolation, en utilisant leur URL principale comme origine de référence, avec la possibilité de déclarer des origines additionnelles quand un réseau utilise plusieurs domaines.
 
 ## Qu'est-ce qui est isolé ?
 
-SocialGlowz vise deux types de stockage Android WebView pour chaque session `${profileId}-${networkId}` :
+CommunityGlows vise deux types de stockage Android WebView pour chaque session `${profileId}-${networkId}` :
 
 - les cookies, restaurés pour la session active avant la navigation ;
 - les valeurs `localStorage`, persistées et restaurées par origine.
 
 La séparation se fait donc sur deux axes :
 
-- le profil SocialGlowz sélectionné ;
+- le profil CommunityGlows sélectionné ;
 - le réseau ouvert dans la WebView Android.
 
 En pratique, une session CinderReels du Profil A et une session CinderReels du Profil B ne doivent pas partager le même état de connexion via les cookies ou `localStorage`, même si elles chargent le même site.
@@ -69,17 +69,17 @@ En pratique, une session CinderReels du Profil A et une session CinderReels du P
 
 Les WebViews Android exposent du stockage web par origine. Une origine correspond au triplet schéma, hôte et port, par exemple `https://example.com`.
 
-SocialGlowz ne traite pas `localStorage` comme un bloc global du réseau. Les snapshots sont liés à la session `${profileId}-${networkId}` et à l'origine exacte. Cela évite qu'une valeur capturée sur une origine soit restaurée sur une autre origine qui ne devrait pas la recevoir.
+CommunityGlows ne traite pas `localStorage` comme un bloc global du réseau. Les snapshots sont liés à la session `${profileId}-${networkId}` et à l'origine exacte. Cela évite qu'une valeur capturée sur une origine soit restaurée sur une autre origine qui ne devrait pas la recevoir.
 
 ## Pourquoi CinderReels a une origine explicite
 
-CinderReels a une règle plus explicite parce que son authentification utilise `localStorage`. Si SocialGlowz isolait seulement les cookies, deux profils pourraient encore se retrouver avec un état d'authentification partagé par le stockage web global de la WebView.
+CinderReels a une règle plus explicite parce que son authentification utilise `localStorage`. Si CommunityGlows isolait seulement les cookies, deux profils pourraient encore se retrouver avec un état d'authentification partagé par le stockage web global de la WebView.
 
 L'origine CinderReels est donc déclarée explicitement afin que l'isolation scriptée s'applique au bon domaine dès la navigation Android WebView concernée.
 
 ## Comment les autres réseaux sont couverts
 
-Pour les autres réseaux Android WebView, SocialGlowz applique l'isolation globale par défaut avec la clé `${profileId}-${networkId}`. Quand aucun besoin multi-domaine particulier n'est documenté, l'origine de référence vient de l'URL principale du réseau.
+Pour les autres réseaux Android WebView, CommunityGlows applique l'isolation globale par défaut avec la clé `${profileId}-${networkId}`. Quand aucun besoin multi-domaine particulier n'est documenté, l'origine de référence vient de l'URL principale du réseau.
 
 Ce comportement couvre le cas courant : un réseau chargé depuis son domaine principal, avec cookies et `localStorage` associés à cette origine.
 

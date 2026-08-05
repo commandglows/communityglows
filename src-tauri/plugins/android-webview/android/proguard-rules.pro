@@ -1,1 +1,1 @@
--keep class com.socialglowz.webview.** { *; }
+-keep class com.communityglows.webview.** { *; }

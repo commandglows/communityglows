@@ -11,9 +11,9 @@ describe('getSafeBillingError', () => {
     [new Error('code already used'), 'billing.errors.used'],
     [new Error('Code is required'), 'billing.errors.required'],
     [new Error('Not authenticated'), 'billing.errors.unauthorized'],
-    [new Error('SocialGlowz bridge unavailable'), 'billing.errors.bridge_unavailable'],
+    [new Error('CommunityGlows bridge unavailable'), 'billing.errors.bridge_unavailable'],
     [new Error('Suite bridge not configured'), 'billing.errors.bridge_unavailable'],
-    [new Error('invalid socialglowz bridge secret'), 'billing.errors.bridge_unavailable'],
+    [new Error('invalid communityglows bridge secret'), 'billing.errors.bridge_unavailable'],
     [new Error('Malformed response from bridge'), 'billing.errors.bridge_unavailable'],
     [new Error('Unexpected backend detail'), 'billing.errors.generic'],
   ])('maps %s to %s', (error, key) => {

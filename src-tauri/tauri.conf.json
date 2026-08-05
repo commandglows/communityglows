@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "SocialGlowz",
+  "productName": "CommunityGlows",
   "version": "0.1.0",
-  "identifier": "com.socialglowz.desktop",
+  "identifier": "com.communityglows.desktop",
   "build": {
     "frontendDist": "../dist/tauri",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "SocialGlowz",
+        "title": "CommunityGlows",
         "width": 1280,
         "height": 800,
         "minWidth": 900,
@@ -31,7 +31,7 @@
       "mobile": [
         {
           "scheme": [
-            "socialglowz"
+            "communityglows"
           ],
           "host": "auth-callback",
           "pathPrefix": [
@@ -42,14 +42,14 @@
           "scheme": [
             "https"
           ],
-            "host": "socialglowz.com",
+            "host": "communityglows.com",
           "pathPrefix": [
             "/auth/callback"
           ]
         },
         {
           "scheme": [
-            "socialglowz"
+            "communityglows"
           ],
           "host": "app",
           "pathPrefix": [
@@ -58,7 +58,7 @@
         }
       ],
       "desktop": {
-        "schemes": ["socialglowz"]
+        "schemes": ["communityglows"]
       }
     }
   },

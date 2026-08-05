@@ -2,7 +2,7 @@
 artifact: business_profile
 metadata_schema_version: "1.0"
 artifact_version: "1.0.0"
-project: socialglowz
+project: communityglows
 created: "2026-04-26"
 status: reviewed
 source_skill: 300-sg-docs
@@ -17,7 +17,7 @@ depends_on: []
 evidence:
   - "README.md"
   - "package.json"
-  - "src/ui/setup/pages/SocialGlowz/App.vue"
+  - "src/ui/setup/pages/CommunityGlows/App.vue"
 supersedes: []
 next_step: "/300-sg-docs audit shipglows_data/business/business.md"
 ---
@@ -26,7 +26,7 @@ next_step: "/300-sg-docs audit shipglows_data/business/business.md"
 
 ## Business model
 
-SocialGlowz is a unified social management platform with a cross-platform approach:
+CommunityGlows is a unified social management platform with a cross-platform approach:
 
 - Chrome and Firefox extensions
 - Web application (Vercel-hosted)

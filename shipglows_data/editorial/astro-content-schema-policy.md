@@ -2,7 +2,7 @@
 artifact: editorial_astro_schema_policy
 metadata_schema_version: "1.0"
 artifact_version: "0.1.0"
-project: socialglowz
+project: communityglows
 created: "2026-06-11"
 updated: "2026-06-11"
 status: draft

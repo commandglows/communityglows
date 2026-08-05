@@ -5,13 +5,13 @@ import Footer from '../../components/Footer.astro'
 import { appUrl } from '../../config/site'
 
 const offerId = Astro.url.searchParams.get('offerId')
-const isLifetimeDeal = offerId === 'socialglowz/lifetime_deal'
+const isLifetimeDeal = offerId === 'communityglows/lifetime_deal'
 const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
 ---
 
 <Layout
-  title="Checkout Success - SocialGlowz"
-  description="Your SocialGlowz direct checkout request has been received. Open the app to finish access setup."
+  title="Checkout Success - CommunityGlows"
+  description="Your CommunityGlows direct checkout request has been received. Open the app to finish access setup."
   path="/purchase/success"
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
@@ -19,17 +19,17 @@ const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
     <section class="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
       <h1 class="text-3xl font-bold text-foreground">Thanks for your order</h1>
       <p class="mt-4 text-muted-foreground">
-        If the payment is completed, your order status is now being synced to your SocialGlowz account.
+        If the payment is completed, your order status is now being synced to your CommunityGlows account.
       </p>
       <p class="mt-2 text-muted-foreground">
-        You can open SocialGlowz and check access in the billing section.
+        You can open CommunityGlows and check access in the billing section.
       </p>
       <div class="mt-8 flex flex-col gap-3">
         <a
           href={appUrl()}
           class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-200"
         >
-          Open SocialGlowz
+          Open CommunityGlows
         </a>
         <a
           href={returnUrl}

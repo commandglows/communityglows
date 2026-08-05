@@ -2,7 +2,7 @@
 artifact: dependency_risk_register
 metadata_schema_version: "1.0"
 artifact_version: "1.0.2"
-project: socialglowz
+project: communityglows
 created: "2026-04-30"
 updated: "2026-08-04"
 status: active
@@ -64,13 +64,13 @@ Applied decision:
 
 Validation:
 
-- `(cd src-tauri && cargo audit --json > /tmp/socialglowz-cargo-audit-accepted.json)` -> 0 vulnerabilities, 17 unmaintained warnings, 2 unsound warnings.
+- `(cd src-tauri && cargo audit --json > /tmp/communityglows-cargo-audit-accepted.json)` -> 0 vulnerabilities, 17 unmaintained warnings, 2 unsound warnings.
 - `(cd src-tauri && cargo tree --locked -i rand@0.8.6)` -> direct `app` edge now uses patched `rand@0.8.6`.
 - `(cd src-tauri && cargo tree --locked -i rand@0.7.3)` -> remaining old `rand` line is Tauri parser/codegen owned.
 - `(cd src-tauri && cargo tree --locked -i glib@0.18.5)` -> remaining `glib` warning is Linux GTK/WebKit/Tauri owned.
 - `corepack pnpm tauri:build` -> passed; this validates Tauri frontend assets only, not native packaging.
 - `(cd src-tauri && cargo check --locked)` -> passed after installing the Tauri Linux system dependencies.
-- `pnpm tauri:bundle` -> passed after enabling the Corepack `pnpm` shim; produced `/home/ubuntu/socialglowz/src-tauri/target/release/app`.
+- `pnpm tauri:bundle` -> passed after enabling the Corepack `pnpm` shim; produced `/home/ubuntu/communityglows/src-tauri/target/release/app`.
 - Workflow review confirms RustSec runs before native artifact generation in `.github/workflows/build.yml` and `.github/workflows/dev-builds.yml`.
 
 Proof gap:
@@ -117,7 +117,7 @@ Fresh docs checked:
 - Official PrimeVue migration guide: `https://primevue.org/guides/migration/v4/`.
 - Official PrimeVue styled mode docs: `https://primevue.org/theming/styled`.
 
-Rollback boundary: package dependency changes plus `src/ui/setup/pages/SocialGlowz/main.ts` only. Do not start Tailwind, router, Vite, TypeScript, or runtime/auth upgrades in this stage.
+Rollback boundary: package dependency changes plus `src/ui/setup/pages/CommunityGlows/main.ts` only. Do not start Tailwind, router, Vite, TypeScript, or runtime/auth upgrades in this stage.
 
 Applied decision: use the Lara preset from `@primeuix/themes/lara` to stay closest to the previous `lara-light-blue` theme, configure `darkModeSelector: '.dark'` to preserve the existing `html.dark` store behavior, and keep `cssLayer: false` to avoid changing Tailwind/DaisyUI cascade order in this stage.
 

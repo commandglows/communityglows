@@ -10,7 +10,7 @@ export type PostAuthSyncStage =
 
 type PostAuthSyncMode = "blocking" | "success";
 
-const READY_NOTICE_KEY = "sfz_post_auth_ready_notice_v1";
+const READY_NOTICE_KEY = "communityglows_post_auth_ready_notice_v1";
 const MIN_STAGE_MS = 1000;
 const READY_NOTICE_MS = 3000;
 

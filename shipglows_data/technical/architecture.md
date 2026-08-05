@@ -2,7 +2,7 @@
 artifact: architecture_context
 metadata_schema_version: "1.0"
 artifact_version: "1.0.3"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed
@@ -36,15 +36,15 @@ supersedes:
   - "archi.md"
 evidence:
   - "Legacy root archi.md was a pointer to shipglows_data/technical/architecture.md."
-  - "Vite, Tauri, Convex, and manifest configs define SocialGlowz's distribution targets."
+  - "Vite, Tauri, Convex, and manifest configs define CommunityGlows's distribution targets."
 next_review: "2026-09-03"
 next_step: "/300-sg-docs audit shipglows_data/technical/architecture.md"
 ---
 
 # Architecture
 
-- SocialGlowz repose sur une base Vue.js unique distribuée en 4 familles de cibles (extension, desktop, mobile, web).
-- La couche domaine métier et les stores partagés vivent dans `src/` et `src/ui/setup/pages/SocialGlowz/`.
+- CommunityGlows repose sur une base Vue.js unique distribuée en 4 familles de cibles (extension, desktop, mobile, web).
+- La couche domaine métier et les stores partagés vivent dans `src/` et `src/ui/setup/pages/CommunityGlows/`.
 - La synchronisation cloud passe par Convex quand configurée; sinon, état local.
 - Les fonctions natives critiques restent concentrées dans `src-tauri/src/lib.rs` et le plugin Android WebView.
 

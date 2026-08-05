@@ -3,7 +3,7 @@ import { getConvexClient } from "@/lib/convex";
 import { isAuthenticated, isConvexConfigured } from "@/lib/convexAuth";
 import type { CloudSettingsPatch } from "@/lib/cloudSettings";
 
-const STORAGE_KEY = "sfz_cloud_sync_queue_v1";
+const STORAGE_KEY = "communityglows_cloud_sync_queue_v1";
 const RETRY_DELAY_MS = 5000;
 const PERIODIC_FLUSH_MS = 15000;
 

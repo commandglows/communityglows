@@ -2,7 +2,7 @@
 artifact: product_context
 metadata_schema_version: "1.0"
 artifact_version: "1.0.2"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
 status: reviewed

@@ -52,10 +52,10 @@
     <p>
       For more information or to exercise these rights, please contact us at:
       <a
-        href="mailto:privacy@socialglowz.com"
+        href="mailto:privacy@communityglows.com"
         class="text-primary"
       >
-        privacy@socialglowz.com
+        privacy@communityglows.com
       </a>
     </p>
   </div>

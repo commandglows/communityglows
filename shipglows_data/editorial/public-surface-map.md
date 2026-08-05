@@ -2,7 +2,7 @@
 artifact: editorial_public_surface_map
 metadata_schema_version: "1.0"
 artifact_version: "0.1.0"
-project: socialglowz
+project: communityglows
 created: "2026-06-11"
 updated: "2026-06-11"
 status: draft
@@ -45,7 +45,7 @@ next_review: "2026-09-11"
 
 ## Product runtime surfaces with public user impact
 
-- `src/ui/setup/pages/SocialGlowz/` (application UX and in-app messaging).
+- `src/ui/setup/pages/CommunityGlows/` (application UX and in-app messaging).
 - `src-tauri/` (desktop package metadata and packaging assets).
 
 ## Content governance triggers

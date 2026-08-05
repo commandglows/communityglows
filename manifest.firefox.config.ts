@@ -6,7 +6,7 @@ export default defineManifest((env) => ({
   ...ManifestConfig,
   browser_specific_settings: {
     gecko: {
-      id: env["FIREFOX_ADDON_ID"] || "socialglowz@local",
+      id: env["FIREFOX_ADDON_ID"] || "communityglows@local",
       data_collection_permissions: {
         required: ["none"],
       },

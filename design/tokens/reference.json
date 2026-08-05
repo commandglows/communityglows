@@ -786,93 +786,93 @@
   "android_mappings": {
     "color": [
       {
-        "name": "socialglowz_window_surface",
+        "name": "communityglows_window_surface",
         "token": "--sg-color-surface-raised"
       },
       {
-        "name": "socialglowz_window_surface_muted",
+        "name": "communityglows_window_surface_muted",
         "token": "--sg-color-surface-muted"
       },
       {
-        "name": "socialglowz_window_surface_hover",
+        "name": "communityglows_window_surface_hover",
         "token": "--sg-color-surface-hover"
       },
       {
-        "name": "socialglowz_window_text",
+        "name": "communityglows_window_text",
         "token": "--sg-color-text"
       },
       {
-        "name": "socialglowz_window_text_muted",
+        "name": "communityglows_window_text_muted",
         "token": "--sg-color-text-muted"
       },
       {
-        "name": "socialglowz_window_border",
+        "name": "communityglows_window_border",
         "token": "--sg-color-border"
       },
       {
-        "name": "socialglowz_window_border_strong",
+        "name": "communityglows_window_border_strong",
         "token": "--sg-color-border-strong"
       },
       {
-        "name": "socialglowz_window_action",
+        "name": "communityglows_window_action",
         "token": "--sg-color-action"
       },
       {
-        "name": "socialglowz_window_action_hover",
+        "name": "communityglows_window_action_hover",
         "token": "--sg-color-action-hover"
       },
       {
-        "name": "socialglowz_window_danger",
+        "name": "communityglows_window_danger",
         "token": "--sg-color-danger"
       },
       {
-        "name": "socialglowz_window_warning",
+        "name": "communityglows_window_warning",
         "token": "--sg-color-warning"
       },
       {
-        "name": "socialglowz_window_info",
+        "name": "communityglows_window_info",
         "token": "--sg-color-info"
       },
       {
-        "name": "socialglowz_window_success",
+        "name": "communityglows_window_success",
         "token": "--sg-color-success"
       }
     ],
     "dimension": [
       {
-        "name": "socialglowz_button_min_height",
+        "name": "communityglows_button_min_height",
         "token": "--sg-button-min-height"
       },
       {
-        "name": "socialglowz_control_height_sm",
+        "name": "communityglows_control_height_sm",
         "token": "--sg-control-height-sm"
       },
       {
-        "name": "socialglowz_control_height_lg",
+        "name": "communityglows_control_height_lg",
         "token": "--sg-control-height-lg"
       },
       {
-        "name": "socialglowz_space_1",
+        "name": "communityglows_space_1",
         "token": "--sg-space-1"
       },
       {
-        "name": "socialglowz_space_2",
+        "name": "communityglows_space_2",
         "token": "--sg-space-2"
       },
       {
-        "name": "socialglowz_space_4",
+        "name": "communityglows_space_4",
         "token": "--sg-space-4"
       },
       {
-        "name": "socialglowz_radius_sm",
+        "name": "communityglows_radius_sm",
         "token": "--sg-radius-sm"
       },
       {
-        "name": "socialglowz_radius_lg",
+        "name": "communityglows_radius_lg",
         "token": "--sg-radius-lg"
       },
       {
-        "name": "socialglowz_spinner_size",
+        "name": "communityglows_spinner_size",
         "token": "--sg-spinner-size"
       }
     ]

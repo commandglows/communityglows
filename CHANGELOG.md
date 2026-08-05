@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- Added a shared desktop/mobile settings panel for SocialGlowz Lifetime Deal and early-bird code activation, backed by the internal processor-agnostic billing entitlement layer.
+- Added a shared desktop/mobile settings panel for CommunityGlows Lifetime Deal and early-bird code activation, backed by the internal processor-agnostic billing entitlement layer.
 - Added an operator import script and runbook for direct Lifetime Deal and early-bird activation-code batches through the suite entitlement bridge.
 - Added local contextual tasks with HTTPS URL capture, notes, tags, priority, due date, status columns, and backup/restore support.
 
@@ -20,7 +20,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Compact mobile network list from wide cards to four-column square tiles with centered labels.
 - Aligned project docs and scripts with the active Chrome, Firefox, Tauri desktop, and mobile targets.
-- Replaced extension scaffold surfaces (popup, side panel, options, install/update/setup) with a SocialGlowz extension control surface and browser-tab launcher.
+- Replaced extension scaffold surfaces (popup, side panel, options, install/update/setup) with a CommunityGlows extension control surface and browser-tab launcher.
 - Enforced strict extension custom-link validation (`https://` only, blocked dangerous schemes, blocked embedded credentials).
 - Removed default global content-script injection and removed devtools surface exposure from baseline manifest.
 - Split side panel behavior by browser: Chrome-only side panel, Firefox fallback without side panel promise.

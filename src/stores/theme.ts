@@ -47,42 +47,42 @@ export const useThemeStore = defineStore('theme', {
       if (typeof window === 'undefined')
         return
 
-      const timeoutId = window.__sfzAutoThemeTimeout
+      const timeoutId = window.__communityglowsAutoThemeTimeout
       if (typeof timeoutId === 'number') {
         window.clearTimeout(timeoutId)
       }
-      window.__sfzAutoThemeTimeout = null
+      window.__communityglowsAutoThemeTimeout = null
 
-      const media = window.__sfzAutoThemeMedia
-      const listener = window.__sfzAutoThemeMediaListener
+      const media = window.__communityglowsAutoThemeMedia
+      const listener = window.__communityglowsAutoThemeMediaListener
       if (media && listener) {
         media.removeEventListener('change', listener)
       }
-      window.__sfzAutoThemeMedia = null
-      window.__sfzAutoThemeMediaListener = null
+      window.__communityglowsAutoThemeMedia = null
+      window.__communityglowsAutoThemeMediaListener = null
 
-      const visibilityListener = window.__sfzAutoThemeVisibilityListener
+      const visibilityListener = window.__communityglowsAutoThemeVisibilityListener
       if (visibilityListener) {
         document.removeEventListener('visibilitychange', visibilityListener)
       }
-      window.__sfzAutoThemeVisibilityListener = null
+      window.__communityglowsAutoThemeVisibilityListener = null
     },
 
     scheduleAutoThemeRefresh(at: number | null) {
       if (typeof window === 'undefined')
         return
 
-      const timeoutId = window.__sfzAutoThemeTimeout
+      const timeoutId = window.__communityglowsAutoThemeTimeout
       if (typeof timeoutId === 'number') {
         window.clearTimeout(timeoutId)
       }
-      window.__sfzAutoThemeTimeout = null
+      window.__communityglowsAutoThemeTimeout = null
 
       if (!at)
         return
 
       const delay = Math.max(60_000, at - Date.now() + 15_000)
-      window.__sfzAutoThemeTimeout = window.setTimeout(() => {
+      window.__communityglowsAutoThemeTimeout = window.setTimeout(() => {
         void this.refreshAutoTheme({ allowPrompt: false })
       }, delay)
     },
@@ -92,33 +92,33 @@ export const useThemeStore = defineStore('theme', {
         return
 
       const media = window.matchMedia('(prefers-color-scheme: dark)')
-      if (!window.__sfzAutoThemeMediaListener) {
-        window.__sfzAutoThemeMediaListener = () => {
+      if (!window.__communityglowsAutoThemeMediaListener) {
+        window.__communityglowsAutoThemeMediaListener = () => {
           if (this.themeMode !== 'auto' || this.autoThemeSource !== 'system')
             return
           void this.refreshAutoTheme({ allowPrompt: false })
         }
       }
 
-      if (window.__sfzAutoThemeMedia !== media) {
-        if (window.__sfzAutoThemeMedia && window.__sfzAutoThemeMediaListener) {
-          window.__sfzAutoThemeMedia.removeEventListener('change', window.__sfzAutoThemeMediaListener)
+      if (window.__communityglowsAutoThemeMedia !== media) {
+        if (window.__communityglowsAutoThemeMedia && window.__communityglowsAutoThemeMediaListener) {
+          window.__communityglowsAutoThemeMedia.removeEventListener('change', window.__communityglowsAutoThemeMediaListener)
         }
-        media.addEventListener('change', window.__sfzAutoThemeMediaListener)
-        window.__sfzAutoThemeMedia = media
+        media.addEventListener('change', window.__communityglowsAutoThemeMediaListener)
+        window.__communityglowsAutoThemeMedia = media
       }
     },
 
     ensureVisibilityListener() {
-      if (typeof document === 'undefined' || window.__sfzAutoThemeVisibilityListener)
+      if (typeof document === 'undefined' || window.__communityglowsAutoThemeVisibilityListener)
         return
 
-      window.__sfzAutoThemeVisibilityListener = () => {
+      window.__communityglowsAutoThemeVisibilityListener = () => {
         if (document.visibilityState !== 'visible' || this.themeMode !== 'auto')
           return
         void this.refreshAutoTheme({ allowPrompt: false })
       }
-      document.addEventListener('visibilitychange', window.__sfzAutoThemeVisibilityListener)
+      document.addEventListener('visibilitychange', window.__communityglowsAutoThemeVisibilityListener)
     },
 
     async refreshAutoTheme(options?: { allowPrompt?: boolean }) {
@@ -210,16 +210,16 @@ export const useThemeStore = defineStore('theme', {
         localStorage.setItem('grayscale', settings.grayscaleEnabled ? '1' : '0')
       }
       if (typeof settings.textZoom === 'number') {
-        localStorage.setItem('sfz_text_zoom', String(settings.textZoom))
+        localStorage.setItem('communityglows_text_zoom', String(settings.textZoom))
       }
       if (typeof settings.hapticEnabled === 'boolean') {
-        localStorage.setItem('sfz_haptic', String(settings.hapticEnabled))
+        localStorage.setItem('communityglows_haptic', String(settings.hapticEnabled))
       }
       if (typeof settings.tapSoundEnabled === 'boolean') {
-        localStorage.setItem('sfz_tap_sound', String(settings.tapSoundEnabled))
+        localStorage.setItem('communityglows_tap_sound', String(settings.tapSoundEnabled))
       }
       if (typeof settings.tapSoundVariant === 'string') {
-        localStorage.setItem('sfz_tap_sound_variant', settings.tapSoundVariant)
+        localStorage.setItem('communityglows_tap_sound_variant', settings.tapSoundVariant)
       }
       this.persistResolvedTheme()
       this.applyTheme()

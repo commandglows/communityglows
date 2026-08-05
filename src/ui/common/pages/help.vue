@@ -7,10 +7,10 @@
       Need assistance? We are here to help! For any issues or questions, you can
       contact our support team at:
       <a
-        href="mailto:support@socialglowz.com"
+        href="mailto:support@communityglows.com"
         class="btn-link"
       >
-        support@socialglowz.com
+        support@communityglows.com
       </a>
     </p>
 

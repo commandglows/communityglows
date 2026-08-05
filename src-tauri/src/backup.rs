@@ -250,7 +250,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .expect("clock before epoch")
             .as_nanos();
-        std::env::temp_dir().join(format!("socialglowz-backup-{name}-{nonce}"))
+        std::env::temp_dir().join(format!("communityglows-backup-{name}-{nonce}"))
     }
 
     fn archive_with_entries(entries: &[(&str, &[u8])]) -> Vec<u8> {

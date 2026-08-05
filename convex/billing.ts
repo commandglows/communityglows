@@ -5,10 +5,10 @@ import { requireAuthUserId } from './authHelpers'
 /**
  * Suite entitlement bridge adapter.
  * - Canonical entitlement state is owned by WinFlowz suite.
- * - Local tables are retained only as migration/cached compatibility surfaces.
+ * - Local tables are retained only as the active CommunityGlows entitlement cache.
  */
 
-const PRODUCT_SOCIALGLOWZ = 'socialglowz'
+const PRODUCT_COMMUNITYGLOWS = 'communityglows'
 const PLAN_FREE = 'free'
 const PLAN_LIFETIME_DEAL = 'lifetime_deal'
 const PLAN_FOUNDER_LTD = 'founder_ltd'
@@ -44,7 +44,7 @@ declare const process: {
 }
 
 function requireAdminSecret(secret: string) {
-  const configured = process.env.SOCIALGLOWZ_BILLING_ADMIN_SECRET
+  const configured = process.env.COMMUNITYGLOWS_BILLING_ADMIN_SECRET
   if (!configured || secret !== configured) {
     throw new Error('Unauthorized billing admin action')
   }
@@ -60,15 +60,15 @@ function getSuiteBridgeUrl(raw: string | undefined): string {
     throw new Error('suite_bridge_not_configured')
   }
 
-  if (normalized.endsWith('/api/bridge/socialglowz')) {
+  if (normalized.endsWith('/api/bridge/communityglows')) {
     return normalized
   }
 
-  return `${normalized}/api/bridge/socialglowz`
+  return `${normalized}/api/bridge/communityglows`
 }
 
 function getSuiteBridgeSecret() {
-  const secret = process.env.SOCIALGLOWZ_SUITE_BRIDGE_SECRET
+  const secret = process.env.COMMUNITYGLOWS_SUITE_BRIDGE_SECRET
   if (!secret) {
     throw new Error('suite_bridge_not_configured')
   }
@@ -89,7 +89,7 @@ function mapBridgeError(message: string) {
   if (/unauthorized|not authenticated|authentication/i.test(message)) {
     return 'unauthorized'
   }
-  if (/not_configured|unavailable|failed|bridge_secret_not_configured|invalid_socialglowz_bridge_secret|bridge_secret_mismatch/i.test(message)) {
+  if (/not_configured|unavailable|failed|bridge_secret_not_configured|invalid_communityglows_bridge_secret|bridge_secret_mismatch/i.test(message)) {
     return 'bridge_not_configured'
   }
   return 'generic'
@@ -99,7 +99,7 @@ function normalizePlan(planId?: string | null) {
   return planId || PLAN_LIFETIME_DEAL
 }
 
-function isAllowedPlanForSocialGlowz(planId: string) {
+function isAllowedPlanForCommunityGlows(planId: string) {
   return planId === PLAN_LIFETIME_DEAL || planId === PLAN_FOUNDER_LTD
 }
 
@@ -125,7 +125,7 @@ type SuiteBridgeArgs = {
 async function callSuiteBridge<T extends Record<string, unknown> = Record<string, unknown>>(
   args: SuiteBridgeArgs,
 ): Promise<BridgeResponseOk<T>> {
-  const suiteBridgeUrl = getSuiteBridgeUrl(process.env.SOCIALGLOWZ_SUITE_BRIDGE_URL)
+  const suiteBridgeUrl = getSuiteBridgeUrl(process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL)
   const suiteBridgeSecret = getSuiteBridgeSecret()
 
   let response: Response
@@ -134,7 +134,7 @@ async function callSuiteBridge<T extends Record<string, unknown> = Record<string
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-socialglowz-suite-secret': suiteBridgeSecret,
+        'x-communityglows-suite-secret': suiteBridgeSecret,
       },
       body: JSON.stringify({
         ...args,
@@ -182,7 +182,7 @@ export const getProductAccess = action({
 
     if (!snapshot.hasAccess) {
       return {
-        productId: PRODUCT_SOCIALGLOWZ,
+        productId: PRODUCT_COMMUNITYGLOWS,
         planId: PLAN_FREE,
         status: 'free' as const,
         source: 'default' as const,
@@ -193,7 +193,7 @@ export const getProductAccess = action({
     }
 
     return {
-      productId: PRODUCT_SOCIALGLOWZ,
+      productId: PRODUCT_COMMUNITYGLOWS,
       planId: snapshot.planId ?? PLAN_FREE,
       status: 'active' as const,
       source: snapshot.source ?? 'manual',
@@ -229,7 +229,7 @@ export const redeemCode = action({
     }
 
     return {
-      productId: PRODUCT_SOCIALGLOWZ,
+      productId: PRODUCT_COMMUNITYGLOWS,
       planId: redemption.planId ?? PLAN_FREE,
       status: redemption.hasAccess ? ('active' as const) : ('free' as const),
       source: redemption.source ?? 'manual',
@@ -267,10 +267,10 @@ export const adminUpsertRedemptionCode = action({
     if (!code) {
       throw new Error('code_required')
     }
-    if (args.productId && args.productId !== PRODUCT_SOCIALGLOWZ) {
+    if (args.productId && args.productId !== PRODUCT_COMMUNITYGLOWS) {
       throw new Error('product_not_allowed')
     }
-    if (args.planId && !isAllowedPlanForSocialGlowz(normalizePlan(args.planId))) {
+    if (args.planId && !isAllowedPlanForCommunityGlows(normalizePlan(args.planId))) {
       throw new Error('plan_not_allowed')
     }
 
@@ -292,7 +292,7 @@ export const adminUpsertRedemptionCode = action({
   },
 })
 
-export const adminManualGrantSocialGlowzAccess = action({
+export const adminManualGrantCommunityGlowsAccess = action({
   args: {
     adminSecret: v.string(),
     providerAccountId: v.string(),
@@ -311,7 +311,7 @@ export const adminManualGrantSocialGlowzAccess = action({
   handler: async (_ctx, args) => {
     requireAdminSecret(args.adminSecret)
     const planId = normalizePlan(args.planId)
-    if (!isAllowedPlanForSocialGlowz(planId)) {
+    if (!isAllowedPlanForCommunityGlows(planId)) {
       throw new Error('plan_not_allowed')
     }
 
@@ -333,7 +333,7 @@ export const adminManualGrantSocialGlowzAccess = action({
   },
 })
 
-export const adminRevokeSocialGlowzAccess = action({
+export const adminRevokeCommunityGlowsAccess = action({
   args: {
     adminSecret: v.string(),
     providerAccountId: v.string(),
@@ -359,7 +359,7 @@ export const adminRevokeSocialGlowzAccess = action({
   },
 })
 
-export const adminRefundSocialGlowzAccess = action({
+export const adminRefundCommunityGlowsAccess = action({
   args: {
     adminSecret: v.string(),
     providerAccountId: v.string(),

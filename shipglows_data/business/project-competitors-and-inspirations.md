@@ -2,7 +2,7 @@
 artifact: competitive_intelligence
 metadata_schema_version: "1.0"
 artifact_version: "1.2.1"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-11"
 updated: "2026-08-03"
 status: reviewed
@@ -15,7 +15,7 @@ security_impact: none
 docs_impact: yes
 evidence:
   - "Initial competitor and inspiration triage captured in legacy root concurrent.md."
-  - "SocialGlowz product context describes a multi-platform social operations dashboard."
+  - "CommunityGlows product context describes a multi-platform social operations dashboard."
   - "AlternativeTo competitor pages reviewed on 2026-08-03."
   - "Official Rambox, Ferdium, Franz, Wavebox, Freeter, WebCatalog, Biscuit and Shift product sources reviewed on 2026-08-03."
 depends_on:
@@ -28,9 +28,9 @@ depends_on:
 supersedes:
   - "concurrent.md"
 next_review: "2026-11-03"
-next_step: "/009-sg-marketing market approfondir le positionnement SocialGlowz face aux conteneurs de web apps et réseaux multi-comptes"
+next_step: "/009-sg-marketing market approfondir le positionnement CommunityGlows face aux conteneurs de web apps et réseaux multi-comptes"
 target_projects:
-  - socialglowz
+  - communityglows
 reference_categories:
   - direct_competitor
   - indirect_competitor
@@ -39,11 +39,11 @@ reference_categories:
 source_policy: "Track public sources only; do not copy private positioning, paid assets, credentials, or non-public customer data."
 ---
 
-# Concurrents et inspirations — SocialGlowz
+# Concurrents et inspirations — CommunityGlows
 
 ## Lecture projet
 
-SocialGlowz est un dashboard social multi-plateforme. Les liens utiles concernent multi-comptes, social content, analytics, relations et intégrations.
+CommunityGlows est un dashboard social multi-plateforme. Les liens utiles concernent multi-comptes, social content, analytics, relations et intégrations.
 
 ## Concurrents directs actifs
 
@@ -68,22 +68,22 @@ SocialGlowz est un dashboard social multi-plateforme. Les liens utiles concernen
 
 | Produit | Statut | Score | Pourquoi elle est proche | Patterns à reprendre |
 |---|---:|:---:|---|---|
-| [Station](https://alternativeto.net/software/station/about/) | Inspiration majeure — produit abandonné | 9/10 | Son smart browser réunissait les web apps complètes dans un dock, avec multi-compte, navigation par application et réduction du changement de contexte : une logique très proche de SocialGlowz. | Dock persistant, regroupement automatique des pages par réseau, recherche et changement rapide, notifications réglables par app, mode focus et mise en veille des services inactifs. |
+| [Station](https://alternativeto.net/software/station/about/) | Inspiration majeure — produit abandonné | 9/10 | Son smart browser réunissait les web apps complètes dans un dock, avec multi-compte, navigation par application et réduction du changement de contexte : une logique très proche de CommunityGlows. | Dock persistant, regroupement automatique des pages par réseau, recherche et changement rapide, notifications réglables par app, mode focus et mise en veille des services inactifs. |
 
 ## Suggestions étudiées mais hors concurrence directe
 
 | Produit | Classement retenu | Pourquoi il est écarté |
 |---|---|---|
-| [Beeper](https://www.beeper.com/) | Substitut de messagerie unifiée | Beeper rassemble les conversations dans une inbox et ne donne pas accès aux interfaces complètes des réseaux sociaux. Il concurrence une éventuelle fonction de messagerie de SocialGlowz, pas le produit actuel dans son ensemble. |
+| [Beeper](https://www.beeper.com/) | Substitut de messagerie unifiée | Beeper rassemble les conversations dans une inbox et ne donne pas accès aux interfaces complètes des réseaux sociaux. Il concurrence une éventuelle fonction de messagerie de CommunityGlows, pas le produit actuel dans son ensemble. |
 | [IM+](https://plus.im/) ([AlternativeTo](https://alternativeto.net/software/im/about/)) | Agrégateur de messages historique | Même limite que Beeper : couverture de protocoles et conversations, sans shell général pour utiliser les réseaux eux-mêmes. |
 
 ## Lecture stratégique 2026
 
-- Le noyau concurrentiel n'est pas seulement le social media management classique : SocialGlowz affronte surtout les workspaces qui exécutent les interfaces web complètes avec plusieurs sessions ou comptes.
+- Le noyau concurrentiel n'est pas seulement le social media management classique : CommunityGlows affronte surtout les workspaces qui exécutent les interfaces web complètes avec plusieurs sessions ou comptes.
 - La différenciation à défendre est la combinaison `réseaux sociaux + profils isolés + extension navigateur + desktop + mobile`, plutôt qu'un simple regroupement de messageries desktop.
 - Rambox, Ferdium, WebCatalog et Franz sont les benchmarks prioritaires du shell multi-services. Wavebox, Biscuit, Shift et Freeter sont particulièrement utiles pour l'isolation, les workspaces et le multi-compte.
 - Station est une inspiration produit prioritaire malgré son abandon : sa proximité fonctionnelle en fait une bonne source de patterns UX, sans la compter parmi les concurrents actifs.
-- Beeper et IM+ ne doivent entrer dans une comparaison produit que si SocialGlowz développe une inbox de messages unifiée.
+- Beeper et IM+ ne doivent entrer dans une comparaison produit que si CommunityGlows développe une inbox de messages unifiée.
 - Station doit rester clairement marqué comme abandonné. WMail doit être référencé sous son nom actuel Wavebox pour éviter une fausse entrée concurrente distincte.
 - Les avis communautaires et fiches AlternativeTo sont des signaux de positionnement et d'objections, pas des preuves de performance, de sécurité ou de satisfaction globale.
 
@@ -91,7 +91,7 @@ SocialGlowz est un dashboard social multi-plateforme. Les liens utiles concernen
 
 | Lien | Type | Score | Usage concret |
 |---|---:|:---:|---|
-| [BundleUp](https://betalist.com/startups/bundleup) | Inspiration architecture | 8/10 | API unifiée multi-intégrations: proche du besoin SocialGlowz pour réseaux, Gmail, storage, analytics. |
+| [BundleUp](https://betalist.com/startups/bundleup) | Inspiration architecture | 8/10 | API unifiée multi-intégrations: proche du besoin CommunityGlows pour réseaux, Gmail, storage, analytics. |
 | [TonimusAI](https://betalist.com/startups/tonimusai) | Concurrent indirect | 7/10 | Creator analytics/revenue: benchmark pour vues performance et priorisation des contenus. |
 | [Igloo](https://betalist.com/startups/igloo-2) | Inspiration contenu social | 7/10 | Génération de reels: utile pour workflow de publication/social content. |
 | [Photo Poodle](https://betalist.com/startups/photo-poodle) | Inspiration UGC | 6/10 | Capture photo événementielle par QR: pattern intéressant pour campagnes sociales. |

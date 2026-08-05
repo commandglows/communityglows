@@ -2,7 +2,7 @@
 artifact: development_guidelines
 metadata_schema_version: "1.0"
 artifact_version: "1.1.0"
-project: socialglowz
+project: communityglows
 created: "2026-04-26"
 status: reviewed
 source_skill: 300-sg-docs
@@ -21,8 +21,8 @@ evidence:
   - "vite.firefox.config.ts"
   - "vite.web.config.ts"
   - "vite.tauri.config.ts"
-  - "src/ui/setup/pages/SocialGlowz/assets/main.css"
-  - "src/ui/setup/pages/SocialGlowz/components/ui/"
+  - "src/ui/setup/pages/CommunityGlows/assets/main.css"
+  - "src/ui/setup/pages/CommunityGlows/components/ui/"
   - "shipglows_data/technical/design-system-authority.md"
 supersedes: []
 next_step: "/300-sg-docs audit shipglows_data/technical/README.md"
@@ -33,7 +33,7 @@ next_step: "/300-sg-docs audit shipglows_data/technical/README.md"
 ## Technical standards
 
 - Use existing stack conventions:
-  - Windows/Tauri: Vue 3, TypeScript, Pinia, Reka UI, SocialGlowz wrappers/tokens and Notivue
+  - Windows/Tauri: Vue 3, TypeScript, Pinia, Reka UI, CommunityGlows wrappers/tokens and Notivue
   - Legacy extension surfaces: preserve existing PrimeVue/PrimeFlex/PrimeIcons consumers until a separately validated migration removes them
   - Site and historical web surfaces: Tailwind/DaisyUI only where already established; do not introduce them as a second Windows visual authority
   - Convex for persistence and auth

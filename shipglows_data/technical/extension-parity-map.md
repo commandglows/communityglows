@@ -2,7 +2,7 @@
 artifact: documentation
 metadata_schema_version: "1.0"
 artifact_version: "1.0.0"
-project: "socialglowz"
+project: "communityglows"
 created: "2026-05-25"
 updated: "2026-05-25"
 status: active
@@ -27,7 +27,7 @@ linked_systems:
   - "src/ui/options-page/pages/index.vue"
   - "src/ui/setup/pages/install.vue"
   - "src/ui/setup/pages/update.vue"
-  - "src/ui/setup/pages/SocialGlowz.vue"
+  - "src/ui/setup/pages/CommunityGlows.vue"
   - "src/content-script/index.ts"
   - "src/devtools/index.ts"
   - "src/offscreen/index.ts"

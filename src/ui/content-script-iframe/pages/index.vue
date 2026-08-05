@@ -1,6 +1,6 @@
 <template>
   <div class="ext-page-note">
-    SocialGlowz overlay is disabled by default in extension mode.
+    CommunityGlows overlay is disabled by default in extension mode.
   </div>
 </template>
 

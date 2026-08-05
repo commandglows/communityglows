@@ -382,37 +382,37 @@ Cette liste est une mémoire de naming, pas une recommandation SEO ni une valida
 
 ### Publiables à partir du produit actuel
 
-🟠 [socialglowz] task: Comment gérer plusieurs comptes de réseaux sociaux sans multiplier les connexions ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: gestion-multi-comptes | claim: current-product-proof-required
+🟠 [communityglows] task: Comment gérer plusieurs comptes de réseaux sociaux sans multiplier les connexions ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: gestion-multi-comptes | claim: current-product-proof-required
 
-🟠 [socialglowz] task: Pourquoi utiliser un espace de travail social plutôt que dix onglets de navigateur ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: problem-aware | cluster: social-media-workspace | claim: current-product-proof-required
+🟠 [communityglows] task: Pourquoi utiliser un espace de travail social plutôt que dix onglets de navigateur ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: problem-aware | cluster: social-media-workspace | claim: current-product-proof-required
 
-🟠 [socialglowz] task: Gérer plusieurs profils sur un même réseau social sans mélanger les sessions | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: profils-sessions-isolees | claim: security-review-required
+🟠 [communityglows] task: Gérer plusieurs profils sur un même réseau social sans mélanger les sessions | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: profils-sessions-isolees | claim: security-review-required
 
-🟠 [socialglowz] task: Gestionnaire de réseaux sociaux desktop, mobile ou extension : que choisir ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: comparatif | cluster: gestion-multiplateforme | claim: platform-matrix-review-required
+🟠 [communityglows] task: Gestionnaire de réseaux sociaux desktop, mobile ou extension : que choisir ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: comparatif | cluster: gestion-multiplateforme | claim: platform-matrix-review-required
 
-🟠 [socialglowz] task: Comment réduire les changements de contexte quand on gère plusieurs réseaux sociaux | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel | cluster: productivite-sociale | claim: avoid-unproven-time-savings
+🟠 [communityglows] task: Comment réduire les changements de contexte quand on gère plusieurs réseaux sociaux | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel | cluster: productivite-sociale | claim: avoid-unproven-time-savings
 
-🟠 [socialglowz] task: Rambox, Station, Freeter ou WebCatalog : quelle approche pour un workspace social spécialisé ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: comparatif | cluster: alternatives-workspace | claim: competitor-research-required
+🟠 [communityglows] task: Rambox, Station, Freeter ou WebCatalog : quelle approche pour un workspace social spécialisé ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: comparatif | cluster: alternatives-workspace | claim: competitor-research-required
 
-🟠 [socialglowz] task: Community management et social media management : quelles différences ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: definitionnel | cluster: community-management | claim: low
+🟠 [communityglows] task: Community management et social media management : quelles différences ? | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: definitionnel | cluster: community-management | claim: low
 
-🟠 [socialglowz] task: Réseau social, communauté et réseau professionnel : trois notions à ne pas confondre | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: definitionnel | cluster: network-community | claim: low
+🟠 [communityglows] task: Réseau social, communauté et réseau professionnel : trois notions à ne pas confondre | status: todo | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: definitionnel | cluster: network-community | claim: low
 
 ### À publier après livraison des fonctionnalités concernées
 
-🟡 [socialglowz] task: Construire un cockpit éditorial multicanal qui reste propriétaire à l’utilisateur | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: cockpit-editorial | blocked_by: product-roadmap-proof
+🟡 [communityglows] task: Construire un cockpit éditorial multicanal qui reste propriétaire à l’utilisateur | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: cockpit-editorial | blocked_by: product-roadmap-proof
 
-🟡 [socialglowz] task: Comment adapter un même brouillon à LinkedIn, Instagram, Bluesky, Mastodon et X | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: tutorial | cluster: variantes-multicanales | blocked_by: editorial-cockpit-shipped
+🟡 [communityglows] task: Comment adapter un même brouillon à LinkedIn, Instagram, Bluesky, Mastodon et X | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: tutorial | cluster: variantes-multicanales | blocked_by: editorial-cockpit-shipped
 
-🟡 [socialglowz] task: Calendrier éditorial indépendant des API : pourquoi garder la maîtrise de ses données ? | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: owned-editorial-data | blocked_by: editorial-calendar-shipped
+🟡 [communityglows] task: Calendrier éditorial indépendant des API : pourquoi garder la maîtrise de ses données ? | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: owned-editorial-data | blocked_by: editorial-calendar-shipped
 
-🟡 [socialglowz] task: Pourquoi commencer ses connecteurs sociaux par Bluesky, Mastodon et Discord ? | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: technical-product | cluster: progressive-api-connectors | blocked_by: connector-validation-and-release
+🟡 [communityglows] task: Pourquoi commencer ses connecteurs sociaux par Bluesky, Mastodon et Discord ? | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: technical-product | cluster: progressive-api-connectors | blocked_by: connector-validation-and-release
 
-🟡 [socialglowz] task: Comment organiser plusieurs marques et clients dans un seul workspace social | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: commercial | cluster: multi-brand-workspaces | blocked_by: brand-client-workspaces-shipped
+🟡 [communityglows] task: Comment organiser plusieurs marques et clients dans un seul workspace social | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: commercial | cluster: multi-brand-workspaces | blocked_by: brand-client-workspaces-shipped
 
-🟡 [socialglowz] task: Mode focus, notifications et hibernation : reprendre le contrôle de son espace social | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: focus-notifications-hibernation | blocked_by: focus-and-hibernation-shipped
+🟡 [communityglows] task: Mode focus, notifications et hibernation : reprendre le contrôle de son espace social | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: informationnel-commercial | cluster: focus-notifications-hibernation | blocked_by: focus-and-hibernation-shipped
 
-🟡 [socialglowz] task: Du social workspace au Social OS : comment centraliser sans enfermer l’utilisateur | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: social-os | blocked_by: product-positioning-and-roadmap-proof
+🟡 [communityglows] task: Du social workspace au Social OS : comment centraliser sans enfermer l’utilisateur | status: blocked | area: seo-editorial | surface: blog | source: conversation-naming-2026-08-03 | intent: thought-leadership | cluster: social-os | blocked_by: product-positioning-and-roadmap-proof
 
 ## Architecture SEO suggérée
 
