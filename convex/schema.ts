@@ -50,6 +50,14 @@ export default defineSchema({
     activeProfileId: v.optional(v.string()),
     onboardingCompleted: v.optional(v.boolean()),
     friendsFilterEnabled: v.optional(v.boolean()),
+    keyboardShortcuts: v.optional(v.array(v.object({
+      id: v.string(),
+      action: v.string(),
+      label: v.string(),
+      keys: v.string(),
+      enabled: v.boolean(),
+      target: v.optional(v.string()),
+    }))),
   }).index("by_userId", ["userId"]),
 
   profiles: defineTable({

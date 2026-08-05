@@ -24,6 +24,14 @@ export const upsert = mutation({
     hapticEnabled: v.optional(v.boolean()),
     tapSoundEnabled: v.optional(v.boolean()),
     tapSoundVariant: v.optional(v.union(v.literal("classic"), v.literal("soft"), v.literal("pop"))),
+    keyboardShortcuts: v.optional(v.array(v.object({
+      id: v.string(),
+      action: v.string(),
+      label: v.string(),
+      keys: v.string(),
+      enabled: v.boolean(),
+      target: v.optional(v.string()),
+    }))),
     activeProfileId: v.optional(v.string()),
     onboardingCompleted: v.optional(v.boolean()),
     friendsFilterEnabled: v.optional(v.boolean()),
@@ -45,6 +53,14 @@ export const upsert = mutation({
       hapticEnabled?: boolean;
       tapSoundEnabled?: boolean;
       tapSoundVariant?: "classic" | "soft" | "pop";
+      keyboardShortcuts?: {
+        id: string;
+        action: string;
+        label: string;
+        keys: string;
+        enabled: boolean;
+        target?: string;
+      }[];
       activeProfileId?: string;
       onboardingCompleted?: boolean;
       friendsFilterEnabled?: boolean;
@@ -75,6 +91,9 @@ export const upsert = mutation({
     }
     if (args.tapSoundVariant !== undefined) {
       patch.tapSoundVariant = args.tapSoundVariant;
+    }
+    if (args.keyboardShortcuts !== undefined) {
+      patch.keyboardShortcuts = args.keyboardShortcuts;
     }
     if (args.activeProfileId !== undefined) {
       const activeProfileId = args.activeProfileId;
@@ -110,6 +129,7 @@ export const upsert = mutation({
         hapticEnabled: args.hapticEnabled,
         tapSoundEnabled: args.tapSoundEnabled,
         tapSoundVariant: args.tapSoundVariant,
+        keyboardShortcuts: args.keyboardShortcuts,
         activeProfileId: args.activeProfileId,
         onboardingCompleted: args.onboardingCompleted,
         friendsFilterEnabled: args.friendsFilterEnabled,

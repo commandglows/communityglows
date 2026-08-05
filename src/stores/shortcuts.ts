@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
+import { syncSettingsPatch } from '@/lib/cloudSettings'
 
 export type CoreShortcutAction =
   | 'toggle-left-sidebar'
@@ -68,6 +69,63 @@ function parseShortcutEntry(entry: unknown): Partial<AppShortcut> {
   }
 }
 
+function normalizeShortcutList(raw: unknown): AppShortcut[] {
+  if (!Array.isArray(raw)) return structuredClone(defaults)
+
+  const loaded = raw.map(parseShortcutEntry).filter(entry => entry.id)
+  const normalized: AppShortcut[] = defaults.map((fallback) => {
+    const item = loaded.find((entry: Partial<AppShortcut>) => entry.id === fallback.id) ?? {}
+    return {
+      ...fallback,
+      ...item,
+      enabled: parseBoolean(item.enabled, fallback.enabled),
+    }
+  })
+
+  for (const entry of loaded) {
+    if (defaults.some((fallback) => fallback.id === entry.id)) continue
+    if (!entry.id || typeof entry.id !== 'string') continue
+
+    const hasTarget = typeof entry.target === 'string' && entry.target.length > 0
+    if (entry.action === 'open-network' && hasTarget) {
+      normalized.push({
+        id: entry.id,
+        action: 'open-network',
+        label: entry.label || `Ouvrir ${entry.target}`,
+        keys: typeof entry.keys === 'string' ? entry.keys : '',
+        enabled: parseBoolean(entry.enabled, false),
+        target: entry.target!,
+      })
+      continue
+    }
+
+    if (entry.action === 'open-rightpanel-section' && hasTarget) {
+      normalized.push({
+        id: entry.id,
+        action: 'open-rightpanel-section',
+        label: entry.label || entry.id,
+        keys: typeof entry.keys === 'string' ? entry.keys : '',
+        enabled: parseBoolean(entry.enabled, false),
+        target: entry.target,
+      })
+      continue
+    }
+
+    if (entry.label) {
+      normalized.push({
+        id: entry.id,
+        action: normalizeShortcutAction(entry.action),
+        label: entry.label || entry.id!,
+        keys: typeof entry.keys === 'string' ? entry.keys : '',
+        enabled: parseBoolean(entry.enabled, false),
+        target: entry.target,
+      })
+    }
+  }
+
+  return normalized
+}
+
 function toNetworkShortcutId(networkId: string): string {
   return `${NETWORK_SHORTCUT_PREFIX}${networkId}`
 }
@@ -91,58 +149,10 @@ function parseBoolean(value: unknown, fallback: boolean): boolean {
 
 function loadShortcuts(): AppShortcut[] {
   try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
-    if (!Array.isArray(parsed)) return structuredClone(defaults)
-    const loaded = parsed.map(parseShortcutEntry).filter(entry => entry.id)
-    const normalized: AppShortcut[] = defaults.map((fallback) => {
-      const item = loaded.find((entry: Partial<AppShortcut>) => entry.id === fallback.id) ?? {}
-      return {
-        ...fallback,
-        ...item,
-        enabled: parseBoolean(item.enabled, fallback.enabled),
-      }
-    })
-
-    for (const entry of loaded) {
-      if (defaults.some((fallback) => fallback.id === entry.id)) continue
-      if (!entry.id || typeof entry.id !== 'string') continue
-      const hasTarget = typeof entry.target === 'string' && entry.target.length > 0
-      const isNetwork = entry.action === 'open-network' && hasTarget
-      if (entry.action === 'open-network' && hasTarget) {
-        normalized.push({
-          id: entry.id,
-          action: 'open-network',
-          label: entry.label || `Ouvrir ${entry.target}`,
-          keys: typeof entry.keys === 'string' ? entry.keys : '',
-          enabled: parseBoolean(entry.enabled, false),
-          target: entry.target!,
-        })
-      }
-      const isRightPanelSection = entry.action === 'open-rightpanel-section'
-      if (!isNetwork && isRightPanelSection && entry.target) {
-        normalized.push({
-          id: entry.id,
-          action: 'open-rightpanel-section',
-          label: entry.label || entry.id,
-          keys: typeof entry.keys === 'string' ? entry.keys : '',
-          enabled: parseBoolean(entry.enabled, false),
-          target: entry.target,
-        })
-        continue
-      }
-      if (!isNetwork && entry.id && entry.label) {
-        normalized.push({
-          id: entry.id,
-          action: normalizeShortcutAction(entry.action),
-          label: entry.label || entry.id!,
-          keys: typeof entry.keys === 'string' ? entry.keys : '',
-          enabled: parseBoolean(entry.enabled, false),
-          target: entry.target,
-        })
-      }
-    }
-
-    return normalized
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (!stored) return structuredClone(defaults)
+    const parsed = JSON.parse(stored)
+    return normalizeShortcutList(parsed)
   } catch {
     return structuredClone(defaults)
   }
@@ -154,6 +164,11 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
 
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(shortcuts.value))
+  }
+
+  function syncShortcutSettings() {
+    const snapshot = structuredClone(toRaw(shortcuts.value))
+    void syncSettingsPatch({ keyboardShortcuts: snapshot })
   }
 
   function keyForNetwork(networkId: string): string {
@@ -176,6 +191,7 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
     if (index < 0) return false
     shortcuts.value[index] = { ...shortcuts.value[index], keys }
     persist()
+    syncShortcutSettings()
     return true
   }
 
@@ -184,6 +200,7 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
       shortcut.id === id ? { ...shortcut, enabled: parseBoolean(enabled, false) } : shortcut
     ))
     persist()
+    syncShortcutSettings()
   }
 
   function ensureNetworkShortcut(networkId: string, label: string): AppShortcut {
@@ -240,6 +257,16 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
   function reset() {
     shortcuts.value = structuredClone(defaults)
     persist()
+    syncShortcutSettings()
+  }
+
+  function setFromCloud(payload: unknown) {
+    shortcuts.value = normalizeShortcutList(payload)
+    persist()
+  }
+
+  function serializeForSync(): AppShortcut[] {
+    return structuredClone(toRaw(shortcuts.value))
   }
 
   return {
@@ -254,6 +281,8 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
     hasKeysConflict,
     findById,
     reset,
+    setFromCloud,
+    serializeForSync,
   }
 })
 

@@ -13,7 +13,9 @@ import { useCustomLinksStore } from "@/stores/customLinks";
 import { useFriendsFilterStore } from "@/stores/friendsFilter";
 import { useThemeStore } from "@/stores/theme";
 import { useOnboardingStore } from "@/stores/onboarding";
+import { useShortcutsStore } from "@/stores/shortcuts";
 import { setLocale } from "@/utils/i18n";
+import type { AppShortcut } from "@/stores/shortcuts";
 import {
   advancePostAuthSyncStage,
   beginPostAuthSyncFeedback,
@@ -52,6 +54,7 @@ type CloudSettings = Pick<
   | "activeProfileId"
   | "onboardingCompleted"
   | "friendsFilterEnabled"
+  | "keyboardShortcuts"
 >;
 
 type CloudProfile = {
@@ -201,6 +204,12 @@ export function asCloudSettings(value: unknown): CloudSettings | null {
   if (typeof value.tapSoundEnabled === "boolean") settings.tapSoundEnabled = value.tapSoundEnabled;
   if (isTapSoundVariant(value.tapSoundVariant)) settings.tapSoundVariant = value.tapSoundVariant;
   if (isEntityId(value.activeProfileId)) settings.activeProfileId = value.activeProfileId;
+  if (Object.prototype.hasOwnProperty.call(value, "keyboardShortcuts")) {
+    const keyboardShortcuts = value.keyboardShortcuts;
+    if (Array.isArray(keyboardShortcuts)) {
+      settings.keyboardShortcuts = keyboardShortcuts as AppShortcut[];
+    }
+  }
   if (typeof value.onboardingCompleted === "boolean") {
     settings.onboardingCompleted = value.onboardingCompleted;
   }
@@ -400,6 +409,7 @@ function applyCloudSettings(settings: CloudSettings | null) {
   const profilesStore = useProfilesStore();
   const friendsStore = useFriendsFilterStore();
   const onboardingStore = useOnboardingStore();
+  const shortcutsStore = useShortcutsStore();
 
   if (!settings) return false;
 
@@ -411,6 +421,10 @@ function applyCloudSettings(settings: CloudSettings | null) {
 
   if (typeof settings.activeProfileId === "string") {
     profilesStore.activeProfileId = settings.activeProfileId;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(settings, "keyboardShortcuts")) {
+    shortcutsStore.setFromCloud(settings.keyboardShortcuts);
   }
 
   if (typeof settings.friendsFilterEnabled === "boolean") {
@@ -446,6 +460,7 @@ function clearCloudBackedLocalState() {
   localStorage.removeItem("sfz_tap_sound");
   localStorage.removeItem("sfz_tap_sound_variant");
   localStorage.removeItem("sfz_text_zoom");
+  localStorage.removeItem("sfz_keyboard_shortcuts");
   clearCloudSyncQueue();
 }
 
@@ -473,6 +488,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
   const accountsStore = useAccountsStore();
   const themeStore = useThemeStore();
   const onboardingStore = useOnboardingStore();
+  const shortcutsStore = useShortcutsStore();
 
   if (!snapshot.settings) {
     await syncSettingsPatch({
@@ -484,6 +500,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       tapSoundEnabled: localStorage.getItem("sfz_tap_sound") === "true",
       tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("sfz_tap_sound_variant")),
       activeProfileId: profilesStore.activeProfileId || undefined,
+      keyboardShortcuts: shortcutsStore.serializeForSync(),
       onboardingCompleted: onboardingStore.completed,
       friendsFilterEnabled: friendsStore.enabled,
     });

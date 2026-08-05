@@ -1,4 +1,5 @@
 import { enqueueSettingsPatch, flushCloudSyncQueue } from "@/lib/cloudSyncQueue";
+import type { AppShortcut } from "@/stores/shortcuts";
 import type { ThemeMode } from "@/utils/themeAuto";
 
 export interface CloudSettingsPatch {
@@ -10,6 +11,7 @@ export interface CloudSettingsPatch {
   hapticEnabled?: boolean;
   tapSoundEnabled?: boolean;
   tapSoundVariant?: "classic" | "soft" | "pop";
+  keyboardShortcuts?: AppShortcut[];
   activeProfileId?: string;
   onboardingCompleted?: boolean;
   friendsFilterEnabled?: boolean;
