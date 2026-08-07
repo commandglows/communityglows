@@ -664,8 +664,13 @@ const hiddenFingerprint = computed(() => {
 watch(
   hiddenFingerprint,
   async () => {
-    if (!isTauri) return
+    const activeNetworkId = webviewStore.activeNetworkId
     const profileId = profilesStore.activeProfileId
+    if (profileId && activeNetworkId && profilesStore.isNetworkHidden(profileId, activeNetworkId)) {
+      webviewStore.clearNetwork()
+    }
+
+    if (!isTauri) return
     if (!profileId) return
     const visibleIds = Object.keys(WEBVIEW_URLS)
       .filter(id => !profilesStore.isNetworkHidden(profileId, id))

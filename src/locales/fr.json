@@ -213,7 +213,9 @@
     "url_placeholder": "URL (ex: example.com)"
   },
   "networks": {
-    "edit_mode_hint": "Appuyez à l'extérieur pour terminer"
+    "edit_mode_hint": "Appuyez sur un réseau pour l’afficher ou le masquer pour ce profil, puis choisissez Terminer.",
+    "start_editing": "Modifier",
+    "finish_editing": "Terminer"
   },
   "notif": {
     "mark_all_read": "Tout lire",

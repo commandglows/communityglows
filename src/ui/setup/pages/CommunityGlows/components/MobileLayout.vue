@@ -98,7 +98,18 @@
         class="networks-section"
         @click.self="exitEditMode"
       >
-        <p class="section-title">{{ $t('sidebar.networks_section') }}</p>
+        <div class="networks-section-header">
+          <p class="section-title">{{ $t('sidebar.networks_section') }}</p>
+          <button
+            v-if="networkEditMode"
+            class="network-edit-complete"
+            type="button"
+            @click="exitEditMode"
+          >
+            <SgIcon icon="pi pi-check" />
+            {{ $t('networks.finish_editing') }}
+          </button>
+        </div>
         <div class="network-grid">
           <button
             v-for="item in visibleMenuItems"
@@ -106,9 +117,10 @@
             class="network-tile"
             :class="{ active: isNetworkActive(item), 'edit-mode': networkEditMode }"
             :style="{ background: tileBg(item) }"
-            @click="networkEditMode ? handleEditClick(item) : navigateToNetwork(item)"
+            @click="onNetworkTileClick(item)"
             @touchstart="startLongPress(item)"
             @touchend="cancelLongPress"
+            @touchcancel="cancelLongPress"
             @touchmove="cancelLongPress"
             @contextmenu.prevent
           >
@@ -336,11 +348,14 @@ const notificationCount = ref(3)
 // ─── Network edit mode (long press to show/hide networks) ────
 const networkEditMode = ref(false)
 let longPressTimer: ReturnType<typeof setTimeout> | null = null
+let suppressNextNetworkClick = false
 
 function startLongPress(_item: MenuItem) {
   cancelLongPress()
+  suppressNextNetworkClick = false
   longPressTimer = setTimeout(() => {
     networkEditMode.value = true
+    suppressNextNetworkClick = true
     longPressTimer = null
   }, 500)
 }
@@ -353,7 +368,21 @@ function cancelLongPress() {
 }
 
 function exitEditMode() {
+  cancelLongPress()
+  suppressNextNetworkClick = false
   networkEditMode.value = false
+}
+
+function onNetworkTileClick(item: MenuItem) {
+  if (suppressNextNetworkClick) {
+    suppressNextNetworkClick = false
+    return
+  }
+  if (networkEditMode.value) {
+    handleEditClick(item)
+    return
+  }
+  navigateToNetwork(item)
 }
 
 const networkIdFromItem = (item: MenuItem) => item.route.slice(1)
@@ -923,6 +952,13 @@ const navigateToNetwork = (network: MenuItem) => {
   padding: 0 var(--sg-space-0d75rem) var(--sg-space-2);
 }
 
+.networks-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sg-space-2);
+}
+
 .section-title {
   margin: var(--sg-space-0d25rem) 0 var(--sg-space-2) var(--sg-space-0d25rem);
   font-size: var(--sg-font-size-0d72rem);
@@ -930,6 +966,27 @@ const navigateToNetwork = (network: MenuItem) => {
   letter-spacing: var(--sg-letter-spacing-0d06em);
   text-transform: uppercase;
   color: var(--sg-color-text-muted);
+}
+
+.network-edit-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-1);
+  margin-bottom: var(--sg-space-2);
+  padding: var(--sg-space-0d4rem) var(--sg-space-0d75rem);
+  border: var(--sg-border-1px) solid var(--sg-color-action);
+  border-radius: var(--sg-radius-8px);
+  background: var(--sg-color-action);
+  color: var(--sg-color-text-on-action);
+  font: inherit;
+  font-size: var(--sg-font-size-0d72rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.network-edit-complete:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
 }
 
 .network-grid {

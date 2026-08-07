@@ -213,7 +213,9 @@
     "url_placeholder": "URL (e.g. example.com)"
   },
   "networks": {
-    "edit_mode_hint": "Tap outside to finish"
+    "edit_mode_hint": "Tap a network to show or hide it for this profile, then select Done.",
+    "start_editing": "Edit",
+    "finish_editing": "Done"
   },
   "notif": {
     "mark_all_read": "Mark all read",

@@ -38,21 +38,33 @@
             <div class="sidebar-scrollable-content">
               <!-- Réseaux sociaux -->
               <div class="menu-section">
-                <div
-                  v-if="!iconsOnly"
-                  class="section-header"
-                >
-                  <h3>{{ $t('sidebar.networks_section') }}</h3>
+                <div class="section-header">
+                  <h3 v-if="!iconsOnly">{{ $t('sidebar.networks_section') }}</h3>
+                  <Button
+                    v-sg-tooltip.right="networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing')"
+                    :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
+                    :label="iconsOnly ? undefined : (networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing'))"
+                    :aria-label="networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing')"
+                    :aria-pressed="networkEditMode"
+                    text
+                    size="small"
+                    class="network-edit-mode-button"
+                    @click="toggleNetworkEditMode"
+                  />
                 </div>
                 <div class="menu-items">
                   <div
-                    v-for="item in menuItems"
+                    v-for="item in visibleMenuItems"
                     :key="item.id"
                     class="menu-item-group"
                   >
                     <div
                       class="network-row"
-                      :class="{ active: isNetworkActive(item) }"
+                      :class="{
+                        active: isNetworkActive(item),
+                        'network-row--editing': networkEditMode,
+                        'network-row--hidden': isNetworkHiddenForProfile(item),
+                      }"
                     >
                       <Button
                         :icon="undefined"
@@ -63,9 +75,13 @@
                         :class="[
                           'network-btn',
                           iconsOnly ? 'network-btn--centered' : 'network-btn--leading',
-                          { 'network-btn--active': isNetworkActive(item) }
+                          {
+                            'network-btn--active': isNetworkActive(item),
+                            'network-btn--editing': networkEditMode && !iconsOnly,
+                          }
                         ]"
-                        @click="navigateToNetwork(item)"
+                        :aria-pressed="networkEditMode ? !isNetworkHiddenForProfile(item) : undefined"
+                        @click="networkEditMode ? toggleNetworkVisibility(item) : navigateToNetwork(item)"
                       >
                         <template #icon>
                           <NetworkBrandIcon
@@ -74,6 +90,13 @@
                           />
                         </template>
                       </Button>
+                      <span
+                        v-if="networkEditMode"
+                        class="network-visibility-indicator"
+                        aria-hidden="true"
+                      >
+                        <i :class="isNetworkHiddenForProfile(item) ? 'pi pi-eye-slash' : 'pi pi-eye'" />
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -341,6 +364,30 @@ const menuItems = ref<MenuItem[]>([
   { id: builtinMenuItems.length + 2, label: 'Tâches', icon: 'pi pi-check-square', route: '/tasks' },
 ])
 
+const networkEditMode = ref(false)
+
+const visibleMenuItems = computed(() => {
+  if (networkEditMode.value) return menuItems.value
+  const profileId = profilesStore.activeProfileId
+  if (!profileId) return menuItems.value
+  return menuItems.value.filter((item) => !profilesStore.isNetworkHidden(profileId, item.route.slice(1)))
+})
+
+const isNetworkHiddenForProfile = (item: MenuItem) => {
+  const profileId = profilesStore.activeProfileId
+  return !!profileId && profilesStore.isNetworkHidden(profileId, item.route.slice(1))
+}
+
+const toggleNetworkVisibility = (item: MenuItem) => {
+  const profileId = profilesStore.activeProfileId
+  if (!profileId) return
+  profilesStore.toggleNetworkHidden(profileId, item.route.slice(1))
+}
+
+const toggleNetworkEditMode = () => {
+  networkEditMode.value = !networkEditMode.value
+}
+
 const customLinkItems = computed<MenuItem[]>(() => {
   const profileId = profilesStore.activeProfileId ?? ''
   return customLinksStore.getLinks(profileId).map((link, i) => ({
@@ -523,6 +570,21 @@ onUnmounted(() => {
   border-left: var(--sg-sidebar-active-indicator-width) solid var(--sg-color-action);
 }
 
+.network-row--editing {
+  cursor: pointer;
+}
+
+.network-row--hidden {
+  opacity: var(--sg-opacity-muted);
+}
+
+.network-visibility-indicator {
+  position: absolute;
+  right: var(--sg-sidebar-compact-control-spacing);
+  color: var(--sg-color-text-muted);
+  pointer-events: none;
+}
+
 .network-btn {
   flex: 1;
   border-radius: 0;
@@ -538,6 +600,10 @@ onUnmounted(() => {
 .network-btn--leading {
   justify-content: flex-start;
   padding: 0 var(--sg-sidebar-network-row-padding-inline);
+}
+
+.network-btn--editing {
+  padding-right: var(--sg-space-2rem);
 }
 
 .network-btn--centered {
