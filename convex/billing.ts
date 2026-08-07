@@ -4,7 +4,7 @@ import { requireAuthUserId } from './authHelpers'
 
 /**
  * Suite entitlement bridge adapter.
- * - Canonical entitlement state is owned by WinFlowz suite.
+ * - Canonical entitlement state is owned by the CommandGlows suite.
  * - Local tables are retained only as the active CommunityGlows entitlement cache.
  */
 
@@ -19,6 +19,10 @@ type EntitlementSnapshot = {
   planId: string | null
   source: string | null
   reasonCode: string
+  accessState?: 'trial_active' | 'trial_expired' | 'lifetime_active'
+  trialStartedAt?: number | null
+  trialEndsAt?: number | null
+  trialExpiresAt?: number | null
 }
 
 type BridgeResponseOk<T extends Record<string, unknown> = Record<string, unknown>> = {
@@ -180,6 +184,67 @@ export const getProductAccess = action({
       throw new Error('invalid_snapshot')
     }
 
+    const trialEndsAt = snapshot.trialEndsAt ?? snapshot.trialExpiresAt ?? null
+    const normalizedAccessState = snapshot.accessState ?? (
+      snapshot.planId === 'trial'
+        ? (typeof trialEndsAt === 'number' && trialEndsAt > Date.now() ? 'trial_active' : 'trial_expired')
+        : undefined
+    )
+    const isLifetime = snapshot.hasAccess && snapshot.planId != null &&
+      isAllowedPlanForCommunityGlows(snapshot.planId)
+    const hasTrustedTrialWindow =
+      typeof snapshot.trialStartedAt === 'number' &&
+      typeof trialEndsAt === 'number' &&
+      snapshot.trialStartedAt < trialEndsAt
+
+    if (normalizedAccessState === 'trial_active') {
+      if (!snapshot.hasAccess || !hasTrustedTrialWindow || trialEndsAt! <= Date.now()) {
+        return {
+          productId: PRODUCT_COMMUNITYGLOWS,
+          planId: 'trial',
+          status: 'free' as const,
+          accessState: 'trial_expired' as const,
+          source: snapshot.source ?? 'suite',
+          entitlementId: null,
+          expiresAt: trialEndsAt,
+          trialStartedAt: snapshot.trialStartedAt ?? null,
+          trialEndsAt,
+          legacyFallback: false,
+          reasonCode: hasTrustedTrialWindow ? 'trial_expired' : 'trial_window_unverified',
+        }
+      }
+
+      return {
+        productId: PRODUCT_COMMUNITYGLOWS,
+        planId: snapshot.planId ?? 'trial',
+        status: 'active' as const,
+        accessState: 'trial_active' as const,
+        source: snapshot.source ?? 'suite',
+        entitlementId: null,
+        expiresAt: trialEndsAt!,
+        trialStartedAt: snapshot.trialStartedAt!,
+        trialEndsAt: trialEndsAt!,
+        legacyFallback: false,
+        reasonCode: snapshot.reasonCode || 'trial_active',
+      }
+    }
+
+    if (normalizedAccessState === 'trial_expired') {
+      return {
+        productId: PRODUCT_COMMUNITYGLOWS,
+        planId: snapshot.planId ?? 'trial',
+        status: 'free' as const,
+        accessState: 'trial_expired' as const,
+        source: snapshot.source ?? 'suite',
+        entitlementId: null,
+        expiresAt: trialEndsAt,
+        trialStartedAt: snapshot.trialStartedAt ?? null,
+        trialEndsAt,
+        legacyFallback: false,
+        reasonCode: snapshot.reasonCode || 'trial_expired',
+      }
+    }
+
     if (!snapshot.hasAccess) {
       return {
         productId: PRODUCT_COMMUNITYGLOWS,
@@ -189,7 +254,15 @@ export const getProductAccess = action({
         entitlementId: null,
         expiresAt: null,
         legacyFallback: false,
+        accessState: 'trial_expired' as const,
+        trialStartedAt: snapshot.trialStartedAt ?? null,
+        trialEndsAt,
+        reasonCode: snapshot.reasonCode,
       }
+    }
+
+    if (!isLifetime) {
+      throw new Error('unverified_access_state')
     }
 
     return {
@@ -200,6 +273,9 @@ export const getProductAccess = action({
       entitlementId: null,
       expiresAt: null,
       legacyFallback: false,
+      accessState: 'lifetime_active' as const,
+      trialStartedAt: snapshot.trialStartedAt ?? null,
+      trialEndsAt,
       reasonCode: snapshot.reasonCode,
     }
   },

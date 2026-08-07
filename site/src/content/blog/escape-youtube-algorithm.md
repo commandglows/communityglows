@@ -46,7 +46,7 @@ Structure social use around blocks:
 - Block 3: inbox and replies  
 - Block 4: reporting and planning  
 
-Add each action to your Kanban board and keep your process measurable.
+Add each action to your current planning board and keep your process measurable. A CommunityGlows CRM and Kanban workspace is in development.
 
 ## Why This Is Better Than Endless Consumption
 

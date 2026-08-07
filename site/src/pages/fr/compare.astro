@@ -1,0 +1,163 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import Navbar from '../../components/Navbar.astro'
+import Footer from '../../components/Footer.astro'
+import { appUrl, siteUrl } from '../../config/site'
+
+const approaches = [
+  {
+    marker: '01',
+    title: 'Les outils centrés sur la publication',
+    promise: 'Planifier et diffuser des contenus sur plusieurs canaux depuis un même endroit.',
+    rhythm: 'Un choix pertinent lorsque le quotidien repose surtout sur les calendriers, les validations, la programmation et le volume de publication.',
+    question: 'Votre besoin principal est-il de coordonner ce qui sera publié, et quand ?',
+  },
+  {
+    marker: '02',
+    title: 'Les outils de sessions et de profils',
+    promise: 'Séparer les identités et les environnements de navigation.',
+    rhythm: 'Un choix pertinent lorsque le contrôle technique des sessions, la séparation des environnements ou l’identité du navigateur est le besoin central.',
+    question: 'Votre priorité est-elle la séparation technique des environnements de navigation ?',
+  },
+  {
+    marker: '03',
+    title: 'CommunityGlows',
+    promise: 'Créer un espace plus calme pour un travail social fondé sur la relation.',
+    rhythm: 'Pensé pour celles et ceux qui passent d’une communauté à l’autre, ont besoin du contexte du réseau réel et veulent revenir aux conversations avec intention.',
+    question: 'Voulez-vous réunir profils, concentration et suivi dans un même espace quotidien ?',
+  },
+]
+
+const principles = [
+  {
+    title: 'La présence avant le volume',
+    body: 'Plus d’activité ne crée pas toujours plus de lien. CommunityGlows donne une place à chaque profil pour ralentir, retrouver le bon contexte et répondre avec la bonne identité.',
+  },
+  {
+    title: 'Le contexte avant l’automatisation',
+    body: 'Une réponse attentive dépend de ce qui la précède. L’accès direct à chaque réseau garde la conversation, son ton et la communauté qui l’entoure visibles pendant le travail.',
+  },
+  {
+    title: 'La continuité avant les actions isolées',
+    body: 'Une communauté se construit aussi par ce dont on se souvient et ce vers quoi on revient. Un workflow visuel aide à suivre les personnes, les conversations et les engagements qui méritent une suite.',
+  },
+]
+
+const decisions = [
+  {
+    need: 'Planifier, valider et publier à grande échelle',
+    direction: 'Commencez par évaluer les plateformes centrées sur la publication.',
+  },
+  {
+    need: 'Contrôler des identités ou environnements techniques de navigateur',
+    direction: 'Commencez par évaluer les outils spécialisés dans les sessions ou les profils.',
+  },
+  {
+    need: 'Travailler directement dans les communautés en séparant les profils',
+    direction: 'CommunityGlows est conçu autour de ce mode de travail.',
+  },
+  {
+    need: 'Protéger son attention et rendre le suivi visible',
+    direction: 'CommunityGlows réunit contrôles de concentration et workflow visuel dans le même espace.',
+  },
+]
+
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl('/fr') },
+    { '@type': 'ListItem', position: 2, name: 'Comparer', item: siteUrl('/fr/compare') },
+  ],
+}]
+---
+
+<Layout
+  title="Comparer les espaces de travail social | CommunityGlows"
+  description="Comparez les approches centrées sur la publication, les sessions ou la relation pour choisir celle qui correspond à votre travail communautaire."
+  path="/fr/compare"
+  lang="fr"
+  jsonLd={jsonLd}
+>
+  <main id="main-content" class="min-h-screen bg-background text-foreground">
+    <Navbar lang="fr" languageHref="/compare" />
+
+    <section class="max-w-5xl mx-auto px-4 pt-32 pb-20 text-center">
+      <p class="mb-5 inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Choisir une manière de travailler</p>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">
+        Tous les outils sociaux ne servent pas le même travail
+      </h1>
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
+        Certains outils aident les équipes à publier davantage. D’autres isolent les sessions de navigation. CommunityGlows part d’une autre priorité : être présent, préserver le contexte humain et construire une continuité avec les personnes derrière chaque compte.
+      </p>
+      <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">Tout essayer pendant 30 jours</a>
+        <a href="/fr/pricing" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">Voir les tarifs</a>
+      </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-4 py-16" aria-labelledby="approaches-title">
+      <div class="mx-auto mb-12 max-w-3xl text-center">
+        <h2 id="approaches-title" class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Trois approches, trois priorités différentes</h2>
+        <p class="mt-4 text-muted-foreground">Le bon choix commence par le travail que vous voulez soutenir.</p>
+      </div>
+      <div class="grid gap-6 lg:grid-cols-3">
+        {approaches.map((item) => (
+          <article class:list={["rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/30", item.marker === '03' ? 'border-foreground/30 bg-card' : 'border-border bg-card/50']}>
+            <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-foreground">{item.marker}</span>
+            <h3 class="mt-5 text-2xl font-semibold text-foreground">{item.title}</h3>
+            <p class="mt-4 font-medium leading-7 text-foreground">{item.promise}</p>
+            <p class="mt-4 text-sm leading-6 text-muted-foreground">{item.rhythm}</p>
+            <p class="mt-7 border-t border-border pt-5 text-sm italic leading-6 text-muted-foreground">{item.question}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-4 py-20" aria-labelledby="philosophy-title">
+      <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <div class="lg:sticky lg:top-32">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Notre point de vue</p>
+          <h2 id="philosophy-title" class="mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Le travail social est un travail de relation</h2>
+          <p class="mt-5 leading-7 text-muted-foreground">L’efficacité compte. Mais lorsqu’elle retire le contexte qui rend une interaction humaine, elle peut desservir la communauté que l’on cherche à construire.</p>
+        </div>
+        <div class="space-y-5">
+          {principles.map((item, index) => (
+            <article class="rounded-2xl border border-border bg-card p-7 transition-colors hover:border-foreground/25">
+              <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-foreground">0{index + 1}</div>
+              <h3 class="text-xl font-semibold text-foreground">{item.title}</h3>
+              <p class="mt-3 leading-7 text-muted-foreground">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-4 py-16" aria-labelledby="decision-title">
+      <div class="rounded-2xl border border-border bg-card p-6 md:p-9">
+        <h2 id="decision-title" class="text-3xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Laissez le besoin choisir l’outil</h2>
+        <p class="mt-3 max-w-2xl text-muted-foreground">Ces catégories peuvent se recouper. Utilisez-les comme point de départ, puis vérifiez les fonctionnalités, intégrations et limites actuelles auprès de chaque éditeur avant de choisir.</p>
+        <dl class="mt-8 divide-y divide-border border-y border-border">
+          {decisions.map((item) => (
+            <div class="grid gap-2 py-5 md:grid-cols-2 md:gap-8">
+              <dt class="font-medium text-foreground">{item.need}</dt>
+              <dd class="text-muted-foreground">{item.direction}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-4 my-16 rounded-2xl border border-border bg-card px-6 py-12 text-center sm:mx-auto sm:px-10">
+      <h2 class="text-3xl font-bold text-foreground">Choisissez l’espace qui protège votre intention</h2>
+      <p class="mt-4 text-lg leading-8 text-muted-foreground">
+        Si votre meilleur travail commence par écouter, comprendre et revenir avec attention, CommunityGlows donne à ce rythme un espace dédié.
+      </p>
+      <a href={appUrl()} class="shimmer-btn mt-8 inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">
+        Essayer CommunityGlows gratuitement pendant 30 jours
+      </a>
+    </section>
+
+    <Footer lang="fr" languageHref="/compare" />
+  </main>
+</Layout>

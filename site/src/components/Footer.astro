@@ -1,13 +1,14 @@
 ---
 import { getTranslations, type Locale } from '../i18n'
-interface Props { lang?: Locale }
-const { lang = 'en' } = Astro.props
+interface Props { lang?: Locale; languageHref?: string }
+const { lang = 'en', languageHref: languageHrefProp } = Astro.props
 const t = getTranslations(lang)
+const localized = (path: string) => lang === 'fr' ? `/fr${path}` : path
 const footerLinks: Record<string, { label: string; href: string }[]> = {
   [t.footer.product]: [
-    { label: t.footer.links.features, href: '/features' },
-    { label: t.footer.links.pricing, href: '/pricing' },
-    { label: t.footer.links.compare, href: '/compare' },
+    { label: t.footer.links.features, href: localized('/features') },
+    { label: t.footer.links.pricing, href: localized('/pricing') },
+    { label: t.footer.links.compare, href: localized('/compare') },
   ],
   [t.footer.resources]: [
     { label: t.footer.links.blog, href: '/blog' },
@@ -25,7 +26,7 @@ const footerLinks: Record<string, { label: string; href: string }[]> = {
 }
 const currentYear = new Date().getFullYear()
 const homeHref = lang === 'fr' ? '/fr' : '/'
-const languageHref = lang === 'fr' ? '/' : '/fr'
+const languageHref = languageHrefProp ?? (lang === 'fr' ? '/' : '/fr')
 ---
 
 <footer class="border-t border-border bg-background">

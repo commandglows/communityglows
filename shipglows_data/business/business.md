@@ -1,14 +1,14 @@
 ---
 artifact: business_profile
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.2.0"
 project: communityglows
 created: "2026-04-26"
 status: reviewed
 source_skill: 300-sg-docs
 scope: business
 owner: "Diane"
-updated: "2026-04-26"
+updated: "2026-08-06"
 confidence: medium
 risk_level: medium
 security_impact: low
@@ -48,14 +48,15 @@ Core value:
 - Professionals managing both personal and business profiles from one tool
 - Mobile-first users needing consistent behavior across desktop and phone
 
-## Monetization assumptions
+## Monetization
 
-- Current repo structure indicates an active product with a **freemium** foundation and optional premium features.
-- Conversion opportunities sit in:
-  - Advanced sync reliability
-  - Enhanced profile/network automation
-  - Priority support and future cloud features
-- Keep core browser/webview workflows stable; premium should not block essential operations.
+- The current public offer is a **30-day full trial without a payment card**, followed by an optional **€79 one-time founder license**. The trial does not start an automatic charge.
+- A progressive 10 × €8 option has been approved for later implementation. It is not a subscription or debt commitment: users may stop without further charges, retain completed-payment progress, resume later, and receive lifetime access after the tenth successful payment. It must not be advertised as available before checkout and entitlement support are verified.
+- Windows and Android are available now.
+- Linux, macOS, and iPhone are planned for later, but development has not started and no release date is committed.
+- Lightweight profile and preference sync is included. Login sessions remain local to each device.
+- CRM/Kanban, inactive-page sleeping, and multiple tabs per network are in development, not shipped entitlements or dated guarantees.
+- The price is intended to fund cross-platform compatibility, maintenance, and future platform releases rather than recurring cloud infrastructure.
 
 ## Key differentiation
 

@@ -1,25 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro'
-import Navbar from '../components/Navbar.astro'
-import Newsletter from '../components/Newsletter.astro'
-import Footer from '../components/Footer.astro'
-import { appUrl, siteUrl } from '../config/site'
-
-const features = [
-  { title: 'Isolated Profiles', desc: 'Create as many profiles as you need: personal, work, client A, client B. Each profile keeps its own cookies and sessions, fully separate from the others.', icon: '🔒' },
-  { title: '18+ Social Networks', desc: 'Open X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram and more from one app shell.', icon: '🌐' },
-  { title: 'Focus Controls', desc: 'Reduce visual noise with grayscale, dark or light appearance, media mute, and adjustable text size where supported.', icon: '🎯' },
-  { title: 'Built-In Kanban', desc: 'Plan your publishing and outreach workflow with a Kanban board right inside the app. No more context switching between Trello and social apps.', icon: '📋' },
-  { title: 'Custom Links', desc: 'Keep selected work links close to your workspace. Availability and session behavior depend on the target and platform.', icon: '🔗' },
-  { title: 'Cloud Sync', desc: 'Pick up your setup anywhere: profiles, active accounts, links, hidden networks, and preferences sync to your account.', icon: '☁️' },
-  { title: 'Desktop, Mobile & Android', desc: 'Use the same workflow on desktop and Android, plus web/mobile bridges where needed.', icon: '📱' },
-]
-
-const steps = [
-  { num: 1, title: 'Install', desc: 'Use the desktop or mobile app to create your first CommunityGlows environment.' },
-  { num: 2, title: 'Create Profiles', desc: 'Set up personal, work, and client profiles and connect each social network you need.' },
-  { num: 3, title: 'Work in One Workspace', desc: 'Switch networks, profiles, and links without reopening browsers or losing context.' },
-]
+import FeaturesPage from '../components/features/FeaturesPage.astro'
+import { siteUrl } from '../config/site'
 
 const jsonLd = [{
   "@context": "https://schema.org",
@@ -32,70 +14,11 @@ const jsonLd = [{
 ---
 
 <Layout
-  title="Features - CommunityGlows"
-  description="Discover CommunityGlows's powerful social workflow features: profiles, anti-distraction, Kanban, and multi-account control."
+  title="Features for more human social work — CommunityGlows"
+  description="Discover how CommunityGlows helps you protect attention, preserve context, and build more consistent relationships with your audience and community."
   path="/features"
+  lang="en"
   jsonLd={jsonLd}
 >
-  <main id="main-content" class="min-h-screen bg-background text-foreground">
-    <Navbar />
-
-    <!-- Hero -->
-    <section class="max-w-5xl mx-auto px-4 pt-32 pb-16 text-center">
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">
-        Everything you need to run social
-      </h1>
-      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-        A full-featured social workspace, not just a link aggregator.
-      </p>
-      <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">Get Started Free</a>
-        <a href="#features" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">Explore Features</a>
-      </div>
-    </section>
-
-    <!-- Features Grid -->
-    <section id="features" class="bg-card py-16 sm:py-24">
-      <div class="max-w-6xl mx-auto px-4">
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {features.map((f) => (
-            <div class="rounded-xl border border-border bg-background p-6">
-              <div class="mb-4 text-3xl">{f.icon}</div>
-              <h3 class="mb-2 text-lg font-semibold text-foreground">{f.title}</h3>
-              <p class="text-sm text-muted-foreground">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="max-w-5xl mx-auto px-4 py-16 sm:py-24">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">How It Works</h2>
-        <p class="mt-4 text-lg text-muted-foreground">Three simple steps to better social execution</p>
-      </div>
-      <div class="grid gap-8 md:grid-cols-3">
-        {steps.map((s) => (
-          <div class="text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-xl font-bold text-background">{s.num}</div>
-            <h3 class="mb-2 text-lg font-semibold text-foreground">{s.title}</h3>
-            <p class="text-muted-foreground">{s.desc}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="bg-card py-16 sm:py-24">
-      <div class="max-w-3xl mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold text-foreground mb-4">Ready to run social without the noise?</h2>
-        <p class="text-lg text-muted-foreground mb-8">Join thousands of creators and operators who moved their social workflow to one calm workspace.</p>
-        <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-8 py-3 text-base font-medium transition-colors">Get Started Free</a>
-      </div>
-    </section>
-
-    <Newsletter />
-    <Footer />
-  </main>
+  <FeaturesPage lang="en" />
 </Layout>

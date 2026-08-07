@@ -49,21 +49,16 @@
         v-else
         class="login-actions"
       >
-        <SgSpinner
-          v-if="signingIn"
+        <SgButton
+          label="Get started"
+          icon="pi pi-arrow-right"
+          @click="handleGetStarted"
         />
-        <template v-else>
-          <SgButton
-            label="Get started"
-            icon="pi pi-arrow-right"
-            @click="handleAnonymousSignIn"
-          />
-          <SgButton
-            label="Sign in with email"
-            text
-            @click="showEmailForm = true"
-          />
-        </template>
+        <SgButton
+          label="Sign in with email"
+          text
+          @click="showEmailForm = true"
+        />
       </div>
     </div>
   </div>
@@ -71,34 +66,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { signIn } from '@/lib/convexAuth'
 import { finalizePasswordSignIn } from '@/lib/cloudSync'
 import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
+import { useOnboardingStore } from '@/stores/onboarding'
 import SgInput from '../components/ui/SgInput.vue'
 import SgButton from '../components/ui/SgButton.vue'
 import SgPassword from '../components/ui/SgPassword.vue'
-import SgSpinner from '../components/ui/SgSpinner.vue'
 
-const router = useRouter()
+const onboardingStore = useOnboardingStore()
 const showEmailForm = ref(false)
 const isSignUp = ref(false)
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
-const signingIn = ref(false)
 
-async function handleAnonymousSignIn() {
-  signingIn.value = true
-  try {
-    await signIn('anonymous')
-    router.push('/twitter')
-  } catch (e) {
-    error.value = 'Connection failed. Please try again.'
-  } finally {
-    signingIn.value = false
-  }
+function handleGetStarted() {
+  onboardingStore.reset()
 }
 
 async function handleSignIn() {

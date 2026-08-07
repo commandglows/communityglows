@@ -6,6 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const BILLING_ACCESS_GRACE_MS: typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']
   const EffectScope: typeof import('vue')['EffectScope']
   const WEBVIEW_URLS: typeof import('../../../../../stores/webviewState')['WEBVIEW_URLS']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -51,6 +52,7 @@ declare global {
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
   const inject: typeof import('vue')['inject']
   const injectLocal: typeof import('@vueuse/core')['injectLocal']
+  const isAccessWithinGrace: typeof import('../../../../../composables/useBillingAccess')['isAccessWithinGrace']
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isEditableShortcutTarget: typeof import('../../../../../stores/shortcuts')['isEditableShortcutTarget']
   const isProxy: typeof import('vue')['isProxy']
@@ -387,6 +389,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly BILLING_ACCESS_GRACE_MS: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly WEBVIEW_URLS: UnwrapRef<typeof import('../../../../../stores/webviewState')['WEBVIEW_URLS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -431,6 +434,7 @@ declare module 'vue' {
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly injectLocal: UnwrapRef<typeof import('@vueuse/core')['injectLocal']>
+    readonly isAccessWithinGrace: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['isAccessWithinGrace']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isEditableShortcutTarget: UnwrapRef<typeof import('../../../../../stores/shortcuts')['isEditableShortcutTarget']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>

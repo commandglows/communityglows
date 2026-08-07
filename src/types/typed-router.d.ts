@@ -133,6 +133,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/NetworkWebviewHost'
       | '/setup/CommunityGlows/components/OnboardingFlow'
       | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
+      | '/setup/CommunityGlows/components/ProductAccessGate'
       | '/setup/CommunityGlows/components/ProfileSwitcher'
       | '/setup/CommunityGlows/components/SignupNudge'
       | '/setup/CommunityGlows/components/SocialLogin'
@@ -479,6 +480,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/ProductAccessGate': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ProductAccessGate',
+      '/setup/CommunityGlows/components/ProductAccessGate',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/ProfileSwitcher': RouteRecordInfo<
       '/setup/CommunityGlows/components/ProfileSwitcher',
       '/setup/CommunityGlows/components/ProfileSwitcher',
@@ -763,6 +771,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/NetworkWebviewHost'
         | '/setup/CommunityGlows/components/OnboardingFlow'
         | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
+        | '/setup/CommunityGlows/components/ProductAccessGate'
         | '/setup/CommunityGlows/components/ProfileSwitcher'
         | '/setup/CommunityGlows/components/SignupNudge'
         | '/setup/CommunityGlows/components/SocialLogin'
@@ -1065,6 +1074,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/PostAuthSyncOverlay.vue': {
       routes:
         | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/ProductAccessGate.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ProductAccessGate'
       views:
         | never
     }

@@ -6,7 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Replaced subscription tiers with one €79 founder lifetime license, separating available Windows/Android capabilities from CRM/Kanban, inactive-page sleeping, multi-tab, and additional-platform roadmap work.
+- Removed unsupported community-support and future-cloud claims, and corrected Kanban references so work in progress is never presented as already shipped.
 - Reworked the English and French homepages around one shared, locale-aware component structure with a clearer outcome-led narrative and a consistent centered-card visual system.
+- Extended both homepages with a human-centered narrative about listening, relationship continuity, thoughtful participation, and long-term community building.
+- Reframed the Features, Compare, Pricing, and Lifetime Deal journeys around attention, audience relationships, and sustainable community work, with equivalent French routes for each page.
 - Reframed unsupported testimonial-style content as honest use cases and aligned landing copy, navigation, pricing labels, newsletter feedback, metadata, and calls to action across both locales.
 - Added canonical landing layout tokens and preserved reduced-motion behavior across entrance and marquee animations.
 

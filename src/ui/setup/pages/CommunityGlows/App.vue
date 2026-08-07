@@ -6,6 +6,9 @@
     <!-- Onboarding (first launch) -->
     <OnboardingFlow v-if="!onboardingStore.completed" />
 
+    <!-- Product access gate: recovery remains available while protected work is paused. -->
+    <ProductAccessGate v-else-if="shouldBlockProductAccess" />
+
     <!-- Mobile layout (≤768px): single-column, no panels -->
     <MobileLayout v-else-if="isMobile" />
 
@@ -106,7 +109,9 @@ import MobileSettingsSheet from './components/MobileSettingsSheet.vue'
 import PostAuthSyncOverlay from './components/PostAuthSyncOverlay.vue'
 import SignupNudge from './components/SignupNudge.vue'
 import OnboardingFlow from './components/OnboardingFlow.vue'
+import ProductAccessGate from './components/ProductAccessGate.vue'
 import { useDesktopControlBarStore } from '@/stores/desktopControlBar'
+import { useBillingAccess } from '@/composables/useBillingAccess'
 
 const sidebarVisible = ref(true)
 const rightSidebarVisible = ref(true)
@@ -123,6 +128,7 @@ const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
+const billingAccess = useBillingAccess()
 const shortcutsStore = useShortcutsStore()
 const controlBarStore = useDesktopControlBarStore()
 const router = useRouter()
@@ -138,6 +144,11 @@ const pendingProfileChoiceAction = ref<CommunityGlowsDeepLinkAction | null>(null
 const lastHandledSharedUrl = ref<string | null>(null)
 
 const isMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
+const shouldBlockProductAccess = computed(() => {
+  if (!onboardingStore.completed || !isAuthenticated.value) return false
+  if (billingAccess.status.value === 'trial_expired') return true
+  return billingAccess.status.value === 'bridge_unavailable' && !billingAccess.canAccessProtected.value
+})
 
 let unlistenTray: (() => void) | undefined
 

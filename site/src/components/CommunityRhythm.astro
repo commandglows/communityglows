@@ -1,0 +1,33 @@
+---
+import { getTranslations, type Locale } from '../i18n'
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props
+const t = getTranslations(lang)
+---
+
+<section class="py-20 sm:py-28 bg-card">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+      <div class="lg:sticky lg:top-28" data-reveal>
+        <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">{t.communityRhythm.label}</p>
+        <h2 class="animate-fade-up delay-100 text-3xl sm:text-5xl font-bold text-foreground mb-6" style="font-family: var(--font-instrument-sans);">
+          {t.communityRhythm.title}
+        </h2>
+        <p class="animate-fade-up delay-200 text-lg text-muted-foreground leading-relaxed mb-5">{t.communityRhythm.intro}</p>
+        <p class="animate-fade-up delay-300 text-base text-muted-foreground leading-relaxed">{t.communityRhythm.body}</p>
+      </div>
+
+      <div class="space-y-4" data-reveal>
+        {t.communityRhythm.steps.map((step, index) => (
+          <article class={`animate-fade-up delay-${(index + 1) * 100} flex gap-5 p-6 sm:p-7 rounded-2xl bg-background border border-border hover:border-foreground/25 transition-colors`}>
+            <span class="shrink-0 inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted text-sm font-semibold text-foreground">0{index + 1}</span>
+            <div>
+              <h3 class="text-xl font-semibold text-foreground mb-2">{step.title}</h3>
+              <p class="text-base text-muted-foreground leading-relaxed">{step.desc}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
