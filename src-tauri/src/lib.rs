@@ -179,6 +179,7 @@ fn android_allowed_hosts_for_network(network_id: &str) -> &'static [&'static str
         "folloverse" => &["folloverse.com"],
         "koru" => &["koru.now"],
         "medium" => &["medium.com"],
+        "luma" => &["luma.com"],
         _ => &[],
     }
 }
@@ -454,6 +455,7 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     )?;
     let koru = MenuItem::with_id(app, "tray:koru", "Koru", true, None::<&str>)?;
     let medium = MenuItem::with_id(app, "tray:medium", "Medium", true, None::<&str>)?;
+    let luma = MenuItem::with_id(app, "tray:luma", "Luma", true, None::<&str>)?;
     let sep2 = MenuItem::with_id(app, "sep2", "──────────────", false, None::<&str>)?;
     let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
 
@@ -491,6 +493,7 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
             &industrysocial_waitlist,
             &koru,
             &medium,
+            &luma,
             &sep2,
             &quit,
         ],
