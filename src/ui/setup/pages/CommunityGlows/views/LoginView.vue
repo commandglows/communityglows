@@ -6,6 +6,14 @@
         <p>Your social media command center</p>
       </div>
 
+      <p
+        v-if="accessMessage"
+        class="login-access-message"
+        role="status"
+      >
+        {{ accessMessage }}
+      </p>
+
       <!-- Email/password upgrade form -->
       <form
         v-if="showEmailForm"
@@ -50,13 +58,14 @@
         class="login-actions"
       >
         <SgButton
+          v-if="!accessMessage"
           label="Get started"
           icon="pi pi-arrow-right"
           @click="handleGetStarted"
         />
         <SgButton
-          label="Sign in with email"
-          text
+          :label="accessMessage ? 'Se connecter avec une adresse e-mail' : 'Sign in with email'"
+          :text="!accessMessage"
           @click="showEmailForm = true"
         />
       </div>
@@ -65,7 +74,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { signIn } from '@/lib/convexAuth'
 import { finalizePasswordSignIn } from '@/lib/cloudSync'
 import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
@@ -75,12 +85,27 @@ import SgButton from '../components/ui/SgButton.vue'
 import SgPassword from '../components/ui/SgPassword.vue'
 
 const onboardingStore = useOnboardingStore()
+const route = useRoute()
 const showEmailForm = ref(false)
 const isSignUp = ref(false)
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+
+const accessMessage = computed(() => {
+  if (route.query.access === 'required') {
+    const destination = typeof route.query.destination === 'string' ? route.query.destination : 'cet espace'
+    return `Pour ouvrir ${destination}, connectez-vous ou créez votre compte CommunityGlows.`
+  }
+  if (route.query.access === 'loading') {
+    return 'Nous vérifions votre session. Réessayez dans un instant.'
+  }
+  if (route.query.access === 'unavailable') {
+    return 'La connexion n’est pas disponible pour le moment. Vérifiez votre réseau puis réessayez.'
+  }
+  return null
+})
 
 function handleGetStarted() {
   onboardingStore.reset()
@@ -164,5 +189,17 @@ async function handleSignIn() {
   flex-direction: column;
   align-items: center;
   gap: var(--sg-space-0d75rem);
+}
+
+.login-access-message {
+  width: var(--sg-size-100pct);
+  margin: 0;
+  padding: var(--sg-space-12px);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
+  line-height: var(--sg-line-height-1d45);
+  text-align: center;
 }
 </style>

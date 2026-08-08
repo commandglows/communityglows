@@ -577,13 +577,47 @@ async fn export_desktop_cookies(
 ) -> Result<String, String> {
     let mut snapshot = serde_json::Map::new();
     for target in targets {
-        let label = webview_label(&target.profile_id, &target.network_id);
-        let Some(webview) = app.get_webview(&label) else { continue; };
         let url: url::Url = target.url.parse().map_err(|e: url::ParseError| e.to_string())?;
-        let cookies = std::thread::spawn(move || webview.cookies_for_url(url))
+        let label = webview_label(&target.profile_id, &target.network_id);
+        let (webview, is_temporary) = if let Some(webview) = app.get_webview(&label) {
+            (webview, false)
+        } else {
+            let data_dir = app
+                .path()
+                .app_data_dir()
+                .map_err(|e| e.to_string())?
+                .join("sessions")
+                .join(&target.profile_id)
+                .join(&target.network_id);
+            if !data_dir.exists() {
+                continue;
+            }
+            let window = app
+                .get_window("main")
+                .ok_or_else(|| "main window not found".to_string())?;
+            let temporary_label = format!(
+                "backup-cookie-{}",
+                chrono::Utc::now().timestamp_nanos_opt().unwrap_or_default()
+            );
+            let webview = window
+                .add_child(
+                    WebviewBuilder::new(&temporary_label, WebviewUrl::External(url.clone()))
+                        .data_directory(data_dir)
+                        .background_color(tauri::window::Color(9, 9, 11, 0)),
+                    tauri::LogicalPosition::new(-10_000.0, -10_000.0),
+                    tauri::LogicalSize::new(1.0, 1.0),
+                )
+                .map_err(|e| format!("open saved session for backup: {e}"))?;
+            (webview, true)
+        };
+        let cookie_webview = webview.clone();
+        let cookies_result = std::thread::spawn(move || cookie_webview.cookies_for_url(url))
             .join()
-            .map_err(|_| "desktop cookie export thread panicked".to_string())?
-            .map_err(|e| e.to_string())?;
+            .map_err(|_| "desktop cookie export thread panicked".to_string());
+        if is_temporary {
+            webview.close().map_err(|e| format!("close temporary backup webview: {e}"))?;
+        }
+        let cookies = cookies_result?.map_err(|e| e.to_string())?;
         if cookies.is_empty() { continue; }
         let header = cookies
             .iter()
@@ -726,6 +760,20 @@ async fn navigate_webview(
     return Ok(())
   }
   Ok(())
+}
+
+#[tauri::command]
+#[cfg(target_os = "android")]
+fn navigate_webview(
+    app: AppHandle,
+    url: String,
+    _profile_id: String,
+    network_id: String,
+) -> Result<(), String> {
+    let validated_url = validate_android_webview_url(&url, &network_id)?;
+    app.android_webview()
+        .navigate(validated_url.as_str(), &network_id)
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]

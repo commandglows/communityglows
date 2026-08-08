@@ -125,6 +125,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
       requiresAuth: true,
+      title: 'Tâches',
     }
   },
   {
@@ -136,6 +137,7 @@ const routes: RouteRecordRaw[] = [
       auth: true,
       requiresAuth: true,
       networkId: 'gmail',
+      title: 'CRM',
 
     }
   }
