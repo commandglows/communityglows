@@ -1,11 +1,14 @@
 <template>
-  <SgDialog
-    v-model="open"
+  <SgSheet
+    :model-value="modelValue"
     title="Gérer les profils"
     description="Configurez une fois l’identité et les réseaux disponibles pour chaque profil."
-    variant="settings"
+    @update:model-value="emit('update:modelValue', $event)"
   >
-    <div class="profile-manager">
+    <div
+      class="profile-manager"
+      :class="{ 'profile-manager--desktop': isDesktop }"
+    >
       <nav
         class="profile-manager__list"
         aria-label="Profils"
@@ -57,43 +60,11 @@
           }}
         </h3>
 
-        <div class="profile-manager__identity">
-          <div
-            class="profile-manager__avatar-preview"
-            aria-hidden="true"
-          >
-            <img
-              v-if="draft.avatar"
-              :src="draft.avatar"
-              alt=""
-            />
-            <span v-else>{{ draft.emoji || DEFAULT_EMOJI }}</span>
-          </div>
-          <div class="profile-manager__avatar-actions">
-            <Button
-              label="Choisir une photo"
-              icon="pi pi-camera"
-              outlined
-              size="small"
-              :aria-describedby="errorField === 'avatar' ? 'profile-manager-error' : undefined"
-              @click="avatarInput?.click()"
-            />
-            <Button
-              v-if="draft.avatar"
-              label="Retirer la photo"
-              text
-              size="small"
-              @click="draft.avatar = undefined"
-            />
-            <input
-              ref="avatarInput"
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              class="profile-manager__file"
-              @change="handleAvatarChange"
-            />
-          </div>
-        </div>
+        <ProfileAvatarEditor
+          :avatar="draft.avatar"
+          :emoji="draft.emoji"
+          @change="updateAvatarDraft"
+        />
 
         <label class="profile-manager__field">
           <span>Nom</span>
@@ -107,27 +78,36 @@
             :aria-describedby="errorField === 'name' ? 'profile-manager-error' : undefined"
           />
         </label>
-        <label class="profile-manager__field profile-manager__field--emoji">
-          <span>Emoji de remplacement</span>
-          <input
-            v-model="draft.emoji"
-            :maxlength="PROFILE_EMOJI_MAX_LENGTH"
-            autocomplete="off"
-          />
-        </label>
-
         <fieldset class="profile-manager__networks">
           <legend>Réseaux visibles</legend>
           <label
             v-for="network in builtInSocialNetworks"
             :key="network.id"
+            class="profile-manager__network-card"
+            :class="{
+              'profile-manager__network-card--selected':
+                draft.visibleNetworks.includes(network.id),
+            }"
           >
             <input
               v-model="draft.visibleNetworks"
               type="checkbox"
               :value="network.id"
             />
-            <span>{{ network.label }}</span>
+            <span class="profile-manager__network-icon">
+              <NetworkBrandIcon
+                :network-id="network.id"
+                :fallback-icon="network.icon"
+              />
+            </span>
+            <span class="profile-manager__network-name">
+              {{ network.label }}
+            </span>
+            <SgIcon
+              v-if="draft.visibleNetworks.includes(network.id)"
+              icon="pi pi-check"
+              class="profile-manager__network-check"
+            />
           </label>
         </fieldset>
 
@@ -204,31 +184,25 @@
         </section>
       </form>
     </div>
-  </SgDialog>
+  </SgSheet>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from "vue"
+import { useMediaQuery } from "@/composables/useMediaQuery"
 import { builtInSocialNetworks } from "@/config/socialNetworks"
-import {
-  PROFILE_AVATAR_MAX_LENGTH,
-  PROFILE_EMOJI_MAX_LENGTH,
-  PROFILE_NAME_MAX_LENGTH,
-  useProfilesStore,
-} from "@/stores/profiles"
-import SgDialog from "./ui/SgDialog.vue"
+import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
+import { PROFILE_NAME_MAX_LENGTH, useProfilesStore } from "@/stores/profiles"
+import SgSheet from "./ui/SgSheet.vue"
 import Button from "./ui/SgButton.vue"
+import SgIcon from "./ui/SgIcon.vue"
+import ProfileAvatarEditor from "./ProfileAvatarEditor.vue"
+import NetworkBrandIcon from "./NetworkBrandIcon.vue"
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>()
 const profilesStore = useProfilesStore()
 const DEFAULT_EMOJI = "🟦"
-const SUPPORTED_AVATAR_TYPES = new Set([
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-  "image/gif",
-])
 
 type EditableDraft = {
   name: string
@@ -237,13 +211,9 @@ type EditableDraft = {
   visibleNetworks: string[]
 }
 
-const open = computed({
-  get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
-})
+const isDesktop = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsDesktop}px)`)
 const selectedProfileId = ref<string | null>(null)
 const isCreating = ref(false)
-const avatarInput = ref<HTMLInputElement | null>(null)
 const nameInput = ref<HTMLInputElement | null>(null)
 const errorMessage = ref("")
 const errorField = ref<"name" | "avatar" | null>(null)
@@ -345,36 +315,9 @@ function saveProfile() {
   }
 }
 
-function handleAvatarChange(event: Event) {
-  errorMessage.value = ""
-  errorField.value = null
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-  if (!SUPPORTED_AVATAR_TYPES.has(file.type)) {
-    errorMessage.value = "Choisissez une image PNG, JPEG, WebP ou GIF."
-    errorField.value = "avatar"
-    input.value = ""
-    return
-  }
-  const reader = new FileReader()
-  reader.onload = () => {
-    const result = typeof reader.result === "string" ? reader.result : ""
-    if (!result || result.length > PROFILE_AVATAR_MAX_LENGTH) {
-      errorMessage.value =
-        "Cette image est trop volumineuse. Choisissez une image de moins de 300 Ko."
-      errorField.value = "avatar"
-    } else {
-      draft.avatar = result
-    }
-    input.value = ""
-  }
-  reader.onerror = () => {
-    errorMessage.value = "Impossible de lire cette image."
-    errorField.value = "avatar"
-    input.value = ""
-  }
-  reader.readAsDataURL(file)
+function updateAvatarDraft(value: { avatar?: string; emoji: string }) {
+  draft.avatar = value.avatar
+  draft.emoji = value.emoji
 }
 
 async function deleteSelectedProfile() {
@@ -408,9 +351,11 @@ watch(
 <style scoped>
 .profile-manager {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: var(--sg-space-5);
   padding: var(--sg-space-5);
+}
+.profile-manager--desktop {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 }
 .profile-manager__list {
   display: flex;
@@ -441,8 +386,7 @@ watch(
   border-color: var(--sg-color-action);
   background: var(--sg-color-surface-muted);
 }
-.profile-manager__thumb,
-.profile-manager__avatar-preview {
+.profile-manager__thumb {
   width: var(--sg-avatar-size-lg);
   height: var(--sg-avatar-size-lg);
   border-radius: var(--sg-radius-pill);
@@ -463,30 +407,6 @@ watch(
 .profile-manager__form h3 {
   margin: 0;
 }
-.profile-manager__identity {
-  display: flex;
-  align-items: center;
-  gap: var(--sg-space-3);
-}
-.profile-manager__avatar-preview {
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  background: var(--sg-color-surface-muted);
-}
-.profile-manager__avatar-preview img {
-  width: var(--sg-size-full);
-  height: var(--sg-size-full);
-  object-fit: cover;
-}
-.profile-manager__avatar-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sg-space-2);
-}
-.profile-manager__file {
-  display: none;
-}
 .profile-manager__field {
   display: flex;
   flex-direction: column;
@@ -502,9 +422,6 @@ watch(
   color: var(--sg-color-text);
   font: inherit;
 }
-.profile-manager__field--emoji {
-  max-width: var(--sg-sidebar-dialog-width);
-}
 .profile-manager__networks {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -518,10 +435,55 @@ watch(
   padding: 0 var(--sg-space-1);
   font-weight: 600;
 }
-.profile-manager__networks label {
+.profile-manager__network-card {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--sg-space-2);
+  min-width: 0;
+  padding: var(--sg-space-3);
+  overflow: hidden;
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
+  cursor: pointer;
+  transition: var(--sg-motion-colors);
+}
+.profile-manager__network-card:hover {
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
+}
+.profile-manager__network-card:focus-within {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+.profile-manager__network-card--selected {
+  border-color: var(--sg-color-action);
+  color: var(--sg-color-text);
+}
+.profile-manager__network-card input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.profile-manager__network-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--sg-color-action);
+}
+.profile-manager__network-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-manager__network-check {
+  flex-shrink: 0;
+  color: var(--sg-color-action);
 }
 .profile-manager__actions {
   display: flex;

@@ -15,47 +15,74 @@
     <!-- Desktop layout: header + resizable sidebars -->
     <template v-else>
       <div class="desktop-layout">
-        <DesktopControlBar
-          v-if="showDesktopControlBar && controlBarStore.position === 'top'"
-          :left-hidden="!sidebarVisible"
-          :right-hidden="!rightSidebarVisible"
-          position="top"
-          @open-left="sidebarVisible = true"
-          @open-right="rightSidebarVisible = true"
-        />
         <div class="desktop-layout__content">
           <AppSidebar
             v-model="sidebarVisible"
             @manage-profiles="profileManagerVisible = true"
+            @open-settings="settingsVisible = true"
           >
             <AppRightSidebar
               v-model="rightSidebarVisible"
               @open-settings="settingsVisible = true"
               @open-rightpanel-section="openRightPanelSection"
               @manage-profiles="profileManagerVisible = true"
+              @edit-profile-avatar="profileAvatarVisible = true"
             >
-              <!-- Native Tauri webview host: shown when a webview-capable network is active -->
-              <NetworkWebviewHost
-                v-if="webviewStore.activeUrl"
-                :suspended="
-                  settingsVisible ||
-                  profileManagerVisible ||
-                  webviewOverlayActive > 0
-                "
-              />
-              <!-- Router-view for Gmail (API), login, and other non-webview pages -->
-              <router-view v-else />
+              <div class="desktop-main">
+                <DesktopControlBar
+                  v-if="
+                    showDesktopControlBar &&
+                    controlBarStore.position === 'top'
+                  "
+                  :left-hidden="!sidebarVisible"
+                  :right-hidden="!rightSidebarVisible"
+                  position="top"
+                  @open-left="sidebarVisible = true"
+                  @open-right="rightSidebarVisible = true"
+                >
+                  <DesktopQuickNavigation
+                    v-if="bothSidebarsHidden"
+                    position="top"
+                    @manage-profiles="profileManagerVisible = true"
+                    @open-settings="settingsVisible = true"
+                  />
+                </DesktopControlBar>
+                <div class="desktop-main__content">
+                  <!-- Native Tauri webview host: shown when a webview-capable network is active -->
+                  <NetworkWebviewHost
+                    v-if="webviewStore.activeUrl"
+                    :suspended="
+                      settingsVisible ||
+                      profileManagerVisible ||
+                      profileAvatarVisible ||
+                      webviewOverlayActive > 0
+                    "
+                  />
+                  <!-- Router-view for Gmail (API), login, and other non-webview pages -->
+                  <router-view v-else />
+                </div>
+                <DesktopControlBar
+                  v-if="
+                    showDesktopControlBar &&
+                    controlBarStore.position === 'bottom'
+                  "
+                  :left-hidden="!sidebarVisible"
+                  :right-hidden="!rightSidebarVisible"
+                  position="bottom"
+                  @open-left="sidebarVisible = true"
+                  @open-right="rightSidebarVisible = true"
+                >
+                  <DesktopQuickNavigation
+                    v-if="bothSidebarsHidden"
+                    position="bottom"
+                    @manage-profiles="profileManagerVisible = true"
+                    @open-settings="settingsVisible = true"
+                  />
+                </DesktopControlBar>
+              </div>
             </AppRightSidebar>
           </AppSidebar>
         </div>
-        <DesktopControlBar
-          v-if="showDesktopControlBar && controlBarStore.position === 'bottom'"
-          :left-hidden="!sidebarVisible"
-          :right-hidden="!rightSidebarVisible"
-          position="bottom"
-          @open-left="sidebarVisible = true"
-          @open-right="rightSidebarVisible = true"
-        />
       </div>
     </template>
 
@@ -74,6 +101,14 @@
     <MobileSettingsSheet
       v-if="onboardingStore.completed && !isMobile"
       v-model="settingsVisible"
+      @edit-profile-avatar="openProfileAvatarFromSettings"
+    />
+    <ProfileAvatarDialog
+      v-if="onboardingStore.completed && !isMobile"
+      v-model="profileAvatarVisible"
+      :avatar="profilesStore.activeProfile?.avatar"
+      :emoji="profilesStore.activeProfile?.emoji ?? '🟦'"
+      @save="saveActiveProfileAvatar"
     />
   </div>
 </template>
@@ -119,6 +154,7 @@ import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
 import AppSidebar from "./components/AppSidebar.vue"
 import AppRightSidebar from "./components/AppRightSidebar.vue"
 import DesktopControlBar from "./components/DesktopControlBar.vue"
+import DesktopQuickNavigation from "./components/DesktopQuickNavigation.vue"
 import NetworkWebviewHost from "./components/NetworkWebviewHost.vue"
 import MobileLayout from "./components/MobileLayout.vue"
 import MobileSettingsSheet from "./components/MobileSettingsSheet.vue"
@@ -127,6 +163,7 @@ import SignupNudge from "./components/SignupNudge.vue"
 import OnboardingFlow from "./components/OnboardingFlow.vue"
 import ProductAccessGate from "./components/ProductAccessGate.vue"
 import ProfileManagerDialog from "./components/ProfileManagerDialog.vue"
+import ProfileAvatarDialog from "./components/ProfileAvatarDialog.vue"
 import { useDesktopControlBarStore } from "@/stores/desktopControlBar"
 import { useBillingAccess } from "@/composables/useBillingAccess"
 
@@ -134,6 +171,7 @@ const sidebarVisible = ref(true)
 const rightSidebarVisible = ref(true)
 const settingsVisible = ref(false)
 const profileManagerVisible = ref(false)
+const profileAvatarVisible = ref(false)
 const webviewOverlayActive = ref(0)
 
 // Signup nudge (desktop only — mobile has its own in MobileLayout)
@@ -153,6 +191,26 @@ const router = useRouter()
 const showDesktopControlBar = computed(
   () => !sidebarVisible.value || !rightSidebarVisible.value,
 )
+const bothSidebarsHidden = computed(
+  () => !sidebarVisible.value && !rightSidebarVisible.value,
+)
+
+function openProfileAvatarFromSettings() {
+  settingsVisible.value = false
+  profileAvatarVisible.value = true
+}
+
+function saveActiveProfileAvatar(value: { avatar?: string; emoji: string }) {
+  const profile = profilesStore.activeProfile
+  if (!profile) return
+  profilesStore.update(profile.id, {
+    name: profile.name,
+    avatar: value.avatar,
+    emoji: value.emoji,
+    hiddenNetworks: profile.hiddenNetworks,
+  })
+  profileAvatarVisible.value = false
+}
 const textZoomLevel = ref(
   normalizeTextZoomLevel(
     Number(
@@ -997,6 +1055,24 @@ textarea,
   min-height: 0;
   overflow: hidden;
   flex: 1;
+}
+
+.desktop-main {
+  display: flex;
+  flex-direction: column;
+  width: var(--sg-size-full);
+  height: var(--sg-size-full);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.desktop-main__content {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 :root {

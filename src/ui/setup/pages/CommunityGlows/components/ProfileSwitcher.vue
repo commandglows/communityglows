@@ -1,7 +1,11 @@
 <template>
   <div
     class="profile-switcher"
-    :class="{ 'icons-only': iconsOnly, 'menu-up': menuDirection === 'up' }"
+    :class="{
+      'icons-only': iconsOnly,
+      'menu-up': menuDirection === 'up',
+      embedded,
+    }"
   >
     <!-- Trigger button -->
     <div
@@ -82,8 +86,15 @@
           class="add-profile-btn"
           @click.stop="openManager"
         >
-          <SgIcon icon="pi pi-cog" />
+          <SgIcon icon="pi pi-users" />
           <span>Gérer les profils</span>
+        </button>
+        <button
+          class="add-profile-btn"
+          @click.stop="openSettings"
+        >
+          <SgIcon icon="pi pi-cog" />
+          <span>Paramètres</span>
         </button>
       </div>
     </div>
@@ -95,11 +106,15 @@ import { ref, onMounted, onUnmounted } from "vue"
 import { COMMUNITYGLOWS_PROFILE_PICKED_EVENT } from "@/lib/communityGlowsDeepLinks"
 import { useProfilesStore } from "@/stores/profiles"
 
-const emit = defineEmits<{ "manage-profiles": [] }>()
+const emit = defineEmits<{
+  "manage-profiles": []
+  "open-settings": []
+}>()
 
 defineProps<{
   iconsOnly: boolean
   menuDirection?: "up" | "down"
+  embedded?: boolean
 }>()
 
 const profilesStore = useProfilesStore()
@@ -128,6 +143,11 @@ function selectProfile(profileId: string) {
 function openManager() {
   menuVisible.value = false
   emit("manage-profiles")
+}
+
+function openSettings() {
+  menuVisible.value = false
+  emit("open-settings")
 }
 
 // Close menu on outside click
@@ -168,6 +188,19 @@ onUnmounted(() => {
   margin-top: var(--sg-space-0d5rem);
   margin-bottom: 0;
   padding: var(--sg-space-0d75rem-0d5rem-0d5rem);
+}
+
+.profile-switcher.embedded {
+  flex: 0 0 auto;
+  max-width: var(--sg-size-220px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.profile-switcher.embedded .profile-menu {
+  right: auto;
+  min-width: var(--sg-size-220px);
 }
 
 .profile-trigger {

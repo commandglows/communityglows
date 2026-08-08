@@ -90,21 +90,21 @@
               <div class="sheet-profile-actions">
                 <button
                   class="sheet-action"
-                  :title="$t('profile.rename_action')"
+                  :aria-label="$t('profile.rename_action')"
                   @click.stop="startEdit(profile)"
                 >
                   <SgIcon icon="pi pi-pencil" />
                 </button>
                 <button
                   class="sheet-action"
-                  :title="$t('profile.avatar_action')"
+                  :aria-label="$t('profile.avatar_action')"
                   @click.stop="pickAvatar(profile.id)"
                 >
                   <SgIcon icon="pi pi-camera" />
                 </button>
                 <button
                   class="sheet-action"
-                  :title="$t('profile.clear_cookies_action')"
+                  :aria-label="$t('profile.clear_cookies_action')"
                   @click.stop="clearCookiesProfileId = clearCookiesProfileId === profile.id ? null : profile.id"
                 >
                   <SgIcon icon="pi pi-eraser" />
@@ -112,7 +112,7 @@
                 <button
                   v-if="profilesStore.profiles.length > 1"
                   class="sheet-action sheet-action--danger"
-                  :title="$t('common.delete')"
+                  :aria-label="$t('common.delete')"
                   @click.stop="deleteProfile(profile.id)"
                 >
                   <SgIcon icon="pi pi-trash" />

@@ -20,7 +20,12 @@ export const useCustomLinksStore = defineStore('customLinks', () => {
   const getLinks = (profileId: string): CustomLink[] =>
     links.value[profileId] ?? []
 
-  const addLink = (profileId: string, label: string, url: string) => {
+  const addLink = (
+    profileId: string,
+    label: string,
+    url: string,
+    icon = 'pi pi-link',
+  ) => {
     const trimmedLabel = label.trim()
     let trimmedUrl = url.trim()
     if (!trimmedLabel || !trimmedUrl) return
@@ -33,7 +38,7 @@ export const useCustomLinksStore = defineStore('customLinks', () => {
       id: `custom-${crypto.randomUUID()}`,
       label: trimmedLabel,
       url: trimmedUrl,
-      icon: 'pi pi-link',
+      icon,
     }
     links.value[profileId].push(link)
     syncLinkToCloud(profileId, link)

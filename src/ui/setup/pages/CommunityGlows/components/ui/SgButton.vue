@@ -11,7 +11,6 @@
     :disabled="disabled || loading"
     :aria-busy="loading || undefined"
     :aria-label="resolvedAriaLabel"
-    :title="tooltip"
   >
     <span
       v-if="loading"

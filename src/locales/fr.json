@@ -209,8 +209,22 @@
     "add_button": "Ajouter un lien",
     "add_tooltip": "Ajouter un lien",
     "add_dialog_title": "Ajouter un lien",
+    "add_dialog_hint": "Créez un raccourci vers le site ou l’outil de votre choix.",
+    "name_label": "Nom du réseau",
     "name_placeholder": "Nom (ex: Mon site)",
-    "url_placeholder": "URL (ex: example.com)"
+    "url_label": "Adresse du réseau",
+    "url_placeholder": "URL (ex: example.com)",
+    "icon_label": "Icône",
+    "icons": {
+      "link": "Lien",
+      "website": "Site web",
+      "business": "Professionnel",
+      "video": "Vidéo",
+      "image": "Image",
+      "community": "Communauté",
+      "email": "E-mail",
+      "bookmark": "Favori"
+    }
   },
   "networks": {
     "edit_mode_hint": "Appuyez sur un réseau pour l’afficher ou le masquer pour ce profil, puis choisissez Terminer.",

@@ -617,24 +617,6 @@
   --sg-crm-status-icon-size: 2rem;
 }
 
-.sg-tooltip {
-  position: fixed;
-  z-index: var(--sg-tooltip-layer);
-  max-width: var(--sg-tooltip-max-width);
-  padding: var(--sg-tooltip-padding);
-  border-radius: var(--sg-radius-sm);
-  background: var(--sg-color-text);
-  color: var(--sg-color-surface-raised);
-  box-shadow: var(--sg-shadow-control);
-  font-size: var(--sg-tooltip-font-size);
-  pointer-events: none;
-}
-
-.sg-tooltip--top { left: var(--sg-tooltip-anchor-left); top: calc(var(--sg-tooltip-anchor-top) - var(--sg-tooltip-anchor-height) / 2 - var(--sg-tooltip-offset)); transform: translate(-50%, -100%); }
-.sg-tooltip--bottom { left: var(--sg-tooltip-anchor-left); top: calc(var(--sg-tooltip-anchor-top) + var(--sg-tooltip-anchor-height) / 2 + var(--sg-tooltip-offset)); transform: translate(-50%, 0); }
-.sg-tooltip--left { left: calc(var(--sg-tooltip-anchor-left) - var(--sg-tooltip-anchor-width) / 2 - var(--sg-tooltip-offset)); top: var(--sg-tooltip-anchor-top); transform: translate(-100%, -50%); }
-.sg-tooltip--right { left: calc(var(--sg-tooltip-anchor-left) + var(--sg-tooltip-anchor-width) / 2 + var(--sg-tooltip-offset)); top: var(--sg-tooltip-anchor-top); transform: translate(0, -50%); }
-
 :root.dark {
   --sg-color-action: #60a5fa;
   --sg-color-action-hover: #93c5fd;

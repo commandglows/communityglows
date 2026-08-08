@@ -198,7 +198,9 @@ watch(
   flex: 1;
   width: var(--sg-size-100pct);
   height: var(--sg-size-100pct);
+  min-width: 0;
   min-height: 0;
+  overflow: hidden;
   background: transparent;
   position: relative;
 }

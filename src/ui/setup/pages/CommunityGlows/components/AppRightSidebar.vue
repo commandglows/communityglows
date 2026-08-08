@@ -4,7 +4,10 @@
       direction="horizontal"
       @layout="handleResize"
     >
-      <SplitterPanel :default-size="100 - SIDEBAR_EXPANDED_SIZE">
+      <SplitterPanel
+        :default-size="100 - SIDEBAR_EXPANDED_SIZE"
+        class="main-panel"
+      >
         <slot></slot>
       </SplitterPanel>
       <SplitterResizeHandle class="sidebar-resize-handle" />
@@ -26,35 +29,6 @@
               'sidebar-header--spaced': !iconsOnly,
             }"
           >
-            <div
-              class="sidebar-actions"
-              :class="{ 'sidebar-actions--compact': iconsOnly }"
-            >
-              <Button
-                v-sg-tooltip.left="
-                  diagnosticsCopied
-                    ? 'Diagnostic copié'
-                    : 'Copier le diagnostic'
-                "
-                :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
-                text
-                :class="['sidebar-header-button', { 'w-full': iconsOnly }]"
-                :aria-label="
-                  diagnosticsCopied
-                    ? 'Diagnostic copié'
-                    : 'Copier le diagnostic'
-                "
-                @click="copyDiagnostics"
-              />
-              <Button
-                v-sg-tooltip.left="$t('common.settings')"
-                icon="pi pi-cog"
-                text
-                :class="['sidebar-header-button', { 'w-full': iconsOnly }]"
-                :aria-label="$t('common.settings')"
-                @click="emit('open-settings')"
-              />
-            </div>
             <Button
               v-sg-tooltip.left="'Toggle right sidebar'"
               icon="pi pi-bars"
@@ -70,29 +44,28 @@
             v-show="!iconsOnly"
             class="profile-section"
           >
-            <Avatar
-              v-if="profilesStore.activeProfile?.avatar"
-              :image="profilesStore.activeProfile.avatar"
-              size="xlarge"
-              shape="circle"
-            />
-            <Avatar
-              v-else
-              :label="profilesStore.activeProfile?.emoji ?? '👤'"
-              size="xlarge"
-              shape="circle"
-            />
-            <h3>{{ profilesStore.activeProfile?.name ?? "Profil" }}</h3>
-            <p>
-              {{ profilesStore.profiles.length }}
-              {{ profilesStore.profiles.length > 1 ? "profils" : "profil" }}
-            </p>
-            <Button
-              label="Gérer les profils"
-              icon="pi pi-cog"
-              text
-              size="small"
-              @click="emit('manage-profiles')"
+            <div class="profile-avatar">
+              <Avatar
+                :image="profilesStore.activeProfile?.avatar"
+                :label="profilesStore.activeProfile?.emoji ?? '👤'"
+                :alt="profilesStore.activeProfile?.name ?? 'Profil'"
+                size="xlarge"
+                shape="circle"
+              />
+              <button
+                type="button"
+                class="profile-avatar__edit"
+                aria-label="Modifier l’image du profil"
+                @click="emit('edit-profile-avatar')"
+              >
+                <SgIcon icon="pi pi-pencil" />
+              </button>
+            </div>
+            <ProfileSwitcher
+              :icons-only="false"
+              menu-direction="down"
+              @manage-profiles="emit('manage-profiles')"
+              @open-settings="emit('open-settings')"
             />
           </div>
 
@@ -177,16 +150,13 @@
                 type="button"
                 :aria-label="
                   isKanbanCollapsed
-                    ? 'Replier puis ouvrir Kanban'
-                    : 'Déplier et réduire Kanban'
+                    ? 'Ouvrir Kanban'
+                    : 'Replier Kanban'
                 "
                 :aria-expanded="String(!isKanbanCollapsed)"
                 @click="isKanbanCollapsed = !isKanbanCollapsed"
               >
                 <span class="sidebar-widget__title">Kanban</span>
-                <span class="sidebar-widget__state">
-                  {{ isKanbanCollapsed ? "Replié" : "Déplié" }}
-                </span>
                 <SgIcon
                   :icon="[
                     'pi',
@@ -215,16 +185,13 @@
                 type="button"
                 :aria-label="
                   isCrmCollapsed
-                    ? 'Replier puis ouvrir CRM'
-                    : 'Déplier et réduire CRM'
+                    ? 'Ouvrir CRM'
+                    : 'Replier CRM'
                 "
                 :aria-expanded="String(!isCrmCollapsed)"
                 @click="isCrmCollapsed = !isCrmCollapsed"
               >
                 <span class="sidebar-widget__title">CRM</span>
-                <span class="sidebar-widget__state">
-                  {{ isCrmCollapsed ? "Replié" : "Déplié" }}
-                </span>
                 <SgIcon
                   :icon="[
                     'pi',
@@ -254,11 +221,8 @@ import { nextTick, onMounted, ref, watch } from "vue"
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
 import Button from "./ui/SgButton.vue"
 import Avatar from "./ui/SgAvatar.vue"
-import { useProfilesStore } from "@/stores/profiles"
 import { useMediaQuery } from "@/composables/useMediaQuery"
-import { buildDiagnosticsReport } from "@/lib/buildDiagnostics"
-import { getPlatformCapabilities } from "@/platform/capabilities"
-import { useWebviewStore } from "@/stores/webviewState"
+import { useProfilesStore } from "@/stores/profiles"
 import {
   isCompactSidebarSize,
   sidebarSizeForMode,
@@ -266,6 +230,7 @@ import {
 } from "./sidebarLayout"
 import KanbanSidebar from "./kanban/KanbanSidebar.vue"
 import CrmSidebarWidget from "./CrmSidebarWidget.vue"
+import ProfileSwitcher from "./ProfileSwitcher.vue"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 
 const props = defineProps<{
@@ -277,49 +242,17 @@ const emit = defineEmits<{
   "open-settings": []
   "open-rightpanel-section": [sectionId: string]
   "manage-profiles": []
+  "edit-profile-avatar": []
 }>()
 
-const webviewStore = useWebviewStore()
 const isSidebarMobile = useMediaQuery(
   `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
 )
-const diagnosticsCopied = ref(false)
+const profilesStore = useProfilesStore()
 
 const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
-async function copyDiagnostics() {
-  const capabilities = getPlatformCapabilities()
-  const report = buildDiagnosticsReport({
-    surface: "desktop-right-sidebar",
-    active_network: webviewStore.activeNetworkId ?? "none",
-    profile_selected: profilesStore.activeProfileId ? "yes" : "no",
-    profile_count: String(profilesStore.profiles.length),
-    desktop_tauri: String(capabilities.isDesktopTauri),
-    native_webview: String(capabilities.supportsNativeWebview),
-    native_session_isolation: String(
-      capabilities.supportsNativeSessionIsolation,
-    ),
-  })
-
-  try {
-    await navigator.clipboard.writeText(report)
-  } catch {
-    const textarea = document.createElement("textarea")
-    textarea.value = report
-    document.body.appendChild(textarea)
-    textarea.select()
-    document.execCommand("copy")
-    document.body.removeChild(textarea)
-  }
-
-  diagnosticsCopied.value = true
-  window.setTimeout(() => {
-    diagnosticsCopied.value = false
-  }, 2000)
-}
-
 const iconsOnly = ref(false)
-const profilesStore = useProfilesStore()
 const isKanbanCollapsed = ref(false)
 const isCrmCollapsed = ref(true)
 const KANBAN_COLLAPSE_KEY = "communityglows-right-sidebar-kanban-collapsed"
@@ -388,6 +321,12 @@ const handleResize = (sizes: number[]) => {
   min-width: var(--sg-right-sidebar-expanded-min-width);
 }
 
+.main-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .sidebar-content {
   height: var(--sg-sidebar-fill-size);
   padding: var(--sg-right-sidebar-content-padding);
@@ -412,22 +351,6 @@ const handleResize = (sizes: number[]) => {
   min-height: auto;
 }
 
-.sidebar-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--sg-sidebar-control-gap);
-}
-
-.sidebar-actions--compact {
-  width: var(--sg-sidebar-fill-size);
-  flex-direction: column;
-  gap: var(--sg-sidebar-subsection-spacing);
-}
-
-.sidebar-header-button {
-  height: var(--sg-right-sidebar-menu-row-height);
-}
-
 .sidebar-header--compact :deep(.sg-button) {
   width: var(--sg-sidebar-fill-size);
   justify-content: center;
@@ -435,11 +358,13 @@ const handleResize = (sizes: number[]) => {
 
 .sidebar-toggle-button {
   width: fit-content;
+  margin-left: auto;
 }
 
 .sidebar-header--compact .sidebar-toggle-button {
   width: var(--sg-sidebar-fill-size);
   justify-content: center;
+  margin-left: 0;
 }
 
 .content-centered {
@@ -453,23 +378,32 @@ const handleResize = (sizes: number[]) => {
 }
 
 .profile-section {
-  text-align: center;
-  padding-bottom: var(--sg-right-sidebar-profile-spacing);
-  border-bottom: 1px solid var(--sg-color-border);
   margin-bottom: var(--sg-right-sidebar-profile-spacing);
 }
 
-.profile-section h3 {
-  margin: var(--sg-right-sidebar-profile-title-margin-block-start) 0
-    var(--sg-right-sidebar-profile-title-margin-block-end);
-  font-size: var(--sg-right-sidebar-profile-title-size);
+.profile-avatar {
+  position: relative;
+  width: fit-content;
+  margin-inline: auto;
+  margin-bottom: var(--sg-sidebar-subsection-spacing);
+  text-align: center;
 }
-
-.profile-section p {
-  color: var(--sg-color-text-muted);
-  margin: 0;
-  font-size: var(--sg-right-sidebar-profile-copy-size);
+.profile-avatar__edit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: var(--sg-control-height-sm);
+  height: var(--sg-control-height-sm);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-pill);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  cursor: pointer;
 }
+.profile-avatar__edit:hover { background: var(--sg-color-surface-hover); }
+.profile-avatar__edit:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 
 .menu-section {
   display: flex;
@@ -554,13 +488,6 @@ const handleResize = (sizes: number[]) => {
   color: var(--sg-color-text-muted);
 }
 
-.sidebar-widget__state {
-  margin-left: auto;
-  margin-right: var(--sg-sidebar-control-gap);
-  font-size: var(--sg-font-size-0d8rem);
-  color: var(--sg-color-text-muted);
-}
-
 .sidebar-widget__body {
   overflow: hidden;
   transition:
@@ -598,7 +525,7 @@ const handleResize = (sizes: number[]) => {
 
 .sidebar-resize-handle {
   width: var(--sg-sidebar-resize-handle-width);
-  background: var(--sg-color-border);
+  background: var(--sg-color-transparent);
   transition: var(--sg-right-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {

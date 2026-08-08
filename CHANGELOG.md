@@ -26,6 +26,22 @@ All notable changes to this project will be documented in this file.
 - Split side panel behavior by browser: Chrome-only side panel, Firefox fallback without side panel promise.
 - Added the `/tasks` desktop/mobile route, an extension popup capture form, and Android shared-link intake into the task form. V1 remains local per runtime and does not read third-party page content.
 
+## [2026-08-08] — Windows profile and panel UI (pending installed-Windows proof)
+
+### Added
+- Added a shared responsive profile-management sheet for creating, editing, and safely deleting profiles, including a reusable photo-or-emoji avatar editor and selectable network cards.
+- Added compact profile and visible-network access to the horizontal desktop control bar when both side panels are collapsed.
+
+### Changed
+- Unified profile selection and management entry points across the left panel, right panel, settings, and collapsed desktop state.
+- Refined desktop panel layout, scrolling, resize-handle presentation, settings responsiveness, custom-network icon selection, and daily-action visibility.
+
+### Removed
+- Removed app-wide information tooltips and redundant permanent profile, settings, diagnostic, profile-count, and Kanban/CRM expansion labels while retaining accessible names for icon controls.
+
+### Verification
+- Local typechecking, focused profile-store tests, changed-file design-system drift, and diff checks passed. Fresh installed-Windows visual and functional validation remains required; this entry does not represent a Windows release.
+
 ## [2026-05-23]
 
 ### Security

@@ -64,6 +64,13 @@ defineEmits<{
 
 .desktop-control-bar--top { border-bottom: 1px solid var(--sg-color-border); }
 .desktop-control-bar--bottom { border-top: 1px solid var(--sg-color-border); }
-.desktop-control-bar__actions { display: flex; align-items: center; justify-content: center; gap: var(--sg-space-2); }
+.desktop-control-bar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sg-space-2);
+  min-width: 0;
+  overflow: hidden;
+}
 .desktop-control-bar > :last-child { justify-self: end; }
 </style>

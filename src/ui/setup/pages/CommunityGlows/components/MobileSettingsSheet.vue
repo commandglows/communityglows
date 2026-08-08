@@ -1,37 +1,21 @@
 <template>
-  <Teleport to="body">
-    <Transition name="sheet">
-      <div
-        v-if="modelValue"
-        class="sheet-overlay"
-        @click.self="closeSheet"
-      >
-        <div
-          ref="sheetRef"
-          class="profile-sheet settings-sheet"
-          :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile-compact': isMobileSettingsNarrow }"
-          :style="sheetStyle"
-        >
+  <SgSheet
+    :model-value="modelValue"
+    :title="$t('common.settings')"
+    @update:model-value="emit('update:modelValue', $event)"
+  >
+    <div
+      class="settings-sheet"
+      :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile-compact': isMobileSettingsNarrow }"
+    >
           <div
-            class="sheet-drag-zone"
-            @pointerdown="onDragStart"
-            @pointermove="onDragMove"
-            @pointerup="onDragEnd"
-            @pointercancel="onDragCancel"
+            class="settings-content"
+            :class="{
+              'is-desktop-grid': isSettingsDesktop,
+              'is-ultrawide-grid': isSettingsUltraWide,
+            }"
           >
-            <div class="sheet-handle" />
-            <div class="sheet-header">
-              <span class="sheet-title">{{ $t('common.settings') }}</span>
-              <button
-                class="sheet-close-btn"
-                @click="closeSheet"
-              >
-                <SgIcon icon="pi pi-times" />
-              </button>
-            </div>
-          </div>
-
-          <div class="settings-content">
+            <div class="settings-column settings-account-column">
             <!-- Account + backup section -->
             <p class="settings-section-label">{{ $t('account.section_title') }}</p>
             <div class="settings-account-card">
@@ -182,7 +166,9 @@
                 <BackupRestore :show-info="false" />
               </div>
             </div>
+            </div>
 
+            <div class="settings-column settings-service-column">
             <p class="settings-section-label">{{ $t('billing.section_title') }}</p>
             <BillingAccessPanel />
 
@@ -208,9 +194,19 @@
                 </button>
               </div>
             </div>
+            </div>
 
+            <div class="settings-column settings-preferences-column">
             <!-- Preferences section -->
             <p class="settings-section-label">{{ $t('settings.preferences') }}</p>
+
+            <div class="settings-account-card">
+              <p class="settings-account-hint">Image du profil actif</p>
+              <button type="button" class="nudge-cta" @click="emit('edit-profile-avatar')">
+                <SgIcon icon="pi pi-pencil" />
+                Modifier la photo ou l’emoji
+              </button>
+            </div>
 
             <div class="settings-toggle-row">
               <span class="settings-toggle-label">
@@ -345,11 +341,10 @@
               <SgIcon icon="pi pi-info-circle" />
               {{ $t('onboarding.replay_button') }}
             </button>
+            </div>
           </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </SgSheet>
 </template>
 
 <script setup lang="ts">
@@ -385,11 +380,15 @@ import { useMediaQuery } from '@/composables/useMediaQuery'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
 import KeyboardShortcuts from './KeyboardShortcuts.vue'
+import SgSheet from './ui/SgSheet.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
 const props = defineProps<{ modelValue: boolean }>()
-const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
+const emit = defineEmits<{
+  'update:modelValue': [value: boolean]
+  'edit-profile-avatar': []
+}>()
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
@@ -413,6 +412,8 @@ const autoThemeHint = computed(() => {
   return `${t('theme.auto_helper')} ${t(sourceKey)}`
 })
 const isMobileSettingsNarrow = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.mobileSettingsCompact}px)`)
+const isSettingsDesktop = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsDesktop}px)`)
+const isSettingsUltraWide = useMediaQuery(`(min-width: ${RESPONSIVE_BREAKPOINTS.settingsUltraWide}px)`)
 
 function setThemeMode(mode: ThemeMode) {
   void themeStore.setThemeMode(mode, { allowPrompt: mode === 'auto' })
@@ -500,103 +501,6 @@ async function handleAccountAuth(flow: 'signIn' | 'signUp') {
   } finally {
     signupLoading.value = false
   }
-}
-
-function closeSheet() {
-  emit('update:modelValue', false)
-}
-
-const sheetRef = ref<HTMLElement | null>(null)
-const dragOffset = ref(0)
-const isDragging = ref(false)
-const activePointerId = ref<number | null>(null)
-const dragStartY = ref(0)
-const dragStartTime = ref(0)
-let dragResetTimer: number | null = null
-
-const sheetStyle = computed(() => ({
-  '--sheet-drag-offset': `${dragOffset.value}px`,
-  transition: isDragging.value ? 'none' : 'var(--sg-mobile-sheet-drag-motion)',
-}))
-
-function clearDragResetTimer() {
-  if (dragResetTimer !== null) {
-    window.clearTimeout(dragResetTimer)
-    dragResetTimer = null
-  }
-}
-
-function scheduleDragReset() {
-  clearDragResetTimer()
-  dragResetTimer = window.setTimeout(() => {
-    dragOffset.value = 0
-    isDragging.value = false
-    activePointerId.value = null
-  }, 250)
-}
-
-function getDismissThreshold() {
-  const sheetHeight = sheetRef.value?.offsetHeight ?? window.innerHeight * 0.5
-  return Math.min(140, Math.max(72, sheetHeight * 0.2))
-}
-
-function shouldIgnoreDragStart(target: EventTarget | null) {
-  if (!(target instanceof Element)) return false
-  return Boolean(target.closest('button, a, input, textarea, select, label, [role="button"], [data-no-sheet-drag]'))
-}
-
-function onDragStart(event: PointerEvent) {
-  if (!props.modelValue || !event.isPrimary) return
-  if (event.pointerType === 'mouse' && event.button !== 0) return
-  if (shouldIgnoreDragStart(event.target)) return
-
-  isDragging.value = true
-  activePointerId.value = event.pointerId
-  dragStartY.value = event.clientY
-  dragStartTime.value = event.timeStamp || performance.now()
-  dragOffset.value = 0
-  clearDragResetTimer()
-
-  ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
-}
-
-function onDragMove(event: PointerEvent) {
-  if (!isDragging.value || event.pointerId !== activePointerId.value) return
-
-  const nextOffset = Math.max(0, event.clientY - dragStartY.value)
-  dragOffset.value = nextOffset
-
-  if (nextOffset > 0) {
-    event.preventDefault()
-  }
-}
-
-function finishDrag(event?: PointerEvent) {
-  if (!isDragging.value) return
-  if (event && event.pointerId !== activePointerId.value) return
-
-  const elapsed = Math.max(1, (event?.timeStamp || performance.now()) - dragStartTime.value)
-  const velocity = dragOffset.value / elapsed
-  const shouldClose = dragOffset.value >= getDismissThreshold() || velocity >= 0.6
-
-  isDragging.value = false
-  activePointerId.value = null
-
-  if (shouldClose) {
-    closeSheet()
-    scheduleDragReset()
-    return
-  }
-
-  dragOffset.value = 0
-}
-
-function onDragEnd(event: PointerEvent) {
-  finishDrag(event)
-}
-
-function onDragCancel(event: PointerEvent) {
-  finishDrag(event)
 }
 
 async function copySignupError() {
@@ -731,21 +635,14 @@ function replayOnboarding() {
 }
 
 watch(() => props.modelValue, (open) => {
-  clearDragResetTimer()
-
   if (open) {
     hapticEnabled.value = localStorage.getItem('communityglows_haptic') !== 'false'
     tapSoundEnabled.value = localStorage.getItem('communityglows_tap_sound') === 'true'
     tapSoundVariant.value = normalizeTapSoundVariant(
       localStorage.getItem(TAP_SOUND_STORAGE_KEY) ?? DEFAULT_TAP_SOUND_VARIANT
     )
-    dragOffset.value = 0
-    isDragging.value = false
-    activePointerId.value = null
     return
   }
-
-  scheduleDragReset()
 })
 
 onMounted(() => {
@@ -754,34 +651,10 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('communityglows-tap-sound-changed', onNativeTapSoundChanged)
-  clearDragResetTimer()
 })
 </script>
 
 <style scoped>
-/* ─── Sheet base (shared with profile sheet) ─────────────────── */
-
-.sheet-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--sg-color-scrim-45);
-  z-index: var(--sg-layer-1000);
-  display: flex;
-  align-items: flex-end;
-}
-
-.profile-sheet {
-  width: var(--sg-size-100pct);
-  background: var(--sg-color-surface-raised);
-  border-radius: var(--sg-radius-20px-20px-0-0);
-  padding-bottom: var(--sg-space-env-safeneg-areaneg-insetneg-bottom-16px);
-  max-height: var(--sg-size-85vh);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transform: translateY(var(--sheet-drag-offset, 0px));
-}
-
 .settings-sheet {
   --settings-account-card-bg: linear-gradient(
     180deg,
@@ -875,85 +748,33 @@ onUnmounted(() => {
   --settings-backup-divider: var(--sg-color-neutral-alpha-16);
 }
 
-.sheet-handle {
-  width: var(--sg-size-2d5rem);
-  height: var(--sg-size-4px);
-  background: var(--sg-color-border);
-  border-radius: var(--sg-radius-2px);
-  margin: var(--sg-space-0d75rem-auto-0);
-  flex-shrink: 0;
-}
-
-.sheet-drag-zone {
-  flex-shrink: 0;
-  touch-action: none;
-  user-select: none;
-}
-
-.sheet-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--sg-space-0d75rem-1d25rem-0d5rem);
-  flex-shrink: 0;
-}
-
-.sheet-title {
-  font-size: var(--sg-font-size-1rem);
-  font-weight: 700;
-  color: var(--sg-color-text);
-}
-
-.sheet-close-btn {
-  background: var(--sg-color-surface-muted);
-  border: none;
-  border-radius: var(--sg-radius-50pct);
-  width: var(--sg-size-2rem);
-  height: var(--sg-size-2rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--sg-color-text-muted);
-  font-size: var(--sg-font-size-0d75rem);
-  transition: var(--sg-motion-backgroundneg-color-0d12s);
-}
-
-.sheet-close-btn:active {
-  background: var(--sg-color-surface-hover);
-}
-
-.sheet-close-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
 /* ─── Settings content ───────────────────────────────────────── */
 
 .settings-content {
   padding: var(--sg-space-0-1d25rem-1d5rem);
-  overflow-y: auto;
-  scrollbar-width: var(--sg-size-thin);
-  scrollbar-color: var(--sg-scrollbar-thumb) transparent;
-  scrollbar-gutter: stable;
 }
 
-.settings-content::-webkit-scrollbar {
-  width: var(--sg-scrollbar-width);
-  -webkit-appearance: none;
+.settings-content.is-desktop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--sg-space-1rem);
 }
 
-.settings-content::-webkit-scrollbar-track {
-  background: transparent;
+.settings-content.is-desktop-grid .settings-preferences-column {
+  grid-column: 1 / -1;
 }
 
-.settings-content::-webkit-scrollbar-thumb {
-  background: var(--sg-scrollbar-thumb);
-  border-radius: var(--sg-scrollbar-radius);
+.settings-content.is-ultrawide-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.settings-content::-webkit-scrollbar-thumb:hover {
-  background: var(--sg-scrollbar-thumb-hover);
+.settings-content.is-ultrawide-grid .settings-preferences-column {
+  grid-column: auto;
+}
+
+.settings-column {
+  min-width: 0;
 }
 
 .settings-section-label {
@@ -1381,33 +1202,7 @@ onUnmounted(() => {
   background: var(--sg-color-surface-hover);
 }
 
-/* ─── Sheet transition ───────────────────────────────────────── */
-
-.sheet-enter-active,
-.sheet-leave-active {
-  transition: var(--sg-motion-opacity-0d25s-ease);
-}
-
-.sheet-enter-active .profile-sheet,
-.sheet-leave-active .profile-sheet {
-  transition: var(--sg-motion-transform-0d25s-ease);
-}
-
-.sheet-enter-from,
-.sheet-leave-to {
-  opacity: 0;
-}
-
-.sheet-enter-from .profile-sheet,
-.sheet-leave-to .profile-sheet {
-  transform: translateY(calc(100% + var(--sheet-drag-offset, 0px)));
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .sheet-enter-active,
-  .sheet-leave-active,
-  .sheet-enter-active .profile-sheet,
-  .sheet-leave-active .profile-sheet,
   .friends-toggle-pill,
   .toggle-thumb {
     transition: var(--sg-motion-none);

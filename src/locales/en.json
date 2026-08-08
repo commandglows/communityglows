@@ -209,8 +209,22 @@
     "add_button": "Add a link",
     "add_tooltip": "Add a link",
     "add_dialog_title": "Add a link",
+    "add_dialog_hint": "Create a shortcut to any website or tool.",
+    "name_label": "Network name",
     "name_placeholder": "Name (e.g. My site)",
-    "url_placeholder": "URL (e.g. example.com)"
+    "url_label": "Network address",
+    "url_placeholder": "URL (e.g. example.com)",
+    "icon_label": "Icon",
+    "icons": {
+      "link": "Link",
+      "website": "Website",
+      "business": "Business",
+      "video": "Video",
+      "image": "Image",
+      "community": "Community",
+      "email": "Email",
+      "bookmark": "Bookmark"
+    }
   },
   "networks": {
     "edit_mode_hint": "Tap a network to show or hide it for this profile, then select Done.",

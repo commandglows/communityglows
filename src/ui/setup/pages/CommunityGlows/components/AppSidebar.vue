@@ -40,38 +40,7 @@
             </div>
 
             <div class="sidebar-scrollable-content">
-              <!-- Réseaux sociaux -->
-              <div class="menu-section">
-                <div class="section-header">
-                  <h3 v-if="!iconsOnly">
-                    {{ $t("sidebar.networks_section") }}
-                  </h3>
-                  <Button
-                    v-sg-tooltip.right="
-                      networkEditMode
-                        ? $t('networks.finish_editing')
-                        : $t('networks.start_editing')
-                    "
-                    :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
-                    :label="
-                      iconsOnly
-                        ? undefined
-                        : networkEditMode
-                          ? $t('networks.finish_editing')
-                          : $t('networks.start_editing')
-                    "
-                    :aria-label="
-                      networkEditMode
-                        ? $t('networks.finish_editing')
-                        : $t('networks.start_editing')
-                    "
-                    :aria-pressed="networkEditMode"
-                    text
-                    size="small"
-                    class="network-edit-mode-button"
-                    @click="toggleNetworkEditMode"
-                  />
-                </div>
+              <div class="menu-section network-menu-section">
                 <div class="menu-items">
                   <div
                     v-for="item in visibleMenuItems"
@@ -137,6 +106,31 @@
                     </div>
                   </div>
                 </div>
+                <Button
+                  v-sg-tooltip.right="
+                    networkEditMode
+                      ? $t('networks.finish_editing')
+                      : $t('networks.start_editing')
+                  "
+                  :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
+                  :label="
+                    iconsOnly
+                      ? undefined
+                      : networkEditMode
+                        ? $t('networks.finish_editing')
+                        : $t('networks.start_editing')
+                  "
+                  :aria-label="
+                    networkEditMode
+                      ? $t('networks.finish_editing')
+                      : $t('networks.start_editing')
+                  "
+                  :aria-pressed="networkEditMode"
+                  text
+                  size="small"
+                  class="network-edit-mode-button"
+                  @click="toggleNetworkEditMode"
+                />
               </div>
 
               <!-- Filtre Amis -->
@@ -206,11 +200,11 @@
 
               <!-- Custom Links -->
               <div
-                v-if="customLinkItems.length || !iconsOnly"
+                v-if="customLinkItems.length || networkEditMode"
                 class="custom-links-section"
               >
                 <div
-                  v-if="!iconsOnly"
+                  v-if="networkEditMode && !iconsOnly"
                   class="section-header"
                 >
                   <h3>{{ $t("sidebar.custom_links_section") }}</h3>
@@ -255,7 +249,7 @@
                         @click="navigateToNetwork(item)"
                       />
                       <Button
-                        v-if="!iconsOnly"
+                        v-if="networkEditMode && !iconsOnly"
                         icon="pi pi-times"
                         text
                         rounded
@@ -269,7 +263,7 @@
                   </div>
                 </div>
                 <Button
-                  v-if="iconsOnly"
+                  v-if="networkEditMode && iconsOnly"
                   v-sg-tooltip.right="$t('links.add_tooltip')"
                   icon="pi pi-plus"
                   text
@@ -288,27 +282,64 @@
                 :title="$t('links.add_dialog_title')"
                 variant="sidebar"
               >
-                <div class="add-link-form">
-                  <input
-                    v-model="newLinkLabel"
-                    :placeholder="$t('links.name_placeholder')"
-                    class="add-link-input"
-                    @keydown.enter="addCustomLink"
-                  />
-                  <input
-                    v-model="newLinkUrl"
-                    type="url"
-                    :placeholder="$t('links.url_placeholder')"
-                    class="add-link-input"
-                    @keydown.enter="addCustomLink"
-                  />
+                <form
+                  class="add-link-form"
+                  @submit.prevent="addCustomLink"
+                >
+                  <p class="add-link-hint">
+                    {{ $t("links.add_dialog_hint") }}
+                  </p>
+
+                  <label class="add-link-field">
+                    <span>{{ $t("links.name_label") }}</span>
+                    <input
+                      v-model="newLinkLabel"
+                      :placeholder="$t('links.name_placeholder')"
+                      class="add-link-input"
+                      autocomplete="off"
+                    />
+                  </label>
+
+                  <label class="add-link-field">
+                    <span>{{ $t("links.url_label") }}</span>
+                    <input
+                      v-model="newLinkUrl"
+                      type="text"
+                      inputmode="url"
+                      :placeholder="$t('links.url_placeholder')"
+                      class="add-link-input"
+                      autocomplete="url"
+                    />
+                  </label>
+
+                  <fieldset class="add-link-icon-field">
+                    <legend>{{ $t("links.icon_label") }}</legend>
+                    <div class="add-link-icon-grid">
+                      <button
+                        v-for="iconOption in customLinkIconOptions"
+                        :key="iconOption.icon"
+                        type="button"
+                        class="add-link-icon-option"
+                        :class="{
+                          'add-link-icon-option--selected':
+                            newLinkIcon === iconOption.icon,
+                        }"
+                        :aria-label="$t(iconOption.labelKey)"
+                        :aria-pressed="newLinkIcon === iconOption.icon"
+                        @click="newLinkIcon = iconOption.icon"
+                      >
+                        <SgIcon :icon="iconOption.icon" />
+                      </button>
+                    </div>
+                  </fieldset>
+
                   <Button
                     :label="$t('common.add')"
                     icon="pi pi-plus"
+                    type="submit"
                     :disabled="!newLinkLabel.trim() || !newLinkUrl.trim()"
-                    @click="addCustomLink"
                   />
-                </div>
+                </form>
               </SgDialog>
             </div>
           </div>
@@ -319,11 +350,15 @@
             menu-direction="up"
             class="profile-switcher-bottom"
             @manage-profiles="emit('manage-profiles')"
+            @open-settings="emit('open-settings')"
           />
         </div>
       </SplitterPanel>
       <SplitterResizeHandle class="sidebar-resize-handle" />
-      <SplitterPanel :default-size="100 - SIDEBAR_EXPANDED_SIZE">
+      <SplitterPanel
+        :default-size="100 - SIDEBAR_EXPANDED_SIZE"
+        class="main-panel"
+      >
         <slot></slot>
       </SplitterPanel>
     </SplitterGroup>
@@ -344,6 +379,7 @@ import { useCustomLinksStore } from "@/stores/customLinks"
 import { builtInSocialNetworks } from "@/config/socialNetworks"
 import type { MenuItem } from "../types"
 import Button from "./ui/SgButton.vue"
+import SgIcon from "./ui/SgIcon.vue"
 import SgDialog from "./ui/SgDialog.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
 import FriendsPanel from "./FriendsPanel.vue"
@@ -365,6 +401,18 @@ const showFriendsPanel = ref(false)
 const showAddLinkDialog = ref(false)
 const newLinkLabel = ref("")
 const newLinkUrl = ref("")
+const newLinkIcon = ref("pi pi-link")
+
+const customLinkIconOptions = [
+  { icon: "pi pi-link", labelKey: "links.icons.link" },
+  { icon: "pi pi-globe", labelKey: "links.icons.website" },
+  { icon: "pi pi-briefcase", labelKey: "links.icons.business" },
+  { icon: "pi pi-video", labelKey: "links.icons.video" },
+  { icon: "pi pi-image", labelKey: "links.icons.image" },
+  { icon: "pi pi-users", labelKey: "links.icons.community" },
+  { icon: "pi pi-envelope", labelKey: "links.icons.email" },
+  { icon: "pi pi-bookmark", labelKey: "links.icons.bookmark" },
+] as const
 
 const filterEnabled = computed(() => filterStore.enabled)
 
@@ -373,6 +421,7 @@ const setFilterEnabled = () => filterStore.toggle()
 function openAddLinkDialog() {
   newLinkLabel.value = ""
   newLinkUrl.value = ""
+  newLinkIcon.value = "pi pi-link"
   setAddLinkTooltipOverlay(true)
   showAddLinkDialog.value = true
 }
@@ -399,6 +448,7 @@ const emit = defineEmits<{
   "update:modelValue": [value: boolean]
   "network-selected": [network: MenuItem]
   "manage-profiles": []
+  "open-settings": []
 }>()
 
 const iconsOnly = ref(false)
@@ -514,7 +564,12 @@ const navigateToNetwork = (network: MenuItem): void => {
 const addCustomLink = () => {
   if (!newLinkLabel.value.trim() || !newLinkUrl.value.trim()) return
   const profileId = profilesStore.activeProfileId ?? ""
-  customLinksStore.addLink(profileId, newLinkLabel.value, newLinkUrl.value)
+  customLinksStore.addLink(
+    profileId,
+    newLinkLabel.value,
+    newLinkUrl.value,
+    newLinkIcon.value,
+  )
   newLinkLabel.value = ""
   newLinkUrl.value = ""
   showAddLinkDialog.value = false
@@ -533,7 +588,6 @@ onUnmounted(() => {
 <style scoped>
 .sidebar {
   background-color: var(--sg-color-surface-raised);
-  border-right: 1px solid var(--sg-color-border);
   height: var(--sg-sidebar-viewport-height);
   margin-top: 0;
   transition: var(--sg-sidebar-transition);
@@ -548,11 +602,22 @@ onUnmounted(() => {
   min-width: var(--sg-sidebar-expanded-min-width);
 }
 
+.main-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .sidebar-content {
   height: var(--sg-sidebar-fill-size);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.profile-switcher-bottom {
+  width: var(--sg-sidebar-fill-size);
+  flex: 0 0 auto;
 }
 
 .sidebar-main {
@@ -562,7 +627,6 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  scrollbar-gutter: stable;
 }
 
 .sidebar-scrollable-content {
@@ -700,6 +764,23 @@ onUnmounted(() => {
   margin-bottom: var(--sg-sidebar-section-spacing);
 }
 
+.network-edit-mode-button {
+  width: var(--sg-sidebar-fill-size);
+  justify-content: flex-start;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.network-menu-section:hover .network-edit-mode-button,
+.network-menu-section:focus-within .network-edit-mode-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.content-centered .network-edit-mode-button {
+  justify-content: center;
+}
+
 .section-header {
   padding: var(--sg-sidebar-section-padding-block)
     var(--sg-sidebar-section-padding-inline);
@@ -760,14 +841,73 @@ onUnmounted(() => {
   gap: var(--sg-sidebar-form-gap);
 }
 
-.friends-filter-button {
-  width: var(--sg-sidebar-fill-size);
-  min-height: var(--sg-sidebar-filter-height);
-  border-radius: 0;
+.add-link-hint {
+  margin: 0;
+  color: var(--sg-color-text-muted);
+}
+
+.add-link-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-space-2);
+  color: var(--sg-color-text);
 }
 
 .add-link-input {
   width: var(--sg-sidebar-fill-size);
+  min-height: var(--sg-control-height-lg);
+  padding: var(--sg-button-padding);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  font: inherit;
+}
+
+.add-link-input:focus-visible,
+.add-link-icon-option:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+
+.add-link-icon-field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--sg-color-text);
+}
+
+.add-link-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sg-space-2);
+  margin-top: var(--sg-space-2);
+}
+
+.add-link-icon-option {
+  min-height: var(--sg-control-height-lg);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text-muted);
+  cursor: pointer;
+}
+
+.add-link-icon-option:hover {
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
+}
+
+.add-link-icon-option--selected {
+  border-color: var(--sg-color-action);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-action);
+}
+
+.friends-filter-button {
+  width: var(--sg-sidebar-fill-size);
+  min-height: var(--sg-sidebar-filter-height);
+  border-radius: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -783,7 +923,7 @@ onUnmounted(() => {
 
 .sidebar-resize-handle {
   width: var(--sg-sidebar-resize-handle-width);
-  background: var(--sg-color-border);
+  background: var(--sg-color-transparent);
   transition: var(--sg-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {
