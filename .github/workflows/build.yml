@@ -18,7 +18,7 @@ jobs:
     name: Linux release build
     runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install system dependencies
         run: |
@@ -36,7 +36,7 @@ jobs:
         uses: pnpm/action-setup@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24.0.0
           cache: 'pnpm'
@@ -68,7 +68,7 @@ jobs:
           inject-env-vars: true
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
@@ -94,13 +94,13 @@ jobs:
     name: Windows release build
     runs-on: blacksmith-2vcpu-windows-2025
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 24.0.0
           cache: 'pnpm'
@@ -132,7 +132,7 @@ jobs:
           inject-env-vars: true
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VITE_CONVEX_URL: ${{ env.VITE_CONVEX_URL || steps.doppler.outputs.VITE_CONVEX_URL }}
