@@ -23,8 +23,8 @@ log = "0.4"
 tauri-plugin-log = "2.9"
 tauri-plugin-android-webview = { path = "plugins/android-webview" }
 tauri-plugin-deep-link = "2"
-tauri-plugin-dialog = "2"
-tauri-plugin-fs = "2"
+tauri-plugin-dialog = "=2.7.2"
+tauri-plugin-fs = "=2.5.1"
 base64 = "0.22"
 url = "2"
 aes-gcm = "0.10"
@@ -35,11 +35,11 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 
 # Desktop: unstable child-webview API + system tray
 [target.'cfg(not(target_os = "android"))'.dependencies]
-tauri = { version = "2.10.0", features = ["unstable", "tray-icon", "image-png"] }
+tauri = { version = "=2.11.2", features = ["unstable", "tray-icon", "image-png"] }
 
 [target.'cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))'.dependencies]
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
 
 # Android: minimal build without desktop-only features
 [target.'cfg(target_os = "android")'.dependencies]
-tauri = { version = "2.10.0", features = ["unstable", "tray-icon", "image-png"] }
+tauri = { version = "=2.11.2", features = ["unstable", "tray-icon", "image-png"] }
