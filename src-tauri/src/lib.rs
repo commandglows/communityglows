@@ -1,10 +1,10 @@
 use std::collections::HashMap;
+#[cfg(target_os = "android")]
+use std::collections::HashSet;
 #[cfg(not(target_os = "android"))]
 use std::sync::Mutex;
 #[cfg(not(target_os = "android"))]
 use std::time::Instant;
-#[cfg(target_os = "android")]
-use std::collections::HashSet;
 
 use tauri::{AppHandle, Manager};
 
@@ -30,13 +30,12 @@ struct DesktopWebviewPoolEntry {
 }
 
 #[cfg(not(target_os = "android"))]
-fn mark_desktop_webview(
-    app: &AppHandle,
-    label: &str,
-    hidden: bool,
-) -> Result<(), String> {
+fn mark_desktop_webview(app: &AppHandle, label: &str, hidden: bool) -> Result<(), String> {
     let state = app.state::<DesktopWebviewPoolState>();
-    let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+    let mut entries = state
+        .entries
+        .lock()
+        .map_err(|_| "webview pool lock poisoned")?;
     entries.insert(
         label.to_string(),
         DesktopWebviewPoolEntry {
@@ -48,13 +47,13 @@ fn mark_desktop_webview(
 }
 
 #[cfg(not(target_os = "android"))]
-fn evict_oldest_hidden_desktop_webviews(
-    app: &AppHandle,
-    keep_label: &str,
-) -> Result<(), String> {
+fn evict_oldest_hidden_desktop_webviews(app: &AppHandle, keep_label: &str) -> Result<(), String> {
     let state = app.state::<DesktopWebviewPoolState>();
     let evicted = {
-        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         let hidden_count = entries.values().filter(|entry| entry.hidden).count();
         if hidden_count < MAX_WARM_DESKTOP_WEBVIEWS {
             Vec::new()
@@ -77,7 +76,10 @@ fn evict_oldest_hidden_desktop_webviews(
         if let Some(wv) = app.get_webview(&label) {
             wv.close().map_err(|e| e.to_string())?;
         }
-        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let mut entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         entries.remove(&label);
     }
     Ok(())
@@ -87,7 +89,10 @@ fn evict_oldest_hidden_desktop_webviews(
 fn close_desktop_profile_webviews(app: &AppHandle, profile_id: &str) -> Result<(), String> {
     let state = app.state::<DesktopWebviewPoolState>();
     let labels: Vec<String> = {
-        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         entries
             .keys()
             .filter(|label| label.starts_with(&format!("social-{profile_id}-")))
@@ -99,7 +104,10 @@ fn close_desktop_profile_webviews(app: &AppHandle, profile_id: &str) -> Result<(
         if let Some(wv) = app.get_webview(&label) {
             wv.close().map_err(|e| e.to_string())?;
         }
-        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let mut entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         entries.remove(&label);
     }
     Ok(())
@@ -109,7 +117,10 @@ fn close_desktop_profile_webviews(app: &AppHandle, profile_id: &str) -> Result<(
 fn close_all_desktop_webviews(app: &AppHandle) -> Result<(), String> {
     let state = app.state::<DesktopWebviewPoolState>();
     let labels: Vec<String> = {
-        let entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         entries.keys().cloned().collect()
     };
 
@@ -117,7 +128,10 @@ fn close_all_desktop_webviews(app: &AppHandle) -> Result<(), String> {
         if let Some(wv) = app.get_webview(&label) {
             wv.close().map_err(|e| e.to_string())?;
         }
-        let mut entries = state.entries.lock().map_err(|_| "webview pool lock poisoned")?;
+        let mut entries = state
+            .entries
+            .lock()
+            .map_err(|_| "webview pool lock poisoned")?;
         entries.remove(&label);
     }
     Ok(())
@@ -140,7 +154,11 @@ const OAUTH_CALLBACK_TTL_MS: i64 = 5 * 60 * 1000;
 
 #[cfg(target_os = "android")]
 fn android_allowed_oauth_callback_hosts() -> &'static [&'static str] {
-    &["auth-callback", "communityglows.com", "www.communityglows.com"]
+    &[
+        "auth-callback",
+        "communityglows.com",
+        "www.communityglows.com",
+    ]
 }
 
 #[cfg(target_os = "android")]
@@ -227,7 +245,9 @@ fn validate_android_webview_url(url: &str, network_id: &str) -> Result<url::Url,
         .to_ascii_lowercase();
 
     if is_disallowed_host_value(&host) {
-        return Err(format!("Android webview URL rejected: host `{host}` is not allowed"));
+        return Err(format!(
+            "Android webview URL rejected: host `{host}` is not allowed"
+        ));
     }
 
     let allowed_hosts = android_allowed_hosts_for_network(network_id);
@@ -275,7 +295,7 @@ fn validate_android_storage_origins(
 
         if parsed.scheme() != "https" {
             return Err(
-                "Android storage origins rejected: only https scheme is allowed".to_string()
+                "Android storage origins rejected: only https scheme is allowed".to_string(),
             );
         }
 
@@ -321,7 +341,10 @@ fn validate_android_storage_origins_by_network(
         return Ok(HashMap::new());
     };
 
-    let visible_network_ids = network_ids.iter().map(String::as_str).collect::<HashSet<_>>();
+    let visible_network_ids = network_ids
+        .iter()
+        .map(String::as_str)
+        .collect::<HashSet<_>>();
     let mut validated = HashMap::new();
 
     for (network_id, origins) in raw_origins_by_network {
@@ -349,7 +372,10 @@ fn now_millis() -> i64 {
 }
 
 #[cfg(target_os = "android")]
-fn prune_consumed_oauth_states(consumed_states: &mut std::collections::HashMap<String, i64>, now: i64) {
+fn prune_consumed_oauth_states(
+    consumed_states: &mut std::collections::HashMap<String, i64>,
+    now: i64,
+) {
     consumed_states.retain(|_, timestamp| now - *timestamp <= OAUTH_CALLBACK_TTL_MS);
 }
 
@@ -370,7 +396,9 @@ fn validate_android_oauth_callback_url(callback_url: &str) -> Result<url::Url, S
         .to_ascii_lowercase();
 
     if is_disallowed_host_value(&host) {
-        return Err(format!("Android OAuth callback rejected: host `{host}` is not allowed"));
+        return Err(format!(
+            "Android OAuth callback rejected: host `{host}` is not allowed"
+        ));
     }
 
     if !android_allowed_oauth_callback_hosts()
@@ -441,12 +469,22 @@ fn build_tray(app: &AppHandle) -> tauri::Result<()> {
     let mastodon = MenuItem::with_id(app, "tray:mastodon", "Mastodon", true, None::<&str>)?;
     let substack = MenuItem::with_id(app, "tray:substack", "Substack", true, None::<&str>)?;
     let ko_fi = MenuItem::with_id(app, "tray:ko-fi", "Ko-fi", true, None::<&str>)?;
-    let buymeacoffee =
-        MenuItem::with_id(app, "tray:buymeacoffee", "Buy Me a Coffee", true, None::<&str>)?;
+    let buymeacoffee = MenuItem::with_id(
+        app,
+        "tray:buymeacoffee",
+        "Buy Me a Coffee",
+        true,
+        None::<&str>,
+    )?;
     let producthunt =
         MenuItem::with_id(app, "tray:producthunt", "Product Hunt", true, None::<&str>)?;
-    let indiehackers =
-        MenuItem::with_id(app, "tray:indiehackers", "Indie Hackers", true, None::<&str>)?;
+    let indiehackers = MenuItem::with_id(
+        app,
+        "tray:indiehackers",
+        "Indie Hackers",
+        true,
+        None::<&str>,
+    )?;
     let hackernews = MenuItem::with_id(
         app,
         "tray:hackernews",
@@ -577,7 +615,10 @@ async fn export_desktop_cookies(
 ) -> Result<String, String> {
     let mut snapshot = serde_json::Map::new();
     for target in targets {
-        let url: url::Url = target.url.parse().map_err(|e: url::ParseError| e.to_string())?;
+        let url: url::Url = target
+            .url
+            .parse()
+            .map_err(|e: url::ParseError| e.to_string())?;
         let label = webview_label(&target.profile_id, &target.network_id);
         let (webview, is_temporary) = if let Some(webview) = app.get_webview(&label) {
             (webview, false)
@@ -615,10 +656,14 @@ async fn export_desktop_cookies(
             .join()
             .map_err(|_| "desktop cookie export thread panicked".to_string());
         if is_temporary {
-            webview.close().map_err(|e| format!("close temporary backup webview: {e}"))?;
+            webview
+                .close()
+                .map_err(|e| format!("close temporary backup webview: {e}"))?;
         }
         let cookies = cookies_result?.map_err(|e| e.to_string())?;
-        if cookies.is_empty() { continue; }
+        if cookies.is_empty() {
+            continue;
+        }
         let header = cookies
             .iter()
             .map(|cookie| format!("{}={}", cookie.name(), cookie.value()))
@@ -714,23 +759,41 @@ fn restore_portable_android_cookies(
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
         Err(error) => return Err(format!("read portable cookies: {error}")),
     };
-    let snapshots: serde_json::Value = serde_json::from_str(&raw)
-        .map_err(|error| format!("parse portable cookies: {error}"))?;
-    let Some(values) = snapshots.as_object() else { return Ok(()); };
+    let snapshots: serde_json::Value =
+        serde_json::from_str(&raw).map_err(|error| format!("parse portable cookies: {error}"))?;
+    let Some(values) = snapshots.as_object() else {
+        return Ok(());
+    };
     let session_prefix = format!("{profile_id}-{network_id}|");
 
     for (key, value) in values {
-        let Some(url) = key.strip_prefix(&session_prefix) else { continue; };
-        let Some(header) = value.as_str() else { continue; };
-        let parsed_url: url::Url = match url.parse() {
+        let Some(url) = key.strip_prefix(&session_prefix) else {
+            continue;
+        };
+        let Some(header) = value.as_str() else {
+            continue;
+        };
+        let parsed_url = match url.parse::<url::Url>() {
             Ok(url) if url.scheme() == "https" => url,
             _ => continue,
         };
-        let Some(host) = parsed_url.host_str() else { continue; };
-        let domain = host.split('.').rev().take(2).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join(".");
+        let Some(host) = parsed_url.host_str() else {
+            continue;
+        };
+        let domain = host
+            .split('.')
+            .rev()
+            .take(2)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .rev()
+            .collect::<Vec<_>>()
+            .join(".");
         for part in header.split(';') {
             let pair = part.trim();
-            if !pair.contains('=') { continue; }
+            if !pair.contains('=') {
+                continue;
+            }
             let name = pair.split('=').next().unwrap_or_default();
             let attributes = if name.starts_with("__Host-") {
                 format!("{pair}; Path=/; Secure")
@@ -748,18 +811,18 @@ fn restore_portable_android_cookies(
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
 async fn navigate_webview(
-  app: AppHandle,
-  url: String,
-  profile_id: String,
-  network_id: String,
+    app: AppHandle,
+    url: String,
+    profile_id: String,
+    network_id: String,
 ) -> Result<(), String> {
-  let label = webview_label(&profile_id, &network_id);
-  if let Some(wv) = app.get_webview(&label) {
-    let parsed: url::Url = url.parse().map_err(|e: url::ParseError| e.to_string())?;
-    wv.navigate(parsed).map_err(|e| e.to_string())?;
-    return Ok(())
-  }
-  Ok(())
+    let label = webview_label(&profile_id, &network_id);
+    if let Some(wv) = app.get_webview(&label) {
+        let parsed: url::Url = url.parse().map_err(|e: url::ParseError| e.to_string())?;
+        wv.navigate(parsed).map_err(|e| e.to_string())?;
+        return Ok(());
+    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -876,8 +939,7 @@ fn open_webview(
     _height: f64,
 ) -> Result<(), String> {
     let validated_url = validate_android_webview_url(&url, &network_id)?;
-    let validated_storage_origins =
-        validate_android_storage_origins(storage_origins, &network_id)?;
+    let validated_storage_origins = validate_android_storage_origins(storage_origins, &network_id)?;
 
     // Use "profileId-networkId" as the session key for Android
     let session_key = format!("{}-{}", profile_id, network_id);
@@ -1113,7 +1175,11 @@ fn set_bar_networks(
 /// Send profile list to the Android popup menu for inline profile switching.
 #[tauri::command]
 #[cfg(target_os = "android")]
-fn set_profiles(app: AppHandle, profiles_json: String, active_profile_id: String) -> Result<(), String> {
+fn set_profiles(
+    app: AppHandle,
+    profiles_json: String,
+    active_profile_id: String,
+) -> Result<(), String> {
     app.android_webview()
         .set_profiles(profiles_json, active_profile_id)
         .map_err(|e| e.to_string())
@@ -1121,7 +1187,11 @@ fn set_profiles(app: AppHandle, profiles_json: String, active_profile_id: String
 
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
-fn set_profiles(_app: AppHandle, _profiles_json: String, _active_profile_id: String) -> Result<(), String> {
+fn set_profiles(
+    _app: AppHandle,
+    _profiles_json: String,
+    _active_profile_id: String,
+) -> Result<(), String> {
     Ok(())
 }
 
@@ -1212,17 +1282,10 @@ fn delete_network_session(
 /// Create an encrypted backup, save to disk, return the file path.
 /// On Android the Tauri FS plugin is unreliable, so Rust handles all I/O directly.
 #[tauri::command]
-fn create_backup(
-    app: AppHandle,
-    store_data: String,
-    password: String,
-) -> Result<String, String> {
+fn create_backup(app: AppHandle, store_data: String, password: String) -> Result<String, String> {
     use base64::{engine::general_purpose::STANDARD, Engine as _};
 
-    let app_data = app
-        .path()
-        .app_data_dir()
-        .map_err(|e| e.to_string())?;
+    let app_data = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let sessions_dir = app_data.join("sessions");
 
     let zip_bytes = backup::create_backup_archive(&sessions_dir, &store_data)?;
@@ -1233,10 +1296,12 @@ fn create_backup(
     std::fs::create_dir_all(&backups_dir)
         .map_err(|e| format!("Failed to create backups dir: {e}"))?;
 
-    let filename = format!("communityglows-backup-{}.sfbak", chrono::Utc::now().timestamp_millis());
+    let filename = format!(
+        "communityglows-backup-{}.sfbak",
+        chrono::Utc::now().timestamp_millis()
+    );
     let file_path = backups_dir.join(&filename);
-    std::fs::write(&file_path, &blob)
-        .map_err(|e| format!("Failed to write backup file: {e}"))?;
+    std::fs::write(&file_path, &blob).map_err(|e| format!("Failed to write backup file: {e}"))?;
 
     // Also return base64 for desktop (file dialog flow)
     Ok(STANDARD.encode(&blob))
@@ -1252,10 +1317,7 @@ fn restore_backup(
 ) -> Result<String, String> {
     use base64::{engine::general_purpose::STANDARD, Engine as _};
 
-    let app_data = app
-        .path()
-        .app_data_dir()
-        .map_err(|e| e.to_string())?;
+    let app_data = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let sessions_dir = app_data.join("sessions");
 
     let blob = if encrypted_b64.is_empty() {
@@ -1267,10 +1329,10 @@ fn restore_backup(
             .filter(|e| e.path().extension().is_some_and(|ext| ext == "sfbak"))
             .collect();
         backups.sort_by(|a, b| b.file_name().cmp(&a.file_name()));
-        let latest = backups.first()
-            .ok_or_else(|| "Aucune sauvegarde trouvée. Exportez d'abord vos données.".to_string())?;
-        std::fs::read(latest.path())
-            .map_err(|e| format!("Failed to read backup file: {e}"))?
+        let latest = backups.first().ok_or_else(|| {
+            "Aucune sauvegarde trouvée. Exportez d'abord vos données.".to_string()
+        })?;
+        std::fs::read(latest.path()).map_err(|e| format!("Failed to read backup file: {e}"))?
     } else {
         STANDARD
             .decode(&encrypted_b64)
@@ -1286,7 +1348,12 @@ fn restore_backup(
         let portable_cookies_path = app_data.join("portable-android-cookies.json");
         let cookie_snapshot = serde_json::from_str::<serde_json::Value>(&store_data)
             .ok()
-            .and_then(|data| data.get("android")?.get("cookieSnapshot")?.as_str().map(str::to_owned));
+            .and_then(|data| {
+                data.get("android")?
+                    .get("cookieSnapshot")?
+                    .as_str()
+                    .map(str::to_owned)
+            });
         if let Some(snapshot) = cookie_snapshot.filter(|snapshot| !snapshot.trim().is_empty()) {
             std::fs::write(&portable_cookies_path, snapshot)
                 .map_err(|e| format!("store portable Android cookies: {e}"))?;

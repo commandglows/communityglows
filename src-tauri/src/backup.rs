@@ -46,12 +46,11 @@ fn add_dir_to_zip(
         if path.is_dir() {
             add_dir_to_zip(zip, base, &path, &archive_path)?;
         } else {
-            let options = SimpleFileOptions::default()
-                .compression_method(zip::CompressionMethod::Deflated);
+            let options =
+                SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
             zip.start_file(&archive_path, options)
                 .map_err(|e| format!("zip start_file: {e}"))?;
-            let data =
-                std::fs::read(&path).map_err(|e| format!("read {}: {e}", path.display()))?;
+            let data = std::fs::read(&path).map_err(|e| format!("read {}: {e}", path.display()))?;
             zip.write_all(&data)
                 .map_err(|e| format!("zip write: {e}"))?;
         }
@@ -63,8 +62,7 @@ fn add_dir_to_zip(
 pub fn create_backup_archive(sessions_dir: &Path, store_data: &str) -> Result<Vec<u8>, String> {
     let buf = Cursor::new(Vec::new());
     let mut zip = zip::ZipWriter::new(buf);
-    let options =
-        SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
+    let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Deflated);
 
     // manifest
     let manifest = serde_json::json!({
@@ -229,7 +227,10 @@ fn extract_backup_archive_for_platform(
         let rel = &name["sessions/".len()..];
         let rel_path = Path::new(rel);
         if rel_path.components().any(|component| {
-            matches!(component, Component::Prefix(_) | Component::RootDir | Component::ParentDir)
+            matches!(
+                component,
+                Component::Prefix(_) | Component::RootDir | Component::ParentDir
+            )
         }) {
             let _ = std::fs::remove_dir_all(&staging_dir);
             return Err("Backup contains an unsafe session path".to_string());
@@ -301,14 +302,18 @@ mod tests {
         let sessions_dir = test_directory("invalid-json");
         std::fs::create_dir_all(&sessions_dir).expect("create sessions directory");
         let existing = sessions_dir.join("profile/network/state.txt");
-        std::fs::create_dir_all(existing.parent().expect("state parent")).expect("create state parent");
+        std::fs::create_dir_all(existing.parent().expect("state parent"))
+            .expect("create state parent");
         std::fs::write(&existing, b"existing").expect("write existing state");
 
         let archive = archive_with_entries(&[("stores/data.json", b"not-json")]);
         let error = extract_backup_archive(&archive, &sessions_dir).expect_err("archive must fail");
 
         assert!(error.contains("invalid stores/data.json"));
-        assert_eq!(std::fs::read(&existing).expect("read existing state"), b"existing");
+        assert_eq!(
+            std::fs::read(&existing).expect("read existing state"),
+            b"existing"
+        );
         assert!(!sessions_dir.with_extension("restore-tmp").exists());
         let _ = std::fs::remove_dir_all(sessions_dir);
     }
@@ -327,9 +332,16 @@ mod tests {
         let error = extract_backup_archive(&archive, &sessions_dir).expect_err("archive must fail");
 
         assert!(error.contains("unsafe session path"));
-        assert_eq!(std::fs::read(&existing).expect("read existing state"), b"keep");
+        assert_eq!(
+            std::fs::read(&existing).expect("read existing state"),
+            b"keep"
+        );
         assert!(!sessions_dir.with_extension("restore-tmp").exists());
-        assert!(!sessions_dir.parent().expect("sessions parent").join("escaped.txt").exists());
+        assert!(!sessions_dir
+            .parent()
+            .expect("sessions parent")
+            .join("escaped.txt")
+            .exists());
         let _ = std::fs::remove_dir_all(sessions_dir);
     }
 
