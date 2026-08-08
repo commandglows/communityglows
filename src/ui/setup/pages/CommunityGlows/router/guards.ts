@@ -25,16 +25,25 @@ export const authGuard: NavigationGuard = async (to, _from, next) => {
 
   if (to.meta.requiresAuth) {
     if (authBootstrapError.value) {
-      return next("/login?authError=1");
+      return next({
+        path: "/login",
+        query: { access: "unavailable" },
+      });
     }
 
     // Still loading auth state — block private navigation until resolved
     if (isAuthLoading.value) {
-      return next("/login?authLoading=1");
+      return next({
+        path: "/login",
+        query: { access: "loading" },
+      });
     }
 
     if (!isAuthenticated.value) {
-      return next("/login");
+      return next({
+        path: "/login",
+        query: { access: "required", destination: typeof to.meta.title === "string" ? to.meta.title : to.name?.toString() ?? "cet espace" },
+      });
     }
 
     if (isSessionLocked.value) {

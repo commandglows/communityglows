@@ -1,0 +1,177 @@
+---
+import Navbar from '../Navbar.astro'
+import Newsletter from '../Newsletter.astro'
+import Footer from '../Footer.astro'
+import { appUrl } from '../../config/site'
+import type { Locale } from '../../i18n'
+
+interface Props { lang: Locale }
+const { lang } = Astro.props
+
+const copy = lang === 'fr' ? {
+  hero: {
+    eyebrow: 'Des outils au service de la relation',
+    title: 'Moins de bruit. Plus de présence.',
+    body: 'CommunityGlows rassemble vos comptes, vos réseaux et vos repères de travail dans un espace calme. Vous passez moins de temps à reconstruire le contexte — et davantage à écouter, répondre et faire vivre les relations qui comptent.',
+    primary: 'Essayer 30 jours gratuitement', secondary: 'Explorer les fonctionnalités',
+  },
+  bridge: {
+    label: 'Le vrai travail se passe entre les publications',
+    title: 'Une communauté ne se gère pas comme une liste de tâches.',
+    body: 'Derrière chaque commentaire, message ou retour se trouve une personne qui choisit d’accorder son attention. Les bons outils ne remplacent pas cette relation : ils vous aident à lui faire de la place.',
+    points: [
+      { icon: '👂', title: 'Écouter avec intention', desc: 'Revenez dans le bon contexte pour repérer les questions, les attentes et les voix qui reviennent.' },
+      { icon: '💬', title: 'Répondre avec présence', desc: 'Réduisez les distractions autour de l’échange afin de formuler une réponse utile plutôt qu’une réaction précipitée.' },
+      { icon: '🤝', title: 'Entretenir la continuité', desc: 'Gardez les prochaines actions à proximité pour reprendre une conversation sans perdre son fil humain.' },
+    ],
+  },
+  featureLabel: 'Votre espace de travail social',
+  featureTitle: 'Des fonctionnalités qui protègent votre attention et votre contexte',
+  features: [
+    { title: 'Profils isolés', desc: 'Séparez les espaces personnels, professionnels, clients ou projets. Chaque profil conserve ses propres sessions pour éviter de mélanger les identités et les conversations.', icon: '🔒' },
+    { title: 'Vos réseaux réunis', desc: 'Ouvrez X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram et d’autres services depuis la même interface.', icon: '🌐' },
+    { title: 'Contrôles de concentration', desc: 'Utilisez les niveaux de gris, l’apparence claire ou sombre, la mise en sourdine des médias et la taille du texte, lorsqu’ils sont pris en charge, pour rester présent à la tâche.', icon: '🎯' },
+    { title: 'CRM et Kanban en développement', desc: 'Nous travaillons sur un espace pour garder idées, publications et suivis près des réseaux où le travail se déroule.', icon: '📋' },
+    { title: 'Liens personnalisés', desc: 'Placez vos ressources de travail utiles à côté de vos réseaux. Leur disponibilité et le comportement des sessions dépendent de chaque plateforme.', icon: '🔗' },
+    { title: 'Synchronisation utile', desc: 'Retrouvez vos profils, comptes actifs, liens, réseaux masqués et préférences depuis votre compte, tout en gardant les sessions de connexion actives sur l’appareil.', icon: '☁️' },
+    { title: 'Ordinateur et Android', desc: 'Conservez un workflow familier sur ordinateur et Android, avec des passerelles web et mobile lorsque le contexte l’exige.', icon: '📱' },
+  ],
+  rhythm: {
+    label: 'Du système au lien humain', title: 'Un espace qui soutient votre rythme, sans dicter votre voix.',
+    intro: 'CommunityGlows organise les conditions du travail. La qualité de la relation reste la vôtre : votre écoute, votre ton et la manière dont vous revenez vers les personnes.',
+    steps: [
+      { num: '01', title: 'Préparez le bon contexte', desc: 'Ouvrez le profil, les réseaux et les liens associés à une audience, un client ou un projet précis.' },
+      { num: '02', title: 'Entrez avec une intention', desc: 'Choisissez de venir écouter, répondre, publier ou assurer un suivi avant que le fil d’actualité ne décide à votre place.' },
+      { num: '03', title: 'Laissez une prochaine étape', desc: 'Notez ce qui mérite une réponse, un retour ou une nouvelle conversation pour conserver la continuité dans le temps.' },
+    ],
+  },
+  closing: {
+    title: 'Faites de votre espace social un lieu de relation.',
+    body: 'Rassemblez les outils autour de votre communauté, puis redonnez votre attention aux personnes qui la font vivre.',
+    cta: 'Essayer 30 jours gratuitement',
+  },
+} : {
+  hero: {
+    eyebrow: 'Tools in service of the relationship',
+    title: 'Less noise. More presence.',
+    body: 'CommunityGlows brings your accounts, networks, and working context into one calm space. Spend less time rebuilding your setup — and more time listening, responding, and caring for the relationships that matter.',
+    primary: 'Try 30 days free', secondary: 'Explore the features',
+  },
+  bridge: {
+    label: 'The real work happens between posts',
+    title: 'A community is not a task list to manage.',
+    body: 'Behind every comment, message, and piece of feedback is a person choosing to give you their attention. Good tools do not replace that relationship. They help you make room for it.',
+    points: [
+      { icon: '👂', title: 'Listen with intention', desc: 'Return to the right context to notice questions, needs, and the familiar voices that keep showing up.' },
+      { icon: '💬', title: 'Respond with presence', desc: 'Reduce the distractions around an exchange so you can offer a useful answer instead of a rushed reaction.' },
+      { icon: '🤝', title: 'Protect continuity', desc: 'Keep next actions nearby so you can continue a conversation without losing its human thread.' },
+    ],
+  },
+  featureLabel: 'Your social workspace',
+  featureTitle: 'Features that protect your attention and context',
+  features: [
+    { title: 'Isolated profiles', desc: 'Separate personal, work, client, and project spaces. Each profile keeps its own sessions so identities and conversations do not get mixed together.', icon: '🔒' },
+    { title: 'Your networks together', desc: 'Open X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram, and other services from the same interface.', icon: '🌐' },
+    { title: 'Focus controls', desc: 'Use grayscale, light or dark appearance, media mute, and adjustable text size where supported to stay present with the task in front of you.', icon: '🎯' },
+    { title: 'CRM and Kanban in development', desc: 'We are building a workspace to keep ideas, publishing work, and follow-ups near the networks where they happen.', icon: '📋' },
+    { title: 'Custom links', desc: 'Place useful working resources beside your networks. Availability and session behavior depend on each destination and platform.', icon: '🔗' },
+    { title: 'Useful sync', desc: 'Find your profiles, active accounts, links, hidden networks, and preferences through your account while live login sessions stay on the device.', icon: '☁️' },
+    { title: 'Desktop and Android', desc: 'Keep a familiar workflow on desktop and Android, with web and mobile bridges where the context calls for them.', icon: '📱' },
+  ],
+  rhythm: {
+    label: 'From system to human connection', title: 'A workspace that supports your rhythm without dictating your voice.',
+    intro: 'CommunityGlows organizes the conditions around the work. The quality of the relationship remains yours: how you listen, how you speak, and how you return to people.',
+    steps: [
+      { num: '01', title: 'Prepare the right context', desc: 'Open the profile, networks, and supporting links connected to one audience, client, or project.' },
+      { num: '02', title: 'Arrive with an intention', desc: 'Choose whether you are here to listen, answer, publish, or follow up before the feed decides for you.' },
+      { num: '03', title: 'Leave a next step', desc: 'Keep track of what deserves a reply, a return visit, or another conversation so continuity can grow over time.' },
+    ],
+  },
+  closing: {
+    title: 'Make your social workspace a place for connection.',
+    body: 'Bring the tools together around your community, then give your attention back to the people who make it real.',
+    cta: 'Try 30 days free',
+  },
+}
+---
+
+<main id="main-content" class="min-h-screen bg-background text-foreground">
+  <Navbar lang={lang} languageHref={lang === 'fr' ? '/features' : '/fr/features'} />
+
+  <section class="relative max-w-5xl mx-auto px-4 pt-32 pb-20 text-center overflow-hidden" data-reveal>
+    <p class="animate-fade-up inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{copy.hero.eyebrow}</p>
+    <h1 class="animate-fade-up delay-100 mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">{copy.hero.title}</h1>
+    <p class="animate-fade-up delay-200 mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{copy.hero.body}</p>
+    <div class="animate-fade-up delay-300 mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+      <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">{copy.hero.primary}</a>
+      <a href="#features" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">{copy.hero.secondary}</a>
+    </div>
+  </section>
+
+  <section class="bg-card py-20 sm:py-28">
+    <div class="max-w-6xl mx-auto px-4" data-reveal>
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="animate-fade-up text-sm font-medium uppercase tracking-widest text-muted-foreground">{copy.bridge.label}</p>
+        <h2 class="animate-fade-up delay-100 mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">{copy.bridge.title}</h2>
+        <p class="animate-fade-up delay-200 mt-5 text-lg leading-relaxed text-muted-foreground">{copy.bridge.body}</p>
+      </div>
+      <div class="mt-14 grid gap-6 md:grid-cols-3">
+        {copy.bridge.points.map((point) => (
+          <article class="animate-fade-up rounded-2xl border border-border bg-background p-7 text-center transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-4xl" aria-hidden="true">{point.icon}</div>
+            <h3 class="text-xl font-semibold text-foreground">{point.title}</h3>
+            <p class="mt-3 leading-relaxed text-muted-foreground">{point.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="py-20 sm:py-28 scroll-mt-24">
+    <div class="max-w-6xl mx-auto px-4" data-reveal>
+      <div class="mx-auto mb-14 max-w-3xl text-center">
+        <p class="animate-fade-up text-sm font-medium uppercase tracking-widest text-muted-foreground">{copy.featureLabel}</p>
+        <h2 class="animate-fade-up delay-100 mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">{copy.featureTitle}</h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {copy.features.map((feature) => (
+          <article class="animate-fade-up rounded-2xl border border-border bg-card p-7 text-center transition-all duration-300 hover:-translate-y-1 hover:border-foreground/25">
+            <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-4xl" aria-hidden="true">{feature.icon}</div>
+            <h3 class="text-lg font-semibold text-foreground">{feature.title}</h3>
+            <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{feature.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-card py-20 sm:py-28">
+    <div class="max-w-5xl mx-auto px-4" data-reveal>
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="animate-fade-up text-sm font-medium uppercase tracking-widest text-muted-foreground">{copy.rhythm.label}</p>
+        <h2 class="animate-fade-up delay-100 mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">{copy.rhythm.title}</h2>
+        <p class="animate-fade-up delay-200 mt-5 text-lg leading-relaxed text-muted-foreground">{copy.rhythm.intro}</p>
+      </div>
+      <div class="mt-14 grid gap-8 md:grid-cols-3">
+        {copy.rhythm.steps.map((step) => (
+          <article class="animate-fade-up rounded-2xl border border-border bg-background p-7 text-center transition-colors hover:border-foreground/25">
+            <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-sm font-semibold tracking-widest text-foreground">{step.num}</span>
+            <h3 class="mt-3 text-xl font-semibold text-foreground">{step.title}</h3>
+            <p class="mt-3 leading-relaxed text-muted-foreground">{step.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 sm:py-28">
+    <div class="max-w-3xl mx-auto rounded-2xl border border-border bg-card px-6 py-12 text-center sm:px-10" data-reveal>
+      <h2 class="animate-fade-up text-3xl sm:text-4xl font-bold text-foreground">{copy.closing.title}</h2>
+      <p class="animate-fade-up delay-100 mt-5 text-lg leading-relaxed text-muted-foreground">{copy.closing.body}</p>
+      <a href={appUrl()} class="animate-fade-up delay-200 shimmer-btn mt-8 inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-8 py-3 text-base font-medium transition-colors">{copy.closing.cta}</a>
+    </div>
+  </section>
+
+  <Newsletter lang={lang} />
+  <Footer lang={lang} languageHref={lang === 'fr' ? '/features' : '/fr/features'} />
+</main>

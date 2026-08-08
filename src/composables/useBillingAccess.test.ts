@@ -1,5 +1,49 @@
 import { describe, expect, it } from 'vitest'
-import { getSafeAccessCheckError, getSafeBillingError } from './useBillingAccess'
+import {
+  BILLING_ACCESS_GRACE_MS,
+  getSafeAccessCheckError,
+  getSafeBillingError,
+  isAccessWithinGrace,
+} from './useBillingAccess'
+
+describe('billing access grace', () => {
+  const lifetime = {
+    productId: 'communityglows',
+    planId: 'lifetime_deal',
+    status: 'active',
+    accessState: 'lifetime_active',
+    source: 'manual',
+    entitlementId: null,
+    expiresAt: null,
+    trialStartedAt: null,
+    trialEndsAt: null,
+    legacyFallback: false,
+    reasonCode: 'active_entitlement',
+  } as const
+
+  it('keeps a recently verified entitlement during a bounded outage', () => {
+    expect(isAccessWithinGrace(lifetime, 1_000, 1_000 + BILLING_ACCESS_GRACE_MS)).toBe(true)
+  })
+
+  it('fails closed after the bounded grace window', () => {
+    expect(isAccessWithinGrace(lifetime, 1_000, 1_001 + BILLING_ACCESS_GRACE_MS)).toBe(false)
+  })
+
+  it('never grants grace without a previously verified entitlement', () => {
+    expect(isAccessWithinGrace(null, 1_000, 1_001)).toBe(false)
+  })
+
+  it('never extends a trial beyond its trusted end timestamp', () => {
+    const trial = {
+      ...lifetime,
+      planId: 'trial',
+      accessState: 'trial_active',
+      trialStartedAt: 100,
+      trialEndsAt: 2_000,
+    } as const
+    expect(isAccessWithinGrace(trial, 1_900, 2_000)).toBe(false)
+  })
+})
 
 describe('getSafeBillingError', () => {
   it.each([

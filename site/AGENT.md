@@ -1,7 +1,7 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.3.0"
 project: "tubeflow-site"
 created: "2026-04-26"
 updated: "2026-08-05"
@@ -57,9 +57,10 @@ This repository is the public marketing site for TubeFlow. It is an Astro site w
 
 - `src/pages/index.astro`: English landing page assembled from shared, locale-aware components
 - `src/pages/fr/index.astro`: French landing page assembled from the same shared, locale-aware components
-- `src/pages/features.astro`: feature marketing page
-- `src/pages/pricing.astro`: pricing and FAQ page
-- `src/pages/compare.astro`: comparison page positioning TubeFlow against YouTube
+- `src/pages/features.astro` and `src/pages/fr/features.astro`: bilingual feature marketing pages
+- `src/pages/pricing.astro` and `src/pages/fr/pricing.astro`: bilingual pricing and FAQ pages
+- `src/pages/compare.astro` and `src/pages/fr/compare.astro`: bilingual comparison pages organized around social-work approaches
+- `src/pages/lifetime-deal.astro` and `src/pages/fr/lifetime-deal.astro`: bilingual founder-offer pages
 - `src/pages/blog/index.astro`: blog listing
 - `src/pages/blog/[slug].astro`: blog article route
 - `src/pages/blog/feed.xml.ts`: RSS feed

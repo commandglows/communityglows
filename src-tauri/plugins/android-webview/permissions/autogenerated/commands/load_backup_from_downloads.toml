@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-load-backup-from-downloads"
+description = "Enables the load_backup_from_downloads command without any pre-configured scope."
+commands.allow = ["load_backup_from_downloads"]
+
+[[permission]]
+identifier = "deny-load-backup-from-downloads"
+description = "Denies the load_backup_from_downloads command without any pre-configured scope."
+commands.deny = ["load_backup_from_downloads"]

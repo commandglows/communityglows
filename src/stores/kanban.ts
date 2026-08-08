@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { KanbanService, type KanbanItem, type KanbanColumnId } from '@/services/kanbanService'
+import { enqueueKanbanSnapshot, flushCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
 export type { KanbanItem, KanbanColumnId }
 
@@ -33,10 +34,26 @@ export const useKanbanStore = defineStore('kanban', {
       }
     },
 
+    replaceFromCloud(serialized: string | undefined) {
+      if (serialized === undefined) return
+      try {
+        this.service.replaceState(serialized)
+        this.error = null
+      } catch {
+        this.error = 'Erreur lors de la synchronisation du Kanban'
+      }
+    },
+
+    syncToCloud() {
+      enqueueKanbanSnapshot(this.service.serializeState())
+      return flushCloudSyncQueue()
+    },
+
     addItem(columnId: KanbanColumnId, item: Omit<KanbanItem, 'id' | 'order' | 'columnId'>) {
       try {
         const newItem = this.service.addItem(columnId, item)
         this.service.saveState()
+        void this.syncToCloud()
         return newItem
       } catch (error) {
         this.error = 'Erreur lors de l\'ajout de l\'élément'
@@ -48,6 +65,7 @@ export const useKanbanStore = defineStore('kanban', {
       try {
         this.service.moveItem(itemId, targetColumnId)
         this.service.saveState()
+        void this.syncToCloud()
       } catch (error) {
         this.error = 'Erreur lors du déplacement de l\'élément'
         console.error(error)
@@ -58,6 +76,7 @@ export const useKanbanStore = defineStore('kanban', {
       try {
         this.service.reorderItems(columnId, itemIds)
         this.service.saveState()
+        void this.syncToCloud()
       } catch (error) {
         this.error = 'Erreur lors de la réorganisation des éléments'
         console.error(error)
@@ -68,6 +87,7 @@ export const useKanbanStore = defineStore('kanban', {
       try {
         this.service.deleteItem(itemId)
         this.service.saveState()
+        void this.syncToCloud()
       } catch (error) {
         this.error = 'Erreur lors de la suppression de l\'élément'
         console.error(error)
@@ -103,6 +123,11 @@ export const useKanbanStore = defineStore('kanban', {
 
     clearError() {
       this.error = null
+    },
+
+    clearLocal() {
+      this.service.resetState()
+      localStorage.removeItem('kanban-state')
     }
   }
 })

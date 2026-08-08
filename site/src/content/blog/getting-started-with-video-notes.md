@@ -32,7 +32,7 @@ Pin useful external tools (analytics, CRM, mail, booking pages) in the custom li
 
 ### 5. Capture Reusable Routines
 
-Use the Kanban board to turn recurring daily actions into a repeatable system. If your routine is stable, your team can operate the same way in every profile.
+Use your current planning board to turn recurring daily actions into a repeatable system. CommunityGlows is developing its own CRM and Kanban workspace.
 
 ## Checklist: First 15 Minutes
 

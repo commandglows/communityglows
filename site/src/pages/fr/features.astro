@@ -1,0 +1,24 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import FeaturesPage from '../../components/features/FeaturesPage.astro'
+import { siteUrl } from '../../config/site'
+
+const jsonLd = [{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Accueil", item: siteUrl('/fr') },
+    { "@type": "ListItem", position: 2, name: "Fonctionnalités", item: siteUrl('/fr/features') },
+  ],
+}]
+---
+
+<Layout
+  title="Des fonctionnalités pour un travail social plus humain — CommunityGlows"
+  description="Découvrez comment CommunityGlows aide à protéger votre attention, préserver le contexte et construire des relations plus constantes avec votre audience et votre communauté."
+  path="/fr/features"
+  lang="fr"
+  jsonLd={jsonLd}
+>
+  <FeaturesPage lang="fr" />
+</Layout>

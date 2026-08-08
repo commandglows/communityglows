@@ -73,7 +73,10 @@
             />
             <h3>{{ profilesStore.activeProfile?.name ?? 'Profil' }}</h3>
             <p>{{ profilesStore.profiles.length }} {{ profilesStore.profiles.length > 1 ? 'profils' : 'profil' }}</p>
-            <ProfileSwitcher :icons-only="false" />
+            <ProfileSwitcher
+              ref="profileSwitcher"
+              :icons-only="false"
+            />
             <Button
               label="Ajouter un profil"
               icon="pi pi-plus"
@@ -270,6 +273,7 @@ const isCrmCollapsed = ref(true)
 const KANBAN_COLLAPSE_KEY = 'communityglows-right-sidebar-kanban-collapsed'
 const CRM_COLLAPSE_KEY = 'communityglows-right-sidebar-crm-collapsed'
 const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
+const profileSwitcher = ref<{ openProfileCreator: () => void } | null>(null)
 
 const readBoolFromStorage = (key: string, fallback: boolean) => {
   try {
@@ -308,7 +312,7 @@ watch(iconsOnly, async compact => {
 })
 
 const openProfileCreator = () => {
-  window.dispatchEvent(new CustomEvent('communityglows-create-profile'))
+  profileSwitcher.value?.openProfileCreator()
 }
 
 const handleResize = (sizes: number[]) => {

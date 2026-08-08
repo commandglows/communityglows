@@ -92,6 +92,13 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_user_network", ["userId", "networkId"]),
 
+  workspaceState: defineTable({
+    userId: v.id("users"),
+    contextualTasksJson: v.optional(v.string()),
+    kanbanStateJson: v.optional(v.string()),
+    updatedAt: v.number(),
+  }).index("by_userId", ["userId"]),
+
   entitlements: defineTable({
     userId: v.id("users"),
     productId: v.string(),

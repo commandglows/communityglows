@@ -110,6 +110,110 @@ describe("billing bridge adapter", () => {
       source: "manual",
       reasonCode: "active_entitlement",
       legacyFallback: false,
+      accessState: "lifetime_active",
+    });
+  });
+
+  it("accepts a trusted active trial window from the suite", async () => {
+    const t = convexTest(schema, modules);
+    const now = Date.now();
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: true,
+        globalUserId: "gu-trial",
+        planId: "trial",
+        source: "suite",
+        reasonCode: "trial_active",
+        accessState: "trial_active",
+        trialStartedAt: now - 1_000,
+        trialEndsAt: now + 30 * 24 * 60 * 60 * 1000,
+      },
+    });
+
+    const access = await t.action(api.billing.getProductAccess, {});
+
+    expect(access).toMatchObject({
+      status: "active",
+      accessState: "trial_active",
+      planId: "trial",
+      trialStartedAt: now - 1_000,
+      trialEndsAt: now + 30 * 24 * 60 * 60 * 1000,
+      reasonCode: "trial_active",
+    });
+  });
+
+  it("normalizes the suite ledger trialExpiresAt field", async () => {
+    const t = convexTest(schema, modules);
+    const now = Date.now();
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: true,
+        globalUserId: "gu-trial-legacy-field",
+        planId: "trial",
+        source: "suite",
+        reasonCode: "trial_active",
+        trialStartedAt: now - 1_000,
+        trialExpiresAt: now + 30 * 24 * 60 * 60 * 1000,
+      },
+    });
+
+    const access = await t.action(api.billing.getProductAccess, {});
+
+    expect(access).toMatchObject({
+      status: "active",
+      accessState: "trial_active",
+      trialEndsAt: now + 30 * 24 * 60 * 60 * 1000,
+    });
+  });
+
+  it("fails closed when an active trial has no trusted window", async () => {
+    const t = convexTest(schema, modules);
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: true,
+        globalUserId: "gu-trial",
+        planId: "trial",
+        source: "suite",
+        reasonCode: "trial_active",
+        accessState: "trial_active",
+      },
+    });
+
+    const access = await t.action(api.billing.getProductAccess, {});
+
+    expect(access).toMatchObject({
+      status: "free",
+      accessState: "trial_expired",
+      reasonCode: "trial_window_unverified",
+    });
+  });
+
+  it("keeps an expired trial closed even if the bridge says hasAccess", async () => {
+    const t = convexTest(schema, modules);
+    const now = Date.now();
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: true,
+        globalUserId: "gu-trial",
+        planId: "trial",
+        source: "suite",
+        reasonCode: "trial_expired",
+        accessState: "trial_expired",
+        trialStartedAt: now - 31 * 24 * 60 * 60 * 1000,
+        trialEndsAt: now - 24 * 60 * 60 * 1000,
+      },
+    });
+
+    const access = await t.action(api.billing.getProductAccess, {});
+
+    expect(access).toMatchObject({
+      status: "free",
+      accessState: "trial_expired",
+      reasonCode: "trial_expired",
     });
   });
 

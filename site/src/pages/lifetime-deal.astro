@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro'
 import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
-import { siteUrl, winflowzCheckoutUrl } from '../config/site'
+import { appUrl, siteUrl, winflowzCheckoutUrl } from '../config/site'
 
 const offerId = 'communityglows/lifetime_deal'
 const checkoutUrl = winflowzCheckoutUrl(offerId, {
@@ -33,7 +33,8 @@ const workflow = [
 const includes = [
   'CommunityGlows Pro access under the published Lifetime Deal terms',
   'Multi-profile social workspace for creators and operators',
-  'Anti-distraction controls, custom links, Kanban workflow, backup and restore',
+  'Anti-distraction controls, custom links, backup and restore',
+  'CRM and Kanban workspace shown separately as in development',
   'Desktop and mobile-oriented product direction as released builds mature',
   'Access fulfilled through the WinFlowz suite commerce and entitlement bridge',
   'Support path for account verification, checkout issues, refunds, and replayed events',
@@ -42,26 +43,26 @@ const includes = [
 const boundaries = [
   'Social networks can change their web interfaces and policies; compatibility work is ongoing.',
   'Future platform availability follows released builds and public product notes.',
-  'Cloud-heavy features may receive fair-use or plan limits if operating costs require them.',
+  'Sync covers profiles and preferences; live login sessions remain local to each device.',
   'Checkout requires Lemon Squeezy configuration through the central WinFlowz commerce route.',
 ]
 
 const faq = [
   {
-    q: 'Is this the real CommunityGlows checkout?',
-    a: 'Yes. The CTA uses the existing suite checkout route with the internal offer id communityglows/lifetime_deal.',
+    q: 'What happens after I choose lifetime access?',
+    a: 'The CTA takes you to the existing secure suite checkout. Your CommunityGlows access is then connected to your account through the current entitlement system.',
   },
   {
     q: 'Why does checkout go through WinFlowz?',
-    a: 'CommunityGlows access is fulfilled through the WinFlowz suite commerce bridge so payment events and entitlements stay centralized.',
+    a: 'WinFlowz provides the shared checkout and account-access system used by CommunityGlows, so your purchase and access stay connected.',
   },
   {
-    q: 'Is this AppSumo pricing?',
-    a: 'No. This is the direct founder window. AppSumo terms can be negotiated separately later and should stay consistent with public pricing rules.',
+    q: 'What is included in the 30-day trial?',
+    a: 'The trial includes every CommunityGlows feature available today. Roadmap items and features still in development are not included. No credit card is required and nothing is billed automatically when the trial ends.',
   },
   {
     q: 'Can the offer change?',
-    a: 'Yes. This page is ready as a direct sales surface, while final public price, limits, and legal copy can still be refined.',
+    a: 'Yes. Availability, price, limits, and terms may evolve. The terms shown at checkout are the ones that apply to your purchase.',
   },
 ]
 
@@ -70,12 +71,13 @@ const jsonLd = [
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: 'CommunityGlows Lifetime Deal',
-    description: 'Founder Lifetime Deal for CommunityGlows, a profile-aware social workspace for creators and operators.',
+    description: 'Try all CommunityGlows features available today for 30 days without a credit card, then optionally buy lifetime access for €79.',
     brand: { '@type': 'Brand', name: 'CommunityGlows' },
     offers: {
       '@type': 'Offer',
       availability: 'https://schema.org/InStock',
-      priceCurrency: 'USD',
+      price: '79',
+      priceCurrency: 'EUR',
       url: siteUrl('/lifetime-deal'),
     },
   },
@@ -92,13 +94,16 @@ const jsonLd = [
 ---
 
 <Layout
-  title="CommunityGlows Lifetime Deal - Founder Access"
-  description="Get founder Lifetime Deal access to CommunityGlows, the focused social workspace for creators, operators, and small teams managing multiple social accounts."
+  title="30-day trial and €79 lifetime access — CommunityGlows"
+  description="Try every CommunityGlows feature available today for 30 days with no credit card or automatic billing, then choose lifetime access for €79 once."
   path="/lifetime-deal"
   jsonLd={jsonLd}
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
-    <Navbar />
+    <Navbar languageHref="/fr/lifetime-deal" />
+    <div class="relative z-20 mx-auto -mb-24 flex max-w-6xl justify-center px-4 pt-24 lg:justify-end">
+      <span class="rounded-full border border-foreground/20 bg-background px-4 py-2 text-sm font-semibold text-foreground">€79 · one-time payment</span>
+    </div>
 
     <section class="relative overflow-hidden border-b border-border pt-32 pb-20">
       <div class="absolute inset-0 bg-gradient-to-b from-card to-background" aria-hidden="true"></div>
@@ -108,23 +113,23 @@ const jsonLd = [
             Founder Lifetime Deal
           </p>
           <h1 class="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-            Own the social workspace before the price climbs.
+            Keep showing up for your community, without the tab chaos.
           </h1>
           <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            CommunityGlows brings your social accounts, profiles, focus controls, and lightweight execution workflow into one app so you can operate without tab sprawl.
+            Bring your accounts, conversations, and next actions into one focused workspace—so more of your attention can go to the people behind the notifications.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
             <a
-              href={checkoutUrl}
+              href={appUrl()}
               class="shimmer-btn inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
             >
-              Get Lifetime Access
+              Try 30 days free
             </a>
             <a
-              href="#offer"
+              href={checkoutUrl}
               class="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              Review the offer
+              Buy lifetime access for €79
             </a>
           </div>
         </div>
@@ -134,7 +139,7 @@ const jsonLd = [
             <div class="flex items-center justify-between gap-4">
               <div>
                 <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">CommunityGlows</p>
-                <p class="mt-1 text-lg font-semibold text-foreground">Founder workspace</p>
+                <p class="mt-1 text-lg font-semibold text-foreground">Community workspace</p>
               </div>
               <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-400">Direct LTD</span>
             </div>
@@ -159,7 +164,7 @@ const jsonLd = [
               </div>
               <div class="rounded-xl border border-border p-4">
                 <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Access route</p>
-                <p class="mt-2 break-words text-sm text-foreground">{offerId}</p>
+                <p class="mt-2 text-sm text-foreground">Secure suite checkout</p>
               </div>
             </div>
           </div>
@@ -170,11 +175,11 @@ const jsonLd = [
     <section class="mx-auto max-w-6xl px-4 py-16">
       <div class="grid gap-8 lg:grid-cols-2">
         <div>
-          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Why this exists</p>
-          <h2 class="mt-3 text-3xl font-bold text-foreground">A direct founder window for the product you can sell first.</h2>
+          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Why this workspace matters</p>
+          <h2 class="mt-3 text-3xl font-bold text-foreground">Community grows through remembered details and repeated care.</h2>
         </div>
         <p class="text-lg leading-relaxed text-muted-foreground">
-          The Lifetime Deal gives early buyers a clear path into CommunityGlows while the product is still priced for founder adoption. It keeps the commercial story simple: one product, one direct offer, one checkout, and server-side access fulfillment.
+          The Lifetime Deal gives you a lasting place to listen, respond, and follow through. CommunityGlows keeps profiles and working context close together, helping you move from scattered activity to a more human, consistent presence.
         </p>
       </div>
     </section>
@@ -202,7 +207,7 @@ const jsonLd = [
         <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">The offer</p>
         <h2 class="mt-3 text-3xl font-bold text-foreground">CommunityGlows Lifetime Deal</h2>
         <p class="mt-4 text-muted-foreground">
-          The exact public price can still be refined, but the page architecture and checkout path are ready for direct early-bird sales.
+          Start with a full 30-day trial of every feature available today—without a credit card or automatic billing. Roadmap items are not part of the trial. If the workspace fits, one voluntary purchase gives you lifetime access under the terms published at checkout.
         </p>
       </div>
 
@@ -210,9 +215,9 @@ const jsonLd = [
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Founder early-bird</p>
-            <h3 class="mt-3 text-4xl font-bold text-foreground">Lifetime access</h3>
+            <h3 class="mt-3 text-4xl font-bold text-foreground">€79 · Lifetime access</h3>
             <p class="mt-3 max-w-2xl text-sm text-muted-foreground">
-              Pay once through the central checkout. Access is fulfilled from signed provider events into the suite entitlement layer.
+              Pay once, then use the Pro workspace to keep accounts organized, return to important conversations, and carry community context forward.
             </p>
           </div>
           <span class="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -228,18 +233,16 @@ const jsonLd = [
           ))}
         </div>
 
-        <a
-          href={checkoutUrl}
-          class="shimmer-btn mt-6 inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
-        >
-          Continue to checkout
-        </a>
+        <div class="mt-6 grid gap-3 sm:grid-cols-2">
+          <a href={appUrl()} class="shimmer-btn inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200">Try 30 days free</a>
+          <a href={checkoutUrl} class="inline-flex w-full items-center justify-center rounded-full border border-border px-6 py-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted">Buy once for €79</a>
+        </div>
       </div>
     </section>
 
     <section class="mx-auto max-w-6xl px-4 py-16">
       <div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <h2 class="text-3xl font-bold text-foreground">Clear launch boundaries</h2>
+        <h2 class="text-3xl font-bold text-foreground">What to expect as the product evolves</h2>
         <div class="mt-6 grid gap-3 md:grid-cols-2">
           {boundaries.map((item) => (
             <div class="rounded-xl border border-border bg-background p-4 text-sm leading-relaxed text-muted-foreground">
@@ -252,7 +255,7 @@ const jsonLd = [
 
     <section class="mx-auto max-w-6xl px-4 py-16">
       <div class="grid gap-4">
-        <h2 class="text-3xl font-bold text-foreground">Founder FAQ</h2>
+        <h2 class="text-3xl font-bold text-foreground">Lifetime access FAQ</h2>
         {faq.map((item) => (
           <div class="rounded-xl border border-border bg-card p-5">
             <h3 class="text-base font-semibold text-foreground">{item.q}</h3>
@@ -266,21 +269,19 @@ const jsonLd = [
       <div class="rounded-2xl border border-foreground/20 bg-white p-8 text-zinc-950 sm:p-10">
         <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div class="max-w-2xl">
-            <h2 class="text-3xl font-bold">Open the CommunityGlows founder window.</h2>
+            <h2 class="text-3xl font-bold">Make more room for the people in your community.</h2>
             <p class="mt-4 text-zinc-600">
-              Use this page as the direct sales surface while final price, legal details, and Lemon Squeezy product setup are finalized.
+              Choose lifetime access and build a calmer social rhythm around listening, responding, and following through.
             </p>
           </div>
-          <a
-            href={checkoutUrl}
-            class="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
-          >
-            Get Lifetime Access
-          </a>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <a href={appUrl()} class="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800">Try 30 days free</a>
+            <a href={checkoutUrl} class="inline-flex items-center justify-center rounded-full border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-100">Buy once for €79</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <Footer />
+    <Footer languageHref="/fr/lifetime-deal" />
   </main>
 </Layout>

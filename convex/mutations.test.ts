@@ -175,4 +175,32 @@ describe("Convex mutation invariants (convex-test)", () => {
     expect(settingsRows).toHaveLength(0);
     expect(links).toHaveLength(0);
   });
+
+  it("AC8: isolates workspace snapshots and rejects malformed state", async () => {
+    const t = convexTest(schema, modules);
+    const userA = await t.run((ctx) => ctx.db.insert("users", { createdAt: Date.now() }));
+    const userB = await t.run((ctx) => ctx.db.insert("users", { createdAt: Date.now() }));
+    authState.userId = userA;
+
+    await t.mutation(api.workspaceState.setContextualTasks, {
+      contextualTasksJson: "[]",
+      updatedAt: Date.now(),
+    });
+    await t.mutation(api.workspaceState.setKanbanState, {
+      kanbanStateJson: "[]",
+      updatedAt: Date.now(),
+    });
+    await expect(t.mutation(api.workspaceState.setContextualTasks, {
+      contextualTasksJson: "{}",
+      updatedAt: Date.now(),
+    })).rejects.toThrow(/array/i);
+
+    authState.userId = userB;
+    expect(await t.query(api.workspaceState.get, {})).toBeNull();
+    authState.userId = userA;
+    expect(await t.query(api.workspaceState.get, {})).toMatchObject({
+      contextualTasksJson: "[]",
+      kanbanStateJson: "[]",
+    });
+  });
 });

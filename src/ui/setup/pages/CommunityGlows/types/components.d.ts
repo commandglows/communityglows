@@ -43,6 +43,7 @@ declare module 'vue' {
     NextdoorIcon: typeof import('./../components/icons/NextdoorIcon.vue')['default']
     OnboardingFlow: typeof import('./../components/OnboardingFlow.vue')['default']
     PostAuthSyncOverlay: typeof import('./../components/PostAuthSyncOverlay.vue')['default']
+    ProductAccessGate: typeof import('./../components/ProductAccessGate.vue')['default']
     ProfileSwitcher: typeof import('./../components/ProfileSwitcher.vue')['default']
     QuoraIcon: typeof import('./../components/icons/QuoraIcon.vue')['default']
     RedditView: typeof import('./../components/networks/RedditView.vue')['default']
