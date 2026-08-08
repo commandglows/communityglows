@@ -9,7 +9,7 @@
     "@vueuse/core": "^12.8.2",
     "convex": "^1.43.0",
     "notivue": "^2.4.5",
-    "pinia": "^2.3.1",
+    "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "4.7.1",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
