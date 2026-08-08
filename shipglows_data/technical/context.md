@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.4.0"
+artifact_version: "1.4.1"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-04"
+updated: "2026-08-08"
 status: reviewed
 source_skill: 300-sg-docs
 scope: context
@@ -26,6 +26,8 @@ evidence:
   - "src/ui/setup/pages/CommunityGlows/components/ui/"
   - "src/ui/setup/pages/CommunityGlows/directives/tooltip.ts"
   - "src/utils/notifications.ts"
+  - "src/lib/convexAuth.ts"
+  - "src/lib/cloudSync.ts"
   - "src-tauri/src/lib.rs"
   - "convex/schema.ts"
   - "convex/billing.ts"
@@ -89,8 +91,9 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 
 1. Vite démarre une entrée UI.
 2. `src/ui/setup/pages/CommunityGlows/main.ts` initialise Pinia, i18n, router, Notivue et `v-sg-tooltip`; PrimeVue, Aura et les services/directives PrimeVue ne sont plus chargés par cette entrée.
-3. Si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` initient Convex Auth.
-4. App bootstrap puis montage de l'application.
+3. Si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` chargent les jetons persistés avant de configurer Convex Auth.
+4. Après une connexion par mot de passe, le client attend la confirmation de session Convex avant d'exposer l'état authentifié et d'hydrater les données cloud; un utilisateur cloud absent devient une erreur terminale visible et aucun rechargement n'est lancé.
+5. App bootstrap puis montage de l'application.
 
 #### Couche UI Windows/Tauri
 

@@ -34,6 +34,7 @@ import {
   type CloudSnapshotShape,
 } from "@/lib/cloudSyncDecisions";
 import type { CloudSettingsPatch } from "@/lib/cloudSettings";
+import { recordDiagnosticEvent } from "@/lib/buildDiagnostics";
 
 type CloudSnapshot = CloudSnapshotShape & {
   settings: CloudSettings | null;
@@ -563,7 +564,19 @@ export async function hydrateCloudState(options?: {
   hydratePromise = (async () => {
     const client = getConvexClient();
     const user = await client.query(api.users.getMe, {});
-    if (!user?._id) return;
+    if (!user?._id) {
+      recordDiagnosticEvent({
+        area: "cloud-sync",
+        stage: "authenticated-user",
+        status: "missing",
+      });
+      throw new Error("La session cloud n’est pas disponible. Reconnectez-vous puis réessayez.");
+    }
+    recordDiagnosticEvent({
+      area: "cloud-sync",
+      stage: "authenticated-user",
+      status: "confirmed",
+    });
     if (hydratedUserId === user._id) return;
 
     const rememberedUserId = getRememberedCloudUserId();
@@ -613,6 +626,7 @@ export async function hydrateCloudState(options?: {
 
     hydratedUserId = user._id;
     rememberCloudUserId(user._id);
+    recordDiagnosticEvent({ area: "cloud-sync", stage: "snapshot", status: "applied" });
   })().finally(() => {
     hydratePromise = null;
   });

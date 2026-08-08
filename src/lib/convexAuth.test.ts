@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockState = vi.hoisted(() => {
   return {
     action: vi.fn(),
+    setAuth: vi.fn(),
     tokenCallback: null as null | ((args: { forceRefreshToken: boolean }) => Promise<string | null>),
     onAuthStateChange: null as null | ((authenticated: boolean) => void),
   };
@@ -23,6 +24,7 @@ vi.mock("convex/browser", () => {
     constructor(_url: string) {}
 
     action = mockState.action;
+    setAuth = mockState.setAuth;
   }
 
   return {
@@ -77,8 +79,16 @@ function createMockClient() {
   };
 }
 
+async function confirmRestoredSession(setupPromise: Promise<void>) {
+  await vi.waitFor(() => expect(mockState.tokenCallback).not.toBeNull());
+  await mockState.tokenCallback?.({ forceRefreshToken: false });
+  mockState.onAuthStateChange?.(true);
+  await setupPromise;
+}
+
 beforeEach(() => {
   mockState.action.mockReset();
+  mockState.setAuth.mockReset();
   mockState.tokenCallback = null;
   mockState.onAuthStateChange = null;
 
@@ -101,7 +111,7 @@ describe("convexAuth client boundaries", () => {
     localStorage.setItem(REFRESH_STORAGE_KEY, "refresh-1");
     const { setupConvexAuth, isAuthenticated, isAuthLoading } = await loadAuthModule();
 
-    await setupConvexAuth(createMockClient() as never, CONVEX_URL);
+    await confirmRestoredSession(setupConvexAuth(createMockClient() as never, CONVEX_URL));
 
     expect(isAuthenticated.value).toBe(true);
     expect(isAuthLoading.value).toBe(false);
@@ -135,9 +145,7 @@ describe("convexAuth client boundaries", () => {
     expect(localStorage.getItem(LEGACY_GLOBAL_REFRESH_KEY)).toBeNull();
   });
 
-  it("persists sign-in tokens under the Convex namespace", async () => {
-    localStorage.setItem(JWT_STORAGE_KEY, "jwt-initial");
-    localStorage.setItem(REFRESH_STORAGE_KEY, "refresh-initial");
+  it("waits for Convex to confirm a fresh sign-in before exposing authentication", async () => {
     mockState.action.mockResolvedValue({
       tokens: {
         token: "jwt-2",
@@ -145,16 +153,46 @@ describe("convexAuth client boundaries", () => {
       },
     });
 
-    const { setupConvexAuth, signIn } = await loadAuthModule();
+    const { setupConvexAuth, signIn, isAuthenticated } = await loadAuthModule();
     await setupConvexAuth(createMockClient() as never, CONVEX_URL);
-    await signIn("password", { email: "user@test.com", password: "secret" });
+    const signInPromise = signIn("password", { email: "user@test.com", password: "secret" });
+    await vi.waitFor(() => expect(localStorage.getItem(JWT_STORAGE_KEY)).toBe("jwt-2"));
 
-    expect(localStorage.getItem(JWT_STORAGE_KEY)).toBe("jwt-2");
+    expect(isAuthenticated.value).toBe(false);
+    expect(mockState.tokenCallback).not.toBeNull();
+    await expect(mockState.tokenCallback?.({ forceRefreshToken: false })).resolves.toBe("jwt-2");
+    mockState.onAuthStateChange?.(true);
+    await signInPromise;
+
     expect(localStorage.getItem(REFRESH_STORAGE_KEY)).toBe("refresh-2");
+    expect(isAuthenticated.value).toBe(true);
     expect(mockState.action).toHaveBeenCalledWith("auth:signIn", {
       provider: "password",
       params: { email: "user@test.com", password: "secret" },
     });
+  });
+
+  it("offers a restored JWT to Convex on the first auth callback", async () => {
+    localStorage.setItem(JWT_STORAGE_KEY, "jwt-restored");
+    localStorage.setItem(REFRESH_STORAGE_KEY, "refresh-restored");
+    const { setupConvexAuth } = await loadAuthModule();
+
+    const setupPromise = setupConvexAuth(createMockClient() as never, CONVEX_URL);
+    await vi.waitFor(() => expect(mockState.tokenCallback).not.toBeNull());
+    await expect(mockState.tokenCallback?.({ forceRefreshToken: false })).resolves.toBe("jwt-restored");
+    mockState.onAuthStateChange?.(true);
+    await setupPromise;
+  });
+
+  it("rejects a password sign-in response without session tokens", async () => {
+    mockState.action.mockResolvedValue({});
+    const { setupConvexAuth, signIn, isAuthenticated } = await loadAuthModule();
+    await setupConvexAuth(createMockClient() as never, CONVEX_URL);
+
+    await expect(
+      signIn("password", { email: "user@test.com", password: "secret" }),
+    ).rejects.toThrow("session valide");
+    expect(isAuthenticated.value).toBe(false);
   });
 
   it("clears tokens when refresh is requested without a refresh token", async () => {
@@ -176,11 +214,12 @@ describe("convexAuth client boundaries", () => {
     mockState.action.mockRejectedValue(new Error("sign out failed"));
 
     const { setupConvexAuth, signOut, isAuthenticated } = await loadAuthModule();
-    await setupConvexAuth(createMockClient() as never, CONVEX_URL);
+    await confirmRestoredSession(setupConvexAuth(createMockClient() as never, CONVEX_URL));
     await signOut();
 
     expect(localStorage.getItem(JWT_STORAGE_KEY)).toBeNull();
     expect(localStorage.getItem(REFRESH_STORAGE_KEY)).toBeNull();
     expect(isAuthenticated.value).toBe(false);
+    expect(mockState.setAuth).toHaveBeenCalledWith("jwt-4");
   });
 });

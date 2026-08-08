@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.2.1"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-04"
+updated: "2026-08-08"
 status: reviewed
 source_skill: 300-sg-docs
 scope: function_tree
@@ -102,11 +102,11 @@ Vue fonctionnelle du cœur de CommunityGlows sans lire tout le projet.
 - `src/lib/convex.ts`
   - Construction du client Convex singleton.
 - `src/lib/convexAuth.ts`
-  - Wrapper d'auth, token storage, signIn/signOut.
+  - Wrapper d'auth, token storage, signIn/signOut et confirmation de session Convex avant hydratation.
 - `src/lib/communityGlowsDeepLinks.ts`
   - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
 - `src/lib/cloudSync*.ts`
-  - Sync settings, queue de sync, feedback post-auth.
+  - Sync settings, queue de sync, feedback post-auth et échec explicite si la session n'expose aucun utilisateur cloud.
 - `src/utils/disableCopyProtection.ts`
   - Effet anti-copie, hooks installés côté entrée UI.
 - `src/composables/*`

@@ -7,6 +7,7 @@
  */
 import { ConvexClient, ConvexHttpClient } from "convex/browser";
 import { ref } from "vue";
+import { recordDiagnosticEvent } from "@/lib/buildDiagnostics";
 
 const JWT_KEY = "__convexAuthJWT";
 const REFRESH_TOKEN_KEY = "__convexAuthRefreshToken";
@@ -16,6 +17,7 @@ const SESSION_LAST_ACTIVITY_KEY = "communityglows_session_last_activity_at";
 const SESSION_PIN_HASH_KEY = "communityglows_session_pin_hash";
 const SESSION_PIN_SALT_KEY = "communityglows_session_pin_salt";
 const DEFAULT_SESSION_LOCK_IDLE_MS = 15 * 60 * 1000;
+const AUTH_CONFIRMATION_TIMEOUT_MS = 12_000;
 
 function storageKey(key: string, namespace: string) {
   return `${key}_${namespace.replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -67,6 +69,95 @@ function getHttpClient() {
   return new ConvexHttpClient(_namespace);
 }
 
+function detachClientAuth() {
+  _client?.setAuth(async () => null, (authenticated) => {
+    isAuthenticated.value = authenticated;
+  });
+}
+
+function configureClientAuth(options?: { waitForConfirmation?: boolean }) {
+  if (!_client) {
+    return Promise.reject(new Error("Le service de connexion n’est pas initialisé."));
+  }
+
+  let tokenWasProvided = false;
+  let settled = false;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const confirmation = new Promise<void>((resolve, reject) => {
+    if (options?.waitForConfirmation) {
+      timeoutId = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        clearTokens();
+        detachClientAuth();
+        recordDiagnosticEvent({ area: "cloud-auth", stage: "session-confirmation", status: "timeout" });
+        reject(new Error("La confirmation de la session cloud a expiré. Réessayez."));
+      }, AUTH_CONFIRMATION_TIMEOUT_MS);
+    }
+
+    _client?.setAuth(
+      async ({ forceRefreshToken }) => {
+        if (forceRefreshToken) {
+          const refreshToken = localStorage.getItem(
+            storageKey(REFRESH_TOKEN_KEY, _namespace),
+          );
+          if (!refreshToken) {
+            clearTokens();
+            return null;
+          }
+          try {
+            const httpClient = new ConvexHttpClient(_namespace);
+            const result = (await httpClient.action(AUTH_SIGN_IN, {
+              refreshToken,
+            })) as AuthResult | null;
+            if (result?.tokens) {
+              persistTokens(result.tokens);
+              tokenWasProvided = true;
+              return result.tokens.token;
+            }
+          } catch {
+            // Refresh failed — session expired.
+          }
+          clearTokens();
+          return null;
+        }
+        tokenWasProvided = Boolean(_currentToken);
+        return _currentToken;
+      },
+      (authenticated) => {
+        isAuthenticated.value = authenticated;
+        recordDiagnosticEvent({
+          area: "cloud-auth",
+          stage: "session-confirmation",
+          status: authenticated ? "confirmed" : "signed-out",
+        });
+
+        if (!options?.waitForConfirmation || settled) return;
+        if (authenticated) {
+          settled = true;
+          if (timeoutId) clearTimeout(timeoutId);
+          touchSessionActivity();
+          resolve();
+        } else if (tokenWasProvided) {
+          settled = true;
+          if (timeoutId) clearTimeout(timeoutId);
+          clearTokens();
+          detachClientAuth();
+          reject(new Error("La session cloud n’a pas pu être confirmée. Réessayez."));
+        }
+      },
+    );
+
+    if (!options?.waitForConfirmation) {
+      settled = true;
+      resolve();
+    }
+  });
+
+  return confirmation;
+}
+
 // --------------- Bootstrap ---------------
 
 /**
@@ -85,43 +176,13 @@ export async function setupConvexAuth(client: ConvexClient, convexUrl: string) {
   const jwtK = storageKey(JWT_KEY, _namespace);
   const refreshK = storageKey(REFRESH_TOKEN_KEY, _namespace);
 
-  // Provide the token callback to ConvexClient
-  client.setAuth(
-    async ({ forceRefreshToken }) => {
-        if (forceRefreshToken) {
-          const refreshToken = localStorage.getItem(refreshK);
-          if (!refreshToken) {
-            clearTokens();
-            return null;
-        }
-        try {
-          const httpClient = new ConvexHttpClient(convexUrl);
-          const result = (await httpClient.action(AUTH_SIGN_IN, {
-            refreshToken,
-          })) as AuthResult | null;
-          if (result?.tokens) {
-            persistTokens(result.tokens);
-            return result.tokens.token;
-          }
-        } catch {
-          // Refresh failed — session expired
-        }
-        clearTokens();
-        return null;
-      }
-      return _currentToken;
-    },
-    (authenticated) => {
-      isAuthenticated.value = authenticated;
-    },
-  );
-
   // Try to restore from storage
   const storedToken = localStorage.getItem(jwtK);
   const storedRefreshToken = localStorage.getItem(refreshK);
   if (storedToken && storedRefreshToken) {
     _currentToken = storedToken;
-    isAuthenticated.value = true;
+    isAuthenticated.value = false;
+    await configureClientAuth({ waitForConfirmation: true });
     touchSessionActivity();
     isAuthLoading.value = false;
     return;
@@ -129,6 +190,7 @@ export async function setupConvexAuth(client: ConvexClient, convexUrl: string) {
 
   // No existing session → explicit non-auth state (no anonymous auto-login)
   clearTokens();
+  await configureClientAuth();
   isAuthLoading.value = false;
 }
 
@@ -158,6 +220,12 @@ export async function signIn(
 
   if (result?.tokens) {
     persistTokens(result.tokens);
+    isAuthenticated.value = false;
+    recordDiagnosticEvent({ area: "cloud-auth", stage: "password-sign-in", status: "tokens-received" });
+    await configureClientAuth({ waitForConfirmation: true });
+  } else {
+    recordDiagnosticEvent({ area: "cloud-auth", stage: "password-sign-in", status: "no-tokens" });
+    throw new Error("La connexion n’a pas renvoyé de session valide. Réessayez.");
   }
 
   return result;
@@ -167,6 +235,7 @@ export async function signOut() {
   if (!_client) return;
   try {
     const httpClient = getHttpClient();
+    if (_currentToken) httpClient.setAuth(_currentToken);
     await httpClient.action(AUTH_SIGN_OUT, {});
   } catch (e) {
     console.warn("[ConvexAuth] Sign-out failed (already signed out?)", e);
@@ -183,7 +252,6 @@ function persistTokens(tokens: { token: string; refreshToken: string }) {
     storageKey(REFRESH_TOKEN_KEY, _namespace),
     tokens.refreshToken,
   );
-  isAuthenticated.value = true;
   touchSessionActivity();
 }
 
