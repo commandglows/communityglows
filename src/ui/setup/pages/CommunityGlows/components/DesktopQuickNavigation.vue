@@ -60,15 +60,22 @@ const profilesStore = useProfilesStore()
 const webviewStore = useWebviewStore()
 
 const visibleNetworks = computed(() => {
-  const profileId = profilesStore.activeProfileId
-  if (!profileId) return builtInSocialNetworks
+  const profile = profilesStore.activeProfile
+  if (!profile) return []
+  const hiddenNetworkIds = new Set(profile.hiddenNetworks ?? [])
   return builtInSocialNetworks.filter(
-    (network) => !profilesStore.isNetworkHidden(profileId, network.id),
+    (network) => !hiddenNetworkIds.has(network.id),
   )
 })
 
 function navigateToNetwork(network: BuiltInSocialNetwork) {
-  profilesStore.ensureDefault()
+  const profileId = profilesStore.activeProfileId
+  if (
+    !profileId ||
+    profilesStore.isNetworkHidden(profileId, network.id)
+  ) {
+    return
+  }
   if (webviewStore.usesWebview(network.id)) {
     webviewStore.selectNetwork(network.id)
     return

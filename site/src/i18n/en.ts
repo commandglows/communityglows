@@ -6,6 +6,7 @@ export default {
     reviews: 'Use Cases',
     blog: 'Blog',
     signIn: 'View pricing',
+    download: 'Download',
     getStarted: 'Try 30 days free',
     menuLabel: 'Open menu',
     closeMenuLabel: 'Close menu',

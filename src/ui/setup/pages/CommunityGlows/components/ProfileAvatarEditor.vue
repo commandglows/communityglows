@@ -1,5 +1,8 @@
 <template>
-  <div class="avatar-editor">
+  <div
+    class="avatar-editor"
+    :class="{ 'avatar-editor--compact': compact }"
+  >
     <div class="avatar-editor__preview" aria-hidden="true">
       <img v-if="draftAvatar" :src="draftAvatar" alt="" />
       <span v-else>{{ draftEmoji || DEFAULT_EMOJI }}</span>
@@ -44,7 +47,10 @@ import { ref, watch } from "vue"
 import { PROFILE_AVATAR_MAX_LENGTH } from "@/stores/profiles"
 import Button from "./ui/SgButton.vue"
 
-const props = defineProps<{ avatar?: string; emoji: string }>()
+const props = withDefaults(
+  defineProps<{ avatar?: string; emoji: string; compact?: boolean }>(),
+  { compact: false },
+)
 const emit = defineEmits<{ change: [value: { avatar?: string; emoji: string }] }>()
 
 const DEFAULT_EMOJI = "🟦"
@@ -121,4 +127,7 @@ watch(() => [props.avatar, props.emoji], syncDraft, { immediate: true })
 .avatar-editor__emoji--selected { border-color: var(--sg-color-action); background: var(--sg-color-surface-muted); }
 .avatar-editor__emoji:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .avatar-editor__error { margin: 0; color: var(--sg-color-danger-text); }
+.avatar-editor--compact { gap: var(--sg-space-2); }
+.avatar-editor--compact .avatar-editor__content { min-width: 0; gap: var(--sg-space-2); }
+.avatar-editor--compact .avatar-editor__emojis { padding: var(--sg-space-1); }
 </style>

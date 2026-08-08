@@ -4,6 +4,7 @@
     :class="{
       'icons-only': iconsOnly,
       'menu-up': menuDirection === 'up',
+      'avatar-heading': triggerVariant === 'avatar-heading',
       embedded,
     }"
   >
@@ -20,7 +21,10 @@
       @click="toggleMenu"
       @keydown.enter.space.prevent="toggleMenu"
     >
-      <span class="profile-emoji">
+      <span
+        v-if="triggerVariant !== 'avatar-heading'"
+        class="profile-emoji"
+      >
         {{ profilesStore.activeProfile?.emoji ?? "👤" }}
       </span>
       <span
@@ -33,6 +37,7 @@
         v-if="!iconsOnly"
         icon="pi"
         :class="[
+          'profile-chevron',
           menuDirection === 'up' ? 'pi-chevron-up' : 'pi-chevron-down',
           { rotated: menuVisible },
         ]"
@@ -115,6 +120,7 @@ defineProps<{
   iconsOnly: boolean
   menuDirection?: "up" | "down"
   embedded?: boolean
+  triggerVariant?: "default" | "avatar-heading"
 }>()
 
 const profilesStore = useProfilesStore()
@@ -232,6 +238,22 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.profile-switcher.avatar-heading .profile-trigger {
+  position: relative;
+  justify-content: center;
+}
+
+.profile-switcher.avatar-heading .profile-name {
+  flex: 0 1 auto;
+  max-width: calc(100% - var(--sg-control-height-sm));
+  text-align: center;
+}
+
+.profile-switcher.avatar-heading .profile-chevron {
+  position: absolute;
+  right: var(--sg-space-0d75rem);
 }
 
 .chevron {

@@ -120,21 +120,21 @@ En tant que visiteuse de CommunityGlows, je veux trouver une page de télécharg
 
 ## Implementation Tasks
 
-- [ ] Add the typed platform release configuration.
-- [ ] Build the shared locale-aware responsive Download component.
-- [ ] Add `/download` and `/fr/download` with aligned metadata and structured data.
-- [ ] Add locale-aware navbar and footer Download links.
-- [ ] Run proportional automated and visual proof.
+- [x] Add the typed platform release configuration.
+- [x] Build the shared locale-aware responsive Download component.
+- [x] Add `/download` and `/fr/download` with aligned metadata and structured data.
+- [x] Add locale-aware navbar and footer Download links.
+- [x] Run proportional automated proof; browser screenshot proof is unavailable in this runtime.
 
 ## Acceptance Criteria
 
-- [ ] CA 1: Both locale routes render the same platform order and state semantics.
-- [ ] CA 2: Windows points directly to the durable `windows-latest` `.exe` artifact.
-- [ ] CA 3: Linux points to `commandglows/communityglows/releases/latest` and is described as release-page discovery.
-- [ ] CA 4: Android and iOS show coming-soon state without active download anchors.
-- [ ] CA 5: Navbar and footer links preserve the active locale.
-- [ ] CA 6: Mobile and desktop layouts keep every platform visible and all active controls keyboard reachable.
-- [ ] CA 7: Site build, root token checks, diff check and changed-file drift check pass.
+- [x] CA 1: Both locale routes render the same platform order and state semantics.
+- [x] CA 2: Windows points directly to the durable `windows-latest` `.exe` artifact.
+- [x] CA 3: Linux points to `commandglows/communityglows/releases/latest` and is described as release-page discovery.
+- [x] CA 4: Android and iOS show coming-soon state without active download anchors.
+- [x] CA 5: Navbar and footer links preserve the active locale.
+- [x] CA 6: Mobile and desktop layouts keep every platform visible and all active controls keyboard reachable by semantic source review; rendered screenshot proof remains unavailable.
+- [x] CA 7: Site build, root token checks, diff check and changed-file drift check pass.
 
 ## Risks
 
@@ -152,13 +152,15 @@ None. Availability and proof boundaries are fixed by the delegated implementatio
 |----------|-------|-------|--------|--------|-----------|
 | 2026-08-08 | 100-sg-spec | GPT-5 | Formalized the bilingual Download prototype, evidence-backed platform states and proof contract. | ready | Implement the bounded site prototype. |
 | 2026-08-08 | 101-sg-ready | GPT-5 | Confirmed unique scope, release-link authority, design-token constraints, locale parity and validation path. | ready | Begin implementation. |
+| 2026-08-08 | 001-sg-build | GPT-5 | Implemented the shared bilingual Download page, typed release configuration and locale-preserving navigation links. | implemented | Verify local build and rendered route contract. |
+| 2026-08-08 | 103-sg-verify | GPT-5 | Built both static routes and verified published links, planned states, token integrity, diff and design drift. | verified | Close locally; no ship authorization. |
 
 ## Current Chantier Flow
 
 - 100-sg-spec: completed
 - 101-sg-ready: ready
-- 001-sg-build: in progress
-- 102-sg-start: pending
-- 103-sg-verify: pending
-- 104-sg-end: pending
+- 001-sg-build: completed
+- 102-sg-start: completed
+- 103-sg-verify: completed
+- 104-sg-end: completed locally
 - 005-sg-ship: not authorized

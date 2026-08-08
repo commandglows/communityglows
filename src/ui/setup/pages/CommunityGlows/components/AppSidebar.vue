@@ -1,274 +1,217 @@
 <template>
-  <template v-if="modelValue">
-    <SplitterGroup
-      direction="horizontal"
-      @layout="handleResize"
+  <SplitterGroup
+    direction="horizontal"
+    @layout="handleResize"
+  >
+    <SplitterPanel
+      v-show="modelValue"
+      ref="sidebarPanel"
+      :default-size="SIDEBAR_EXPANDED_SIZE"
+      :min-size="5"
+      :collapsed-size="0"
+      collapsible
+      class="sidebar"
+      :class="{ 'icons-only': iconsOnly }"
     >
-      <SplitterPanel
-        ref="sidebarPanel"
-        :default-size="SIDEBAR_EXPANDED_SIZE"
-        :min-size="5"
-        class="sidebar"
-        :class="{ 'icons-only': iconsOnly }"
+      <div
+        class="sidebar-content"
+        :class="{ 'content-centered': iconsOnly }"
       >
-        <div
-          class="sidebar-content"
-          :class="{ 'content-centered': iconsOnly }"
-        >
-          <div class="sidebar-main">
-            <div
-              class="sidebar-header"
-              :class="
-                iconsOnly
-                  ? 'sidebar-header--centered'
-                  : 'sidebar-header--spaced'
-              "
+        <div class="sidebar-main">
+          <div
+            class="sidebar-header"
+            :class="
+              iconsOnly ? 'sidebar-header--centered' : 'sidebar-header--spaced'
+            "
+          >
+            <Button
+              v-sg-tooltip.right="'Toggle left sidebar'"
+              icon="pi pi-bars"
+              text
+              aria-label="Toggle left sidebar"
+              @click="toggleSidebar"
+            />
+            <h1
+              v-if="!iconsOnly"
+              class="app-title"
             >
-              <Button
-                v-sg-tooltip.right="'Toggle left sidebar'"
-                icon="pi pi-bars"
-                text
-                aria-label="Toggle left sidebar"
-                @click="toggleSidebar"
-              />
-              <h1
-                v-if="!iconsOnly"
-                class="app-title"
-              >
-                CommunityGlows
-              </h1>
-            </div>
+              CommunityGlows
+            </h1>
+          </div>
 
-            <div class="sidebar-scrollable-content">
-              <div class="menu-section network-menu-section">
-                <div class="menu-items">
+          <div class="sidebar-scrollable-content">
+            <div class="menu-section network-menu-section">
+              <div class="menu-items">
+                <div
+                  v-for="item in visibleMenuItems"
+                  :key="item.id"
+                  class="menu-item-group"
+                >
                   <div
-                    v-for="item in visibleMenuItems"
-                    :key="item.id"
-                    class="menu-item-group"
+                    class="network-row"
+                    :class="{
+                      active: isNetworkActive(item),
+                      'network-row--editing': networkEditMode,
+                      'network-row--hidden': isNetworkHiddenForProfile(item),
+                    }"
                   >
-                    <div
-                      class="network-row"
-                      :class="{
-                        active: isNetworkActive(item),
-                        'network-row--editing': networkEditMode,
-                        'network-row--hidden': isNetworkHiddenForProfile(item),
-                      }"
+                    <Button
+                      :icon="undefined"
+                      :label="iconsOnly ? undefined : item.label"
+                      :tooltip="iconsOnly ? item.label : undefined"
+                      :tooltip-options="{ position: 'right' }"
+                      text
+                      :class="[
+                        'network-btn',
+                        iconsOnly
+                          ? 'network-btn--centered'
+                          : 'network-btn--leading',
+                        {
+                          'network-btn--active': isNetworkActive(item),
+                          'network-btn--editing': networkEditMode && !iconsOnly,
+                        },
+                      ]"
+                      :aria-pressed="
+                        networkEditMode
+                          ? !isNetworkHiddenForProfile(item)
+                          : undefined
+                      "
+                      @click="
+                        networkEditMode
+                          ? toggleNetworkVisibility(item)
+                          : navigateToNetwork(item)
+                      "
                     >
-                      <Button
-                        :icon="undefined"
-                        :label="iconsOnly ? undefined : item.label"
-                        :tooltip="iconsOnly ? item.label : undefined"
-                        :tooltip-options="{ position: 'right' }"
-                        text
-                        :class="[
-                          'network-btn',
-                          iconsOnly
-                            ? 'network-btn--centered'
-                            : 'network-btn--leading',
-                          {
-                            'network-btn--active': isNetworkActive(item),
-                            'network-btn--editing':
-                              networkEditMode && !iconsOnly,
-                          },
-                        ]"
-                        :aria-pressed="
-                          networkEditMode
-                            ? !isNetworkHiddenForProfile(item)
-                            : undefined
-                        "
-                        @click="
-                          networkEditMode
-                            ? toggleNetworkVisibility(item)
-                            : navigateToNetwork(item)
-                        "
-                      >
-                        <template #icon>
-                          <NetworkBrandIcon
-                            :network-id="item.route.slice(1)"
-                            :fallback-icon="item.icon"
-                          />
-                        </template>
-                      </Button>
-                      <span
-                        v-if="networkEditMode"
-                        class="network-visibility-indicator"
-                        aria-hidden="true"
-                      >
-                        <i
-                          :class="
-                            isNetworkHiddenForProfile(item)
-                              ? 'pi pi-eye-slash'
-                              : 'pi pi-eye'
-                          "
+                      <template #icon>
+                        <NetworkBrandIcon
+                          :network-id="item.route.slice(1)"
+                          :fallback-icon="item.icon"
                         />
-                      </span>
-                    </div>
+                      </template>
+                    </Button>
+                    <span
+                      v-if="networkEditMode"
+                      class="network-visibility-indicator"
+                      aria-hidden="true"
+                    >
+                      <i
+                        :class="
+                          isNetworkHiddenForProfile(item)
+                            ? 'pi pi-eye-slash'
+                            : 'pi pi-eye'
+                        "
+                      />
+                    </span>
                   </div>
                 </div>
-                <Button
-                  v-sg-tooltip.right="
-                    networkEditMode
+              </div>
+              <Button
+                v-sg-tooltip.right="
+                  networkEditMode
+                    ? $t('networks.finish_editing')
+                    : $t('networks.start_editing')
+                "
+                :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
+                :label="
+                  iconsOnly
+                    ? undefined
+                    : networkEditMode
                       ? $t('networks.finish_editing')
                       : $t('networks.start_editing')
+                "
+                :aria-label="
+                  networkEditMode
+                    ? $t('networks.finish_editing')
+                    : $t('networks.start_editing')
+                "
+                :aria-pressed="networkEditMode"
+                text
+                size="small"
+                class="network-edit-mode-button"
+                @click="toggleNetworkEditMode"
+              />
+            </div>
+
+            <!-- Filtre Amis -->
+            <div class="friends-section friends-section--hidden">
+              <div
+                v-if="!iconsOnly"
+                class="section-header"
+              >
+                <h3>{{ $t("sidebar.friends_section") }}</h3>
+                <Button
+                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
+                  icon="pi pi-users"
+                  text
+                  size="small"
+                  :aria-label="$t('friends_filter.manage_button')"
+                  @click="showFriendsPanel = true"
+                />
+              </div>
+              <div
+                class="friends-toggle"
+                :class="{ 'friends-toggle--centered': iconsOnly }"
+              >
+                <Button
+                  v-sg-tooltip.right="
+                    iconsOnly
+                      ? filterEnabled
+                        ? $t('friends_filter.filter_active')
+                        : $t('friends_filter.filter_inactive')
+                      : undefined
                   "
-                  :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
                   :label="
                     iconsOnly
                       ? undefined
-                      : networkEditMode
-                        ? $t('networks.finish_editing')
-                        : $t('networks.start_editing')
+                      : filterEnabled
+                        ? $t('friends_filter.friends_only')
+                        : $t('friends_filter.see_all')
                   "
                   :aria-label="
-                    networkEditMode
-                      ? $t('networks.finish_editing')
-                      : $t('networks.start_editing')
+                    iconsOnly
+                      ? filterEnabled
+                        ? $t('friends_filter.filter_active')
+                        : $t('friends_filter.filter_inactive')
+                      : undefined
                   "
-                  :aria-pressed="networkEditMode"
+                  :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
+                  :aria-pressed="filterEnabled"
+                  class="friends-filter-button"
+                  @click="setFilterEnabled"
+                />
+                <Button
+                  v-if="iconsOnly"
+                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
+                  icon="pi pi-users"
                   text
                   size="small"
-                  class="network-edit-mode-button"
-                  @click="toggleNetworkEditMode"
+                  class="friends-manage-btn"
+                  :aria-label="$t('friends_filter.manage_button')"
+                  @click="showFriendsPanel = true"
                 />
               </div>
+            </div>
 
-              <!-- Filtre Amis -->
-              <div class="friends-section friends-section--hidden">
-                <div
-                  v-if="!iconsOnly"
-                  class="section-header"
-                >
-                  <h3>{{ $t("sidebar.friends_section") }}</h3>
-                  <Button
-                    v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                    icon="pi pi-users"
-                    text
-                    size="small"
-                    :aria-label="$t('friends_filter.manage_button')"
-                    @click="showFriendsPanel = true"
-                  />
-                </div>
-                <div
-                  class="friends-toggle"
-                  :class="{ 'friends-toggle--centered': iconsOnly }"
-                >
-                  <Button
-                    v-sg-tooltip.right="
-                      iconsOnly
-                        ? filterEnabled
-                          ? $t('friends_filter.filter_active')
-                          : $t('friends_filter.filter_inactive')
-                        : undefined
-                    "
-                    :label="
-                      iconsOnly
-                        ? undefined
-                        : filterEnabled
-                          ? $t('friends_filter.friends_only')
-                          : $t('friends_filter.see_all')
-                    "
-                    :aria-label="
-                      iconsOnly
-                        ? filterEnabled
-                          ? $t('friends_filter.filter_active')
-                          : $t('friends_filter.filter_inactive')
-                        : undefined
-                    "
-                    :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
-                    :aria-pressed="filterEnabled"
-                    class="friends-filter-button"
-                    @click="setFilterEnabled"
-                  />
-                  <Button
-                    v-if="iconsOnly"
-                    v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                    icon="pi pi-users"
-                    text
-                    size="small"
-                    class="friends-manage-btn"
-                    :aria-label="$t('friends_filter.manage_button')"
-                    @click="showFriendsPanel = true"
-                  />
-                </div>
-              </div>
+            <FriendsPanel
+              v-model="showFriendsPanel"
+              :network-id="webviewStore.activeNetworkId ?? 'twitter'"
+            />
 
-              <FriendsPanel
-                v-model="showFriendsPanel"
-                :network-id="webviewStore.activeNetworkId ?? 'twitter'"
-              />
-
-              <!-- Custom Links -->
+            <!-- Custom Links -->
+            <div
+              v-if="customLinkItems.length || networkEditMode"
+              class="custom-links-section"
+            >
               <div
-                v-if="customLinkItems.length || networkEditMode"
-                class="custom-links-section"
+                v-if="networkEditMode && !iconsOnly"
+                class="section-header"
               >
-                <div
-                  v-if="networkEditMode && !iconsOnly"
-                  class="section-header"
-                >
-                  <h3>{{ $t("sidebar.custom_links_section") }}</h3>
-                  <Button
-                    v-sg-tooltip.right="$t('links.add_tooltip')"
-                    icon="pi pi-plus"
-                    text
-                    size="small"
-                    type="button"
-                    :aria-label="$t('links.add_button')"
-                    @mouseenter="setAddLinkTooltipOverlay(true)"
-                    @mouseleave="setAddLinkTooltipOverlay(false)"
-                    @click="openAddLinkDialog"
-                  />
-                </div>
-                <div
-                  v-if="customLinkItems.length"
-                  class="menu-items"
-                >
-                  <div
-                    v-for="item in customLinkItems"
-                    :key="item.id"
-                    class="menu-item-group"
-                  >
-                    <div
-                      class="network-row"
-                      :class="{ active: isNetworkActive(item) }"
-                    >
-                      <Button
-                        :icon="item.icon"
-                        :label="iconsOnly ? undefined : item.label"
-                        :tooltip="iconsOnly ? item.label : undefined"
-                        :tooltip-options="{ position: 'right' }"
-                        text
-                        :class="[
-                          'network-btn',
-                          iconsOnly
-                            ? 'network-btn--centered'
-                            : 'network-btn--leading',
-                          { 'network-btn--active': isNetworkActive(item) },
-                        ]"
-                        @click="navigateToNetwork(item)"
-                      />
-                      <Button
-                        v-if="networkEditMode && !iconsOnly"
-                        icon="pi pi-times"
-                        text
-                        rounded
-                        size="small"
-                        severity="danger"
-                        class="custom-link-delete"
-                        :aria-label="$t('common.delete')"
-                        @click="removeCustomLink(item.route.slice(1))"
-                      />
-                    </div>
-                  </div>
-                </div>
+                <h3>{{ $t("sidebar.custom_links_section") }}</h3>
                 <Button
-                  v-if="networkEditMode && iconsOnly"
                   v-sg-tooltip.right="$t('links.add_tooltip')"
                   icon="pi pi-plus"
                   text
                   size="small"
-                  class="custom-link-add-icon"
                   type="button"
                   :aria-label="$t('links.add_button')"
                   @mouseenter="setAddLinkTooltipOverlay(true)"
@@ -276,100 +219,155 @@
                   @click="openAddLinkDialog"
                 />
               </div>
-
-              <SgDialog
-                v-model="showAddLinkDialog"
-                :title="$t('links.add_dialog_title')"
-                variant="sidebar"
+              <div
+                v-if="customLinkItems.length"
+                class="menu-items"
               >
-                <form
-                  class="add-link-form"
-                  @submit.prevent="addCustomLink"
+                <div
+                  v-for="item in customLinkItems"
+                  :key="item.id"
+                  class="menu-item-group"
                 >
-                  <p class="add-link-hint">
-                    {{ $t("links.add_dialog_hint") }}
-                  </p>
-
-                  <label class="add-link-field">
-                    <span>{{ $t("links.name_label") }}</span>
-                    <input
-                      v-model="newLinkLabel"
-                      :placeholder="$t('links.name_placeholder')"
-                      class="add-link-input"
-                      autocomplete="off"
+                  <div
+                    class="network-row"
+                    :class="{ active: isNetworkActive(item) }"
+                  >
+                    <Button
+                      :icon="item.icon"
+                      :label="iconsOnly ? undefined : item.label"
+                      :tooltip="iconsOnly ? item.label : undefined"
+                      :tooltip-options="{ position: 'right' }"
+                      text
+                      :class="[
+                        'network-btn',
+                        iconsOnly
+                          ? 'network-btn--centered'
+                          : 'network-btn--leading',
+                        { 'network-btn--active': isNetworkActive(item) },
+                      ]"
+                      @click="navigateToNetwork(item)"
                     />
-                  </label>
-
-                  <label class="add-link-field">
-                    <span>{{ $t("links.url_label") }}</span>
-                    <input
-                      v-model="newLinkUrl"
-                      type="text"
-                      inputmode="url"
-                      :placeholder="$t('links.url_placeholder')"
-                      class="add-link-input"
-                      autocomplete="url"
+                    <Button
+                      v-if="networkEditMode && !iconsOnly"
+                      icon="pi pi-times"
+                      text
+                      rounded
+                      size="small"
+                      severity="danger"
+                      class="custom-link-delete"
+                      :aria-label="$t('common.delete')"
+                      @click="removeCustomLink(item.route.slice(1))"
                     />
-                  </label>
-
-                  <fieldset class="add-link-icon-field">
-                    <legend>{{ $t("links.icon_label") }}</legend>
-                    <div class="add-link-icon-grid">
-                      <button
-                        v-for="iconOption in customLinkIconOptions"
-                        :key="iconOption.icon"
-                        type="button"
-                        class="add-link-icon-option"
-                        :class="{
-                          'add-link-icon-option--selected':
-                            newLinkIcon === iconOption.icon,
-                        }"
-                        :aria-label="$t(iconOption.labelKey)"
-                        :aria-pressed="newLinkIcon === iconOption.icon"
-                        @click="newLinkIcon = iconOption.icon"
-                      >
-                        <SgIcon :icon="iconOption.icon" />
-                      </button>
-                    </div>
-                  </fieldset>
-
-                  <Button
-                    :label="$t('common.add')"
-                    icon="pi pi-plus"
-                    type="submit"
-                    :disabled="!newLinkLabel.trim() || !newLinkUrl.trim()"
-                  />
-                </form>
-              </SgDialog>
+                  </div>
+                </div>
+              </div>
+              <Button
+                v-if="networkEditMode && iconsOnly"
+                v-sg-tooltip.right="$t('links.add_tooltip')"
+                icon="pi pi-plus"
+                text
+                size="small"
+                class="custom-link-add-icon"
+                type="button"
+                :aria-label="$t('links.add_button')"
+                @mouseenter="setAddLinkTooltipOverlay(true)"
+                @mouseleave="setAddLinkTooltipOverlay(false)"
+                @click="openAddLinkDialog"
+              />
             </div>
-          </div>
 
-          <!-- Profile switcher (global — one profile = all networks) -->
-          <ProfileSwitcher
-            :icons-only="iconsOnly"
-            menu-direction="up"
-            class="profile-switcher-bottom"
-            @manage-profiles="emit('manage-profiles')"
-            @open-settings="emit('open-settings')"
-          />
+            <SgDialog
+              v-model="showAddLinkDialog"
+              :title="$t('links.add_dialog_title')"
+              variant="sidebar"
+            >
+              <form
+                class="add-link-form"
+                @submit.prevent="addCustomLink"
+              >
+                <p class="add-link-hint">
+                  {{ $t("links.add_dialog_hint") }}
+                </p>
+
+                <label class="add-link-field">
+                  <span>{{ $t("links.name_label") }}</span>
+                  <input
+                    v-model="newLinkLabel"
+                    :placeholder="$t('links.name_placeholder')"
+                    class="add-link-input"
+                    autocomplete="off"
+                  />
+                </label>
+
+                <label class="add-link-field">
+                  <span>{{ $t("links.url_label") }}</span>
+                  <input
+                    v-model="newLinkUrl"
+                    type="text"
+                    inputmode="url"
+                    :placeholder="$t('links.url_placeholder')"
+                    class="add-link-input"
+                    autocomplete="url"
+                  />
+                </label>
+
+                <fieldset class="add-link-icon-field">
+                  <legend>{{ $t("links.icon_label") }}</legend>
+                  <div class="add-link-icon-grid">
+                    <button
+                      v-for="iconOption in customLinkIconOptions"
+                      :key="iconOption.icon"
+                      type="button"
+                      class="add-link-icon-option"
+                      :class="{
+                        'add-link-icon-option--selected':
+                          newLinkIcon === iconOption.icon,
+                      }"
+                      :aria-label="$t(iconOption.labelKey)"
+                      :aria-pressed="newLinkIcon === iconOption.icon"
+                      @click="newLinkIcon = iconOption.icon"
+                    >
+                      <SgIcon :icon="iconOption.icon" />
+                    </button>
+                  </div>
+                </fieldset>
+
+                <Button
+                  :label="$t('common.add')"
+                  icon="pi pi-plus"
+                  type="submit"
+                  :disabled="!newLinkLabel.trim() || !newLinkUrl.trim()"
+                />
+              </form>
+            </SgDialog>
+          </div>
         </div>
-      </SplitterPanel>
-      <SplitterResizeHandle class="sidebar-resize-handle" />
-      <SplitterPanel
-        :default-size="100 - SIDEBAR_EXPANDED_SIZE"
-        class="main-panel"
-      >
-        <slot></slot>
-      </SplitterPanel>
-    </SplitterGroup>
-  </template>
-  <template v-else>
-    <slot></slot>
-  </template>
+
+        <!-- Profile switcher (global — one profile = all networks) -->
+        <ProfileSwitcher
+          :icons-only="iconsOnly"
+          menu-direction="up"
+          class="profile-switcher-bottom"
+          @manage-profiles="emit('manage-profiles')"
+          @open-settings="emit('open-settings')"
+        />
+      </div>
+    </SplitterPanel>
+    <SplitterResizeHandle
+      v-show="modelValue"
+      class="sidebar-resize-handle"
+    />
+    <SplitterPanel
+      :default-size="100 - SIDEBAR_EXPANDED_SIZE"
+      class="main-panel"
+    >
+      <slot></slot>
+    </SplitterPanel>
+  </SplitterGroup>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onUnmounted, watch } from "vue"
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue"
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
 import { useRouter, useRoute } from "vue-router"
 import { useWebviewStore } from "@/stores/webviewState"
@@ -452,19 +450,49 @@ const emit = defineEmits<{
 }>()
 
 const iconsOnly = ref(false)
-const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
+const sidebarPanel = ref<{
+  collapse: () => void
+  getSize: () => number
+  resize: (size: number) => void
+} | null>(null)
+const lastVisibleSidebarSize = ref(SIDEBAR_EXPANDED_SIZE)
+
+onMounted(() => {
+  if (!props.modelValue) sidebarPanel.value?.collapse()
+})
 
 watch(iconsOnly, async (compact) => {
   await nextTick()
   sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
+// Keep the splitter and its default slot mounted while the panel is hidden.
+// Replacing the whole splitter branch used to remount the central native
+// WebView host, which closed/reopened WebView2 and produced a visible flash.
+watch(
+  () => props.modelValue,
+  async (visible) => {
+    if (!visible) {
+      const currentSize = sidebarPanel.value?.getSize()
+      if (typeof currentSize === "number" && currentSize > 0) {
+        lastVisibleSidebarSize.value = currentSize
+      }
+      sidebarPanel.value?.collapse()
+      return
+    }
+    await nextTick()
+    sidebarPanel.value?.resize(lastVisibleSidebarSize.value)
+  },
+)
+
 const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
 const handleResize = (sizes: number[]) => {
+  if (!props.modelValue) return
   const newSize = sizes[0]
   if (typeof newSize !== "number") return
 
+  if (newSize > 0) lastVisibleSidebarSize.value = newSize
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
 
@@ -927,10 +955,10 @@ onUnmounted(() => {
   transition: var(--sg-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {
-  background: var(--sg-color-action);
+  background: var(--sg-color-text-on-action);
 }
 .sidebar-resize-handle:focus-visible {
-  background: var(--sg-color-action);
+  background: var(--sg-color-text-on-action);
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
 }

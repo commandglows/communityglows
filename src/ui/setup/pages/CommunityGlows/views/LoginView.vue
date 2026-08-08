@@ -142,6 +142,7 @@ async function handleSignIn() {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: var(--sg-size-full);
   min-height: var(--sg-size-100vh);
   background: var(--sg-color-background);
 }

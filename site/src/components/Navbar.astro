@@ -1,5 +1,4 @@
 ---
-import { appUrl } from '../config/site'
 import { getTranslations, localizeHref, type Locale } from '../i18n'
 
 interface Props { lang?: Locale; languageHref?: string }
@@ -48,10 +47,10 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
         {t.nav.signIn}
       </a>
       <a
-        href={appUrl()}
+        href={localizeHref('/download', lang)}
         class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-2 text-sm font-medium transition-colors"
       >
-        {t.nav.getStarted}
+        {t.nav.download}
       </a>
     </div>
 
@@ -84,7 +83,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
       <hr class="border-border my-2" />
       <a href={languageHref} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{languageCode}</a>
       <a href={localizeHref('/pricing', lang)} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{t.nav.signIn}</a>
-      <a href={appUrl()} class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.getStarted}</a>
+      <a href={localizeHref('/download', lang)} class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.download}</a>
     </div>
   </div>
 </header>

@@ -22,13 +22,13 @@ Any product claim in the repo should be backed by the product registry, a live r
 
 ## Plateformes
 
-| Plateforme | Technologie | Build | Statut |
-|---|---|---|---|
-| Chrome Extension | CRXJS + Vite | `pnpm build:chrome` | Production |
-| Firefox Extension | CRXJS + Vite | `pnpm build:firefox` | Production |
-| Desktop (Win/Mac/Linux) | Tauri 2 | `pnpm tauri:bundle` | Production |
-| Android | Tauri 2 Mobile | CI GitHub Actions | Production |
-| iOS | Tauri 2 Mobile | CI GitHub Actions (macOS) | Planned |
+| Plateforme              | Technologie    | Build                     | Statut     |
+| ----------------------- | -------------- | ------------------------- | ---------- |
+| Chrome Extension        | CRXJS + Vite   | `pnpm build:chrome`       | Production |
+| Firefox Extension       | CRXJS + Vite   | `pnpm build:firefox`      | Production |
+| Desktop (Win/Mac/Linux) | Tauri 2        | `pnpm tauri:bundle`       | Production |
+| Android                 | Tauri 2 Mobile | CI GitHub Actions         | Production |
+| iOS                     | Tauri 2 Mobile | CI GitHub Actions (macOS) | Planned    |
 
 ### Prérequis Runtime
 
@@ -70,11 +70,11 @@ Le gestionnaire de tâches `/tasks` permet de noter une intention humaine avec u
 
 ### Configs Vite par plateforme
 
-| Fichier | Cible | Sortie |
-|---|---|---|
-| `vite.chrome.config.ts` | Extension Chrome | `dist/chrome/` |
-| `vite.firefox.config.ts` | Extension Firefox | `dist/firefox/` |
-| `vite.tauri.config.ts` | Desktop/Mobile Tauri | `dist/tauri/` |
+| Fichier                  | Cible                | Sortie          |
+| ------------------------ | -------------------- | --------------- |
+| `vite.chrome.config.ts`  | Extension Chrome     | `dist/chrome/`  |
+| `vite.firefox.config.ts` | Extension Firefox    | `dist/firefox/` |
+| `vite.tauri.config.ts`   | Desktop/Mobile Tauri | `dist/tauri/`   |
 
 ## Pourquoi Tauri et pas Flutter ou Expo
 
@@ -89,33 +89,36 @@ CommunityGlows affiche des réseaux sociaux dans des WebViews natives. Les préf
 ### Alternatives rejetées
 
 **Flutter (Dart)**
+
 - Réécriture complète de l'UI en Dart — double codebase à maintenir
 - WebView support limité : pas d'injection de scripts JS, pas de contrôle cookie granulaire
 - Impossible de partager du code avec l'extension Chrome (Dart ≠ JS)
 - Pas de support extension navigateur
 
 **Expo / React Native (React)**
+
 - Réécriture complète en React — double codebase à maintenir
 - WebView : le package `react-native-webview` ne supporte pas l'injection `document_start`, ni le contrôle cookie natif
 - Pas de support desktop natif sans Electron (lourd, ~200 MB)
 - Pas de support extension navigateur
 
 **Electron**
+
 - Supporte le web mais embarque un Chromium complet (~200 MB par app)
 - Pas de support mobile
 - Mémoire excessive pour une app qui affiche déjà des WebViews
 
 ### Pourquoi Tauri gagne
 
-| Critère | Tauri | Flutter | Expo/RN | Electron |
-|---|---|---|---|---|
-| Réutilise le code Vue.js existant | Oui | Non (Dart) | Non (React) | Oui |
-| Extension navigateur | Oui (même code) | Non | Non | Non |
-| WebView native + injection JS | Oui | Limité | Limité | Oui |
-| Taille binaire | ~5 MB | ~15 MB | ~30 MB | ~200 MB |
-| Support mobile | Tauri 2 | Natif | Natif | Non |
-| Support desktop | Natif | Natif | Limité | Natif |
-| Contrôle cookies WebView | Natif (Kotlin/Swift) | Non | Non | Oui |
+| Critère                           | Tauri                | Flutter    | Expo/RN     | Electron |
+| --------------------------------- | -------------------- | ---------- | ----------- | -------- |
+| Réutilise le code Vue.js existant | Oui                  | Non (Dart) | Non (React) | Oui      |
+| Extension navigateur              | Oui (même code)      | Non        | Non         | Non      |
+| WebView native + injection JS     | Oui                  | Limité     | Limité      | Oui      |
+| Taille binaire                    | ~5 MB                | ~15 MB     | ~30 MB      | ~200 MB  |
+| Support mobile                    | Tauri 2              | Natif      | Natif       | Non      |
+| Support desktop                   | Natif                | Natif      | Limité      | Natif    |
+| Contrôle cookies WebView          | Natif (Kotlin/Swift) | Non        | Non         | Oui      |
 
 **En résumé** : Tauri permet de garder une codebase Vue.js unique pour les cibles desktop et mobile, avec un accès bas niveau au WebView natif pour les préférences visuelles limitées et la gestion de session par profil. Il ne doit pas servir à contourner les règles ou les interfaces des plateformes tierces.
 
@@ -209,9 +212,11 @@ pnpm run design:tokens:check    # Carriers générés à jour
 ## Déploiement
 
 ### Mobile (CI)
+
 Voir [shipglows_data/workflow/tauri-mobile.md](shipglows_data/workflow/tauri-mobile.md) pour le workflow GitHub Actions.
 
 ### Extensions
+
 Les fichiers `.zip` sont générés dans `dist/` pour upload sur le Chrome Web Store et Firefox Add-ons.
 
 ### Windows
@@ -220,3 +225,5 @@ La dernière version de test Windows est disponible directement ici :
 [Télécharger CommunityGlows pour Windows (.exe)](https://github.com/commandglows/communityglows/releases/download/windows-latest/CommunityGlows-Windows-latest.exe).
 
 Ce fichier est remplacé automatiquement après chaque exécution réussie du workflow manuel Windows.
+
+Avant de lancer ce workflow, configurer le secret GitHub Actions `VITE_CONVEX_URL` avec l'URL du déploiement Convex. Le workflow refuse désormais de publier un installeur si cette configuration est absente.

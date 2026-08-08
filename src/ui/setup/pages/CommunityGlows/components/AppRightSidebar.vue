@@ -1,219 +1,215 @@
 <template>
-  <template v-if="modelValue">
-    <SplitterGroup
-      direction="horizontal"
-      @layout="handleResize"
+  <SplitterGroup
+    direction="horizontal"
+    @layout="handleResize"
+  >
+    <SplitterPanel
+      :default-size="100 - SIDEBAR_EXPANDED_SIZE"
+      class="main-panel"
     >
-      <SplitterPanel
-        :default-size="100 - SIDEBAR_EXPANDED_SIZE"
-        class="main-panel"
-      >
-        <slot></slot>
-      </SplitterPanel>
-      <SplitterResizeHandle class="sidebar-resize-handle" />
-      <SplitterPanel
-        ref="sidebarPanel"
-        :default-size="SIDEBAR_EXPANDED_SIZE"
-        :min-size="5"
-        class="sidebar"
-        :class="{ 'is-mobile': isSidebarMobile, 'icons-only': iconsOnly }"
+      <slot></slot>
+    </SplitterPanel>
+    <SplitterResizeHandle
+      v-show="modelValue"
+      class="sidebar-resize-handle"
+    />
+    <SplitterPanel
+      v-show="modelValue"
+      ref="sidebarPanel"
+      :default-size="SIDEBAR_EXPANDED_SIZE"
+      :min-size="5"
+      :collapsed-size="0"
+      collapsible
+      class="sidebar"
+      :class="{ 'is-mobile': isSidebarMobile, 'icons-only': iconsOnly }"
+    >
+      <div
+        class="sidebar-content"
+        :class="{ 'content-centered': iconsOnly }"
       >
         <div
-          class="sidebar-content"
-          :class="{ 'content-centered': iconsOnly }"
+          class="sidebar-header"
+          :class="{
+            'sidebar-header--compact': iconsOnly,
+            'sidebar-header--spaced': !iconsOnly,
+          }"
         >
-          <div
-            class="sidebar-header"
-            :class="{
-              'sidebar-header--compact': iconsOnly,
-              'sidebar-header--spaced': !iconsOnly,
-            }"
-          >
-            <Button
-              v-sg-tooltip.left="'Toggle right sidebar'"
-              icon="pi pi-bars"
-              text
-              class="sidebar-toggle-button"
-              aria-label="Toggle right sidebar"
-              @click="toggleSidebar"
-            />
-          </div>
+          <Button
+            v-sg-tooltip.left="'Toggle right sidebar'"
+            icon="pi pi-bars"
+            text
+            class="sidebar-toggle-button"
+            aria-label="Toggle right sidebar"
+            @click="toggleSidebar"
+          />
+        </div>
 
-          <!-- Section profil -->
-          <div
-            v-show="!iconsOnly"
-            class="profile-section"
-          >
-            <div class="profile-avatar">
-              <Avatar
-                :image="profilesStore.activeProfile?.avatar"
-                :label="profilesStore.activeProfile?.emoji ?? '👤'"
-                :alt="profilesStore.activeProfile?.name ?? 'Profil'"
-                size="xlarge"
-                shape="circle"
+        <!-- Section profil -->
+        <div
+          v-show="!iconsOnly"
+          class="profile-section"
+        >
+          <div class="profile-avatar">
+            <Avatar
+              :image="profilesStore.activeProfile?.avatar"
+              :label="profilesStore.activeProfile?.emoji ?? '👤'"
+              :alt="profilesStore.activeProfile?.name ?? 'Profil'"
+              size="xlarge"
+              shape="circle"
+            />
+            <button
+              type="button"
+              class="profile-avatar__edit"
+              aria-label="Modifier l’image du profil"
+              @click="emit('edit-profile-avatar')"
+            >
+              <SgIcon icon="pi pi-pencil" />
+            </button>
+          </div>
+          <ProfileSwitcher
+            :icons-only="false"
+            menu-direction="down"
+            trigger-variant="avatar-heading"
+            @manage-profiles="emit('manage-profiles')"
+            @open-settings="emit('open-settings')"
+          />
+        </div>
+
+        <!-- Menu principal -->
+        <div class="menu-section">
+          <Button
+            icon="pi pi-home"
+            :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
+            :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'feed')"
+          />
+          <Button
+            icon="pi pi-user"
+            :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
+            :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'profile')"
+          />
+          <Button
+            icon="pi pi-users"
+            :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
+            :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'friends')"
+          />
+          <Button
+            icon="pi pi-bell"
+            :label="iconsOnly ? undefined : $t('common.notifications')"
+            :aria-label="iconsOnly ? $t('common.notifications') : undefined"
+            :badge="'3'"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'notifications')"
+          />
+          <Button
+            icon="pi pi-bookmark"
+            :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
+            :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'saved')"
+          />
+          <Button
+            icon="pi pi-calendar"
+            :label="iconsOnly ? undefined : $t('sidebar.events_button')"
+            :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
+            text
+            :class="[
+              'w-full',
+              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+            ]"
+            @click="emit('open-rightpanel-section', 'events')"
+          />
+        </div>
+
+        <div
+          v-if="!iconsOnly"
+          class="kanban-host"
+        >
+          <div class="sidebar-widget">
+            <button
+              class="sidebar-widget__toggle"
+              type="button"
+              :aria-label="
+                isKanbanCollapsed ? 'Ouvrir Kanban' : 'Replier Kanban'
+              "
+              :aria-expanded="String(!isKanbanCollapsed)"
+              @click="isKanbanCollapsed = !isKanbanCollapsed"
+            >
+              <span class="sidebar-widget__title">Kanban</span>
+              <SgIcon
+                :icon="[
+                  'pi',
+                  isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                ]"
               />
-              <button
-                type="button"
-                class="profile-avatar__edit"
-                aria-label="Modifier l’image du profil"
-                @click="emit('edit-profile-avatar')"
-              >
-                <SgIcon icon="pi pi-pencil" />
-              </button>
-            </div>
-            <ProfileSwitcher
-              :icons-only="false"
-              menu-direction="down"
-              @manage-profiles="emit('manage-profiles')"
-              @open-settings="emit('open-settings')"
-            />
-          </div>
-
-          <!-- Menu principal -->
-          <div class="menu-section">
-            <Button
-              icon="pi pi-home"
-              :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
-              :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'feed')"
-            />
-            <Button
-              icon="pi pi-user"
-              :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
-              :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'profile')"
-            />
-            <Button
-              icon="pi pi-users"
-              :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
-              :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'friends')"
-            />
-            <Button
-              icon="pi pi-bell"
-              :label="iconsOnly ? undefined : $t('common.notifications')"
-              :aria-label="iconsOnly ? $t('common.notifications') : undefined"
-              :badge="'3'"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'notifications')"
-            />
-            <Button
-              icon="pi pi-bookmark"
-              :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
-              :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'saved')"
-            />
-            <Button
-              icon="pi pi-calendar"
-              :label="iconsOnly ? undefined : $t('sidebar.events_button')"
-              :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
-              text
-              :class="[
-                'w-full',
-                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-              ]"
-              @click="emit('open-rightpanel-section', 'events')"
-            />
-          </div>
-
-          <div
-            v-if="!iconsOnly"
-            class="kanban-host"
-          >
-            <div class="sidebar-widget">
-              <button
-                class="sidebar-widget__toggle"
-                type="button"
-                :aria-label="
-                  isKanbanCollapsed
-                    ? 'Ouvrir Kanban'
-                    : 'Replier Kanban'
-                "
-                :aria-expanded="String(!isKanbanCollapsed)"
-                @click="isKanbanCollapsed = !isKanbanCollapsed"
-              >
-                <span class="sidebar-widget__title">Kanban</span>
-                <SgIcon
-                  :icon="[
-                    'pi',
-                    isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
-                  ]"
-                />
-              </button>
-              <div
-                class="sidebar-widget__body sidebar-widget__body--kanban"
-                :class="{
-                  'sidebar-widget__body--collapsed': isKanbanCollapsed,
-                }"
-              >
-                <KanbanSidebar />
-              </div>
-            </div>
-          </div>
-
-          <div
-            v-if="!iconsOnly"
-            class="crm-host"
-          >
-            <div class="sidebar-widget">
-              <button
-                class="sidebar-widget__toggle"
-                type="button"
-                :aria-label="
-                  isCrmCollapsed
-                    ? 'Ouvrir CRM'
-                    : 'Replier CRM'
-                "
-                :aria-expanded="String(!isCrmCollapsed)"
-                @click="isCrmCollapsed = !isCrmCollapsed"
-              >
-                <span class="sidebar-widget__title">CRM</span>
-                <SgIcon
-                  :icon="[
-                    'pi',
-                    isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
-                  ]"
-                />
-              </button>
-              <div
-                class="sidebar-widget__body sidebar-widget__body--crm"
-                :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
-              >
-                <CrmSidebarWidget />
-              </div>
+            </button>
+            <div
+              class="sidebar-widget__body sidebar-widget__body--kanban"
+              :class="{
+                'sidebar-widget__body--collapsed': isKanbanCollapsed,
+              }"
+            >
+              <KanbanSidebar />
             </div>
           </div>
         </div>
-      </SplitterPanel>
-    </SplitterGroup>
-  </template>
-  <template v-else>
-    <slot></slot>
-  </template>
+
+        <div
+          v-if="!iconsOnly"
+          class="crm-host"
+        >
+          <div class="sidebar-widget">
+            <button
+              class="sidebar-widget__toggle"
+              type="button"
+              :aria-label="isCrmCollapsed ? 'Ouvrir CRM' : 'Replier CRM'"
+              :aria-expanded="String(!isCrmCollapsed)"
+              @click="isCrmCollapsed = !isCrmCollapsed"
+            >
+              <span class="sidebar-widget__title">CRM</span>
+              <SgIcon
+                :icon="[
+                  'pi',
+                  isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                ]"
+              />
+            </button>
+            <div
+              class="sidebar-widget__body sidebar-widget__body--crm"
+              :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
+            >
+              <CrmSidebarWidget />
+            </div>
+          </div>
+        </div>
+      </div>
+    </SplitterPanel>
+  </SplitterGroup>
 </template>
 
 <script setup lang="ts">
@@ -257,7 +253,12 @@ const isKanbanCollapsed = ref(false)
 const isCrmCollapsed = ref(true)
 const KANBAN_COLLAPSE_KEY = "communityglows-right-sidebar-kanban-collapsed"
 const CRM_COLLAPSE_KEY = "communityglows-right-sidebar-crm-collapsed"
-const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
+const sidebarPanel = ref<{
+  collapse: () => void
+  getSize: () => number
+  resize: (size: number) => void
+} | null>(null)
+const lastVisibleSidebarSize = ref(SIDEBAR_EXPANDED_SIZE)
 
 const readBoolFromStorage = (key: string, fallback: boolean) => {
   try {
@@ -280,6 +281,7 @@ const writeBoolToStorage = (key: string, value: boolean) => {
 onMounted(() => {
   isKanbanCollapsed.value = readBoolFromStorage(KANBAN_COLLAPSE_KEY, false)
   isCrmCollapsed.value = readBoolFromStorage(CRM_COLLAPSE_KEY, true)
+  if (!props.modelValue) sidebarPanel.value?.collapse()
 })
 
 watch(isKanbanCollapsed, (isCollapsed) => {
@@ -295,10 +297,31 @@ watch(iconsOnly, async (compact) => {
   sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
+// Preserve the central slot's component identity across panel visibility
+// changes. The previous v-if/v-else wrapper destroyed NetworkWebviewHost and
+// made the native WebView2 instance briefly disappear before reopening.
+watch(
+  () => props.modelValue,
+  async (visible) => {
+    if (!visible) {
+      const currentSize = sidebarPanel.value?.getSize()
+      if (typeof currentSize === "number" && currentSize > 0) {
+        lastVisibleSidebarSize.value = currentSize
+      }
+      sidebarPanel.value?.collapse()
+      return
+    }
+    await nextTick()
+    sidebarPanel.value?.resize(lastVisibleSidebarSize.value)
+  },
+)
+
 const handleResize = (sizes: number[]) => {
+  if (!props.modelValue) return
   const newSize = sizes[1]
   if (typeof newSize !== "number") return
 
+  if (newSize > 0) lastVisibleSidebarSize.value = newSize
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
 </script>
@@ -402,8 +425,13 @@ const handleResize = (sizes: number[]) => {
   color: var(--sg-color-text);
   cursor: pointer;
 }
-.profile-avatar__edit:hover { background: var(--sg-color-surface-hover); }
-.profile-avatar__edit:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.profile-avatar__edit:hover {
+  background: var(--sg-color-surface-hover);
+}
+.profile-avatar__edit:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
 
 .menu-section {
   display: flex;
@@ -529,10 +557,10 @@ const handleResize = (sizes: number[]) => {
   transition: var(--sg-right-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {
-  background: var(--sg-color-action);
+  background: var(--sg-color-text-on-action);
 }
 .sidebar-resize-handle:focus-visible {
-  background: var(--sg-color-action);
+  background: var(--sg-color-text-on-action);
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
 }

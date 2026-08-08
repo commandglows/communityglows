@@ -1,0 +1,7 @@
+---
+import DownloadPage from '../../components/download/DownloadPage.astro'
+import Layout from '../../layouts/Layout.astro'
+import { siteUrl } from '../../config/site'
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl('/fr') }, { '@type': 'ListItem', position: 2, name: 'Téléchargements', item: siteUrl('/fr/download') }] }]
+---
+<Layout title="Télécharger CommunityGlows" description="Retrouvez les téléchargements et pages de releases CommunityGlows publiés pour chaque plateforme." path="/fr/download" lang="fr" jsonLd={jsonLd}><DownloadPage lang="fr" /></Layout>

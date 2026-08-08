@@ -6,6 +6,7 @@ export default {
     reviews: "Cas d'usage",
     blog: 'Blog',
     signIn: 'Voir le tarif',
+    download: 'Télécharger',
     getStarted: 'Essayer 30 jours',
     menuLabel: 'Ouvrir le menu',
     closeMenuLabel: 'Fermer le menu',

@@ -52,32 +52,40 @@
         class="profile-manager__form"
         @submit.prevent="saveProfile"
       >
-        <h3>
-          {{
-            isCreating
-              ? "Nouveau profil"
-              : `Modifier ${draft.name || "le profil"}`
-          }}
-        </h3>
+        <section
+          class="profile-manager__identity"
+          aria-labelledby="profile-manager-identity-title"
+        >
+          <h3 id="profile-manager-identity-title">
+            {{
+              isCreating
+                ? "Nouveau profil"
+                : `Modifier ${draft.name || "le profil"}`
+            }}
+          </h3>
 
-        <ProfileAvatarEditor
-          :avatar="draft.avatar"
-          :emoji="draft.emoji"
-          @change="updateAvatarDraft"
-        />
+          <div class="profile-manager__identity-content">
+            <label class="profile-manager__field">
+              <span>Nom</span>
+              <input
+                ref="nameInput"
+                v-model="draft.name"
+                :maxlength="PROFILE_NAME_MAX_LENGTH"
+                autocomplete="off"
+                required
+                :aria-invalid="errorField === 'name' || undefined"
+                :aria-describedby="errorField === 'name' ? 'profile-manager-error' : undefined"
+              />
+            </label>
 
-        <label class="profile-manager__field">
-          <span>Nom</span>
-          <input
-            ref="nameInput"
-            v-model="draft.name"
-            :maxlength="PROFILE_NAME_MAX_LENGTH"
-            autocomplete="off"
-            required
-            :aria-invalid="errorField === 'name' || undefined"
-            :aria-describedby="errorField === 'name' ? 'profile-manager-error' : undefined"
-          />
-        </label>
+            <ProfileAvatarEditor
+              compact
+              :avatar="draft.avatar"
+              :emoji="draft.emoji"
+              @change="updateAvatarDraft"
+            />
+          </div>
+        </section>
         <fieldset class="profile-manager__networks">
           <legend>Réseaux visibles</legend>
           <label
@@ -407,6 +415,24 @@ watch(
 .profile-manager__form h3 {
   margin: 0;
 }
+.profile-manager__identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-space-3);
+  padding: var(--sg-space-3);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-muted);
+}
+.profile-manager__identity-content {
+  display: grid;
+  gap: var(--sg-space-3);
+  min-width: 0;
+}
+.profile-manager--desktop .profile-manager__identity-content {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: start;
+}
 .profile-manager__field {
   display: flex;
   flex-direction: column;
@@ -418,7 +444,7 @@ watch(
   padding: var(--sg-control-padding-sm);
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-sm);
-  background: var(--sg-color-surface-muted);
+  background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
   font: inherit;
 }

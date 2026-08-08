@@ -1,0 +1,7 @@
+---
+import DownloadPage from '../components/download/DownloadPage.astro'
+import Layout from '../layouts/Layout.astro'
+import { siteUrl } from '../config/site'
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl('/') }, { '@type': 'ListItem', position: 2, name: 'Downloads', item: siteUrl('/download') }] }]
+---
+<Layout title="Download CommunityGlows" description="Find the currently published CommunityGlows downloads and release pages for each platform." path="/download" lang="en" jsonLd={jsonLd}><DownloadPage lang="en" /></Layout>

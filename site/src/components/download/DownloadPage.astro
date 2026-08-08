@@ -1,0 +1,45 @@
+---
+import Footer from '../Footer.astro'
+import Navbar from '../Navbar.astro'
+import { downloadPlatforms, type DownloadPlatformId } from '../../config/downloads'
+import type { Locale } from '../../i18n'
+
+interface Props { lang: Locale }
+const { lang } = Astro.props
+const copy = lang === 'fr' ? {
+  eyebrow: 'Téléchargements CommunityGlows', title: 'Choisissez votre plateforme.', intro: 'Téléchargez CommunityGlows lorsqu’une version est publiée. Les autres plateformes restent visibles afin que vous sachiez précisément ce qui est disponible aujourd’hui.', available: 'Disponible', releasePage: 'Voir les releases', comingSoon: 'Bientôt disponible',
+  windows: { title: 'Windows', detail: 'Téléchargement direct de la dernière version Windows publiée.', action: 'Télécharger pour Windows' }, linux: { title: 'Linux', detail: 'Consultez les assets publiés dans les releases du projet.', action: 'Voir les releases Linux' }, android: { title: 'Android', detail: 'La distribution Android publique est en préparation.', action: '' }, ios: { title: 'iPhone et iPad', detail: 'La version iOS est prévue, sans date de sortie annoncée.', action: '' },
+  noteTitle: 'Un téléchargement clair, sans devinette', note: 'Nous n’installons rien automatiquement et ne masquons aucune plateforme. Une carte active mène vers une version ou une page de releases réellement publiée.',
+} : {
+  eyebrow: 'CommunityGlows downloads', title: 'Choose your platform.', intro: 'Download CommunityGlows when a release is published. Other platforms stay visible so you can see exactly what is available today.', available: 'Available', releasePage: 'View releases', comingSoon: 'Coming soon',
+  windows: { title: 'Windows', detail: 'Direct download of the latest published Windows version.', action: 'Download for Windows' }, linux: { title: 'Linux', detail: 'Browse the assets published in the project releases.', action: 'View Linux releases' }, android: { title: 'Android', detail: 'Public Android distribution is being prepared.', action: '' }, ios: { title: 'iPhone and iPad', detail: 'The iOS version is planned, with no release date announced.', action: '' },
+  noteTitle: 'A clear download path, without guesswork', note: 'We never install anything automatically or hide a platform. An active card leads to a genuinely published version or release page.',
+}
+const platformIcons: Record<DownloadPlatformId, string> = { windows: '⊞', linux: '◒', android: '◉', ios: '●' }
+const languageHref = lang === 'fr' ? '/download' : '/fr/download'
+---
+
+<main id="main-content" class="min-h-screen bg-background text-foreground">
+  <Navbar lang={lang} languageHref={languageHref} />
+  <section class="mx-auto max-w-5xl px-4 pb-16 pt-32 text-center sm:pb-20" data-reveal>
+    <p class="animate-fade-up inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{copy.eyebrow}</p>
+    <h1 class="animate-fade-up delay-100 mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl" style="font-family: var(--font-cal-sans);">{copy.title}</h1>
+    <p class="animate-fade-up delay-200 mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{copy.intro}</p>
+  </section>
+  <section class="mx-auto max-w-5xl px-4 pb-20 sm:pb-28" aria-label={copy.eyebrow}>
+    <div class="grid gap-5 sm:grid-cols-2" data-reveal>
+      {downloadPlatforms.map((platform) => {
+        const details = copy[platform.id]
+        const active = platform.availability !== 'coming-soon'
+        const status = platform.availability === 'available' ? copy.available : platform.availability === 'release-page' ? copy.releasePage : copy.comingSoon
+        return <article class:list={['animate-fade-up flex min-h-64 flex-col rounded-2xl border p-6 text-left sm:p-7', active ? 'border-border bg-card' : 'border-border bg-muted/40']} data-release-status={platform.availability}>
+          <div class="flex items-start justify-between gap-4"><div class="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-2xl text-foreground" aria-hidden="true">{platformIcons[platform.id]}</div><span class:list={['rounded-full border px-3 py-1 text-xs font-semibold', active ? 'border-border bg-background text-muted-foreground' : 'border-border text-muted-foreground']}>{status}</span></div>
+          <div class="mt-7"><h2 class="text-2xl font-semibold text-foreground">{details.title}</h2><p class="mt-3 leading-relaxed text-muted-foreground">{details.detail}</p></div>
+          <div class="mt-auto pt-7">{active && platform.href ? <a href={platform.href} class="inline-flex min-h-10 w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card" rel="noreferrer">{details.action}</a> : <span class="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-medium text-muted-foreground" aria-disabled="true">{copy.comingSoon}</span>}</div>
+        </article>
+      })}
+    </div>
+  </section>
+  <section class="border-y border-border bg-card py-16 sm:py-20"><div class="mx-auto max-w-3xl px-4 text-center" data-reveal><h2 class="animate-fade-up text-2xl font-semibold text-foreground sm:text-3xl">{copy.noteTitle}</h2><p class="animate-fade-up delay-100 mt-4 leading-relaxed text-muted-foreground">{copy.note}</p></div></section>
+  <Footer lang={lang} languageHref={languageHref} />
+</main>
