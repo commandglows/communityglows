@@ -107,7 +107,7 @@
         <button
           v-else
           class="add-profile-btn"
-          @click="startAdd"
+          @click.stop="startAdd"
         >
           <SgIcon icon="pi pi-plus" />
           <span>Add profile</span>
@@ -214,6 +214,8 @@ function openProfileCreator() {
   menuVisible.value = true
   startAdd()
 }
+
+defineExpose({ openProfileCreator })
 
 onMounted(() => {
   document.addEventListener('click', handleOutsideClick)

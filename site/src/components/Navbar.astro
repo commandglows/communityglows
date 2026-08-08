@@ -2,8 +2,8 @@
 import { appUrl } from '../config/site'
 import { getTranslations, localizeHref, type Locale } from '../i18n'
 
-interface Props { lang?: Locale }
-const { lang = 'en' } = Astro.props
+interface Props { lang?: Locale; languageHref?: string }
+const { lang = 'en', languageHref: languageHrefProp } = Astro.props
 const t = getTranslations(lang)
 
 const navItems = [
@@ -14,7 +14,7 @@ const navItems = [
   { label: t.nav.blog, href: '/blog' },
 ]
 const homeHref = lang === 'fr' ? '/fr' : '/'
-const languageHref = lang === 'fr' ? '/' : '/fr'
+const languageHref = languageHrefProp ?? (lang === 'fr' ? '/' : '/fr')
 const languageCode = lang === 'fr' ? 'EN' : 'FR'
 ---
 
@@ -44,7 +44,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
     <!-- CTA Buttons -->
     <div class="hidden md:flex items-center gap-3">
       <a href={languageHref} class="text-sm text-muted-foreground hover:text-foreground transition-colors px-2 py-2" title={t.nav.languageLabel}>{languageCode}</a>
-      <a href={appUrl()} class="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2">
+      <a href={localizeHref('/pricing', lang)} class="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2">
         {t.nav.signIn}
       </a>
       <a
@@ -83,7 +83,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
       ))}
       <hr class="border-border my-2" />
       <a href={languageHref} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{languageCode}</a>
-      <a href={appUrl()} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{t.nav.signIn}</a>
+      <a href={localizeHref('/pricing', lang)} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{t.nav.signIn}</a>
       <a href={appUrl()} class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.getStarted}</a>
     </div>
   </div>

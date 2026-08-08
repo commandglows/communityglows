@@ -4,168 +4,159 @@ import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
 import { appUrl, siteUrl } from '../config/site'
 
-const rows = [
+const approaches = [
   {
-    feature: 'Multi-account isolation',
-    communityglows: 'Yes (native)',
-    hootsuite: 'No',
-    buffer: 'No',
-    sessionbox: 'Yes (network-level)',
-    gologin: 'Yes (anti-detect)',
+    marker: '01',
+    title: 'Publishing-led tools',
+    promise: 'Plan and distribute content across channels from one place.',
+    rhythm: 'A strong fit when your day revolves around calendars, approvals, scheduling, and publishing volume.',
+    question: 'Do you mainly need to coordinate what gets published, and when?',
   },
   {
-    feature: 'Direct access to networks',
-    communityglows: 'Yes (real websites)',
-    hootsuite: 'No (API only)',
-    buffer: 'No (API only)',
-    sessionbox: 'Yes',
-    gologin: 'Yes',
+    marker: '02',
+    title: 'Session and profile tools',
+    promise: 'Keep identities and browser environments separate.',
+    rhythm: 'A strong fit when technical session control, environment separation, or browser identity is the central need.',
+    question: 'Is your priority the technical separation of browsing environments?',
   },
   {
-    feature: 'Anti-distraction controls',
-    communityglows: 'Yes',
-    hootsuite: 'No',
-    buffer: 'No',
-    sessionbox: 'No',
-    gologin: 'No',
-  },
-  {
-    feature: 'Kanban board',
-    communityglows: 'Yes',
-    hootsuite: 'No',
-    buffer: 'No',
-    sessionbox: 'No',
-    gologin: 'No',
-  },
-  {
-    feature: 'Desktop + mobile',
-    communityglows: 'Yes',
-    hootsuite: 'Web only',
-    buffer: 'Web only',
-    sessionbox: 'Browser extension only',
-    gologin: 'Desktop only',
-  },
-  {
-    feature: 'Privacy (local session data)',
-    communityglows: 'Yes',
-    hootsuite: 'No',
-    buffer: 'No',
-    sessionbox: 'No',
-    gologin: 'No',
+    marker: '03',
+    title: 'CommunityGlows',
+    promise: 'Create a calmer workspace for direct, relationship-led social work.',
+    rhythm: 'Designed for people who move between communities, need the context of the real network, and want to return to conversations with intention.',
+    question: 'Do you want profiles, focus, and follow-through to live in the same daily workspace?',
   },
 ]
 
-const useCases = [
+const principles = [
   {
-    title: 'Community managers',
-    communityglows: 'One-click switching between client profiles, no risky cross-posting.',
-    alternative: 'Often limited by API access and manual credential handling.',
+    title: 'Presence before volume',
+    body: 'More activity is not always more connection. CommunityGlows gives each profile its own place so you can slow down, enter the right context, and respond as the right person.',
   },
   {
-    title: 'Freelancers',
-    communityglows: 'Profiles and profiles-specific cookies keep personal and client work separated.',
-    alternative: 'Most competitors force account switching hacks or manual process.',
+    title: 'Context before automation',
+    body: 'A thoughtful reply depends on what came before it. Direct access to each network keeps the conversation, its tone, and its surrounding community visible while you work.',
   },
   {
-    title: 'Agencies',
-    communityglows: 'Built-in Kanban plus profile-level workspaces keep teams organized.',
-    alternative: 'Typically requires extra tools to combine operations.',
+    title: 'Continuity before one-off actions',
+    body: 'Community is built through what you remember and return to. A visual workflow helps you keep track of the people, conversations, and commitments that deserve another touchpoint.',
+  },
+]
+
+const decisions = [
+  {
+    need: 'Plan, approve, and publish at scale',
+    direction: 'Start by evaluating publishing-led platforms.',
+  },
+  {
+    need: 'Control technical browser identities or environments',
+    direction: 'Start by evaluating specialist session or profile tools.',
+  },
+  {
+    need: 'Work directly inside communities while keeping profiles distinct',
+    direction: 'CommunityGlows is designed around this workflow.',
+  },
+  {
+    need: 'Protect attention and make follow-up visible',
+    direction: 'CommunityGlows brings focus controls and a visual workflow into the same workspace.',
   },
 ]
 
 const jsonLd = [{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl('/') },
-    { "@type": "ListItem", position: 2, name: "Compare", item: siteUrl('/compare') },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl('/') },
+    { '@type': 'ListItem', position: 2, name: 'Compare', item: siteUrl('/compare') },
   ],
 }]
 ---
 
 <Layout
-  title="CommunityGlows vs alternatives"
-  description="A practical comparison of CommunityGlows against Hootsuite, Buffer, SessionBox, and GoLogin for social operators."
+  title="Compare social workspaces | CommunityGlows"
+  description="Compare publishing-led, session-led, and relationship-led social workflows to find the approach that fits your community work."
   path="/compare"
   jsonLd={jsonLd}
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
-    <Navbar />
+    <Navbar lang="en" languageHref="/fr/compare" />
 
-    <section class="max-w-5xl mx-auto px-4 pt-32 pb-16 text-center">
+    <section class="max-w-5xl mx-auto px-4 pt-32 pb-20 text-center">
+      <p class="mb-5 inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Choose a way of working</p>
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">
-        CommunityGlows vs Alternatives
+        Not every social tool is built for the same kind of work
       </h1>
-      <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-        Compare practical workflows, not only feature checklists. CommunityGlows focuses on real social work and profile isolation.
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
+        Some tools help teams publish more. Others isolate browser sessions. CommunityGlows is shaped around another priority: being present, keeping human context, and building continuity with the people behind every account.
       </p>
       <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">Try CommunityGlows</a>
-        <a href="/pricing" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">View Pricing</a>
+        <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">Try everything for 30 days</a>
+        <a href="/pricing" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">View pricing</a>
       </div>
     </section>
 
-    <section class="max-w-6xl mx-auto px-4 pb-16">
-      <div class="rounded-2xl border border-border bg-card p-6 md:p-8">
-        <h2 class="text-2xl md:text-3xl font-bold text-foreground mb-4" style="font-family: var(--font-instrument-sans);">Feature comparison</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="border-b border-border">
-                <th scope="col" class="py-4 pr-4 text-left font-semibold text-foreground">Feature</th>
-                <th scope="col" class="w-32 py-4 text-center font-semibold text-foreground">CommunityGlows</th>
-                <th scope="col" class="w-32 py-4 text-center font-semibold text-foreground">Hootsuite</th>
-                <th scope="col" class="w-32 py-4 text-center font-semibold text-foreground">Buffer</th>
-                <th scope="col" class="w-32 py-4 text-center font-semibold text-foreground">SessionBox</th>
-                <th scope="col" class="w-32 py-4 text-center font-semibold text-foreground">GoLogin</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr class="border-b border-border">
-                  <td class="py-4 pr-4">
-                    <div class="font-medium text-foreground">{row.feature}</div>
-                  </td>
-                  <td class="py-4 text-center text-foreground">{row.communityglows}</td>
-                  <td class="py-4 text-center text-muted-foreground">{row.hootsuite}</td>
-                  <td class="py-4 text-center text-muted-foreground">{row.buffer}</td>
-                  <td class="py-4 text-center text-muted-foreground">{row.sessionbox}</td>
-                  <td class="py-4 text-center text-muted-foreground">{row.gologin}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+    <section class="max-w-6xl mx-auto px-4 py-16" aria-labelledby="approaches-title">
+      <div class="mx-auto mb-12 max-w-3xl text-center">
+        <h2 id="approaches-title" class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Three approaches, three different priorities</h2>
+        <p class="mt-4 text-muted-foreground">The right choice starts with the work you want the product to support.</p>
       </div>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 py-16">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Who benefits most from CommunityGlows?</h2>
-      </div>
-      <div class="space-y-6">
-        {useCases.map((item) => (
-          <article class="rounded-xl border border-border bg-card p-6">
-            <h3 class="text-xl font-semibold text-foreground mb-3">{item.title}</h3>
-            <div class="grid gap-4 md:grid-cols-2">
-              <p class="rounded-lg bg-background border border-border p-4 text-sm text-muted-foreground">{item.communityglows}</p>
-              <p class="rounded-lg bg-background border border-border p-4 text-sm text-muted-foreground">{item.alternative}</p>
-            </div>
+      <div class="grid gap-6 lg:grid-cols-3">
+        {approaches.map((item) => (
+          <article class:list={["rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 hover:border-foreground/30", item.marker === '03' ? 'border-foreground/30 bg-card' : 'border-border bg-card/50']}>
+            <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-foreground">{item.marker}</span>
+            <h3 class="mt-5 text-2xl font-semibold text-foreground">{item.title}</h3>
+            <p class="mt-4 font-medium leading-7 text-foreground">{item.promise}</p>
+            <p class="mt-4 text-sm leading-6 text-muted-foreground">{item.rhythm}</p>
+            <p class="mt-7 border-t border-border pt-5 text-sm italic leading-6 text-muted-foreground">{item.question}</p>
           </article>
         ))}
       </div>
     </section>
 
-    <section class="max-w-3xl mx-auto px-4 py-16 text-center">
-      <h2 class="text-3xl font-bold text-foreground mb-4">The short answer</h2>
-      <p class="text-lg text-muted-foreground mb-8">
-        CommunityGlows is built to replace tab-heavy workflows with a calm social workspace: profiles, isolation, and direct network access.
+    <section class="max-w-6xl mx-auto px-4 py-20" aria-labelledby="philosophy-title">
+      <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <div class="lg:sticky lg:top-32">
+          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Our point of view</p>
+          <h2 id="philosophy-title" class="mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Social work is relationship work</h2>
+          <p class="mt-5 leading-7 text-muted-foreground">Efficiency matters. But when efficiency removes the context that makes an interaction human, it can work against the community you are trying to build.</p>
+        </div>
+        <div class="space-y-5">
+          {principles.map((item, index) => (
+            <article class="rounded-2xl border border-border bg-card p-7 transition-colors hover:border-foreground/25">
+              <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-foreground">0{index + 1}</div>
+              <h3 class="text-xl font-semibold text-foreground">{item.title}</h3>
+              <p class="mt-3 leading-7 text-muted-foreground">{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-4 py-16" aria-labelledby="decision-title">
+      <div class="rounded-2xl border border-border bg-card p-6 md:p-9">
+        <h2 id="decision-title" class="text-3xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Let the job choose the tool</h2>
+        <p class="mt-3 max-w-2xl text-muted-foreground">These categories can overlap. Use this as a starting point, then verify current features, integrations, and limits with each product before deciding.</p>
+        <dl class="mt-8 divide-y divide-border border-y border-border">
+          {decisions.map((item) => (
+            <div class="grid gap-2 py-5 md:grid-cols-2 md:gap-8">
+              <dt class="font-medium text-foreground">{item.need}</dt>
+              <dd class="text-muted-foreground">{item.direction}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-4 my-16 rounded-2xl border border-border bg-card px-6 py-12 text-center sm:mx-auto sm:px-10">
+      <h2 class="text-3xl font-bold text-foreground">Choose the workspace that protects your intent</h2>
+      <p class="mt-4 text-lg leading-8 text-muted-foreground">
+        If your best work happens when you can listen, understand, and return with care, CommunityGlows gives that rhythm a dedicated home.
       </p>
-      <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">
-        Start with CommunityGlows
+      <a href={appUrl()} class="shimmer-btn mt-8 inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">
+        Try CommunityGlows free for 30 days
       </a>
     </section>
 
-    <Footer />
+    <Footer lang="en" languageHref="/fr/compare" />
   </main>
 </Layout>

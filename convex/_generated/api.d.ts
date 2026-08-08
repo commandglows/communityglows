@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as authHelpers from "../authHelpers.js";
 import type * as billing from "../billing.js";
 import type * as customLinks from "../customLinks.js";
 import type * as friendsFilters from "../friendsFilters.js";
@@ -17,6 +18,8 @@ import type * as profiles from "../profiles.js";
 import type * as settings from "../settings.js";
 import type * as socialAccounts from "../socialAccounts.js";
 import type * as users from "../users.js";
+import type * as validators from "../validators.js";
+import type * as workspaceState from "../workspaceState.js";
 
 import type {
   ApiFromModules,
@@ -26,6 +29,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  authHelpers: typeof authHelpers;
   billing: typeof billing;
   customLinks: typeof customLinks;
   friendsFilters: typeof friendsFilters;
@@ -34,6 +38,8 @@ declare const fullApi: ApiFromModules<{
   settings: typeof settings;
   socialAccounts: typeof socialAccounts;
   users: typeof users;
+  validators: typeof validators;
+  workspaceState: typeof workspaceState;
 }>;
 
 /**

@@ -18,7 +18,27 @@ export type BillingAccessStatus =
   | 'bridge_unavailable'
   | 'free'
   | 'active'
+  | 'trial_active'
+  | 'trial_expired'
+  | 'lifetime_active'
   | 'error'
+
+export const BILLING_ACCESS_GRACE_MS = 15 * 60 * 1000
+
+export function isAccessWithinGrace(
+  access: ProductAccess | null,
+  verifiedAt: number | null,
+  now = Date.now(),
+) {
+  if (!access || verifiedAt === null || now - verifiedAt > BILLING_ACCESS_GRACE_MS) {
+    return false
+  }
+  if (access.accessState === 'trial_active') {
+    return typeof access.trialEndsAt === 'number' && access.trialEndsAt > now
+  }
+  return access.accessState === 'lifetime_active' ||
+    access.status === 'active'
+}
 
 export function getSafeBillingError(error: unknown) {
   const message = error instanceof Error ? error.message : ''
@@ -68,6 +88,7 @@ export function useBillingAccess() {
   const isRedeeming = ref(false)
   const errorKey = ref<string | null>(null)
   const successKey = ref<string | null>(null)
+  const lastVerifiedAt = ref<number | null>(null)
 
   const canLoadAccess = computed(
     () => isConvexConfigured.value && isAuthenticated.value,
@@ -89,13 +110,26 @@ export function useBillingAccess() {
       return 'bridge_unavailable'
     }
     if (errorKey.value && !access.value) return 'error'
+    if (access.value?.accessState === 'trial_active') return 'trial_active'
+    if (access.value?.accessState === 'trial_expired') return 'trial_expired'
+    if (access.value?.accessState === 'lifetime_active') return 'lifetime_active'
     if (access.value?.status === 'active') return 'active'
     return 'free'
+  })
+  const canAccessProtected = computed(() => {
+    if (status.value === 'trial_active' || status.value === 'lifetime_active' || status.value === 'active') {
+      return true
+    }
+    if (status.value === 'bridge_unavailable') {
+      return isAccessWithinGrace(access.value, lastVerifiedAt.value)
+    }
+    return false
   })
 
   async function refreshAccess() {
     if (!canLoadAccess.value) {
       access.value = null
+      lastVerifiedAt.value = null
       redeemResult.value = null
       isLoading.value = false
       errorKey.value = null
@@ -107,9 +141,13 @@ export function useBillingAccess() {
     errorKey.value = null
     try {
       access.value = await getConvexClient().action(api.billing.getProductAccess, {})
+      lastVerifiedAt.value = Date.now()
     } catch (error) {
-      access.value = null
       errorKey.value = getSafeAccessCheckError(error)
+      if (errorKey.value !== 'billing.errors.bridge_unavailable') {
+        access.value = null
+        lastVerifiedAt.value = null
+      }
     } finally {
       isLoading.value = false
     }
@@ -161,12 +199,14 @@ export function useBillingAccess() {
 
   return {
     access,
+    canAccessProtected,
     canRedeem,
     errorKey,
     isAuthenticated,
     isAuthLoading,
     isConvexConfigured,
     isLifetimeDeal,
+    lastVerifiedAt,
     isLoading,
     isRedeeming,
     redeemCode,

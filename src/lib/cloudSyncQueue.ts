@@ -78,6 +78,11 @@ type SocialAccountSetActiveOperation = QueueBase & {
   accountId: string;
 };
 
+type WorkspaceStateOperation = QueueBase & {
+  type: "workspaceContextualTasks" | "workspaceKanban";
+  stateJson: string;
+};
+
 type CloudSyncOperation =
   | SettingsPatchOperation
   | ProfileUpsertOperation
@@ -87,7 +92,8 @@ type CloudSyncOperation =
   | FriendsFilterSetOperation
   | SocialAccountUpsertOperation
   | SocialAccountRemoveOperation
-  | SocialAccountSetActiveOperation;
+  | SocialAccountSetActiveOperation
+  | WorkspaceStateOperation;
 
 let flushPromise: Promise<void> | null = null;
 let retryTimer: number | null = null;
@@ -222,6 +228,18 @@ async function executeOperation(operation: CloudSyncOperation) {
       await client.mutation(api.socialAccounts.setActive, {
         networkId: operation.networkId,
         accountId: operation.accountId,
+      });
+      return;
+    case "workspaceContextualTasks":
+      await client.mutation(api.workspaceState.setContextualTasks, {
+        contextualTasksJson: operation.stateJson,
+        updatedAt: operation.updatedAt,
+      });
+      return;
+    case "workspaceKanban":
+      await client.mutation(api.workspaceState.setKanbanState, {
+        kanbanStateJson: operation.stateJson,
+        updatedAt: operation.updatedAt,
       });
       return;
   }
@@ -419,6 +437,26 @@ export function enqueueSocialAccountSetActive(networkId: string, accountId: stri
     key: `activeSocialAccount:${networkId}`,
     networkId,
     accountId,
+    updatedAt: now(),
+    attempts: 0,
+  });
+}
+
+export function enqueueContextualTasksSnapshot(stateJson: string) {
+  enqueueOperation({
+    type: "workspaceContextualTasks",
+    key: "workspace:contextualTasks",
+    stateJson,
+    updatedAt: now(),
+    attempts: 0,
+  });
+}
+
+export function enqueueKanbanSnapshot(stateJson: string) {
+  enqueueOperation({
+    type: "workspaceKanban",
+    key: "workspace:kanban",
+    stateJson,
     updatedAt: now(),
     attempts: 0,
   });

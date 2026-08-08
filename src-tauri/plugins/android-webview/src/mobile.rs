@@ -15,6 +15,13 @@ pub struct OpenRequest {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct NavigateRequest {
+    pub url: String,
+    pub network_id: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AccountRequest {
     pub account_id: String,
 }
@@ -88,6 +95,18 @@ impl<R: Runtime> AndroidWebview<R> {
                     account_id: account_id.to_string(),
                     network_id: network_id.to_string(),
                     storage_origins,
+                },
+            )
+            .map_err(|e| Error::PluginInvoke(e.to_string()))
+    }
+
+    pub fn navigate(&self, url: &str, network_id: &str) -> Result<()> {
+        self.0
+            .run_mobile_plugin(
+                "navigateWebView",
+                NavigateRequest {
+                    url: url.to_string(),
+                    network_id: network_id.to_string(),
                 },
             )
             .map_err(|e| Error::PluginInvoke(e.to_string()))

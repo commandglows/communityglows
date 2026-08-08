@@ -348,6 +348,17 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     onboarding: true,
     defaultSelected: false,
   },
+  {
+    id: 'luma',
+    label: 'Luma',
+    route: '/luma',
+    url: 'https://luma.com',
+    icon: 'pi pi-calendar',
+    color: '#7C3AED',
+    tileColor: '#7C3AED',
+    onboarding: true,
+    defaultSelected: false,
+  },
 ]
 
 const NETWORK_ISOLATION_NOT_COVERED = [

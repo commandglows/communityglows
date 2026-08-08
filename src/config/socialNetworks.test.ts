@@ -55,4 +55,13 @@ describe('social network isolation policy', () => {
     expect(policy.storageOrigins).toEqual([])
     expect(origins).toEqual(['https://mail.google.com'])
   })
+
+  it('includes Luma with its official HTTPS origin', () => {
+    const origins = getNetworkIsolationOrigins('luma')
+
+    expect(origins).toEqual(['https://luma.com'])
+    expect(getNetworkIsolationOriginsByNetwork(['luma'])).toEqual({
+      luma: ['https://luma.com'],
+    })
+  })
 })

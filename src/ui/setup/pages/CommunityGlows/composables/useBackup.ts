@@ -10,6 +10,12 @@ import { setLocale } from '@/utils/i18n'
 import type { ThemeMode } from '@/utils/themeAuto'
 import { normalizeTapSoundVariant } from '../utils/tapSound'
 import { isAndroidTauri as detectAndroidTauri, isTauri as detectTauri } from '@/platform/capabilities'
+import { builtInSocialNetworks } from '@/config/socialNetworks'
+import {
+  BACKUP_DATA_VERSION,
+  collectPortableLocalStorage,
+  restorePortableLocalStorage,
+} from './backupData'
 
 const isTauri = detectTauri()
 const isAndroidTauri = detectAndroidTauri
@@ -24,6 +30,7 @@ async function collectStoreData(): Promise<string> {
   const onboarding = useOnboardingStore()
   let androidCookieSnapshot = ''
   let androidLocalStorageSnapshot = ''
+  let desktopCookieSnapshot = ''
 
   if (isAndroidTauri()) {
     try {
@@ -39,7 +46,22 @@ async function collectStoreData(): Promise<string> {
     }
   }
 
+  if (isTauri() && !isAndroidTauri()) {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const targets = profiles.profiles.flatMap(profile => builtInSocialNetworks.map(network => ({
+        profileId: profile.id,
+        networkId: network.id,
+        url: network.url,
+      })))
+      desktopCookieSnapshot = await invoke<string>('export_desktop_cookies', { targets })
+    } catch (error) {
+      console.warn('[backup] Failed to export Desktop session snapshot', error)
+    }
+  }
+
   const data = {
+    dataVersion: BACKUP_DATA_VERSION,
     profiles: {
       profiles: profiles.profiles,
       activeProfileId: profiles.activeProfileId,
@@ -63,23 +85,13 @@ async function collectStoreData(): Promise<string> {
     onboarding: {
       completed: onboarding.completed,
     },
-    localStorage: {
-      communityglows_username: localStorage.getItem('communityglows_username') ?? '',
-      communityglows_email: localStorage.getItem('communityglows_email') ?? '',
-      'user-locale': localStorage.getItem('user-locale') ?? 'fr',
-      theme: localStorage.getItem('theme') ?? 'light',
-      'theme-resolved': localStorage.getItem('theme-resolved') ?? 'light',
-      grayscale: localStorage.getItem('grayscale') ?? '0',
-      communityglows_haptic: localStorage.getItem('communityglows_haptic') ?? 'true',
-      communityglows_tap_sound: localStorage.getItem('communityglows_tap_sound') ?? 'false',
-      communityglows_tap_sound_variant: localStorage.getItem('communityglows_tap_sound_variant') ?? 'classic',
-      communityglows_text_zoom: localStorage.getItem('communityglows_text_zoom') ?? '100',
-      'kanban-state': localStorage.getItem('kanban-state') ?? '',
-      'contextual-tasks-v1': localStorage.getItem('contextual-tasks-v1') ?? '',
-    },
+    localStorage: collectPortableLocalStorage(localStorage),
     android: {
       cookieSnapshot: androidCookieSnapshot,
       localStorageSnapshot: androidLocalStorageSnapshot,
+    },
+    desktop: {
+      cookieSnapshot: desktopCookieSnapshot,
     },
   }
   return JSON.stringify(data)
@@ -141,39 +153,24 @@ async function applyStoreData(json: string) {
   }
 
   if (data.localStorage) {
-    if (data.localStorage.communityglows_username)
-      localStorage.setItem('communityglows_username', data.localStorage.communityglows_username)
-    if (data.localStorage.communityglows_email)
-      localStorage.setItem('communityglows_email', data.localStorage.communityglows_email)
-    if (data.localStorage['user-locale']) {
-      localStorage.setItem('user-locale', data.localStorage['user-locale'])
+    restorePortableLocalStorage(data.localStorage, localStorage)
+    if (typeof data.localStorage['user-locale'] === 'string') {
       setLocale(data.localStorage['user-locale'])
     }
-    if (data.localStorage.theme)
-      localStorage.setItem('theme', data.localStorage.theme)
-    if (data.localStorage['theme-resolved'])
-      localStorage.setItem('theme-resolved', data.localStorage['theme-resolved'])
-    if (data.localStorage.grayscale)
-      localStorage.setItem('grayscale', data.localStorage.grayscale)
-    if (data.localStorage.communityglows_haptic)
-      localStorage.setItem('communityglows_haptic', data.localStorage.communityglows_haptic)
-    if (data.localStorage.communityglows_tap_sound)
-      localStorage.setItem('communityglows_tap_sound', data.localStorage.communityglows_tap_sound)
-    if (data.localStorage.communityglows_tap_sound_variant)
-      localStorage.setItem('communityglows_tap_sound_variant', data.localStorage.communityglows_tap_sound_variant)
-    if (data.localStorage.communityglows_text_zoom)
-      localStorage.setItem('communityglows_text_zoom', data.localStorage.communityglows_text_zoom)
-    if (data.localStorage['kanban-state'])
-      localStorage.setItem('kanban-state', data.localStorage['kanban-state'])
-    if (data.localStorage['contextual-tasks-v1'])
-      localStorage.setItem('contextual-tasks-v1', data.localStorage['contextual-tasks-v1'])
   }
 
-  if (isAndroidTauri()) {
+  if (
+    isAndroidTauri()
+    && (
+      data.android?.cookieSnapshot
+      || data.android?.localStorageSnapshot
+      || data.desktop?.cookieSnapshot
+    )
+  ) {
     try {
       const { invoke } = await import('@tauri-apps/api/core')
       await invoke('plugin:android-webview|import_cookies_from_backup', {
-        cookiesJson: data.android?.cookieSnapshot ?? '',
+        cookiesJson: data.android?.cookieSnapshot || data.desktop?.cookieSnapshot || '',
         localStorageJson: data.android?.localStorageSnapshot ?? '',
       })
     } catch (error) {
@@ -271,7 +268,7 @@ export function useBackup() {
     let encryptedB64 = ''
 
     if (isAndroid) {
-      // Load the latest .sfbak from Downloads/CommunityGlows/ via Kotlin MediaStore
+      // Let Android's system document picker read a .sfbak from any accessible location.
       const result = await invoke<{ base64: string }>(
         'plugin:android-webview|load_backup_from_downloads',
         {},

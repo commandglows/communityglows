@@ -1,7 +1,7 @@
 ---
 artifact: gtm_context
 metadata_schema_version: "1.0"
-artifact_version: "1.0.2"
+artifact_version: "1.2.0"
 project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-04"
@@ -27,7 +27,7 @@ supersedes: []
 next_review: "2026-09-03"
 next_step: "/300-sg-docs audit shipglows_data/business/gtm.md"
 target_segment: "independent operators, small marketing teams, and social operators managing multiple accounts across networks and devices"
-offer: "an all-in-one social operations workspace with shared UI, local profiles, and cross-platform delivery from one codebase"
+offer: "a 30-day full trial without a payment card or automatic charge, followed by an optional €79 one-time founder license for a calm social operations workspace on Windows and Android; a progressive 10 × €8 path is approved but not public until implemented and verified"
 channels: "developer and user documentation, landing pages, feature changelogs, social proof from update cadence, and onboarding walkthroughs"
 proof_points: "shared multi-platform build pipeline, Convex-backed profile/session architecture, native webview support, and explicit roadmap visibility in shipglows_data/workflow/TASKS.md"
 ---
@@ -43,6 +43,9 @@ proof_points: "shared multi-platform build pipeline, Convex-backed profile/sessi
 
 - CommunityGlows is positioned as a unified social operations workspace, not another fragmented extension or single-surface tool.
 - The practical promise is consistency: one interface and one codebase behavior across browser extension, desktop, and web.
+- The current commercial offer starts with a 30-day full trial without a card or automatic charge, followed by an optional one-time €79 payment. It is not a subscription and does not claim community support or unspecified future cloud services.
+- A progressive 10 × €8 route is a planned commerce capability, not a current public option. It permits stopping without future charges, preserves paid-month progress, and converts to lifetime access after ten successful payments.
+- Current features and roadmap work must be separated visibly on public sales pages.
 
 ## Positioning
 

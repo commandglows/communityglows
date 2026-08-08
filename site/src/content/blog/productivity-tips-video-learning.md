@@ -33,9 +33,9 @@ Don’t consume social continuously. Set fixed windows for inbox checks, outreac
 - 20-minute block for content planning and review  
 - Separate windows for deep work tasks (posting, reporting, discovery)  
 
-## 4. Build a Daily Kanban Rhythm
+## 4. Build a Daily Planning Rhythm
 
-Use a board with columns that match execution: To Review, Draft, Scheduled, Published, Follow-up.
+Use your current planning board with columns that match execution: To Review, Draft, Scheduled, Published, Follow-up. CommunityGlows is developing its own CRM and Kanban workspace.
 Keep every card linked to a profile and a next action.
 
 - Add publishing and outreach tasks in one place  

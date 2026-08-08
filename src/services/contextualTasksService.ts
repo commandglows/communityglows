@@ -158,6 +158,16 @@ export class ContextualTasksService {
     return [...this.tasks]
   }
 
+  serializeState() {
+    return JSON.stringify(this.tasks)
+  }
+
+  replaceState(value: unknown) {
+    if (!Array.isArray(value)) throw new Error('invalid_tasks_state')
+    this.tasks = value.filter((task): task is ContextualTask => this.isTask(task))
+    this.saveState()
+  }
+
   loadState() {
     if (!canUseStorage()) return
     const raw = localStorage.getItem(CONTEXTUAL_TASKS_STORAGE_KEY)

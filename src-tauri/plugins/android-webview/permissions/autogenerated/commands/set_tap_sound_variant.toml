@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-set-tap-sound-variant"
+description = "Enables the set_tap_sound_variant command without any pre-configured scope."
+commands.allow = ["set_tap_sound_variant"]
+
+[[permission]]
+identifier = "deny-set-tap-sound-variant"
+description = "Denies the set_tap_sound_variant command without any pre-configured scope."
+commands.deny = ["set_tap_sound_variant"]

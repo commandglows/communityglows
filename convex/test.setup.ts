@@ -7,6 +7,7 @@ export const modules = {
   "./settings.ts": () => import("./settings"),
   "./profiles.ts": () => import("./profiles"),
   "./friendsFilters.ts": () => import("./friendsFilters"),
+  "./workspaceState.ts": () => import("./workspaceState"),
   "./users.ts": () => import("./users"),
   "./billing.ts": () => import("./billing"),
   "./auth.ts": () => import("./auth"),
