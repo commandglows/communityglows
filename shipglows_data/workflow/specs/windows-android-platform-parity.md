@@ -275,12 +275,16 @@ Update after implementation and verification:
   - Depends on: Task 1.
   - Validate with: composable regression tests, Rust build, Windows installer manual checklist, repeated network/profile switching.
 
-- [ ] Task 3: Replace desktop placeholder profile behavior.
-  - Files: `src/ui/setup/pages/SocialGlowz/components/AppSidebar.vue`, `src/ui/setup/pages/SocialGlowz/components/AppRightSidebar.vue`, shared profile components/stores as needed.
-  - Action: render the active profile from `profilesStore`, expose discoverable profile creation, switch, and manage actions, and keep hidden-network state consistent with the active profile.
+- [ ] Task 3: Replace desktop placeholder profile behavior with one serious profile manager.
+  - Files: `src/ui/setup/pages/CommunityGlows/components/AppSidebar.vue`, `src/ui/setup/pages/CommunityGlows/components/AppRightSidebar.vue`, `src/ui/setup/pages/CommunityGlows/components/ProfileSwitcher.vue`, one shared desktop profile-manager component, and shared profile components/stores as needed.
+  - Action: render the active profile from `profilesStore` and route every desktop create/manage entry point to one tokenized Reka-backed manager. Keep the compact dropdown focused on profile switching plus one explicit “Manage profiles” action; do not maintain independent inline creation or editing flows in either panel.
+  - Form contract: creation and editing use the same deliberate interface for required trimmed name, photo upload/removal with preview and validation, emoji/fallback identity, and visible-network selection derived from `src/config/socialNetworks.ts`. A save is explicit and atomic; blur never saves, cancel never mutates profile or cloud state, and one user submit produces exactly one profile ID and one cloud upsert.
+  - Deletion contract: remove the inline destructive icon beside profile names. Deletion exists only in the manager's danger zone, names the affected profile and session consequence in a confirmation dialog, cannot delete the final profile, closes/deletes only the confirmed profile's native sessions, and leaves local/cloud state unchanged when native deletion fails.
+  - Shared-state contract: after create, edit, switch, or confirmed delete, the left panel, right panel, dropdown, active session, persisted store, and cloud snapshot resolve the same profile ID, name, photo/emoji, and network visibility without duplicate records.
+  - Accessibility contract: the manager uses the maintained dialog primitive with focus trap and focus restoration, supports Tab/Shift+Tab and Escape, exposes labels and validation errors programmatically, and preserves visible focus and contrast in light and dark themes.
   - User story link: profile context must be the same on both platforms.
   - Depends on: Task 1.
-  - Validate with: Vue component tests or focused interaction tests plus Windows manual profile switching.
+  - Validate with: focused Vue manager/entry-point tests, store and cloud-queue assertions, the Enter-plus-blur duplicate regression, keyboard/focus tests, and a fresh Windows installer walkthrough covering create/edit/cancel/switch/delete/restart/offline recovery.
 
 - [ ] Task 4: Align settings behavior across shell and embedded WebViews.
   - Files: `src/ui/setup/pages/SocialGlowz/components/AppSettings.vue`, `src/ui/setup/pages/SocialGlowz/components/MobileSettingsSheet.vue`, `src/ui/setup/pages/SocialGlowz/composables/`, `src-tauri/src/lib.rs`, Android plugin files.
@@ -331,6 +335,14 @@ Update after implementation and verification:
 - [ ] AC10: Given light and dark themes, when the shell and native controls are compared, then semantic colors, surfaces, borders, shadows, radii, focus states, and active states follow the documented token mapping.
 - [ ] AC11: Given the manual parity checklist is executed, when any capability lacks proof, then the corresponding platform claim remains `unknown` or explicitly degraded and the release is not presented as fully verified.
 - [ ] AC12: Given the final verified implementation, when README and technical docs are read, then they describe Windows and Android capabilities and limitations consistently.
+- [ ] AC13: Given any Windows create/manage entry point in the left panel, right panel, or profile dropdown, when the user activates it, then the same single profile manager opens with the same draft and persisted state contract.
+- [ ] AC14: Given a valid new-profile draft, when the user submits by keyboard or pointer and focus subsequently changes, then exactly one profile ID and one cloud upsert are created; blur alone never creates or saves a profile.
+- [ ] AC15: Given a create or edit draft containing a name, photo or emoji fallback, and network visibility choices, when the user saves, then all validated fields persist together and both desktop panels immediately render the same profile identity and visible networks.
+- [ ] AC16: Given any unsaved create or edit draft, when the user cancels or closes the manager, then no local profile, active-profile setting, native session, or cloud queue entry is changed.
+- [ ] AC17: Given an invalid empty/oversized name or unsupported/oversized photo, when the user attempts to save, then the manager keeps the draft open, identifies the invalid field, and performs no partial local or cloud mutation.
+- [ ] AC18: Given a profile selected for deletion, when the user has not completed the named confirmation dialog, then no deletion occurs; the final remaining profile cannot be deleted.
+- [ ] AC19: Given confirmed deletion of a non-final profile, when native session cleanup succeeds, then only that profile is removed locally and from cloud sync; when cleanup fails, the profile remains and a recoverable error is shown.
+- [ ] AC20: Given keyboard-only use in light or dark theme, when the manager opens, validates, cancels, saves, or confirms deletion, then focus is trapped and visible, Escape behavior is safe, accessible labels/errors are announced, and focus returns to the invoking control.
 
 ## Test Strategy
 
@@ -339,6 +351,10 @@ Automated:
 - Extend `useNetworkWebview` tests for mount timing, positive bounds, switch fallback, close, and failure recovery.
 - Add capability adapter tests covering Windows Tauri, Android Tauri, extension, and browser-only contexts.
 - Add store/component tests for active profile rendering, hidden-network synchronization, and network catalog mapping.
+- Add profile-manager tests proving every desktop entry point opens the same manager, Enter followed by blur performs exactly one create/upsert, blur alone never saves, and cancel leaves local/cloud state untouched.
+- Add create/edit validation tests for required trimmed and bounded names, supported bounded photos, photo removal, emoji fallback, and catalog-derived network visibility.
+- Add deletion tests for explicit named confirmation, final-profile protection, native-cleanup failure rollback, unrelated-session preservation, and one cloud removal after native success.
+- Add keyboard/focus tests for focus trap/restoration, Tab/Shift+Tab, Escape, labels, validation errors, and visible focus in light/dark themes.
 - Run `pnpm test:once`, `pnpm typecheck` or the documented bounded typecheck, `pnpm tauri:build`, and Rust checks where available.
 - Run design drift and metadata/documentation checks.
 
@@ -347,6 +363,9 @@ Windows manual:
 - Install the fresh `.exe` from the successful manual workflow.
 - Open representative networks, resize both sidebars, switch A -> B -> A, close/reopen, and restart the app.
 - Verify Profile A/B isolation with a cookie-heavy network and a localStorage-heavy network.
+- Open profile management from the left panel, right panel, and dropdown; create one profile with Enter and then move focus, and verify exactly one new profile appears with the same identity in both panels.
+- Edit name, photo/emoji, and visible networks; cancel one draft, save another, restart the app, and verify persisted and cloud-hydrated state remains identical without duplicates.
+- Verify deletion requires the named confirmation, the final profile cannot be deleted, cancellation is harmless, and a cleanup error remains recoverable without removing the profile.
 - Verify dark mode, grayscale, text zoom, backup/restore, profile visibility, tray actions, and back/close.
 - Record WebView failures, orphan windows, memory/resource behavior, and safe diagnostic output.
 
@@ -408,11 +427,14 @@ None blocking readiness. The implementation owner may choose the exact Windows n
 | 2026-08-02 23:00:21 UTC | 103-sg-verify | GPT-5 Codex | Verified the recent Windows shell, CRM toolbar, hidden-sidebar recovery controls, and keyboard-shortcut work. Automated tests and the Tauri frontend build pass; token audit found remaining legacy component literals and Windows installer scenarios remain unexecuted. | partial | Resolve design-token drift in legacy changed components, then execute the combined Windows installer checklist. |
 | 2026-08-03 04:00:19 UTC | 006-sg-design | GPT-5 Codex | Migrated the touched Windows sidebars, settings, CRM and keyboard-shortcut styles to named semantic tokens in the declared Vue token authority. The drift scan now reports only the two explicit responsive breakpoints. | implemented-pending-visual-proof | Execute the combined Windows installer checklist and visually inspect responsive panel states. |
 | 2026-08-03 08:27:00 UTC | 405-sg-prod / 106-sg-fix | GPT-5 Codex | Diagnosed the failing Quality Checks run as an ES2017 `Object.entries` call in the diagnostics module under the project ES6 typecheck library. Replaced it with an ES6-compatible loop and added a regression test; local CI-equivalent checks pass. | fix-attempted | Publish the pending changes and confirm the remote Quality Checks run. |
+| 2026-08-08 UTC | 001-sg-build | GPT-5 Codex | Refined Task 3 into one deliberate Windows profile-management flow covering idempotent creation, atomic name/photo/emoji/network edits, shared panel state, safe confirmed deletion, and accessible dialog behavior after duplicate creation and dead entry-point reports. | in-progress/spec-refined | Implement the single desktop profile manager and its focused regression tests. |
+| 2026-08-08 UTC | 001-sg-build / 103-sg-verify | GPT-5 Codex | Implemented the single desktop profile manager with a submit lock, store validation before mutation, and accessible validation errors; 127 tests, typecheck, Tauri frontend build, and changed-file token drift checks pass locally. | implemented-pending-windows-proof | Execute the fresh Windows manual profile-manager walkthrough before validating AC13-AC20 and closing Task 3. |
 
 ## Current Chantier Flow
 
 - `100-sg-spec`: complete — durable parity contract created from the platform audit and user-selected formalisation.
 - `101-sg-ready`: complete — scope, security, design, implementation ordering, and installer/APK proof contract are ready.
+- Task 3 (desktop profile manager): implemented-pending-windows-proof — the single manager, atomic create/edit/delete flow, submit lock, validation, shared-state behavior, and accessibility errors are implemented and locally verified; AC13-AC20 remain open pending the fresh installed-Windows walkthrough.
 - `102-sg-start`: implemented — native lifecycle, settings propagation, deletion cleanup, desktop protocol registration, warm links, capability contract, atomic restore, safe diagnostics, and desktop profile surface are coded; Windows settings overlay and direct profile creation are pending installer proof.
 - `004-sg-deploy`: partial — artifacts built successfully from `a61c366`; manual Windows/Android verification remains.
 - `103-sg-verify`: partial — automated checks pass for the recent shell and shortcuts changes, but clean verification is blocked by unresolved design-system drift findings and missing Windows installer proof.

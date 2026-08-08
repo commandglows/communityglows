@@ -8,6 +8,9 @@ export {}
 declare global {
   const BILLING_ACCESS_GRACE_MS: typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']
   const EffectScope: typeof import('vue')['EffectScope']
+  const PROFILE_AVATAR_MAX_LENGTH: typeof import('../../../../../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']
+  const PROFILE_EMOJI_MAX_LENGTH: typeof import('../../../../../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']
+  const PROFILE_NAME_MAX_LENGTH: typeof import('../../../../../stores/profiles')['PROFILE_NAME_MAX_LENGTH']
   const WEBVIEW_URLS: typeof import('../../../../../stores/webviewState')['WEBVIEW_URLS']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const appRouter: typeof import('../../../../../utils/router/index')['appRouter']
@@ -333,6 +336,7 @@ declare global {
   const useWindowFocus: typeof import('@vueuse/core')['useWindowFocus']
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
+  const validateProfileDraft: typeof import('../../../../../stores/profiles')['validateProfileDraft']
   const watch: typeof import('vue')['watch']
   const watchArray: typeof import('@vueuse/core')['watchArray']
   const watchAtMost: typeof import('@vueuse/core')['watchAtMost']
@@ -374,7 +378,7 @@ declare global {
   export type { KanbanItem, KanbanColumnId } from '../../../../../stores/kanban'
   import('../../../../../stores/kanban')
   // @ts-ignore
-  export type { Profile } from '../../../../../stores/profiles'
+  export type { Profile, ProfileDraft } from '../../../../../stores/profiles'
   import('../../../../../stores/profiles')
   // @ts-ignore
   export type { CoreShortcutAction, NetworkShortcutAction, ProfileShortcutAction, RightPanelShortcutAction, ShortcutAction, AppShortcut } from '../../../../../stores/shortcuts'
@@ -391,6 +395,9 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly BILLING_ACCESS_GRACE_MS: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly PROFILE_AVATAR_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']>
+    readonly PROFILE_EMOJI_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']>
+    readonly PROFILE_NAME_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_NAME_MAX_LENGTH']>
     readonly WEBVIEW_URLS: UnwrapRef<typeof import('../../../../../stores/webviewState')['WEBVIEW_URLS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly applyDisableCopyProtection: UnwrapRef<typeof import('../../../../../utils/disableCopyProtection')['applyDisableCopyProtection']>
@@ -713,6 +720,7 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
+    readonly validateProfileDraft: UnwrapRef<typeof import('../../../../../stores/profiles')['validateProfileDraft']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>

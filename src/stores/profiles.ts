@@ -1,23 +1,69 @@
-import { defineStore } from 'pinia'
-import { syncSettingsPatch } from '@/lib/cloudSettings'
-import { enqueueProfileRemove, enqueueProfileUpsert, flushCloudSyncQueue } from '@/lib/cloudSyncQueue'
+import { defineStore } from "pinia"
+import { syncSettingsPatch } from "@/lib/cloudSettings"
+import {
+  enqueueProfileRemove,
+  enqueueProfileUpsert,
+  flushCloudSyncQueue,
+} from "@/lib/cloudSyncQueue"
 
 export interface Profile {
   id: string
   name: string
   emoji: string
-  avatar?: string   // base64 data URL or remote URL
-  hiddenNetworks?: string[]  // network IDs hidden for this profile (e.g. ['tiktok', 'discord'])
+  avatar?: string // base64 data URL or remote URL
+  hiddenNetworks?: string[] // network IDs hidden for this profile (e.g. ['tiktok', 'discord'])
   createdAt: number
   localOnly?: boolean
 }
 
-const DEFAULT_EMOJIS = ['🟦', '🟥', '🟩', '🟨', '🟪', '🟧', '⬛', '🔵']
+export type ProfileDraft = {
+  name: string
+  emoji?: string
+  avatar?: string
+  hiddenNetworks?: string[]
+}
 
-export const useProfilesStore = defineStore('profiles', {
+const DEFAULT_EMOJIS = ["🟦", "🟥", "🟩", "🟨", "🟪", "🟧", "⬛", "🔵"]
+export const PROFILE_NAME_MAX_LENGTH = 64
+export const PROFILE_EMOJI_MAX_LENGTH = 16
+export const PROFILE_AVATAR_MAX_LENGTH = 300_000
+const PROFILE_AVATAR_DATA_URL = /^data:image\/(?:png|jpeg|webp|gif);base64,/i
+
+export function validateProfileDraft(draft: ProfileDraft): ProfileDraft {
+  const name = draft.name.trim()
+  const emoji = draft.emoji?.trim()
+  if (!name) throw new Error("Profile name is required.")
+  if (name.length > PROFILE_NAME_MAX_LENGTH)
+    throw new Error("Profile name is too long.")
+  if (emoji && emoji.length > PROFILE_EMOJI_MAX_LENGTH)
+    throw new Error("Profile emoji is too long.")
+  if (
+    draft.avatar &&
+    (draft.avatar.length > PROFILE_AVATAR_MAX_LENGTH ||
+      (!PROFILE_AVATAR_DATA_URL.test(draft.avatar) &&
+        !draft.avatar.startsWith("https://")))
+  ) {
+    throw new Error("Profile avatar is invalid or too large.")
+  }
+  if (
+    draft.hiddenNetworks?.some(
+      (networkId) => !networkId || networkId.length > 64,
+    )
+  ) {
+    throw new Error("Profile network selection is invalid.")
+  }
+  return {
+    name,
+    emoji,
+    avatar: draft.avatar,
+    hiddenNetworks: [...new Set(draft.hiddenNetworks ?? [])],
+  }
+}
+
+export const useProfilesStore = defineStore("profiles", {
   state: () => ({
     profiles: [] as Profile[],
-    activeProfileId: '' as string,
+    activeProfileId: "" as string,
   }),
 
   getters: {
@@ -37,11 +83,17 @@ export const useProfilesStore = defineStore('profiles', {
       profile.localOnly = false
     },
 
-    /** Add a new profile and make it active. */
-    add(name: string): Profile {
+    /** Create a profile from one validated draft and make it active. */
+    create(draft: ProfileDraft): Profile {
+      const validated = validateProfileDraft(draft)
+      const name = validated.name
       const placeholder = this.getPlaceholderProfile()
       if (placeholder) {
         placeholder.name = name
+        placeholder.emoji =
+          validated.emoji || placeholder.emoji || DEFAULT_EMOJIS[0]
+        placeholder.avatar = validated.avatar
+        placeholder.hiddenNetworks = [...(validated.hiddenNetworks ?? [])]
         this.materializeProfile(placeholder)
         this.activeProfileId = placeholder.id
         this.syncProfileToCloud(placeholder)
@@ -49,11 +101,15 @@ export const useProfilesStore = defineStore('profiles', {
         return placeholder
       }
 
-      const emoji = DEFAULT_EMOJIS[this.profiles.length % DEFAULT_EMOJIS.length]
+      const emoji =
+        validated.emoji ||
+        DEFAULT_EMOJIS[this.profiles.length % DEFAULT_EMOJIS.length]
       const profile: Profile = {
         id: crypto.randomUUID(),
         name,
         emoji,
+        avatar: validated.avatar,
+        hiddenNetworks: [...(validated.hiddenNetworks ?? [])],
         createdAt: Date.now(),
       }
       this.profiles.push(profile)
@@ -63,13 +119,33 @@ export const useProfilesStore = defineStore('profiles', {
       return profile
     },
 
+    /** Backwards-compatible name-only creation used by the mobile sheet. */
+    add(name: string): Profile {
+      return this.create({ name })
+    },
+
+    /** Apply all editable fields as one store mutation and one cloud upsert. */
+    update(profileId: string, draft: ProfileDraft): Profile | undefined {
+      const profile = this.profiles.find((item) => item.id === profileId)
+      if (!profile) return undefined
+      const validated = validateProfileDraft(draft)
+
+      profile.name = validated.name
+      profile.emoji = validated.emoji || profile.emoji || DEFAULT_EMOJIS[0]
+      profile.avatar = validated.avatar
+      profile.hiddenNetworks = [...(validated.hiddenNetworks ?? [])]
+      this.materializeProfile(profile)
+      this.syncProfileToCloud(profile)
+      return profile
+    },
+
     /** Remove a profile; switch to another if it was active. */
     remove(profileId: string) {
       const idx = this.profiles.findIndex((p) => p.id === profileId)
       if (idx === -1) return
       this.profiles.splice(idx, 1)
       if (this.activeProfileId === profileId) {
-        this.activeProfileId = this.profiles[0]?.id ?? ''
+        this.activeProfileId = this.profiles[0]?.id ?? ""
         this.syncActiveProfileToCloud(this.activeProfileId || undefined)
       }
       this.removeProfileFromCloud(profileId)
@@ -139,7 +215,7 @@ export const useProfilesStore = defineStore('profiles', {
       if (this.profiles.length === 0) {
         const profile: Profile = {
           id: crypto.randomUUID(),
-          name: 'Profile 1',
+          name: "Profile 1",
           emoji: DEFAULT_EMOJIS[0],
           createdAt: Date.now(),
           localOnly: true,
@@ -148,7 +224,10 @@ export const useProfilesStore = defineStore('profiles', {
         this.activeProfileId = profile.id
         return profile
       }
-      if (!this.activeProfileId || !this.profiles.find((p) => p.id === this.activeProfileId)) {
+      if (
+        !this.activeProfileId ||
+        !this.profiles.find((p) => p.id === this.activeProfileId)
+      ) {
         this.activeProfileId = this.profiles[0].id
       }
       return this.profiles.find((p) => p.id === this.activeProfileId)!
@@ -156,12 +235,12 @@ export const useProfilesStore = defineStore('profiles', {
 
     replaceFromCloud(
       cloudProfiles: Array<{
-        profileId: string;
-        name: string;
-        emoji: string;
-        avatar?: string;
-        hiddenNetworks?: string[];
-        createdAt: number;
+        profileId: string
+        name: string
+        emoji: string
+        avatar?: string
+        hiddenNetworks?: string[]
+        createdAt: number
       }>,
       activeProfileId?: string,
     ) {
@@ -176,9 +255,10 @@ export const useProfilesStore = defineStore('profiles', {
           localOnly: false,
         }))
         .sort((a, b) => a.createdAt - b.createdAt)
-      this.activeProfileId = activeProfileId && this.profiles.some((p) => p.id === activeProfileId)
-        ? activeProfileId
-        : (this.profiles[0]?.id ?? '')
+      this.activeProfileId =
+        activeProfileId && this.profiles.some((p) => p.id === activeProfileId)
+          ? activeProfileId
+          : (this.profiles[0]?.id ?? "")
     },
 
     async syncProfileToCloud(profile: Profile) {
@@ -220,7 +300,7 @@ export const useProfilesStore = defineStore('profiles', {
 
     clearLocal() {
       this.profiles = []
-      this.activeProfileId = ''
+      this.activeProfileId = ""
     },
   },
 

@@ -21,18 +21,29 @@
         >
           <div
             class="sidebar-header"
-            :class="{ 'sidebar-header--compact': iconsOnly, 'sidebar-header--spaced': !iconsOnly }"
+            :class="{
+              'sidebar-header--compact': iconsOnly,
+              'sidebar-header--spaced': !iconsOnly,
+            }"
           >
             <div
               class="sidebar-actions"
               :class="{ 'sidebar-actions--compact': iconsOnly }"
             >
               <Button
-                v-sg-tooltip.left="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+                v-sg-tooltip.left="
+                  diagnosticsCopied
+                    ? 'Diagnostic copié'
+                    : 'Copier le diagnostic'
+                "
                 :icon="diagnosticsCopied ? 'pi pi-check' : 'pi pi-info-circle'"
                 text
                 :class="['sidebar-header-button', { 'w-full': iconsOnly }]"
-                :aria-label="diagnosticsCopied ? 'Diagnostic copié' : 'Copier le diagnostic'"
+                :aria-label="
+                  diagnosticsCopied
+                    ? 'Diagnostic copié'
+                    : 'Copier le diagnostic'
+                "
                 @click="copyDiagnostics"
               />
               <Button
@@ -71,18 +82,17 @@
               size="xlarge"
               shape="circle"
             />
-            <h3>{{ profilesStore.activeProfile?.name ?? 'Profil' }}</h3>
-            <p>{{ profilesStore.profiles.length }} {{ profilesStore.profiles.length > 1 ? 'profils' : 'profil' }}</p>
-            <ProfileSwitcher
-              ref="profileSwitcher"
-              :icons-only="false"
-            />
+            <h3>{{ profilesStore.activeProfile?.name ?? "Profil" }}</h3>
+            <p>
+              {{ profilesStore.profiles.length }}
+              {{ profilesStore.profiles.length > 1 ? "profils" : "profil" }}
+            </p>
             <Button
-              label="Ajouter un profil"
-              icon="pi pi-plus"
+              label="Gérer les profils"
+              icon="pi pi-cog"
               text
               size="small"
-              @click="openProfileCreator"
+              @click="emit('manage-profiles')"
             />
           </div>
 
@@ -93,7 +103,10 @@
               :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
               :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'feed')"
             />
             <Button
@@ -101,7 +114,10 @@
               :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
               :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'profile')"
             />
             <Button
@@ -109,7 +125,10 @@
               :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
               :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'friends')"
             />
             <Button
@@ -118,7 +137,10 @@
               :aria-label="iconsOnly ? $t('common.notifications') : undefined"
               :badge="'3'"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'notifications')"
             />
             <Button
@@ -126,7 +148,10 @@
               :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
               :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'saved')"
             />
             <Button
@@ -134,7 +159,10 @@
               :label="iconsOnly ? undefined : $t('sidebar.events_button')"
               :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
               text
-              :class="['w-full', iconsOnly ? 'menu-button--centered' : 'menu-button--leading']"
+              :class="[
+                'w-full',
+                iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
+              ]"
               @click="emit('open-rightpanel-section', 'events')"
             />
           </div>
@@ -143,27 +171,34 @@
             v-if="!iconsOnly"
             class="kanban-host"
           >
-            <div
-              class="sidebar-widget"
-            >
+            <div class="sidebar-widget">
               <button
                 class="sidebar-widget__toggle"
                 type="button"
-                :aria-label="isKanbanCollapsed ? 'Replier puis ouvrir Kanban' : 'Déplier et réduire Kanban'"
+                :aria-label="
+                  isKanbanCollapsed
+                    ? 'Replier puis ouvrir Kanban'
+                    : 'Déplier et réduire Kanban'
+                "
                 :aria-expanded="String(!isKanbanCollapsed)"
                 @click="isKanbanCollapsed = !isKanbanCollapsed"
               >
                 <span class="sidebar-widget__title">Kanban</span>
                 <span class="sidebar-widget__state">
-                  {{ isKanbanCollapsed ? 'Replié' : 'Déplié' }}
+                  {{ isKanbanCollapsed ? "Replié" : "Déplié" }}
                 </span>
                 <SgIcon
-                  :icon="['pi', isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']"
+                  :icon="[
+                    'pi',
+                    isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                  ]"
                 />
               </button>
               <div
                 class="sidebar-widget__body sidebar-widget__body--kanban"
-                :class="{ 'sidebar-widget__body--collapsed': isKanbanCollapsed }"
+                :class="{
+                  'sidebar-widget__body--collapsed': isKanbanCollapsed,
+                }"
               >
                 <KanbanSidebar />
               </div>
@@ -178,16 +213,23 @@
               <button
                 class="sidebar-widget__toggle"
                 type="button"
-                :aria-label="isCrmCollapsed ? 'Replier puis ouvrir CRM' : 'Déplier et réduire CRM'"
+                :aria-label="
+                  isCrmCollapsed
+                    ? 'Replier puis ouvrir CRM'
+                    : 'Déplier et réduire CRM'
+                "
                 :aria-expanded="String(!isCrmCollapsed)"
                 @click="isCrmCollapsed = !isCrmCollapsed"
               >
                 <span class="sidebar-widget__title">CRM</span>
                 <span class="sidebar-widget__state">
-                  {{ isCrmCollapsed ? 'Replié' : 'Déplié' }}
+                  {{ isCrmCollapsed ? "Replié" : "Déplié" }}
                 </span>
                 <SgIcon
-                  :icon="['pi', isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up']"
+                  :icon="[
+                    'pi',
+                    isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                  ]"
                 />
               </button>
               <div
@@ -208,78 +250,87 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
-import Button from './ui/SgButton.vue'
-import Avatar from './ui/SgAvatar.vue'
-import { useProfilesStore } from '@/stores/profiles'
-import { useMediaQuery } from '@/composables/useMediaQuery'
-import ProfileSwitcher from './ProfileSwitcher.vue'
-import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
-import { getPlatformCapabilities } from '@/platform/capabilities'
-import { useWebviewStore } from '@/stores/webviewState'
-import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
-import KanbanSidebar from './kanban/KanbanSidebar.vue'
-import CrmSidebarWidget from './CrmSidebarWidget.vue'
-import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
+import { nextTick, onMounted, ref, watch } from "vue"
+import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
+import Button from "./ui/SgButton.vue"
+import Avatar from "./ui/SgAvatar.vue"
+import { useProfilesStore } from "@/stores/profiles"
+import { useMediaQuery } from "@/composables/useMediaQuery"
+import { buildDiagnosticsReport } from "@/lib/buildDiagnostics"
+import { getPlatformCapabilities } from "@/platform/capabilities"
+import { useWebviewStore } from "@/stores/webviewState"
+import {
+  isCompactSidebarSize,
+  sidebarSizeForMode,
+  SIDEBAR_EXPANDED_SIZE,
+} from "./sidebarLayout"
+import KanbanSidebar from "./kanban/KanbanSidebar.vue"
+import CrmSidebarWidget from "./CrmSidebarWidget.vue"
+import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 
 const props = defineProps<{
   modelValue: boolean
 }>()
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'open-settings': []
-  'open-rightpanel-section': [sectionId: string]
+  "update:modelValue": [value: boolean]
+  "open-settings": []
+  "open-rightpanel-section": [sectionId: string]
+  "manage-profiles": []
 }>()
 
 const webviewStore = useWebviewStore()
-const isSidebarMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
+const isSidebarMobile = useMediaQuery(
+  `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
+)
 const diagnosticsCopied = ref(false)
 
-const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
+const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
 async function copyDiagnostics() {
   const capabilities = getPlatformCapabilities()
   const report = buildDiagnosticsReport({
-    surface: 'desktop-right-sidebar',
-    active_network: webviewStore.activeNetworkId ?? 'none',
-    profile_selected: profilesStore.activeProfileId ? 'yes' : 'no',
+    surface: "desktop-right-sidebar",
+    active_network: webviewStore.activeNetworkId ?? "none",
+    profile_selected: profilesStore.activeProfileId ? "yes" : "no",
     profile_count: String(profilesStore.profiles.length),
     desktop_tauri: String(capabilities.isDesktopTauri),
     native_webview: String(capabilities.supportsNativeWebview),
-    native_session_isolation: String(capabilities.supportsNativeSessionIsolation),
+    native_session_isolation: String(
+      capabilities.supportsNativeSessionIsolation,
+    ),
   })
 
   try {
     await navigator.clipboard.writeText(report)
   } catch {
-    const textarea = document.createElement('textarea')
+    const textarea = document.createElement("textarea")
     textarea.value = report
     document.body.appendChild(textarea)
     textarea.select()
-    document.execCommand('copy')
+    document.execCommand("copy")
     document.body.removeChild(textarea)
   }
 
   diagnosticsCopied.value = true
-  window.setTimeout(() => { diagnosticsCopied.value = false }, 2000)
+  window.setTimeout(() => {
+    diagnosticsCopied.value = false
+  }, 2000)
 }
 
 const iconsOnly = ref(false)
 const profilesStore = useProfilesStore()
 const isKanbanCollapsed = ref(false)
 const isCrmCollapsed = ref(true)
-const KANBAN_COLLAPSE_KEY = 'communityglows-right-sidebar-kanban-collapsed'
-const CRM_COLLAPSE_KEY = 'communityglows-right-sidebar-crm-collapsed'
+const KANBAN_COLLAPSE_KEY = "communityglows-right-sidebar-kanban-collapsed"
+const CRM_COLLAPSE_KEY = "communityglows-right-sidebar-crm-collapsed"
 const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
-const profileSwitcher = ref<{ openProfileCreator: () => void } | null>(null)
 
 const readBoolFromStorage = (key: string, fallback: boolean) => {
   try {
     const value = window.localStorage.getItem(key)
     if (value === null) return fallback
-    return value === '1' || value.toLowerCase() === 'true'
+    return value === "1" || value.toLowerCase() === "true"
   } catch {
     return fallback
   }
@@ -287,7 +338,7 @@ const readBoolFromStorage = (key: string, fallback: boolean) => {
 
 const writeBoolToStorage = (key: string, value: boolean) => {
   try {
-    window.localStorage.setItem(key, value ? '1' : '0')
+    window.localStorage.setItem(key, value ? "1" : "0")
   } catch {
     // noop
   }
@@ -298,30 +349,25 @@ onMounted(() => {
   isCrmCollapsed.value = readBoolFromStorage(CRM_COLLAPSE_KEY, true)
 })
 
-watch(isKanbanCollapsed, isCollapsed => {
+watch(isKanbanCollapsed, (isCollapsed) => {
   writeBoolToStorage(KANBAN_COLLAPSE_KEY, isCollapsed)
 })
 
-watch(isCrmCollapsed, isCollapsed => {
+watch(isCrmCollapsed, (isCollapsed) => {
   writeBoolToStorage(CRM_COLLAPSE_KEY, isCollapsed)
 })
 
-watch(iconsOnly, async compact => {
+watch(iconsOnly, async (compact) => {
   await nextTick()
   sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
-const openProfileCreator = () => {
-  profileSwitcher.value?.openProfileCreator()
-}
-
 const handleResize = (sizes: number[]) => {
   const newSize = sizes[1]
-  if (typeof newSize !== 'number') return
+  if (typeof newSize !== "number") return
 
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
-
 </script>
 
 <style scoped>
@@ -414,7 +460,8 @@ const handleResize = (sizes: number[]) => {
 }
 
 .profile-section h3 {
-  margin: var(--sg-right-sidebar-profile-title-margin-block-start) 0 var(--sg-right-sidebar-profile-title-margin-block-end);
+  margin: var(--sg-right-sidebar-profile-title-margin-block-start) 0
+    var(--sg-right-sidebar-profile-title-margin-block-end);
   font-size: var(--sg-right-sidebar-profile-title-size);
 }
 
@@ -484,7 +531,8 @@ const handleResize = (sizes: number[]) => {
   align-items: center;
   justify-content: space-between;
   gap: var(--sg-sidebar-control-gap);
-  padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
+  padding: var(--sg-sidebar-section-padding-block)
+    var(--sg-sidebar-section-padding-inline);
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
   cursor: pointer;
@@ -515,7 +563,9 @@ const handleResize = (sizes: number[]) => {
 
 .sidebar-widget__body {
   overflow: hidden;
-  transition: max-height var(--sg-motion-all-0d2s-ease), opacity var(--sg-motion-all-0d2s-ease);
+  transition:
+    max-height var(--sg-motion-all-0d2s-ease),
+    opacity var(--sg-motion-all-0d2s-ease);
   opacity: 1;
 }
 
@@ -546,9 +596,19 @@ const handleResize = (sizes: number[]) => {
   background-color: var(--sg-color-surface-overlay);
 }
 
-.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--sg-color-border); transition: var(--sg-right-sidebar-gutter-transition); }
-.sidebar-resize-handle:hover { background: var(--sg-color-action); }
-.sidebar-resize-handle:focus-visible { background: var(--sg-color-action); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sidebar-resize-handle {
+  width: var(--sg-sidebar-resize-handle-width);
+  background: var(--sg-color-border);
+  transition: var(--sg-right-sidebar-gutter-transition);
+}
+.sidebar-resize-handle:hover {
+  background: var(--sg-color-action);
+}
+.sidebar-resize-handle:focus-visible {
+  background: var(--sg-color-action);
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar,
@@ -556,4 +616,4 @@ const handleResize = (sizes: number[]) => {
     transition: var(--sg-motion-none);
   }
 }
-</style> 
+</style>

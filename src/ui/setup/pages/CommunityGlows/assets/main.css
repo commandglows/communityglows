@@ -665,6 +665,9 @@ input, textarea, [contenteditable="true"] {
 
 body {
   min-width: unset;
+  /* The shared extension stylesheet forces a permanent page scrollbar. The
+     Tauri shell owns its viewport and scrolls only its explicit panels. */
+  overflow: hidden !important;
   background-color: var(--sg-color-background);
   color: var(--sg-color-text);
 }

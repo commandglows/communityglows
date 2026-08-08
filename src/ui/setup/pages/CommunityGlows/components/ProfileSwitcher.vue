@@ -5,7 +5,9 @@
   >
     <!-- Trigger button -->
     <div
-      v-sg-tooltip.right="iconsOnly ? (profilesStore.activeProfile?.name ?? 'Profile') : undefined"
+      v-sg-tooltip.right="
+        iconsOnly ? (profilesStore.activeProfile?.name ?? 'Profile') : undefined
+      "
       class="profile-trigger"
       :class="{ active: menuVisible }"
       role="button"
@@ -14,17 +16,22 @@
       @click="toggleMenu"
       @keydown.enter.space.prevent="toggleMenu"
     >
-      <span class="profile-emoji">{{ profilesStore.activeProfile?.emoji ?? '👤' }}</span>
+      <span class="profile-emoji">
+        {{ profilesStore.activeProfile?.emoji ?? "👤" }}
+      </span>
       <span
         v-if="!iconsOnly"
         class="profile-name"
       >
-        {{ profilesStore.activeProfile?.name ?? 'No profile' }}
+        {{ profilesStore.activeProfile?.name ?? "No profile" }}
       </span>
       <SgIcon
         v-if="!iconsOnly"
         icon="pi"
-        :class="[ menuDirection === 'up' ? 'pi-chevron-up' : 'pi-chevron-down', { rotated: menuVisible }, ]"
+        :class="[
+          menuDirection === 'up' ? 'pi-chevron-up' : 'pi-chevron-down',
+          { rotated: menuVisible },
+        ]"
       />
     </div>
 
@@ -37,80 +44,46 @@
     >
       <div class="profile-menu-header">Profiles</div>
       <div
-        v-if="deleteError"
-        class="profile-error"
-        role="alert"
-      >
-        {{ deleteError }}
-      </div>
-
-      <div
         v-for="profile in profilesStore.profiles"
         :key="profile.id"
         class="profile-option"
-        :class="{ 'profile-option--active': profile.id === profilesStore.activeProfileId }"
+        :class="{
+          'profile-option--active':
+            profile.id === profilesStore.activeProfileId,
+        }"
         role="option"
         tabindex="0"
         :aria-selected="profile.id === profilesStore.activeProfileId"
         @click="selectProfile(profile.id)"
         @keydown.enter.space.prevent="selectProfile(profile.id)"
       >
-        <span class="profile-option-emoji">{{ profile.emoji }}</span>
-        <span
-          v-if="editingId !== profile.id"
-          class="profile-option-name"
-        >{{ profile.name }}</span>
-        <input
-          v-else
-          ref="editInputRef"
-          v-model="editName"
-          class="profile-edit-input"
-          @blur="saveEdit(profile.id)"
-          @keydown.enter="saveEdit(profile.id)"
-          @keydown.escape="cancelEdit"
-          @click.stop
+        <img
+          v-if="profile.avatar"
+          :src="profile.avatar"
+          class="profile-option-avatar"
+          alt=""
         />
-        <div class="profile-option-actions">
-          <button
-            class="action-btn"
-            aria-label="Rename profile"
-            @click.stop="startEdit(profile)"
-          >
-            <SgIcon icon="pi pi-pencil" />
-          </button>
-          <button
-            v-if="profilesStore.profiles.length > 1"
-            class="action-btn action-btn--danger"
-            aria-label="Delete profile"
-            @click.stop="deleteProfile(profile.id)"
-          >
-            <SgIcon icon="pi pi-trash" />
-          </button>
-        </div>
+        <span
+          v-else
+          class="profile-option-emoji"
+        >
+          {{ profile.emoji }}
+        </span>
+        <span class="profile-option-name">{{ profile.name }}</span>
+        <SgIcon
+          v-if="profile.id === profilesStore.activeProfileId"
+          icon="pi pi-check"
+          aria-hidden="true"
+        />
       </div>
 
       <div class="profile-menu-footer">
-        <div
-          v-if="addingNew"
-          class="add-profile-row"
-        >
-          <input
-            ref="addInputRef"
-            v-model="newProfileName"
-            class="profile-edit-input"
-            placeholder="Profile name…"
-            @blur="confirmAdd"
-            @keydown.enter="confirmAdd"
-            @keydown.escape="cancelAdd"
-          />
-        </div>
         <button
-          v-else
           class="add-profile-btn"
-          @click.stop="startAdd"
+          @click.stop="openManager"
         >
-          <SgIcon icon="pi pi-plus" />
-          <span>Add profile</span>
+          <SgIcon icon="pi pi-cog" />
+          <span>Gérer les profils</span>
         </button>
       </div>
     </div>
@@ -118,33 +91,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, onUnmounted } from 'vue'
-import { COMMUNITYGLOWS_PROFILE_PICKED_EVENT } from '@/lib/communityGlowsDeepLinks'
-import { useProfilesStore } from '@/stores/profiles'
-import type { Profile } from '@/stores/profiles'
+import { ref, onMounted, onUnmounted } from "vue"
+import { COMMUNITYGLOWS_PROFILE_PICKED_EVENT } from "@/lib/communityGlowsDeepLinks"
+import { useProfilesStore } from "@/stores/profiles"
+
+const emit = defineEmits<{ "manage-profiles": [] }>()
 
 defineProps<{
   iconsOnly: boolean
-  menuDirection?: 'up' | 'down'
+  menuDirection?: "up" | "down"
 }>()
 
 const profilesStore = useProfilesStore()
 
 const menuVisible = ref(false)
-const editingId = ref<string | null>(null)
-const editName = ref('')
-const editInputRef = ref<HTMLInputElement | null>(null)
-const addingNew = ref(false)
-const newProfileName = ref('')
-const addInputRef = ref<HTMLInputElement | null>(null)
-const deleteError = ref<string | null>(null)
 
 function toggleMenu() {
   menuVisible.value = !menuVisible.value
 }
 
 function selectProfile(profileId: string) {
-  window.dispatchEvent(new CustomEvent(COMMUNITYGLOWS_PROFILE_PICKED_EVENT, { detail: { profileId } }))
+  window.dispatchEvent(
+    new CustomEvent(COMMUNITYGLOWS_PROFILE_PICKED_EVENT, {
+      detail: { profileId },
+    }),
+  )
   if (profileId === profilesStore.activeProfileId) {
     menuVisible.value = false
     return
@@ -154,55 +125,14 @@ function selectProfile(profileId: string) {
   menuVisible.value = false
 }
 
-function startEdit(profile: Profile) {
-  editingId.value = profile.id
-  editName.value = profile.name
-  nextTick(() => editInputRef.value?.focus())
-}
-
-function saveEdit(profileId: string) {
-  const trimmed = editName.value.trim()
-  if (trimmed) profilesStore.rename(profileId, trimmed)
-  editingId.value = null
-}
-
-function cancelEdit() {
-  editingId.value = null
-}
-
-async function deleteProfile(profileId: string) {
-  deleteError.value = null
-  if (typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window) {
-    try {
-      const { invoke } = await import('@tauri-apps/api/core')
-      await invoke('delete_profile_session', { profileId })
-    } catch {
-      deleteError.value = 'Unable to delete this profile session.'
-      return
-    }
-  }
-  profilesStore.remove(profileId)
-}
-
-function startAdd() {
-  addingNew.value = true
-  newProfileName.value = ''
-  nextTick(() => addInputRef.value?.focus())
-}
-
-function confirmAdd() {
-  const trimmed = newProfileName.value.trim()
-  if (trimmed) profilesStore.add(trimmed)
-  addingNew.value = false
-}
-
-function cancelAdd() {
-  addingNew.value = false
+function openManager() {
+  menuVisible.value = false
+  emit("manage-profiles")
 }
 
 // Close menu on outside click
 function handleOutsideClick(e: MouseEvent) {
-  const el = (e.target as HTMLElement).closest('.profile-switcher')
+  const el = (e.target as HTMLElement).closest(".profile-switcher")
   if (!el) menuVisible.value = false
 }
 
@@ -210,23 +140,17 @@ function openProfileMenu() {
   menuVisible.value = true
 }
 
-function openProfileCreator() {
-  menuVisible.value = true
-  startAdd()
-}
-
-defineExpose({ openProfileCreator })
-
 onMounted(() => {
-  document.addEventListener('click', handleOutsideClick)
-  window.addEventListener('communityglows-show-profile-sheet', openProfileMenu)
-  window.addEventListener('communityglows-create-profile', openProfileCreator)
+  document.addEventListener("click", handleOutsideClick)
+  window.addEventListener("communityglows-show-profile-sheet", openProfileMenu)
 })
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleOutsideClick)
-  window.removeEventListener('communityglows-show-profile-sheet', openProfileMenu)
-  window.removeEventListener('communityglows-create-profile', openProfileCreator)
+  document.removeEventListener("click", handleOutsideClick)
+  window.removeEventListener(
+    "communityglows-show-profile-sheet",
+    openProfileMenu,
+  )
 })
 </script>
 
@@ -347,6 +271,14 @@ onUnmounted(() => {
 .profile-option-emoji {
   font-size: var(--sg-font-size-1d1rem);
   line-height: var(--sg-line-height-1);
+  flex-shrink: 0;
+}
+
+.profile-option-avatar {
+  width: var(--sg-avatar-size-sm);
+  height: var(--sg-avatar-size-sm);
+  border-radius: var(--sg-radius-pill);
+  object-fit: cover;
   flex-shrink: 0;
 }
 

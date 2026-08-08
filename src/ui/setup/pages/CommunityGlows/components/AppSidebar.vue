@@ -18,7 +18,11 @@
           <div class="sidebar-main">
             <div
               class="sidebar-header"
-              :class="iconsOnly ? 'sidebar-header--centered' : 'sidebar-header--spaced'"
+              :class="
+                iconsOnly
+                  ? 'sidebar-header--centered'
+                  : 'sidebar-header--spaced'
+              "
             >
               <Button
                 v-sg-tooltip.right="'Toggle left sidebar'"
@@ -39,12 +43,28 @@
               <!-- Réseaux sociaux -->
               <div class="menu-section">
                 <div class="section-header">
-                  <h3 v-if="!iconsOnly">{{ $t('sidebar.networks_section') }}</h3>
+                  <h3 v-if="!iconsOnly">
+                    {{ $t("sidebar.networks_section") }}
+                  </h3>
                   <Button
-                    v-sg-tooltip.right="networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing')"
+                    v-sg-tooltip.right="
+                      networkEditMode
+                        ? $t('networks.finish_editing')
+                        : $t('networks.start_editing')
+                    "
                     :icon="networkEditMode ? 'pi pi-check' : 'pi pi-pencil'"
-                    :label="iconsOnly ? undefined : (networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing'))"
-                    :aria-label="networkEditMode ? $t('networks.finish_editing') : $t('networks.start_editing')"
+                    :label="
+                      iconsOnly
+                        ? undefined
+                        : networkEditMode
+                          ? $t('networks.finish_editing')
+                          : $t('networks.start_editing')
+                    "
+                    :aria-label="
+                      networkEditMode
+                        ? $t('networks.finish_editing')
+                        : $t('networks.start_editing')
+                    "
                     :aria-pressed="networkEditMode"
                     text
                     size="small"
@@ -74,14 +94,25 @@
                         text
                         :class="[
                           'network-btn',
-                          iconsOnly ? 'network-btn--centered' : 'network-btn--leading',
+                          iconsOnly
+                            ? 'network-btn--centered'
+                            : 'network-btn--leading',
                           {
                             'network-btn--active': isNetworkActive(item),
-                            'network-btn--editing': networkEditMode && !iconsOnly,
-                          }
+                            'network-btn--editing':
+                              networkEditMode && !iconsOnly,
+                          },
                         ]"
-                        :aria-pressed="networkEditMode ? !isNetworkHiddenForProfile(item) : undefined"
-                        @click="networkEditMode ? toggleNetworkVisibility(item) : navigateToNetwork(item)"
+                        :aria-pressed="
+                          networkEditMode
+                            ? !isNetworkHiddenForProfile(item)
+                            : undefined
+                        "
+                        @click="
+                          networkEditMode
+                            ? toggleNetworkVisibility(item)
+                            : navigateToNetwork(item)
+                        "
                       >
                         <template #icon>
                           <NetworkBrandIcon
@@ -95,7 +126,13 @@
                         class="network-visibility-indicator"
                         aria-hidden="true"
                       >
-                        <i :class="isNetworkHiddenForProfile(item) ? 'pi pi-eye-slash' : 'pi pi-eye'" />
+                        <i
+                          :class="
+                            isNetworkHiddenForProfile(item)
+                              ? 'pi pi-eye-slash'
+                              : 'pi pi-eye'
+                          "
+                        />
                       </span>
                     </div>
                   </div>
@@ -108,7 +145,7 @@
                   v-if="!iconsOnly"
                   class="section-header"
                 >
-                  <h3>{{ $t('sidebar.friends_section') }}</h3>
+                  <h3>{{ $t("sidebar.friends_section") }}</h3>
                   <Button
                     v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
                     icon="pi pi-users"
@@ -123,9 +160,27 @@
                   :class="{ 'friends-toggle--centered': iconsOnly }"
                 >
                   <Button
-                    v-sg-tooltip.right="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
-                    :label="iconsOnly ? undefined : (filterEnabled ? $t('friends_filter.friends_only') : $t('friends_filter.see_all'))"
-                    :aria-label="iconsOnly ? (filterEnabled ? $t('friends_filter.filter_active') : $t('friends_filter.filter_inactive')) : undefined"
+                    v-sg-tooltip.right="
+                      iconsOnly
+                        ? filterEnabled
+                          ? $t('friends_filter.filter_active')
+                          : $t('friends_filter.filter_inactive')
+                        : undefined
+                    "
+                    :label="
+                      iconsOnly
+                        ? undefined
+                        : filterEnabled
+                          ? $t('friends_filter.friends_only')
+                          : $t('friends_filter.see_all')
+                    "
+                    :aria-label="
+                      iconsOnly
+                        ? filterEnabled
+                          ? $t('friends_filter.filter_active')
+                          : $t('friends_filter.filter_inactive')
+                        : undefined
+                    "
                     :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
                     :aria-pressed="filterEnabled"
                     class="friends-filter-button"
@@ -158,7 +213,7 @@
                   v-if="!iconsOnly"
                   class="section-header"
                 >
-                  <h3>{{ $t('sidebar.custom_links_section') }}</h3>
+                  <h3>{{ $t("sidebar.custom_links_section") }}</h3>
                   <Button
                     v-sg-tooltip.right="$t('links.add_tooltip')"
                     icon="pi pi-plus"
@@ -192,8 +247,10 @@
                         text
                         :class="[
                           'network-btn',
-                          iconsOnly ? 'network-btn--centered' : 'network-btn--leading',
-                          { 'network-btn--active': isNetworkActive(item) }
+                          iconsOnly
+                            ? 'network-btn--centered'
+                            : 'network-btn--leading',
+                          { 'network-btn--active': isNetworkActive(item) },
                         ]"
                         @click="navigateToNetwork(item)"
                       />
@@ -237,14 +294,14 @@
                     :placeholder="$t('links.name_placeholder')"
                     class="add-link-input"
                     @keydown.enter="addCustomLink"
-                  >
+                  />
                   <input
                     v-model="newLinkUrl"
                     type="url"
                     :placeholder="$t('links.url_placeholder')"
                     class="add-link-input"
                     @keydown.enter="addCustomLink"
-                  >
+                  />
                   <Button
                     :label="$t('common.add')"
                     icon="pi pi-plus"
@@ -261,6 +318,7 @@
             :icons-only="iconsOnly"
             menu-direction="up"
             class="profile-switcher-bottom"
+            @manage-profiles="emit('manage-profiles')"
           />
         </div>
       </SplitterPanel>
@@ -276,21 +334,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onUnmounted, watch } from 'vue'
-import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from 'reka-ui'
-import { useRouter, useRoute } from 'vue-router'
-import { useWebviewStore } from '@/stores/webviewState'
-import { useProfilesStore } from '@/stores/profiles'
-import { useFriendsFilterStore } from '@/stores/friendsFilter'
-import { useCustomLinksStore } from '@/stores/customLinks'
-import { builtInSocialNetworks } from '@/config/socialNetworks'
-import type { MenuItem } from '../types'
-import Button from './ui/SgButton.vue'
-import SgDialog from './ui/SgDialog.vue'
-import ProfileSwitcher from './ProfileSwitcher.vue'
-import FriendsPanel from './FriendsPanel.vue'
-import NetworkBrandIcon from './NetworkBrandIcon.vue'
-import { isCompactSidebarSize, sidebarSizeForMode, SIDEBAR_EXPANDED_SIZE } from './sidebarLayout'
+import { ref, computed, nextTick, onUnmounted, watch } from "vue"
+import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
+import { useRouter, useRoute } from "vue-router"
+import { useWebviewStore } from "@/stores/webviewState"
+import { useProfilesStore } from "@/stores/profiles"
+import { useFriendsFilterStore } from "@/stores/friendsFilter"
+import { useCustomLinksStore } from "@/stores/customLinks"
+import { builtInSocialNetworks } from "@/config/socialNetworks"
+import type { MenuItem } from "../types"
+import Button from "./ui/SgButton.vue"
+import SgDialog from "./ui/SgDialog.vue"
+import ProfileSwitcher from "./ProfileSwitcher.vue"
+import FriendsPanel from "./FriendsPanel.vue"
+import NetworkBrandIcon from "./NetworkBrandIcon.vue"
+import {
+  isCompactSidebarSize,
+  sidebarSizeForMode,
+  SIDEBAR_EXPANDED_SIZE,
+} from "./sidebarLayout"
 
 const router = useRouter()
 const route = useRoute()
@@ -301,22 +363,26 @@ const customLinksStore = useCustomLinksStore()
 
 const showFriendsPanel = ref(false)
 const showAddLinkDialog = ref(false)
-const newLinkLabel = ref('')
-const newLinkUrl = ref('')
+const newLinkLabel = ref("")
+const newLinkUrl = ref("")
 
 const filterEnabled = computed(() => filterStore.enabled)
 
 const setFilterEnabled = () => filterStore.toggle()
 
 function openAddLinkDialog() {
-  newLinkLabel.value = ''
-  newLinkUrl.value = ''
+  newLinkLabel.value = ""
+  newLinkUrl.value = ""
   setAddLinkTooltipOverlay(true)
   showAddLinkDialog.value = true
 }
 
 function setAddLinkTooltipOverlay(active: boolean) {
-  window.dispatchEvent(new CustomEvent('communityglows-webview-overlay-state', { detail: { active } }))
+  window.dispatchEvent(
+    new CustomEvent("communityglows-webview-overlay-state", {
+      detail: { active },
+    }),
+  )
 }
 
 watch(showAddLinkDialog, (isOpen) => {
@@ -330,23 +396,24 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
-  'network-selected': [network: MenuItem]
+  "update:modelValue": [value: boolean]
+  "network-selected": [network: MenuItem]
+  "manage-profiles": []
 }>()
 
 const iconsOnly = ref(false)
 const sidebarPanel = ref<{ resize: (size: number) => void } | null>(null)
 
-watch(iconsOnly, async compact => {
+watch(iconsOnly, async (compact) => {
   await nextTick()
   sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
-const toggleSidebar = () => emit('update:modelValue', !props.modelValue)
+const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
 const handleResize = (sizes: number[]) => {
   const newSize = sizes[0]
-  if (typeof newSize !== 'number') return
+  if (typeof newSize !== "number") return
 
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
@@ -360,8 +427,18 @@ const builtinMenuItems = builtInSocialNetworks.map((network, index) => ({
 
 const menuItems = ref<MenuItem[]>([
   ...builtinMenuItems,
-  { id: builtinMenuItems.length + 1, label: 'CRM', icon: 'pi pi-briefcase', route: '/crm' },
-  { id: builtinMenuItems.length + 2, label: 'Tâches', icon: 'pi pi-check-square', route: '/tasks' },
+  {
+    id: builtinMenuItems.length + 1,
+    label: "CRM",
+    icon: "pi pi-briefcase",
+    route: "/crm",
+  },
+  {
+    id: builtinMenuItems.length + 2,
+    label: "Tâches",
+    icon: "pi pi-check-square",
+    route: "/tasks",
+  },
 ])
 
 const networkEditMode = ref(false)
@@ -370,12 +447,16 @@ const visibleMenuItems = computed(() => {
   if (networkEditMode.value) return menuItems.value
   const profileId = profilesStore.activeProfileId
   if (!profileId) return menuItems.value
-  return menuItems.value.filter((item) => !profilesStore.isNetworkHidden(profileId, item.route.slice(1)))
+  return menuItems.value.filter(
+    (item) => !profilesStore.isNetworkHidden(profileId, item.route.slice(1)),
+  )
 })
 
 const isNetworkHiddenForProfile = (item: MenuItem) => {
   const profileId = profilesStore.activeProfileId
-  return !!profileId && profilesStore.isNetworkHidden(profileId, item.route.slice(1))
+  return (
+    !!profileId && profilesStore.isNetworkHidden(profileId, item.route.slice(1))
+  )
 }
 
 const toggleNetworkVisibility = (item: MenuItem) => {
@@ -389,7 +470,7 @@ const toggleNetworkEditMode = () => {
 }
 
 const customLinkItems = computed<MenuItem[]>(() => {
-  const profileId = profilesStore.activeProfileId ?? ''
+  const profileId = profilesStore.activeProfileId ?? ""
   return customLinksStore.getLinks(profileId).map((link, i) => ({
     id: 1000 + i,
     label: link.label,
@@ -399,24 +480,22 @@ const customLinkItems = computed<MenuItem[]>(() => {
 })
 
 const isNetworkActive = (item: MenuItem): boolean =>
-  item.route === '/crm'
-    ? (
-      webviewStore.activeNetworkId === 'gmail'
-      || (
-        webviewStore.activeNetworkId === null
-        && (route.path === '/crm' || route.path === '/gmail')
-      )
-    )
-    : item.route === '/tasks'
-      ? route.path === '/tasks' || webviewStore.activeNetworkId === 'tasks'
-    : webviewStore.activeNetworkId === item.route.slice(1)
+  item.route === "/crm"
+    ? webviewStore.activeNetworkId === "gmail" ||
+      (webviewStore.activeNetworkId === null &&
+        (route.path === "/crm" || route.path === "/gmail"))
+    : item.route === "/tasks"
+      ? route.path === "/tasks" || webviewStore.activeNetworkId === "tasks"
+      : webviewStore.activeNetworkId === item.route.slice(1)
 
 const navigateToNetwork = (network: MenuItem): void => {
   const networkId = network.route.slice(1) // '/twitter' → 'twitter'
 
-  if (networkId.startsWith('custom-')) {
-    const profileId = profilesStore.activeProfileId ?? ''
-    const link = customLinksStore.getLinks(profileId).find(l => l.id === networkId)
+  if (networkId.startsWith("custom-")) {
+    const profileId = profilesStore.activeProfileId ?? ""
+    const link = customLinksStore
+      .getLinks(profileId)
+      .find((l) => l.id === networkId)
     if (link) {
       profilesStore.ensureDefault()
       webviewStore.selectCustom(link.id, link.url)
@@ -429,20 +508,20 @@ const navigateToNetwork = (network: MenuItem): void => {
     router.push(network.route)
   }
 
-  emit('network-selected', network)
+  emit("network-selected", network)
 }
 
 const addCustomLink = () => {
   if (!newLinkLabel.value.trim() || !newLinkUrl.value.trim()) return
-  const profileId = profilesStore.activeProfileId ?? ''
+  const profileId = profilesStore.activeProfileId ?? ""
   customLinksStore.addLink(profileId, newLinkLabel.value, newLinkUrl.value)
-  newLinkLabel.value = ''
-  newLinkUrl.value = ''
+  newLinkLabel.value = ""
+  newLinkUrl.value = ""
   showAddLinkDialog.value = false
 }
 
 const removeCustomLink = (linkId: string) => {
-  const profileId = profilesStore.activeProfileId ?? ''
+  const profileId = profilesStore.activeProfileId ?? ""
   customLinksStore.removeLink(profileId, linkId)
 }
 
@@ -567,7 +646,8 @@ onUnmounted(() => {
 
 .network-row.active {
   background-color: var(--sg-color-surface-hover);
-  border-left: var(--sg-sidebar-active-indicator-width) solid var(--sg-color-action);
+  border-left: var(--sg-sidebar-active-indicator-width) solid
+    var(--sg-color-action);
 }
 
 .network-row--editing {
@@ -616,13 +696,13 @@ onUnmounted(() => {
   background-color: var(--sg-color-surface-hover);
 }
 
-
 .menu-section {
   margin-bottom: var(--sg-sidebar-section-spacing);
 }
 
 .section-header {
-  padding: var(--sg-sidebar-section-padding-block) var(--sg-sidebar-section-padding-inline);
+  padding: var(--sg-sidebar-section-padding-block)
+    var(--sg-sidebar-section-padding-inline);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -680,7 +760,11 @@ onUnmounted(() => {
   gap: var(--sg-sidebar-form-gap);
 }
 
-.friends-filter-button { width: var(--sg-sidebar-fill-size); min-height: var(--sg-sidebar-filter-height); border-radius: 0; }
+.friends-filter-button {
+  width: var(--sg-sidebar-fill-size);
+  min-height: var(--sg-sidebar-filter-height);
+  border-radius: 0;
+}
 
 .add-link-input {
   width: var(--sg-sidebar-fill-size);
@@ -697,7 +781,17 @@ onUnmounted(() => {
   }
 }
 
-.sidebar-resize-handle { width: var(--sg-sidebar-resize-handle-width); background: var(--sg-color-border); transition: var(--sg-sidebar-gutter-transition); }
-.sidebar-resize-handle:hover { background: var(--sg-color-action); }
-.sidebar-resize-handle:focus-visible { background: var(--sg-color-action); outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
-</style> 
+.sidebar-resize-handle {
+  width: var(--sg-sidebar-resize-handle-width);
+  background: var(--sg-color-border);
+  transition: var(--sg-sidebar-gutter-transition);
+}
+.sidebar-resize-handle:hover {
+  background: var(--sg-color-action);
+}
+.sidebar-resize-handle:focus-visible {
+  background: var(--sg-color-action);
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+</style>

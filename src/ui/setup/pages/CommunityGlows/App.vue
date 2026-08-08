@@ -24,16 +24,24 @@
           @open-right="rightSidebarVisible = true"
         />
         <div class="desktop-layout__content">
-          <AppSidebar v-model="sidebarVisible">
+          <AppSidebar
+            v-model="sidebarVisible"
+            @manage-profiles="profileManagerVisible = true"
+          >
             <AppRightSidebar
               v-model="rightSidebarVisible"
               @open-settings="settingsVisible = true"
               @open-rightpanel-section="openRightPanelSection"
+              @manage-profiles="profileManagerVisible = true"
             >
               <!-- Native Tauri webview host: shown when a webview-capable network is active -->
               <NetworkWebviewHost
                 v-if="webviewStore.activeUrl"
-                :suspended="settingsVisible || webviewOverlayActive > 0"
+                :suspended="
+                  settingsVisible ||
+                  profileManagerVisible ||
+                  webviewOverlayActive > 0
+                "
               />
               <!-- Router-view for Gmail (API), login, and other non-webview pages -->
               <router-view v-else />
@@ -59,6 +67,10 @@
     />
 
     <PostAuthSyncOverlay />
+    <ProfileManagerDialog
+      v-if="onboardingStore.completed && !isMobile"
+      v-model="profileManagerVisible"
+    />
     <MobileSettingsSheet
       v-if="onboardingStore.completed && !isMobile"
       v-model="settingsVisible"
@@ -67,19 +79,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { Notification, Notivue } from 'notivue'
-import { useI18n } from 'vue-i18n'
-import { useMediaQuery } from '@/composables/useMediaQuery'
-import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
-import { useThemeStore } from '@/stores/theme'
-import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
-import { useProfilesStore } from '@/stores/profiles'
-import { getNetworkIsolationOriginsByNetwork } from '@/config/socialNetworks'
-import { isAuthenticated } from '@/lib/convexAuth'
-import { hydrateCloudState, resetCloudSyncState } from '@/lib/cloudSync'
-import { syncSettingsPatch } from '@/lib/cloudSettings'
-import { restorePostAuthReadyFeedback } from '@/lib/postAuthSyncFeedback'
+import { ref, computed, watch, onMounted, onUnmounted } from "vue"
+import { Notification, Notivue } from "notivue"
+import { useI18n } from "vue-i18n"
+import { useMediaQuery } from "@/composables/useMediaQuery"
+import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
+import { useThemeStore } from "@/stores/theme"
+import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
+import { useProfilesStore } from "@/stores/profiles"
+import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
+import { isAuthenticated } from "@/lib/convexAuth"
+import { hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
+import { syncSettingsPatch } from "@/lib/cloudSettings"
+import { restorePostAuthReadyFeedback } from "@/lib/postAuthSyncFeedback"
 import {
   consumePendingCommunityGlowsDeepLinkAction,
   COMMUNITYGLOWS_DEEP_LINK_EVENT,
@@ -87,35 +99,41 @@ import {
   COMMUNITYGLOWS_SHARED_LINK_EVENT,
   resolveCommunityGlowsSharedUrl,
   type CommunityGlowsDeepLinkAction,
-} from '@/lib/communityGlowsDeepLinks'
-import { useOnboardingStore } from '@/stores/onboarding'
-import { isEditableShortcutTarget, normalizeShortcutEvent, useShortcutsStore } from '@/stores/shortcuts'
-import { useRouter } from 'vue-router'
+} from "@/lib/communityGlowsDeepLinks"
+import { useOnboardingStore } from "@/stores/onboarding"
+import {
+  isEditableShortcutTarget,
+  normalizeShortcutEvent,
+  useShortcutsStore,
+} from "@/stores/shortcuts"
+import { useRouter } from "vue-router"
 import {
   DEFAULT_TAP_SOUND_VARIANT,
   TAP_SOUND_STORAGE_KEY,
   normalizeTapSoundVariant,
-} from './utils/tapSound'
-import { preloadWebviews } from './composables/useWebviewPreload'
-import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from './utils/textZoom'
-import { useSignupNudge } from '@/composables/useSignupNudge'
-import { isDesktopTauri, supportsHaptics } from '@/platform/capabilities'
-import AppSidebar from './components/AppSidebar.vue'
-import AppRightSidebar from './components/AppRightSidebar.vue'
-import DesktopControlBar from './components/DesktopControlBar.vue'
-import NetworkWebviewHost from './components/NetworkWebviewHost.vue'
-import MobileLayout from './components/MobileLayout.vue'
-import MobileSettingsSheet from './components/MobileSettingsSheet.vue'
-import PostAuthSyncOverlay from './components/PostAuthSyncOverlay.vue'
-import SignupNudge from './components/SignupNudge.vue'
-import OnboardingFlow from './components/OnboardingFlow.vue'
-import ProductAccessGate from './components/ProductAccessGate.vue'
-import { useDesktopControlBarStore } from '@/stores/desktopControlBar'
-import { useBillingAccess } from '@/composables/useBillingAccess'
+} from "./utils/tapSound"
+import { preloadWebviews } from "./composables/useWebviewPreload"
+import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from "./utils/textZoom"
+import { useSignupNudge } from "@/composables/useSignupNudge"
+import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
+import AppSidebar from "./components/AppSidebar.vue"
+import AppRightSidebar from "./components/AppRightSidebar.vue"
+import DesktopControlBar from "./components/DesktopControlBar.vue"
+import NetworkWebviewHost from "./components/NetworkWebviewHost.vue"
+import MobileLayout from "./components/MobileLayout.vue"
+import MobileSettingsSheet from "./components/MobileSettingsSheet.vue"
+import PostAuthSyncOverlay from "./components/PostAuthSyncOverlay.vue"
+import SignupNudge from "./components/SignupNudge.vue"
+import OnboardingFlow from "./components/OnboardingFlow.vue"
+import ProductAccessGate from "./components/ProductAccessGate.vue"
+import ProfileManagerDialog from "./components/ProfileManagerDialog.vue"
+import { useDesktopControlBarStore } from "@/stores/desktopControlBar"
+import { useBillingAccess } from "@/composables/useBillingAccess"
 
 const sidebarVisible = ref(true)
 const rightSidebarVisible = ref(true)
 const settingsVisible = ref(false)
+const profileManagerVisible = ref(false)
 const webviewOverlayActive = ref(0)
 
 // Signup nudge (desktop only — mobile has its own in MobileLayout)
@@ -132,33 +150,51 @@ const billingAccess = useBillingAccess()
 const shortcutsStore = useShortcutsStore()
 const controlBarStore = useDesktopControlBarStore()
 const router = useRouter()
-const showDesktopControlBar = computed(() => !sidebarVisible.value || !rightSidebarVisible.value)
-const textZoomLevel = ref(normalizeTextZoomLevel(
-  Number(localStorage.getItem('communityglows_text_zoom') ?? String(TEXT_ZOOM_DEFAULT)),
-))
+const showDesktopControlBar = computed(
+  () => !sidebarVisible.value || !rightSidebarVisible.value,
+)
+const textZoomLevel = ref(
+  normalizeTextZoomLevel(
+    Number(
+      localStorage.getItem("communityglows_text_zoom") ??
+        String(TEXT_ZOOM_DEFAULT),
+    ),
+  ),
+)
 const webviewReadyVersion = ref(0)
 restorePostAuthReadyFeedback()
 
-const queuedDeepLinkAction = ref<CommunityGlowsDeepLinkAction | null>(consumePendingCommunityGlowsDeepLinkAction())
-const pendingProfileChoiceAction = ref<CommunityGlowsDeepLinkAction | null>(null)
+const queuedDeepLinkAction = ref<CommunityGlowsDeepLinkAction | null>(
+  consumePendingCommunityGlowsDeepLinkAction(),
+)
+const pendingProfileChoiceAction = ref<CommunityGlowsDeepLinkAction | null>(
+  null,
+)
 const lastHandledSharedUrl = ref<string | null>(null)
 
-const isMobile = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`)
+const isMobile = useMediaQuery(
+  `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
+)
 const shouldBlockProductAccess = computed(() => {
   if (!onboardingStore.completed || !isAuthenticated.value) return false
-  if (billingAccess.status.value === 'trial_expired') return true
-  return billingAccess.status.value === 'bridge_unavailable' && !billingAccess.canAccessProtected.value
+  if (billingAccess.status.value === "trial_expired") return true
+  return (
+    billingAccess.status.value === "bridge_unavailable" &&
+    !billingAccess.canAccessProtected.value
+  )
 })
 
 let unlistenTray: (() => void) | undefined
 
-const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
-let tauriInvoke: ((command: string, args?: Record<string, unknown>) => Promise<unknown>) | null = null
+const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
+let tauriInvoke:
+  | ((command: string, args?: Record<string, unknown>) => Promise<unknown>)
+  | null = null
 
 const ensureTauriInvoke = async () => {
   if (!isTauri) return null
   if (tauriInvoke) return tauriInvoke
-  const { invoke } = await import('@tauri-apps/api/core')
+  const { invoke } = await import("@tauri-apps/api/core")
   tauriInvoke = invoke
   return invoke
 }
@@ -167,12 +203,14 @@ const triggerNativeTapFeedback = () => {
   if (!supportsHaptics()) return
   const invoke = tauriInvoke
   if (invoke) {
-    invoke('plugin:android-webview|trigger_haptic').catch(() => {})
+    invoke("plugin:android-webview|trigger_haptic").catch(() => {})
     return
   }
-  ensureTauriInvoke().then((loadedInvoke) => {
-    loadedInvoke?.('plugin:android-webview|trigger_haptic').catch(() => {})
-  }).catch(() => {})
+  ensureTauriInvoke()
+    .then((loadedInvoke) => {
+      loadedInvoke?.("plugin:android-webview|trigger_haptic").catch(() => {})
+    })
+    .catch(() => {})
 }
 
 // Event handlers declared at module scope so onUnmounted can remove them
@@ -180,9 +218,11 @@ const onWebviewBack = () => {
   const profileId = profilesStore.activeProfileId
   const networkId = webviewStore.activeNetworkId
   if (isDesktopTauri() && profileId && networkId) {
-    ensureTauriInvoke().then((invoke) => {
-      invoke?.('close_webview', { profileId, networkId }).catch(() => {})
-    }).catch(() => {})
+    ensureTauriInvoke()
+      .then((invoke) => {
+        invoke?.("close_webview", { profileId, networkId }).catch(() => {})
+      })
+      .catch(() => {})
   }
   webviewStore.clearNetwork()
 }
@@ -192,7 +232,7 @@ const onGrayscaleChanged = ((e: CustomEvent) => {
 const onOpenProfileSheet = () => {
   webviewStore.clearNetwork()
   setTimeout(() => {
-    window.dispatchEvent(new CustomEvent('communityglows-show-profile-sheet'))
+    window.dispatchEvent(new CustomEvent("communityglows-show-profile-sheet"))
   }, 100)
 }
 const onSwitchProfile = ((e: CustomEvent) => {
@@ -202,248 +242,277 @@ const onSwitchProfile = ((e: CustomEvent) => {
     const networkId = webviewStore.activeNetworkId
     if (networkId) {
       const currentUrl = webviewStore.activeUrl
-      const urlOverride = currentUrl && currentUrl !== WEBVIEW_URLS[networkId]
-        ? currentUrl
-        : undefined
+      const urlOverride =
+        currentUrl && currentUrl !== WEBVIEW_URLS[networkId]
+          ? currentUrl
+          : undefined
       webviewStore.clearNetwork()
       setTimeout(() => webviewStore.selectNetwork(networkId, urlOverride), 100)
     }
   }
 }) as unknown as (e: Event) => void
-const onToggleDarkMode = () => { themeStore.toggleTheme() }
+const onToggleDarkMode = () => {
+  themeStore.toggleTheme()
+}
 const onProfilePicked = ((e: CustomEvent<{ profileId?: string }>) => {
   const pendingAction = pendingProfileChoiceAction.value
-  if (!pendingAction || pendingAction.type !== 'open-network') return
+  if (!pendingAction || pendingAction.type !== "open-network") return
 
-  const selectedProfileId = typeof e.detail?.profileId === 'string' && e.detail.profileId
-    ? e.detail.profileId
-    : profilesStore.activeProfileId
+  const selectedProfileId =
+    typeof e.detail?.profileId === "string" && e.detail.profileId
+      ? e.detail.profileId
+      : profilesStore.activeProfileId
 
   pendingProfileChoiceAction.value = null
-  openNetworkFromDeepLink(pendingAction.networkId, selectedProfileId, pendingAction.urlOverride)
+  openNetworkFromDeepLink(
+    pendingAction.networkId,
+    selectedProfileId,
+    pendingAction.urlOverride,
+  )
 }) as unknown as (e: Event) => void
 const onNativeTextZoomChanged = ((e: CustomEvent) => {
   const level = normalizeTextZoomLevel(Number(e.detail?.level))
   if (!Number.isFinite(level)) return
   textZoomLevel.value = level
-  localStorage.setItem('communityglows_text_zoom', String(level))
+  localStorage.setItem("communityglows_text_zoom", String(level))
 }) as unknown as (e: Event) => void
 const onNativeTapSoundChanged = ((e: CustomEvent) => {
   const enabled = e.detail?.enabled
-  if (typeof enabled !== 'boolean') return
-  localStorage.setItem('communityglows_tap_sound', String(enabled))
+  if (typeof enabled !== "boolean") return
+  localStorage.setItem("communityglows_tap_sound", String(enabled))
   syncSettingsPatch({ tapSoundEnabled: enabled }).catch(() => {})
 }) as unknown as (e: Event) => void
 const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
-  const rawUrl = typeof e.detail?.url === 'string' ? e.detail.url : ''
+  const rawUrl = typeof e.detail?.url === "string" ? e.detail.url : ""
   handleSharedUrl(rawUrl)
 }) as unknown as (e: Event) => void
-const onWebviewReady = () => { webviewReadyVersion.value += 1 }
+const onWebviewReady = () => {
+  webviewReadyVersion.value += 1
+}
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
-  if (event.type === 'keyup') return
+  if (event.type === "keyup") return
   if (isEditableShortcutTarget(event.target)) return
   const pressed = normalizeShortcutEvent(event)
-  const shortcut = shortcutsStore.enabledShortcuts.find(item => item.keys === pressed)
+  const shortcut = shortcutsStore.enabledShortcuts.find(
+    (item) => item.keys === pressed,
+  )
   if (!shortcut) return
   event.preventDefault()
-  if (shortcut.action === 'toggle-left-sidebar') sidebarVisible.value = !sidebarVisible.value
-  if (shortcut.action === 'toggle-right-sidebar') rightSidebarVisible.value = !rightSidebarVisible.value
-  if (shortcut.action === 'open-settings') settingsVisible.value = true
-  if (shortcut.action === 'open-crm') router.push('/crm')
-  if (shortcut.action === 'open-network' && shortcut.target) {
+  if (shortcut.action === "toggle-left-sidebar")
+    sidebarVisible.value = !sidebarVisible.value
+  if (shortcut.action === "toggle-right-sidebar")
+    rightSidebarVisible.value = !rightSidebarVisible.value
+  if (shortcut.action === "open-settings") settingsVisible.value = true
+  if (shortcut.action === "open-crm") router.push("/crm")
+  if (shortcut.action === "open-network" && shortcut.target) {
     webviewStore.selectNetwork(shortcut.target)
   }
-  if (shortcut.action === 'open-profile-selector') {
-    window.dispatchEvent(new CustomEvent('communityglows-show-profile-sheet'))
+  if (shortcut.action === "open-profile-selector") {
+    window.dispatchEvent(new CustomEvent("communityglows-show-profile-sheet"))
   }
-  if (shortcut.action === 'open-profile' && shortcut.target) {
+  if (shortcut.action === "open-profile" && shortcut.target) {
     const nextProfileId = shortcut.target
     profilesStore.setActive(nextProfileId)
     const currentNetworkId = webviewStore.activeNetworkId
-    if (currentNetworkId && profilesStore.isNetworkHidden(nextProfileId, currentNetworkId)) {
+    if (
+      currentNetworkId &&
+      profilesStore.isNetworkHidden(nextProfileId, currentNetworkId)
+    ) {
       webviewStore.clearNetwork()
     }
   }
-  if (shortcut.action === 'open-rightpanel-section' && shortcut.target) {
+  if (shortcut.action === "open-rightpanel-section" && shortcut.target) {
     void openRightPanelSection(shortcut.target)
   }
 }
 
-type RightPanelSection = 'feed' | 'profile' | 'friends' | 'notifications' | 'saved' | 'events'
-type RightPanelSectionMap = Record<string, Partial<Record<RightPanelSection, string>>>
+type RightPanelSection =
+  | "feed"
+  | "profile"
+  | "friends"
+  | "notifications"
+  | "saved"
+  | "events"
+type RightPanelSectionMap = Record<
+  string,
+  Partial<Record<RightPanelSection, string>>
+>
 
 const rightPanelSectionMap: RightPanelSectionMap = {
   twitter: {
-    feed: '/home',
-    friends: '/i/following',
-    notifications: '/notifications',
-    profile: '/i/account',
-    saved: '/i/bookmarks',
-    events: '/i/events',
+    feed: "/home",
+    friends: "/i/following",
+    notifications: "/notifications",
+    profile: "/i/account",
+    saved: "/i/bookmarks",
+    events: "/i/events",
   },
   facebook: {
-    feed: '/',
-    friends: '/friends',
-    notifications: '/notifications',
-    profile: '/profile',
-    saved: '/bookmarks',
-    events: '/events',
+    feed: "/",
+    friends: "/friends",
+    notifications: "/notifications",
+    profile: "/profile",
+    saved: "/bookmarks",
+    events: "/events",
   },
   instagram: {
-    feed: '/',
-    friends: '/accounts/activity',
-    notifications: '/notifications',
-    profile: '/accounts/edit',
-    saved: '/saved',
+    feed: "/",
+    friends: "/accounts/activity",
+    notifications: "/notifications",
+    profile: "/accounts/edit",
+    saved: "/saved",
   },
   linkedin: {
-    feed: '/feed',
-    friends: '/mynetwork',
-    notifications: '/notifications',
-    profile: '/in/',
-    saved: '/my-items/saved-posts',
-    events: '/events',
+    feed: "/feed",
+    friends: "/mynetwork",
+    notifications: "/notifications",
+    profile: "/in/",
+    saved: "/my-items/saved-posts",
+    events: "/events",
   },
   tiktok: {
-    feed: '/',
-    notifications: '/inbox',
-    profile: '/@me',
-    saved: '/foryou',
+    feed: "/",
+    notifications: "/inbox",
+    profile: "/@me",
+    saved: "/foryou",
   },
   threads: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/users/me',
-    saved: '/search',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/users/me",
+    saved: "/search",
   },
   discord: {
-    feed: '/channels/@me',
-    friends: '/channels/@me',
-    notifications: '/channels/@me',
-    profile: '/settings',
+    feed: "/channels/@me",
+    friends: "/channels/@me",
+    notifications: "/channels/@me",
+    profile: "/settings",
   },
   reddit: {
-    feed: '/',
-    friends: '/user/me/friends',
-    notifications: '/message/inbox',
-    profile: '/user/me',
-    saved: '/user/me/saved',
-    events: '/r/all',
+    feed: "/",
+    friends: "/user/me/friends",
+    notifications: "/message/inbox",
+    profile: "/user/me",
+    saved: "/user/me/saved",
+    events: "/r/all",
   },
   snapchat: {
-    feed: '/',
-    notifications: '/',
-    profile: '/@me',
-    saved: '/',
+    feed: "/",
+    notifications: "/",
+    profile: "/@me",
+    saved: "/",
   },
   cinderreels: {
-    feed: '/',
-    notifications: '/',
-    profile: '/account',
+    feed: "/",
+    notifications: "/",
+    profile: "/account",
   },
   quora: {
-    feed: '/',
-    friends: '/following',
-    notifications: '/notifications',
-    profile: '/profile',
-    saved: '/search',
+    feed: "/",
+    friends: "/following",
+    notifications: "/notifications",
+    profile: "/profile",
+    saved: "/search",
   },
   pinterest: {
-    feed: '/',
-    friends: '/your-friends',
-    notifications: '/notifications',
-    profile: '/username',
-    saved: '/saved/',
+    feed: "/",
+    friends: "/your-friends",
+    notifications: "/notifications",
+    profile: "/username",
+    saved: "/saved/",
   },
   telegram: {
-    feed: '/k',
-    notifications: '/im',
-    profile: '/settings',
+    feed: "/k",
+    notifications: "/im",
+    profile: "/settings",
   },
   nextdoor: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/profile',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/profile",
   },
   patreon: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/manage',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/manage",
   },
   theresanaiforthat: {
-    feed: '/',
-    notifications: '/discussions',
-    profile: '/user',
-    saved: '/saved',
+    feed: "/",
+    notifications: "/discussions",
+    profile: "/user",
+    saved: "/saved",
   },
   industrysocial: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/my-account',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/my-account",
   },
   bluesky: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/profile',
-    saved: '/search',
-    events: '/search',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/profile",
+    saved: "/search",
+    events: "/search",
   },
   mastodon: {
-    feed: '/home',
-    notifications: '/notifications',
-    profile: '/users',
-    saved: '/explore/tags',
-    events: '/explore',
+    feed: "/home",
+    notifications: "/notifications",
+    profile: "/users",
+    saved: "/explore/tags",
+    events: "/explore",
   },
   substack: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/home',
-    saved: '/saved',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/home",
+    saved: "/saved",
   },
-  'ko-fi': {
-    feed: '/',
-    profile: '/home',
-    saved: '/shop',
+  "ko-fi": {
+    feed: "/",
+    profile: "/home",
+    saved: "/shop",
   },
   buymeacoffee: {
-    feed: '/',
-    profile: '/settings',
-    saved: '/',
+    feed: "/",
+    profile: "/settings",
+    saved: "/",
   },
   producthunt: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/me',
-    saved: '/posts',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/me",
+    saved: "/posts",
   },
   indiehackers: {
-    feed: '/',
-    notifications: '/notifications',
-    profile: '/members',
+    feed: "/",
+    notifications: "/notifications",
+    profile: "/members",
   },
   hackernews: {
-    feed: '/',
-    notifications: '/user',
-    profile: '/user',
-    saved: '/favorites',
-    events: '/newest',
+    feed: "/",
+    notifications: "/user",
+    profile: "/user",
+    saved: "/favorites",
+    events: "/newest",
   },
 }
 
-function resolveRightPanelSectionPath(networkId: string, sectionId: string): string {
+function resolveRightPanelSectionPath(
+  networkId: string,
+  sectionId: string,
+): string {
   const section = sectionId.toLowerCase() as RightPanelSection
   const byNetwork = rightPanelSectionMap[networkId] ?? {}
   const defaultSectionPaths: Record<string, string> = {
-    feed: '',
-    profile: '',
-    friends: '/friends',
-    notifications: '/notifications',
-    saved: '/saved',
-    events: '/events',
+    feed: "",
+    profile: "",
+    friends: "/friends",
+    notifications: "/notifications",
+    saved: "/saved",
+    events: "/events",
   }
-  return byNetwork[section] ?? defaultSectionPaths[section] ?? ''
+  return byNetwork[section] ?? defaultSectionPaths[section] ?? ""
 }
 
 async function openRightPanelSection(sectionId: string) {
@@ -453,12 +522,12 @@ async function openRightPanelSection(sectionId: string) {
 
   const baseUrl = WEBVIEW_URLS[networkId]
   const path = resolveRightPanelSectionPath(networkId, sectionId)
-  const url = `${baseUrl.replace(/\/$/, '')}${path ? `/${path.replace(/^\//, '')}` : ''}`
+  const url = `${baseUrl.replace(/\/$/, "")}${path ? `/${path.replace(/^\//, "")}` : ""}`
 
   if (isTauri) {
-    const { invoke } = await import('@tauri-apps/api/core')
+    const { invoke } = await import("@tauri-apps/api/core")
     try {
-      await invoke('navigate_webview', { profileId, networkId, url })
+      await invoke("navigate_webview", { profileId, networkId, url })
       return
     } catch {
       // Fallback below for desktop where command may be unavailable in older builds.
@@ -480,20 +549,30 @@ const onGlobalTap = (e: Event) => {
     'button, [role="button"], a[role="button"], .communityglows-tap, input[type="button"], input[type="submit"], label[for]',
   ) as HTMLElement | null
   if (!trigger) return
-  if (trigger.hasAttribute('disabled') || trigger.getAttribute('aria-disabled') === 'true') return
-  if (trigger.closest('[data-no-haptic]')) return
+  if (
+    trigger.hasAttribute("disabled") ||
+    trigger.getAttribute("aria-disabled") === "true"
+  )
+    return
+  if (trigger.closest("[data-no-haptic]")) return
   const now = performance.now()
   if (now - lastTapAt < 50) return
   lastTapAt = now
   triggerNativeTapFeedback()
 }
 
-function openNetworkFromDeepLink(networkId: string, profileId?: string, urlOverride?: string) {
+function openNetworkFromDeepLink(
+  networkId: string,
+  profileId?: string,
+  urlOverride?: string,
+) {
   profilesStore.ensureDefault()
 
-  const targetProfileId = profileId && profilesStore.profiles.some((profile) => profile.id === profileId)
-    ? profileId
-    : profilesStore.activeProfileId
+  const targetProfileId =
+    profileId &&
+    profilesStore.profiles.some((profile) => profile.id === profileId)
+      ? profileId
+      : profilesStore.activeProfileId
 
   if (targetProfileId && targetProfileId !== profilesStore.activeProfileId) {
     profilesStore.setActive(targetProfileId)
@@ -504,7 +583,7 @@ function openNetworkFromDeepLink(networkId: string, profileId?: string, urlOverr
 
 function openProfileChooserFromDeepLink() {
   webviewStore.clearNetwork()
-  window.dispatchEvent(new CustomEvent('communityglows-show-profile-sheet'))
+  window.dispatchEvent(new CustomEvent("communityglows-show-profile-sheet"))
 }
 
 function onWebviewOverlayState(event: Event) {
@@ -520,13 +599,13 @@ function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
     return
   }
 
-  if (action.type === 'create-task') {
+  if (action.type === "create-task") {
     webviewStore.clearNetwork()
-    router.push({ path: '/tasks', query: { url: action.urlOverride ?? '' } })
+    router.push({ path: "/tasks", query: { url: action.urlOverride ?? "" } })
     return
   }
 
-  if (action.type !== 'open-network') return
+  if (action.type !== "open-network") return
 
   profilesStore.ensureDefault()
 
@@ -536,7 +615,11 @@ function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
     return
   }
 
-  openNetworkFromDeepLink(action.networkId, action.profileId, action.urlOverride)
+  openNetworkFromDeepLink(
+    action.networkId,
+    action.profileId,
+    action.urlOverride,
+  )
 }
 
 const onDeepLinkAction = ((e: CustomEvent<CommunityGlowsDeepLinkAction>) => {
@@ -547,18 +630,22 @@ const onDeepLinkAction = ((e: CustomEvent<CommunityGlowsDeepLinkAction>) => {
 function handleSharedUrl(rawUrl: string) {
   const action = resolveCommunityGlowsSharedUrl(rawUrl)
   if (!action) return
-  const dedupeKey = `${action.networkId}:${action.urlOverride ?? ''}`
+  const dedupeKey = `${action.networkId}:${action.urlOverride ?? ""}`
   if (lastHandledSharedUrl.value === dedupeKey) return
   lastHandledSharedUrl.value = dedupeKey
   applyDeepLinkAction(action)
 }
 
 // Sync locale to Android plugin for native UI translations
-watch(locale, async (newLocale) => {
-  if (!isTauri) return
-  const { invoke } = await import('@tauri-apps/api/core')
-  invoke('set_locale', { locale: newLocale }).catch(() => {})
-}, { immediate: true })
+watch(
+  locale,
+  async (newLocale) => {
+    if (!isTauri) return
+    const { invoke } = await import("@tauri-apps/api/core")
+    invoke("set_locale", { locale: newLocale }).catch(() => {})
+  },
+  { immediate: true },
+)
 
 watch(
   () => isAuthenticated.value,
@@ -586,25 +673,31 @@ watch(
 )
 
 // When the settings toggle changes, sync the native webview on Android
-watch(() => themeStore.grayscaleEnabled, async (enabled) => {
-  if (!isTauri) return
-  const { invoke } = await import('@tauri-apps/api/core')
-  invoke('set_grayscale', { enabled }).catch(() => {})
-})
+watch(
+  () => themeStore.grayscaleEnabled,
+  async (enabled) => {
+    if (!isTauri) return
+    const { invoke } = await import("@tauri-apps/api/core")
+    invoke("set_grayscale", { enabled }).catch(() => {})
+  },
+)
 
 // Sync dark mode state to native Android bottom bar
-watch(() => themeStore.isDarkMode, async (enabled) => {
-  if (!isTauri) return
-  const { invoke } = await import('@tauri-apps/api/core')
-  invoke('set_dark_mode', { enabled }).catch(() => {})
-})
+watch(
+  () => themeStore.isDarkMode,
+  async (enabled) => {
+    if (!isTauri) return
+    const { invoke } = await import("@tauri-apps/api/core")
+    invoke("set_dark_mode", { enabled }).catch(() => {})
+  },
+)
 
 // Desktop child WebViews do not inherit Vue shell preferences automatically.
 // Apply the current settings to the active native child without changing shell CSS.
 const syncDesktopWebviewPreferences = async () => {
   if (!isDesktopTauri()) return
-  const { invoke } = await import('@tauri-apps/api/core')
-  invoke('set_webview_preferences', {
+  const { invoke } = await import("@tauri-apps/api/core")
+  invoke("set_webview_preferences", {
     profileId: profilesStore.activeProfileId,
     networkId: webviewStore.activeNetworkId,
     grayscale: themeStore.grayscaleEnabled,
@@ -629,28 +722,32 @@ watch(
 // Sync profile list to Android popup menu whenever profiles or active profile changes.
 // Keep the watcher shallow, but include a small avatar signature so the native menu refreshes after avatar edits.
 const nativeProfilesPayload = computed(() =>
-  profilesStore.profiles.map(p => ({
+  profilesStore.profiles.map((p) => ({
     id: p.id,
     name: p.name,
     emoji: p.emoji,
     avatar: p.avatar,
-  }))
+  })),
 )
 const profilesFingerprint = computed(() =>
   nativeProfilesPayload.value
     .map((p) => {
-      const avatarSig = p.avatar ? `${p.avatar.length}:${p.avatar.slice(-32)}` : ''
+      const avatarSig = p.avatar
+        ? `${p.avatar.length}:${p.avatar.slice(-32)}`
+        : ""
       return `${p.id}:${p.name}:${p.emoji}:${avatarSig}`
     })
-    .join('|')
+    .join("|"),
 )
 watch(
   [profilesFingerprint, () => profilesStore.activeProfileId],
   async ([_, activeId]) => {
     if (!isTauri) return
-    const { invoke } = await import('@tauri-apps/api/core')
+    const { invoke } = await import("@tauri-apps/api/core")
     const profilesJson = JSON.stringify(nativeProfilesPayload.value)
-    invoke('set_profiles', { profilesJson, activeProfileId: activeId }).catch(() => {})
+    invoke("set_profiles", { profilesJson, activeProfileId: activeId }).catch(
+      () => {},
+    )
   },
   { immediate: true },
 )
@@ -659,23 +756,28 @@ watch(
 // Re-fires when the active profile changes or its hiddenNetworks list is edited.
 const hiddenFingerprint = computed(() => {
   const p = profilesStore.activeProfile
-  return p ? `${p.id}:${(p.hiddenNetworks ?? []).join(',')}` : ''
+  return p ? `${p.id}:${(p.hiddenNetworks ?? []).join(",")}` : ""
 })
 watch(
   hiddenFingerprint,
   async () => {
     const activeNetworkId = webviewStore.activeNetworkId
     const profileId = profilesStore.activeProfileId
-    if (profileId && activeNetworkId && profilesStore.isNetworkHidden(profileId, activeNetworkId)) {
+    if (
+      profileId &&
+      activeNetworkId &&
+      profilesStore.isNetworkHidden(profileId, activeNetworkId)
+    ) {
       webviewStore.clearNetwork()
     }
 
     if (!isTauri) return
     if (!profileId) return
-    const visibleIds = Object.keys(WEBVIEW_URLS)
-      .filter(id => !profilesStore.isNetworkHidden(profileId, id))
-    const { invoke } = await import('@tauri-apps/api/core')
-    invoke('set_bar_networks', {
+    const visibleIds = Object.keys(WEBVIEW_URLS).filter(
+      (id) => !profilesStore.isNetworkHidden(profileId, id),
+    )
+    const { invoke } = await import("@tauri-apps/api/core")
+    invoke("set_bar_networks", {
       networkIds: visibleIds,
       storageOriginsByNetwork: getNetworkIsolationOriginsByNetwork(visibleIds),
     }).catch(() => {})
@@ -708,47 +810,69 @@ onMounted(async () => {
     }
   }
 
-  window.addEventListener('communityglows-network-webview-ready', onWebviewReady)
-  window.addEventListener('keydown', onKeyboardShortcut, { capture: true })
-  window.addEventListener('keyup', onKeyboardShortcut, { capture: true })
+  window.addEventListener(
+    "communityglows-network-webview-ready",
+    onWebviewReady,
+  )
+  window.addEventListener("keydown", onKeyboardShortcut, { capture: true })
+  window.addEventListener("keyup", onKeyboardShortcut, { capture: true })
 
   if (isTauri) {
     const invoke = await ensureTauriInvoke()
     if (invoke) {
       // Edge-to-edge: transparent status bar, content extends to top of screen
-      invoke('setup_display').catch(() => {})
+      invoke("setup_display").catch(() => {})
       // Sync initial dark mode state to native bar
-      invoke('set_dark_mode', { enabled: themeStore.isDarkMode }).catch(() => {})
+      invoke("set_dark_mode", { enabled: themeStore.isDarkMode }).catch(
+        () => {},
+      )
       // Keep the shared zoom state normalized before the first WebView opens.
       const savedZoom = normalizeTextZoomLevel(
-        Number(localStorage.getItem('communityglows_text_zoom') ?? String(TEXT_ZOOM_DEFAULT))
+        Number(
+          localStorage.getItem("communityglows_text_zoom") ??
+            String(TEXT_ZOOM_DEFAULT),
+        ),
       )
-      localStorage.setItem('communityglows_text_zoom', String(savedZoom))
+      localStorage.setItem("communityglows_text_zoom", String(savedZoom))
       textZoomLevel.value = savedZoom
       // Sync initial haptic + tap sound preferences to native plugin
       // (Kotlin defaults to haptic=on, tapSound=off — resync if user changed them)
-      const savedHaptic = localStorage.getItem('communityglows_haptic') !== 'false'
-      const savedTapSound = localStorage.getItem('communityglows_tap_sound') === 'true'
+      const savedHaptic =
+        localStorage.getItem("communityglows_haptic") !== "false"
+      const savedTapSound =
+        localStorage.getItem("communityglows_tap_sound") === "true"
       const savedTapSoundVariant = normalizeTapSoundVariant(
-        localStorage.getItem(TAP_SOUND_STORAGE_KEY) ?? DEFAULT_TAP_SOUND_VARIANT
+        localStorage.getItem(TAP_SOUND_STORAGE_KEY) ??
+          DEFAULT_TAP_SOUND_VARIANT,
       )
       localStorage.setItem(TAP_SOUND_STORAGE_KEY, savedTapSoundVariant)
-      invoke('plugin:android-webview|set_haptic', { enabled: savedHaptic }).catch(() => {})
-      invoke('plugin:android-webview|set_tap_sound_variant', { variant: savedTapSoundVariant }).catch(() => {})
+      invoke("plugin:android-webview|set_haptic", {
+        enabled: savedHaptic,
+      }).catch(() => {})
+      invoke("plugin:android-webview|set_tap_sound_variant", {
+        variant: savedTapSoundVariant,
+      }).catch(() => {})
       if (savedTapSound) {
-        invoke('plugin:android-webview|set_tap_sound', { enabled: true }).catch(() => {})
+        invoke("plugin:android-webview|set_tap_sound", { enabled: true }).catch(
+          () => {},
+        )
       }
 
       // Tray events use Rust Emitter.emit() → listen() from @tauri-apps/api/event
-      const { listen } = await import('@tauri-apps/api/event')
-      unlistenTray = await listen<string>('tray:open-network', ({ payload: networkId }) => {
-        profilesStore.ensureDefault()
-        webviewStore.selectNetwork(networkId)
-      })
+      const { listen } = await import("@tauri-apps/api/event")
+      unlistenTray = await listen<string>(
+        "tray:open-network",
+        ({ payload: networkId }) => {
+          profilesStore.ensureDefault()
+          webviewStore.selectNetwork(networkId)
+        },
+      )
 
       try {
-        const sharedLink = await invoke('plugin:android-webview|get_current_shared_link') as { url?: string | null }
-        if (typeof sharedLink?.url === 'string') {
+        const sharedLink = (await invoke(
+          "plugin:android-webview|get_current_shared_link",
+        )) as { url?: string | null }
+        if (typeof sharedLink?.url === "string") {
           handleSharedUrl(sharedLink.url)
         }
       } catch {
@@ -760,42 +884,84 @@ onMounted(async () => {
   // Kotlin bottom bar communicates via CustomEvents dispatched on the main Tauri WebView.
   // This uses evaluateJavascript() — the same proven mechanism as grayscale/mute injection.
   // (Plugin trigger() + addPluginListener was unreliable in production.)
-  window.addEventListener('communityglows-webview-back', onWebviewBack)
-  window.addEventListener('communityglows-grayscale-changed', onGrayscaleChanged)
-  window.addEventListener('communityglows-open-profile-sheet', onOpenProfileSheet)
-  window.addEventListener('communityglows-switch-profile', onSwitchProfile)
-  window.addEventListener('communityglows-toggle-dark-mode', onToggleDarkMode)
-  window.addEventListener('communityglows-text-zoom-changed', onNativeTextZoomChanged)
-  window.addEventListener('communityglows-tap-sound-changed', onNativeTapSoundChanged)
+  window.addEventListener("communityglows-webview-back", onWebviewBack)
+  window.addEventListener(
+    "communityglows-grayscale-changed",
+    onGrayscaleChanged,
+  )
+  window.addEventListener(
+    "communityglows-open-profile-sheet",
+    onOpenProfileSheet,
+  )
+  window.addEventListener("communityglows-switch-profile", onSwitchProfile)
+  window.addEventListener("communityglows-toggle-dark-mode", onToggleDarkMode)
+  window.addEventListener(
+    "communityglows-text-zoom-changed",
+    onNativeTextZoomChanged,
+  )
+  window.addEventListener(
+    "communityglows-tap-sound-changed",
+    onNativeTapSoundChanged,
+  )
   window.addEventListener(COMMUNITYGLOWS_DEEP_LINK_EVENT, onDeepLinkAction)
   window.addEventListener(COMMUNITYGLOWS_PROFILE_PICKED_EVENT, onProfilePicked)
   window.addEventListener(COMMUNITYGLOWS_SHARED_LINK_EVENT, onSharedLink)
-  window.addEventListener('communityglows-webview-overlay-state', onWebviewOverlayState)
+  window.addEventListener(
+    "communityglows-webview-overlay-state",
+    onWebviewOverlayState,
+  )
 
   // Global haptic/sound feedback for Vue-side buttons.
   // Delegated pointerdown → native plugin respects user's haptic + tap_sound prefs.
   // Opt-out with `data-no-haptic` on an element or ancestor.
   if (isTauri) {
-    document.addEventListener('pointerdown', onGlobalTap, { capture: true, passive: true })
+    document.addEventListener("pointerdown", onGlobalTap, {
+      capture: true,
+      passive: true,
+    })
   }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('communityglows-network-webview-ready', onWebviewReady)
-  window.removeEventListener('keydown', onKeyboardShortcut, { capture: true })
-  window.removeEventListener('keyup', onKeyboardShortcut, { capture: true })
-  window.removeEventListener('communityglows-webview-back', onWebviewBack)
-  window.removeEventListener('communityglows-grayscale-changed', onGrayscaleChanged)
-  window.removeEventListener('communityglows-open-profile-sheet', onOpenProfileSheet)
-  window.removeEventListener('communityglows-switch-profile', onSwitchProfile)
-  window.removeEventListener('communityglows-toggle-dark-mode', onToggleDarkMode)
-  window.removeEventListener('communityglows-text-zoom-changed', onNativeTextZoomChanged)
-  window.removeEventListener('communityglows-tap-sound-changed', onNativeTapSoundChanged)
+  window.removeEventListener(
+    "communityglows-network-webview-ready",
+    onWebviewReady,
+  )
+  window.removeEventListener("keydown", onKeyboardShortcut, { capture: true })
+  window.removeEventListener("keyup", onKeyboardShortcut, { capture: true })
+  window.removeEventListener("communityglows-webview-back", onWebviewBack)
+  window.removeEventListener(
+    "communityglows-grayscale-changed",
+    onGrayscaleChanged,
+  )
+  window.removeEventListener(
+    "communityglows-open-profile-sheet",
+    onOpenProfileSheet,
+  )
+  window.removeEventListener("communityglows-switch-profile", onSwitchProfile)
+  window.removeEventListener(
+    "communityglows-toggle-dark-mode",
+    onToggleDarkMode,
+  )
+  window.removeEventListener(
+    "communityglows-text-zoom-changed",
+    onNativeTextZoomChanged,
+  )
+  window.removeEventListener(
+    "communityglows-tap-sound-changed",
+    onNativeTapSoundChanged,
+  )
   window.removeEventListener(COMMUNITYGLOWS_DEEP_LINK_EVENT, onDeepLinkAction)
-  window.removeEventListener(COMMUNITYGLOWS_PROFILE_PICKED_EVENT, onProfilePicked)
+  window.removeEventListener(
+    COMMUNITYGLOWS_PROFILE_PICKED_EVENT,
+    onProfilePicked,
+  )
   window.removeEventListener(COMMUNITYGLOWS_SHARED_LINK_EVENT, onSharedLink)
-  window.removeEventListener('communityglows-webview-overlay-state', onWebviewOverlayState)
-  document.removeEventListener('pointerdown', onGlobalTap, true)
+  window.removeEventListener(
+    "communityglows-webview-overlay-state",
+    onWebviewOverlayState,
+  )
+  document.removeEventListener("pointerdown", onGlobalTap, true)
   unlistenTray?.()
 })
 </script>
@@ -806,7 +972,9 @@ onUnmounted(() => {
   user-select: none;
 }
 
-input, textarea, [contenteditable="true"] {
+input,
+textarea,
+[contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;
 }
@@ -816,8 +984,20 @@ input, textarea, [contenteditable="true"] {
   overflow: hidden;
 }
 
-.desktop-layout { display: flex; width: var(--sg-size-full); height: var(--sg-size-full); min-width: 0; flex-direction: column; }
-.desktop-layout__content { width: var(--sg-size-full); min-width: 0; min-height: 0; overflow: hidden; flex: 1; }
+.desktop-layout {
+  display: flex;
+  width: var(--sg-size-full);
+  height: var(--sg-size-full);
+  min-width: 0;
+  flex-direction: column;
+}
+.desktop-layout__content {
+  width: var(--sg-size-full);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  flex: 1;
+}
 
 :root {
   /* Compatibility aliases for views that have not adopted the sg-* names yet. */
