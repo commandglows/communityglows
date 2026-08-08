@@ -393,6 +393,15 @@ fn webview_label(profile_id: &str, network_id: &str) -> String {
     format!("social-{}-{}", profile_id, network_id)
 }
 
+#[cfg(not(target_os = "android"))]
+#[derive(serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct PortableCookieTarget {
+    profile_id: String,
+    network_id: String,
+    url: String,
+}
+
 // ─── Tray setup (desktop only) ───────────────────────────────────────────────
 
 #[cfg(not(target_os = "android"))]
@@ -562,6 +571,35 @@ fn toggle_window(app: &AppHandle) {
 
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
+async fn export_desktop_cookies(
+    app: AppHandle,
+    targets: Vec<PortableCookieTarget>,
+) -> Result<String, String> {
+    let mut snapshot = serde_json::Map::new();
+    for target in targets {
+        let label = webview_label(&target.profile_id, &target.network_id);
+        let Some(webview) = app.get_webview(&label) else { continue; };
+        let url: url::Url = target.url.parse().map_err(|e: url::ParseError| e.to_string())?;
+        let cookies = std::thread::spawn(move || webview.cookies_for_url(url))
+            .join()
+            .map_err(|_| "desktop cookie export thread panicked".to_string())?
+            .map_err(|e| e.to_string())?;
+        if cookies.is_empty() { continue; }
+        let header = cookies
+            .iter()
+            .map(|cookie| format!("{}={}", cookie.name(), cookie.value()))
+            .collect::<Vec<_>>()
+            .join("; ");
+        snapshot.insert(
+            format!("{}-{}|{}", target.profile_id, target.network_id, target.url),
+            serde_json::Value::String(header),
+        );
+    }
+    Ok(serde_json::Value::Object(snapshot).to_string())
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "android"))]
 async fn open_webview(
     app: AppHandle,
     url: String,
@@ -603,7 +641,7 @@ async fn open_webview(
         .get_window("main")
         .ok_or_else(|| "main window not found".to_string())?;
 
-    window
+    let webview = window
         .add_child(
             WebviewBuilder::new(&label, WebviewUrl::External(parsed))
                 .data_directory(data_dir)
@@ -618,8 +656,58 @@ async fn open_webview(
         )
         .map_err(|e| e.to_string())?;
 
+    restore_portable_android_cookies(&app, &webview, &profile_id, &network_id)?;
+
     mark_desktop_webview(&app, &label, false)?;
 
+    Ok(())
+}
+
+#[cfg(not(target_os = "android"))]
+fn restore_portable_android_cookies(
+    app: &AppHandle,
+    webview: &tauri::Webview,
+    profile_id: &str,
+    network_id: &str,
+) -> Result<(), String> {
+    let path = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?
+        .join("portable-android-cookies.json");
+    let raw = match std::fs::read_to_string(path) {
+        Ok(raw) => raw,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(error) => return Err(format!("read portable cookies: {error}")),
+    };
+    let snapshots: serde_json::Value = serde_json::from_str(&raw)
+        .map_err(|error| format!("parse portable cookies: {error}"))?;
+    let Some(values) = snapshots.as_object() else { return Ok(()); };
+    let session_prefix = format!("{profile_id}-{network_id}|");
+
+    for (key, value) in values {
+        let Some(url) = key.strip_prefix(&session_prefix) else { continue; };
+        let Some(header) = value.as_str() else { continue; };
+        let parsed_url: url::Url = match url.parse() {
+            Ok(url) if url.scheme() == "https" => url,
+            _ => continue,
+        };
+        let Some(host) = parsed_url.host_str() else { continue; };
+        let domain = host.split('.').rev().take(2).collect::<Vec<_>>().into_iter().rev().collect::<Vec<_>>().join(".");
+        for part in header.split(';') {
+            let pair = part.trim();
+            if !pair.contains('=') { continue; }
+            let name = pair.split('=').next().unwrap_or_default();
+            let attributes = if name.starts_with("__Host-") {
+                format!("{pair}; Path=/; Secure")
+            } else {
+                format!("{pair}; Domain=.{domain}; Path=/; Secure")
+            };
+            if let Ok(cookie) = tauri::webview::Cookie::parse(attributes) {
+                let _ = webview.set_cookie(cookie.into_owned());
+            }
+        }
+    }
     Ok(())
 }
 
@@ -1145,6 +1233,20 @@ fn restore_backup(
     #[cfg(not(target_os = "android"))]
     close_all_desktop_webviews(&app)?;
     let store_data = backup::extract_backup_archive(&zip_bytes, &sessions_dir)?;
+    #[cfg(not(target_os = "android"))]
+    {
+        let portable_cookies_path = app_data.join("portable-android-cookies.json");
+        let cookie_snapshot = serde_json::from_str::<serde_json::Value>(&store_data)
+            .ok()
+            .and_then(|data| data.get("android")?.get("cookieSnapshot")?.as_str().map(str::to_owned));
+        if let Some(snapshot) = cookie_snapshot.filter(|snapshot| !snapshot.trim().is_empty()) {
+            std::fs::write(&portable_cookies_path, snapshot)
+                .map_err(|e| format!("store portable Android cookies: {e}"))?;
+        } else if portable_cookies_path.exists() {
+            std::fs::remove_file(&portable_cookies_path)
+                .map_err(|e| format!("clear portable Android cookies: {e}"))?;
+        }
+    }
 
     Ok(store_data)
 }
@@ -1208,6 +1310,8 @@ pub fn run() {
             delete_network_session,
             create_backup,
             restore_backup,
+            #[cfg(not(target_os = "android"))]
+            export_desktop_cookies,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

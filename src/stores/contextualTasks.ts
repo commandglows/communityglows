@@ -5,6 +5,7 @@ import {
   type ContextualTaskInput,
   type ContextualTaskStatus,
 } from '@/services/contextualTasksService'
+import { enqueueContextualTasksSnapshot, flushCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
 export const useContextualTasksStore = defineStore('contextualTasks', {
   state: () => ({
@@ -40,11 +41,29 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
       }
     },
 
+    replaceFromCloud(serialized: string | undefined) {
+      if (serialized === undefined) return
+      try {
+        this.service.replaceState(JSON.parse(serialized))
+        this.tasks = this.service.getTasks()
+        this.error = null
+        this.initialized = true
+      } catch {
+        this.error = 'invalid_tasks_state'
+      }
+    },
+
+    syncToCloud() {
+      enqueueContextualTasksSnapshot(this.service.serializeState())
+      return flushCloudSyncQueue()
+    },
+
     create(input: ContextualTaskInput) {
       try {
         const task = this.service.add(input)
         this.tasks = this.service.getTasks()
         this.error = null
+        void this.syncToCloud()
         return task
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'task_create_failed'
@@ -57,6 +76,7 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
         this.service.update(id, input)
         this.tasks = this.service.getTasks()
         this.error = null
+        void this.syncToCloud()
         return true
       } catch (error) {
         this.error = error instanceof Error ? error.message : 'task_update_failed'
@@ -71,10 +91,17 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
     remove(id: string) {
       this.service.remove(id)
       this.tasks = this.service.getTasks()
+      void this.syncToCloud()
     },
 
     clearError() {
       this.error = null
+    },
+
+    clearLocal() {
+      this.service.replaceState([])
+      this.tasks = []
+      this.initialized = false
     },
   },
 })

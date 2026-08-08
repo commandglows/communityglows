@@ -23,6 +23,10 @@ export class KanbanService {
   private columns: Map<KanbanColumnId, KanbanColumn>
 
   constructor() {
+    this.resetState()
+  }
+
+  resetState() {
     this.columns = new Map([
       ['archived', { id: 'archived', title: 'kanban.archived', items: [] }],
       ['todo', { id: 'todo', title: 'kanban.todo', items: [] }],
@@ -33,6 +37,16 @@ export class KanbanService {
   // Récupérer toutes les colonnes
   getColumns(): KanbanColumn[] {
     return Array.from(this.columns.values())
+  }
+
+  serializeState(): string {
+    return JSON.stringify(Array.from(this.columns.entries()))
+  }
+
+  replaceState(serialized: string): void {
+    const state: unknown = JSON.parse(serialized)
+    if (!Array.isArray(state)) throw new Error('invalid_kanban_state')
+    this.columns = new Map(state as [KanbanColumnId, KanbanColumn][])
   }
 
   // Récupérer une colonne spécifique
@@ -143,8 +157,7 @@ export class KanbanService {
 
   // Sauvegarder l'état dans le localStorage
   saveState(): void {
-    const state = Array.from(this.columns.entries())
-    localStorage.setItem('kanban-state', JSON.stringify(state))
+    localStorage.setItem('kanban-state', this.serializeState())
   }
 
   // Charger l'état depuis le localStorage

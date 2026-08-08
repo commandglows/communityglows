@@ -5,6 +5,7 @@ export type CloudSnapshotShape = {
   friendsFilters: unknown[];
   socialAccounts: unknown[];
   activeAccounts: unknown[];
+  workspaceState: unknown;
 };
 
 export function isCloudSnapshotEmpty(snapshot: CloudSnapshotShape) {
@@ -13,7 +14,8 @@ export function isCloudSnapshotEmpty(snapshot: CloudSnapshotShape) {
     && snapshot.customLinks.length === 0
     && snapshot.friendsFilters.length === 0
     && snapshot.socialAccounts.length === 0
-    && snapshot.activeAccounts.length === 0;
+    && snapshot.activeAccounts.length === 0
+    && !snapshot.workspaceState;
 }
 
 export function canReuseLocalCloudState(options: {

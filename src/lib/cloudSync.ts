@@ -14,6 +14,8 @@ import { useFriendsFilterStore } from "@/stores/friendsFilter";
 import { useThemeStore } from "@/stores/theme";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useShortcutsStore } from "@/stores/shortcuts";
+import { useContextualTasksStore } from "@/stores/contextualTasks";
+import { useKanbanStore } from "@/stores/kanban";
 import { setLocale } from "@/utils/i18n";
 import type { AppShortcut } from "@/stores/shortcuts";
 import {
@@ -40,6 +42,7 @@ type CloudSnapshot = CloudSnapshotShape & {
   friendsFilters: CloudFriendFilter[];
   socialAccounts: CloudSocialAccount[];
   activeAccounts: CloudActiveAccount[];
+  workspaceState: { contextualTasksJson?: string; kanbanStateJson?: string } | null;
 };
 
 type CloudSettings = Pick<
@@ -385,6 +388,7 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
     friendsFilters,
     socialAccounts,
     activeAccounts,
+    workspaceState,
   ] = await Promise.all([
     client.query(api.settings.get, {}),
     client.query(api.profiles.list, {}),
@@ -392,6 +396,7 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
     client.query(api.friendsFilters.list, {}),
     client.query(api.socialAccounts.list, {}),
     client.query(api.socialAccounts.listActive, {}),
+    client.query(api.workspaceState.get, {}),
   ]);
 
   return {
@@ -401,6 +406,16 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
     friendsFilters: asCloudFriendFilters(friendsFilters),
     socialAccounts: asCloudSocialAccounts(socialAccounts),
     activeAccounts: asCloudActiveAccounts(activeAccounts),
+    workspaceState: workspaceState && typeof workspaceState === "object"
+      ? {
+          contextualTasksJson: typeof workspaceState.contextualTasksJson === "string"
+            ? workspaceState.contextualTasksJson
+            : undefined,
+          kanbanStateJson: typeof workspaceState.kanbanStateJson === "string"
+            ? workspaceState.kanbanStateJson
+            : undefined,
+        }
+      : null,
   };
 }
 
@@ -441,6 +456,8 @@ function applyCloudSettings(settings: CloudSettings | null) {
 function clearCloudBackedLocalState() {
   const profilesStore = useProfilesStore();
   const accountsStore = useAccountsStore();
+  const tasksStore = useContextualTasksStore();
+  const kanbanStore = useKanbanStore();
   const customLinksStore = useCustomLinksStore();
   const friendsStore = useFriendsFilterStore();
   const themeStore = useThemeStore();
@@ -450,6 +467,8 @@ function clearCloudBackedLocalState() {
   accountsStore.clearLocal();
   customLinksStore.clearLocal();
   friendsStore.clearLocal();
+  tasksStore.clearLocal();
+  kanbanStore.clearLocal();
   themeStore.resetLocalPreferences();
   onboardingStore.completed = false;
 
@@ -469,6 +488,8 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   const customLinksStore = useCustomLinksStore();
   const friendsStore = useFriendsFilterStore();
   const accountsStore = useAccountsStore();
+  const tasksStore = useContextualTasksStore();
+  const kanbanStore = useKanbanStore();
 
   const settings = asCloudSettings(snapshot.settings);
   applyCloudSettings(settings);
@@ -479,6 +500,8 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
     settings?.friendsFilterEnabled ?? false,
   );
   accountsStore.replaceFromCloud(snapshot.socialAccounts, snapshot.activeAccounts);
+  tasksStore.replaceFromCloud(snapshot.workspaceState?.contextualTasksJson);
+  kanbanStore.replaceFromCloud(snapshot.workspaceState?.kanbanStateJson);
 }
 
 async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
@@ -489,6 +512,8 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
   const themeStore = useThemeStore();
   const onboardingStore = useOnboardingStore();
   const shortcutsStore = useShortcutsStore();
+  const tasksStore = useContextualTasksStore();
+  const kanbanStore = useKanbanStore();
 
   if (!snapshot.settings) {
     await syncSettingsPatch({
@@ -520,6 +545,12 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
 
   if (snapshot.socialAccounts.length === 0 && accountsStore.accounts.length > 0) {
     await accountsStore.seedCloud();
+  }
+
+  if (!snapshot.workspaceState) {
+    tasksStore.initialize();
+    kanbanStore.initialize();
+    await Promise.all([tasksStore.syncToCloud(), kanbanStore.syncToCloud()]);
   }
 }
 

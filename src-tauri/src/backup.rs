@@ -156,10 +156,32 @@ pub fn decrypt_archive(blob: &[u8], password: &str) -> Result<Vec<u8>, String> {
 
 /// Extract store data JSON from a zip archive and restore session files.
 pub fn extract_backup_archive(zip_bytes: &[u8], sessions_dir: &Path) -> Result<String, String> {
+    extract_backup_archive_for_platform(zip_bytes, sessions_dir, std::env::consts::OS)
+}
+
+fn extract_backup_archive_for_platform(
+    zip_bytes: &[u8],
+    sessions_dir: &Path,
+    target_platform: &str,
+) -> Result<String, String> {
     let cursor = Cursor::new(zip_bytes);
     let mut archive = zip::ZipArchive::new(cursor).map_err(|e| format!("zip open: {e}"))?;
 
     let mut store_data = String::new();
+    let source_platform = match archive.by_name("manifest.json") {
+        Ok(mut file) => {
+            let mut manifest_json = String::new();
+            file.read_to_string(&mut manifest_json)
+                .map_err(|e| format!("read manifest.json: {e}"))?;
+            let manifest: serde_json::Value = serde_json::from_str(&manifest_json)
+                .map_err(|e| format!("invalid manifest.json: {e}"))?;
+            manifest
+                .get("platform")
+                .and_then(|value| value.as_str())
+                .map(str::to_owned)
+        }
+        Err(_) => None,
+    };
 
     // First pass: extract store data
     {
@@ -172,6 +194,17 @@ pub fn extract_backup_archive(zip_bytes: &[u8], sessions_dir: &Path) -> Result<S
 
     serde_json::from_str::<serde_json::Value>(&store_data)
         .map_err(|e| format!("invalid stores/data.json: {e}"))?;
+
+    // WebView cookie/session stores are native-engine data. The portable store
+    // payload remains importable everywhere, but session files must only be
+    // activated on the platform that created them. Manifest-less v1 archives
+    // retain their historical same-platform restore behavior.
+    if source_platform
+        .as_deref()
+        .is_some_and(|source| source != target_platform)
+    {
+        return Ok(store_data);
+    }
 
     // Extract into a sibling directory first so a bad archive cannot destroy
     // the currently usable sessions.
@@ -297,6 +330,33 @@ mod tests {
         assert_eq!(std::fs::read(&existing).expect("read existing state"), b"keep");
         assert!(!sessions_dir.with_extension("restore-tmp").exists());
         assert!(!sessions_dir.parent().expect("sessions parent").join("escaped.txt").exists());
+        let _ = std::fs::remove_dir_all(sessions_dir);
+    }
+
+    #[test]
+    fn cross_platform_restore_keeps_local_sessions_and_restores_store_data() {
+        let sessions_dir = test_directory("cross-platform");
+        std::fs::create_dir_all(&sessions_dir).expect("create sessions directory");
+        let existing = sessions_dir.join("keep.txt");
+        std::fs::write(&existing, b"windows-session").expect("write existing state");
+
+        let archive = archive_with_entries(&[
+            ("manifest.json", br#"{"version":1,"platform":"android"}"#),
+            (
+                "stores/data.json",
+                br#"{"dataVersion":2,"profiles":{"profiles":[]}}"#,
+            ),
+            ("sessions/profile/network/state.txt", b"android-session"),
+        ]);
+        let restored = extract_backup_archive_for_platform(&archive, &sessions_dir, "windows")
+            .expect("portable data should restore");
+
+        assert!(restored.contains("\"dataVersion\":2"));
+        assert_eq!(
+            std::fs::read(&existing).expect("read existing state"),
+            b"windows-session"
+        );
+        assert!(!sessions_dir.join("profile/network/state.txt").exists());
         let _ = std::fs::remove_dir_all(sessions_dir);
     }
 }
