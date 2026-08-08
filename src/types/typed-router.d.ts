@@ -123,6 +123,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/CrmToolbar'
       | '/setup/CommunityGlows/components/DashboardFilters'
       | '/setup/CommunityGlows/components/DesktopControlBar'
+      | '/setup/CommunityGlows/components/DesktopQuickNavigation'
       | '/setup/CommunityGlows/components/ExtensionParitySurface'
       | '/setup/CommunityGlows/components/FriendsPanel'
       | '/setup/CommunityGlows/components/KeyboardShortcuts'
@@ -134,6 +135,9 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/OnboardingFlow'
       | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
       | '/setup/CommunityGlows/components/ProductAccessGate'
+      | '/setup/CommunityGlows/components/ProfileAvatarDialog'
+      | '/setup/CommunityGlows/components/ProfileAvatarEditor'
+      | '/setup/CommunityGlows/components/ProfileManagerDialog'
       | '/setup/CommunityGlows/components/ProfileSwitcher'
       | '/setup/CommunityGlows/components/SignupNudge'
       | '/setup/CommunityGlows/components/SocialLogin'
@@ -172,6 +176,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/ui/SgMultiSelect'
       | '/setup/CommunityGlows/components/ui/SgPassword'
       | '/setup/CommunityGlows/components/ui/SgSelect'
+      | '/setup/CommunityGlows/components/ui/SgSheet'
       | '/setup/CommunityGlows/components/ui/SgSpinner'
       | '/setup/CommunityGlows/components/ui/SgSwitch'
       | '/setup/CommunityGlows/components/ui/SgTextarea'
@@ -266,6 +271,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/DesktopControlBar': RouteRecordInfo<
       '/setup/CommunityGlows/components/DesktopControlBar',
       '/setup/CommunityGlows/components/DesktopControlBar',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/DesktopQuickNavigation': RouteRecordInfo<
+      '/setup/CommunityGlows/components/DesktopQuickNavigation',
+      '/setup/CommunityGlows/components/DesktopQuickNavigation',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -487,6 +499,27 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/ProfileAvatarDialog': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ProfileAvatarDialog',
+      '/setup/CommunityGlows/components/ProfileAvatarDialog',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ProfileAvatarEditor': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ProfileAvatarEditor',
+      '/setup/CommunityGlows/components/ProfileAvatarEditor',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ProfileManagerDialog': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ProfileManagerDialog',
+      '/setup/CommunityGlows/components/ProfileManagerDialog',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/ProfileSwitcher': RouteRecordInfo<
       '/setup/CommunityGlows/components/ProfileSwitcher',
       '/setup/CommunityGlows/components/ProfileSwitcher',
@@ -588,6 +621,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/ui/SgSelect': RouteRecordInfo<
       '/setup/CommunityGlows/components/ui/SgSelect',
       '/setup/CommunityGlows/components/ui/SgSelect',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgSheet': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgSheet',
+      '/setup/CommunityGlows/components/ui/SgSheet',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -761,6 +801,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/CrmToolbar'
         | '/setup/CommunityGlows/components/DashboardFilters'
         | '/setup/CommunityGlows/components/DesktopControlBar'
+        | '/setup/CommunityGlows/components/DesktopQuickNavigation'
         | '/setup/CommunityGlows/components/ExtensionParitySurface'
         | '/setup/CommunityGlows/components/FriendsPanel'
         | '/setup/CommunityGlows/components/KeyboardShortcuts'
@@ -772,6 +813,9 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/OnboardingFlow'
         | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
         | '/setup/CommunityGlows/components/ProductAccessGate'
+        | '/setup/CommunityGlows/components/ProfileAvatarDialog'
+        | '/setup/CommunityGlows/components/ProfileAvatarEditor'
+        | '/setup/CommunityGlows/components/ProfileManagerDialog'
         | '/setup/CommunityGlows/components/ProfileSwitcher'
         | '/setup/CommunityGlows/components/SignupNudge'
         | '/setup/CommunityGlows/components/SocialLogin'
@@ -810,6 +854,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/ui/SgMultiSelect'
         | '/setup/CommunityGlows/components/ui/SgPassword'
         | '/setup/CommunityGlows/components/ui/SgSelect'
+        | '/setup/CommunityGlows/components/ui/SgSheet'
         | '/setup/CommunityGlows/components/ui/SgSpinner'
         | '/setup/CommunityGlows/components/ui/SgSwitch'
         | '/setup/CommunityGlows/components/ui/SgTextarea'
@@ -894,6 +939,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/DesktopControlBar.vue': {
       routes:
         | '/setup/CommunityGlows/components/DesktopControlBar'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/DesktopQuickNavigation.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/DesktopQuickNavigation'
       views:
         | never
     }
@@ -1083,6 +1134,24 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/CommunityGlows/components/ProfileAvatarDialog.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ProfileAvatarDialog'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/ProfileAvatarEditor.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ProfileAvatarEditor'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/ProfileManagerDialog.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ProfileManagerDialog'
+      views:
+        | never
+    }
     'src/ui/setup/pages/CommunityGlows/components/ProfileSwitcher.vue': {
       routes:
         | '/setup/CommunityGlows/components/ProfileSwitcher'
@@ -1170,6 +1239,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/ui/SgSelect.vue': {
       routes:
         | '/setup/CommunityGlows/components/ui/SgSelect'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgSheet.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ui/SgSheet'
       views:
         | never
     }

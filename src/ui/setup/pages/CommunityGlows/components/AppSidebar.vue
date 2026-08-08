@@ -8,6 +8,7 @@
       ref="sidebarPanel"
       :default-size="SIDEBAR_EXPANDED_SIZE"
       :min-size="5"
+      :max-size="SIDEBAR_MAX_SIZE"
       :collapsed-size="0"
       collapsible
       class="sidebar"
@@ -19,12 +20,14 @@
       >
         <div class="sidebar-main">
           <div
+            v-if="controlBarPosition === 'top' || !iconsOnly"
             class="sidebar-header"
             :class="
               iconsOnly ? 'sidebar-header--centered' : 'sidebar-header--spaced'
             "
           >
             <Button
+              v-if="controlBarPosition === 'top'"
               v-sg-tooltip.right="'Toggle left sidebar'"
               icon="pi pi-bars"
               text
@@ -351,6 +354,18 @@
           @manage-profiles="emit('manage-profiles')"
           @open-settings="emit('open-settings')"
         />
+        <div
+          v-if="controlBarPosition === 'bottom'"
+          class="sidebar-bottom-toggle sidebar-bottom-toggle--left"
+        >
+          <Button
+            v-sg-tooltip.right="'Toggle left sidebar'"
+            icon="pi pi-bars"
+            text
+            aria-label="Toggle left sidebar"
+            @click="toggleSidebar"
+          />
+        </div>
       </div>
     </SplitterPanel>
     <SplitterResizeHandle
@@ -383,10 +398,13 @@ import ProfileSwitcher from "./ProfileSwitcher.vue"
 import FriendsPanel from "./FriendsPanel.vue"
 import NetworkBrandIcon from "./NetworkBrandIcon.vue"
 import {
+  clampSidebarSize,
   isCompactSidebarSize,
   sidebarSizeForMode,
   SIDEBAR_EXPANDED_SIZE,
+  SIDEBAR_MAX_SIZE,
 } from "./sidebarLayout"
+import type { DesktopControlBarPosition } from "@/stores/desktopControlBar"
 
 const router = useRouter()
 const route = useRoute()
@@ -440,6 +458,7 @@ watch(showAddLinkDialog, (isOpen) => {
 
 const props = defineProps<{
   modelValue: boolean
+  controlBarPosition: DesktopControlBarPosition
 }>()
 
 const emit = defineEmits<{
@@ -481,7 +500,7 @@ watch(
       return
     }
     await nextTick()
-    sidebarPanel.value?.resize(lastVisibleSidebarSize.value)
+    sidebarPanel.value?.resize(clampSidebarSize(lastVisibleSidebarSize.value))
   },
 )
 
@@ -492,7 +511,7 @@ const handleResize = (sizes: number[]) => {
   const newSize = sizes[0]
   if (typeof newSize !== "number") return
 
-  if (newSize > 0) lastVisibleSidebarSize.value = newSize
+  if (newSize > 0) lastVisibleSidebarSize.value = clampSidebarSize(newSize)
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
 
@@ -646,6 +665,18 @@ onUnmounted(() => {
 .profile-switcher-bottom {
   width: var(--sg-sidebar-fill-size);
   flex: 0 0 auto;
+}
+
+.sidebar-bottom-toggle {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: var(--sg-sidebar-header-height);
+  padding: var(--sg-sidebar-control-padding);
+}
+
+.sidebar-bottom-toggle--left {
+  justify-content: flex-start;
 }
 
 .sidebar-main {

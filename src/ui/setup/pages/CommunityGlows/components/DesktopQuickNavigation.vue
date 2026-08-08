@@ -3,6 +3,7 @@
     <ProfileSwitcher
       :icons-only="false"
       embedded
+      control-bar
       :menu-direction="position === 'bottom' ? 'up' : 'down'"
       @manage-profiles="emit('manage-profiles')"
       @open-settings="emit('open-settings')"
@@ -90,7 +91,7 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--sg-space-2);
+  gap: var(--sg-control-bar-navigation-gap);
   min-width: 0;
   max-width: var(--sg-size-100pct);
 }
@@ -98,7 +99,7 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
 .desktop-quick-navigation__networks {
   display: flex;
   align-items: center;
-  gap: var(--sg-space-1);
+  gap: var(--sg-control-bar-navigation-gap);
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -112,9 +113,9 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 var(--sg-control-height-sm);
-  width: var(--sg-control-height-sm);
-  height: var(--sg-control-height-sm);
+  flex: 0 0 var(--sg-control-bar-navigation-icon-size);
+  width: var(--sg-control-bar-navigation-icon-size);
+  height: var(--sg-control-bar-navigation-icon-size);
   padding: 0;
   border: var(--sg-border-1px) solid transparent;
   border-radius: var(--sg-radius-pill);
@@ -134,5 +135,10 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
 .desktop-quick-navigation__network:focus-visible {
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
+}
+
+.desktop-quick-navigation__network :deep(.network-brand-icon) {
+  width: var(--sg-control-bar-navigation-brand-icon-size);
+  height: var(--sg-control-bar-navigation-brand-icon-size);
 }
 </style>

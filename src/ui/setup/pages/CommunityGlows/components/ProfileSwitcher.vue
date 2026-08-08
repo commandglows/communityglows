@@ -6,20 +6,21 @@
       'menu-up': menuDirection === 'up',
       'avatar-heading': triggerVariant === 'avatar-heading',
       embedded,
+      'control-bar': controlBar,
     }"
   >
     <!-- Trigger button -->
-    <div
+    <button
       v-sg-tooltip.right="
         iconsOnly ? (profilesStore.activeProfile?.name ?? 'Profile') : undefined
       "
+      type="button"
       class="profile-trigger"
       :class="{ active: menuVisible }"
-      role="button"
-      tabindex="0"
       :aria-label="iconsOnly ? 'Switch profile' : undefined"
+      aria-haspopup="listbox"
+      :aria-expanded="menuVisible"
       @click="toggleMenu"
-      @keydown.enter.space.prevent="toggleMenu"
     >
       <span
         v-if="triggerVariant !== 'avatar-heading'"
@@ -42,7 +43,7 @@
           { rotated: menuVisible },
         ]"
       />
-    </div>
+    </button>
 
     <!-- Dropdown panel -->
     <div
@@ -121,6 +122,7 @@ defineProps<{
   menuDirection?: "up" | "down"
   embedded?: boolean
   triggerVariant?: "default" | "avatar-heading"
+  controlBar?: boolean
 }>()
 
 const profilesStore = useProfilesStore()
@@ -209,13 +211,32 @@ onUnmounted(() => {
   min-width: var(--sg-size-220px);
 }
 
+.profile-switcher.control-bar .profile-trigger {
+  gap: var(--sg-control-bar-navigation-gap);
+  padding: var(--sg-control-bar-navigation-trigger-padding);
+}
+
+.profile-switcher.control-bar .profile-emoji {
+  font-size: var(--sg-control-bar-navigation-icon-size);
+}
+
+.profile-switcher.control-bar .profile-name {
+  font-size: var(--sg-control-bar-navigation-profile-name-size);
+}
+
 .profile-trigger {
   display: flex;
   align-items: center;
   gap: var(--sg-space-0d5rem);
   padding: var(--sg-space-0d5rem-0d75rem);
+  width: var(--sg-size-100pct);
+  border: 0;
   border-radius: var(--sg-radius-8px);
+  background: var(--sg-color-transparent);
+  color: inherit;
   cursor: pointer;
+  font: inherit;
+  text-align: inherit;
   user-select: none;
   transition: var(--sg-motion-backgroundneg-color-0d15s);
 }
@@ -223,6 +244,11 @@ onUnmounted(() => {
 .profile-trigger:hover,
 .profile-trigger.active {
   background-color: var(--sg-color-surface-hover);
+}
+
+.profile-trigger:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
 }
 
 .profile-emoji {

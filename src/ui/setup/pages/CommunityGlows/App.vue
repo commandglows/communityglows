@@ -18,11 +18,13 @@
         <div class="desktop-layout__content">
           <AppSidebar
             v-model="sidebarVisible"
+            :control-bar-position="controlBarStore.position"
             @manage-profiles="profileManagerVisible = true"
             @open-settings="settingsVisible = true"
           >
             <AppRightSidebar
               v-model="rightSidebarVisible"
+              :control-bar-position="controlBarStore.position"
               @open-settings="settingsVisible = true"
               @open-rightpanel-section="openRightPanelSection"
               @manage-profiles="profileManagerVisible = true"
@@ -36,6 +38,7 @@
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
+                  :resizable="bothSidebarsHidden"
                   position="top"
                   @open-left="sidebarVisible = true"
                   @open-right="rightSidebarVisible = true"
@@ -68,6 +71,7 @@
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
+                  :resizable="bothSidebarsHidden"
                   position="bottom"
                   @open-left="sidebarVisible = true"
                   @open-right="rightSidebarVisible = true"

@@ -1,20 +1,17 @@
 ---
 import { getTranslations, localizeHref, type Locale } from '../i18n'
 
-interface Props { lang?: Locale; languageHref?: string }
-const { lang = 'en', languageHref: languageHrefProp } = Astro.props
+interface Props { lang?: Locale }
+const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
 
 const navItems = [
-  { label: t.nav.benefits, href: localizeHref('/#benefits', lang) },
   { label: t.nav.features, href: localizeHref('/#features', lang) },
-  { label: t.nav.pricing, href: localizeHref('/#pricing', lang) },
+  { label: t.nav.pricing, href: localizeHref('/pricing', lang) },
   { label: t.nav.reviews, href: localizeHref('/#reviews', lang) },
   { label: t.nav.blog, href: '/blog' },
 ]
 const homeHref = lang === 'fr' ? '/fr' : '/'
-const languageHref = languageHrefProp ?? (lang === 'fr' ? '/' : '/fr')
-const languageCode = lang === 'fr' ? 'EN' : 'FR'
 ---
 
 <header class="site-nav-shell fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-3xl animate-slide-down">
@@ -28,7 +25,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
     </a>
 
     <!-- Desktop Nav -->
-    <div class="hidden md:flex items-center gap-1 relative" id="desktop-nav">
+    <div class="hidden lg:flex items-center gap-1 relative" id="desktop-nav">
       <div id="nav-hover-pill" class="site-nav-pill absolute bg-muted rounded-full transition-all duration-200 ease-out opacity-0 pointer-events-none"></div>
       {navItems.map((item) => (
         <a
@@ -41,11 +38,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
     </div>
 
     <!-- CTA Buttons -->
-    <div class="hidden md:flex items-center gap-3">
-      <a href={languageHref} class="text-sm text-muted-foreground hover:text-foreground transition-colors px-2 py-2" title={t.nav.languageLabel}>{languageCode}</a>
-      <a href={localizeHref('/pricing', lang)} class="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2">
-        {t.nav.signIn}
-      </a>
+    <div class="hidden lg:flex items-center gap-3">
       <a
         href={localizeHref('/download', lang)}
         class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-2 text-sm font-medium transition-colors"
@@ -57,7 +50,7 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
     <!-- Mobile Menu Button -->
     <button
       id="mobile-menu-btn"
-      class="md:hidden p-2 text-muted-foreground hover:text-foreground"
+      class="lg:hidden p-2 text-muted-foreground hover:text-foreground"
       aria-label={t.nav.menuLabel}
       data-open-label={t.nav.menuLabel}
       data-close-label={t.nav.closeMenuLabel}
@@ -81,8 +74,6 @@ const languageCode = lang === 'fr' ? 'EN' : 'FR'
         </a>
       ))}
       <hr class="border-border my-2" />
-      <a href={languageHref} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{languageCode}</a>
-      <a href={localizeHref('/pricing', lang)} class="px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">{t.nav.signIn}</a>
       <a href={localizeHref('/download', lang)} class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.download}</a>
     </div>
   </div>

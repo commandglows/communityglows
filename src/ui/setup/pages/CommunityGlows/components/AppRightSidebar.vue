@@ -18,6 +18,7 @@
       ref="sidebarPanel"
       :default-size="SIDEBAR_EXPANDED_SIZE"
       :min-size="5"
+      :max-size="SIDEBAR_MAX_SIZE"
       :collapsed-size="0"
       collapsible
       class="sidebar"
@@ -28,6 +29,7 @@
         :class="{ 'content-centered': iconsOnly }"
       >
         <div
+          v-if="controlBarPosition === 'top'"
           class="sidebar-header"
           :class="{
             'sidebar-header--compact': iconsOnly,
@@ -207,6 +209,20 @@
             </div>
           </div>
         </div>
+
+        <div
+          v-if="controlBarPosition === 'bottom'"
+          class="sidebar-bottom-toggle sidebar-bottom-toggle--right"
+        >
+          <Button
+            v-sg-tooltip.left="'Toggle right sidebar'"
+            icon="pi pi-bars"
+            text
+            class="sidebar-toggle-button"
+            aria-label="Toggle right sidebar"
+            @click="toggleSidebar"
+          />
+        </div>
       </div>
     </SplitterPanel>
   </SplitterGroup>
@@ -220,17 +236,21 @@ import Avatar from "./ui/SgAvatar.vue"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { useProfilesStore } from "@/stores/profiles"
 import {
+  clampSidebarSize,
   isCompactSidebarSize,
   sidebarSizeForMode,
   SIDEBAR_EXPANDED_SIZE,
+  SIDEBAR_MAX_SIZE,
 } from "./sidebarLayout"
 import KanbanSidebar from "./kanban/KanbanSidebar.vue"
 import CrmSidebarWidget from "./CrmSidebarWidget.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
+import type { DesktopControlBarPosition } from "@/stores/desktopControlBar"
 
 const props = defineProps<{
   modelValue: boolean
+  controlBarPosition: DesktopControlBarPosition
 }>()
 
 const emit = defineEmits<{
@@ -312,7 +332,7 @@ watch(
       return
     }
     await nextTick()
-    sidebarPanel.value?.resize(lastVisibleSidebarSize.value)
+    sidebarPanel.value?.resize(clampSidebarSize(lastVisibleSidebarSize.value))
   },
 )
 
@@ -321,7 +341,7 @@ const handleResize = (sizes: number[]) => {
   const newSize = sizes[1]
   if (typeof newSize !== "number") return
 
-  if (newSize > 0) lastVisibleSidebarSize.value = newSize
+  if (newSize > 0) lastVisibleSidebarSize.value = clampSidebarSize(newSize)
   iconsOnly.value = isCompactSidebarSize(newSize)
 }
 </script>
@@ -353,6 +373,10 @@ const handleResize = (sizes: number[]) => {
 .sidebar-content {
   height: var(--sg-sidebar-fill-size);
   padding: var(--sg-right-sidebar-content-padding);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .sidebar-header {
@@ -382,6 +406,21 @@ const handleResize = (sizes: number[]) => {
 .sidebar-toggle-button {
   width: fit-content;
   margin-left: auto;
+}
+
+.sidebar-bottom-toggle {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: var(--sg-sidebar-header-height);
+  margin-top: auto;
+  background-color: var(--sg-color-surface-raised);
+}
+
+.sidebar-bottom-toggle--right {
+  justify-content: flex-end;
 }
 
 .sidebar-header--compact .sidebar-toggle-button {

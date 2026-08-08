@@ -7,9 +7,13 @@
 export {}
 declare global {
   const BILLING_ACCESS_GRACE_MS: typeof import('../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']
+  const DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: typeof import('../stores/desktopControlBar')['DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO']
   const EffectScope: typeof import('vue')['EffectScope']
   const Notification: typeof import('notivue')['Notification']
   const Notivue: typeof import('notivue')['Notivue']
+  const PROFILE_AVATAR_MAX_LENGTH: typeof import('../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']
+  const PROFILE_EMOJI_MAX_LENGTH: typeof import('../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']
+  const PROFILE_NAME_MAX_LENGTH: typeof import('../stores/profiles')['PROFILE_NAME_MAX_LENGTH']
   const WEBVIEW_URLS: typeof import('../stores/webviewState')['WEBVIEW_URLS']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const appRouter: typeof import('../utils/router/index')['appRouter']
@@ -25,6 +29,7 @@ declare global {
   const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
   const controlledRef: typeof import('@vueuse/core')['controlledRef']
   const createApp: typeof import('vue')['createApp']
+  const createDisposableDirective: typeof import('@vueuse/core')['createDisposableDirective']
   const createEventHook: typeof import('@vueuse/core')['createEventHook']
   const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
   const createInjectionState: typeof import('@vueuse/core')['createInjectionState']
@@ -72,6 +77,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeDesktopControlBarHeight: typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarHeight']
   const normalizeDesktopControlBarPosition: typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarPosition']
   const normalizeShortcutEvent: typeof import('../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../utils/notifications')['notivue']
@@ -112,6 +118,7 @@ declare global {
   const refAutoReset: typeof import('@vueuse/core')['refAutoReset']
   const refDebounced: typeof import('@vueuse/core')['refDebounced']
   const refDefault: typeof import('@vueuse/core')['refDefault']
+  const refManualReset: typeof import('@vueuse/core')['refManualReset']
   const refThrottled: typeof import('@vueuse/core')['refThrottled']
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const resolveAutoTheme: typeof import('../utils/themeAuto')['resolveAutoTheme']
@@ -185,6 +192,7 @@ declare global {
   const useCountdown: typeof import('@vueuse/core')['useCountdown']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCssModule: typeof import('vue')['useCssModule']
+  const useCssSupports: typeof import('@vueuse/core')['useCssSupports']
   const useCssVar: typeof import('@vueuse/core')['useCssVar']
   const useCssVars: typeof import('vue')['useCssVars']
   const useCurrentElement: typeof import('@vueuse/core')['useCurrentElement']
@@ -207,6 +215,7 @@ declare global {
   const useElementBounding: typeof import('@vueuse/core')['useElementBounding']
   const useElementByPoint: typeof import('@vueuse/core')['useElementByPoint']
   const useElementHover: typeof import('@vueuse/core')['useElementHover']
+  const useElementOverflow: typeof import('@vueuse/core')['useElementOverflow']
   const useElementSize: typeof import('@vueuse/core')['useElementSize']
   const useElementVisibility: typeof import('@vueuse/core')['useElementVisibility']
   const useEventBus: typeof import('@vueuse/core')['useEventBus']
@@ -314,6 +323,7 @@ declare global {
   const useThrottleFn: typeof import('@vueuse/core')['useThrottleFn']
   const useThrottledRefHistory: typeof import('@vueuse/core')['useThrottledRefHistory']
   const useTimeAgo: typeof import('@vueuse/core')['useTimeAgo']
+  const useTimeAgoIntl: typeof import('@vueuse/core')['useTimeAgoIntl']
   const useTimeout: typeof import('@vueuse/core')['useTimeout']
   const useTimeoutFn: typeof import('@vueuse/core')['useTimeoutFn']
   const useTimeoutPoll: typeof import('@vueuse/core')['useTimeoutPoll']
@@ -339,6 +349,7 @@ declare global {
   const useWindowFocus: typeof import('@vueuse/core')['useWindowFocus']
   const useWindowScroll: typeof import('@vueuse/core')['useWindowScroll']
   const useWindowSize: typeof import('@vueuse/core')['useWindowSize']
+  const validateProfileDraft: typeof import('../stores/profiles')['validateProfileDraft']
   const watch: typeof import('vue')['watch']
   const watchArray: typeof import('@vueuse/core')['watchArray']
   const watchAtMost: typeof import('@vueuse/core')['watchAtMost']
@@ -383,7 +394,7 @@ declare global {
   export type { FacebookPost } from '../stores/mockData/facebookMock'
   import('../stores/mockData/facebookMock')
   // @ts-ignore
-  export type { Profile } from '../stores/profiles'
+  export type { Profile, ProfileDraft } from '../stores/profiles'
   import('../stores/profiles')
   // @ts-ignore
   export type { CoreShortcutAction, NetworkShortcutAction, ProfileShortcutAction, RightPanelShortcutAction, ShortcutAction, AppShortcut } from '../stores/shortcuts'
@@ -399,9 +410,13 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly BILLING_ACCESS_GRACE_MS: UnwrapRef<typeof import('../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']>
+    readonly DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: UnwrapRef<typeof import('../stores/desktopControlBar')['DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly Notification: UnwrapRef<typeof import('notivue')['Notification']>
     readonly Notivue: UnwrapRef<typeof import('notivue')['Notivue']>
+    readonly PROFILE_AVATAR_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']>
+    readonly PROFILE_EMOJI_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']>
+    readonly PROFILE_NAME_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_NAME_MAX_LENGTH']>
     readonly WEBVIEW_URLS: UnwrapRef<typeof import('../stores/webviewState')['WEBVIEW_URLS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly appRouter: UnwrapRef<typeof import('../utils/router/index')['appRouter']>
@@ -417,6 +432,7 @@ declare module 'vue' {
     readonly controlledComputed: UnwrapRef<typeof import('@vueuse/core')['controlledComputed']>
     readonly controlledRef: UnwrapRef<typeof import('@vueuse/core')['controlledRef']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
+    readonly createDisposableDirective: UnwrapRef<typeof import('@vueuse/core')['createDisposableDirective']>
     readonly createEventHook: UnwrapRef<typeof import('@vueuse/core')['createEventHook']>
     readonly createGlobalState: UnwrapRef<typeof import('@vueuse/core')['createGlobalState']>
     readonly createInjectionState: UnwrapRef<typeof import('@vueuse/core')['createInjectionState']>
@@ -464,6 +480,7 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly mockPosts: UnwrapRef<typeof import('../stores/mockData/facebookMock')['mockPosts']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeDesktopControlBarHeight: UnwrapRef<typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarHeight']>
     readonly normalizeDesktopControlBarPosition: UnwrapRef<typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarPosition']>
     readonly normalizeShortcutEvent: UnwrapRef<typeof import('../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../utils/notifications')['notivue']>
@@ -504,12 +521,11 @@ declare module 'vue' {
     readonly refAutoReset: UnwrapRef<typeof import('@vueuse/core')['refAutoReset']>
     readonly refDebounced: UnwrapRef<typeof import('@vueuse/core')['refDebounced']>
     readonly refDefault: UnwrapRef<typeof import('@vueuse/core')['refDefault']>
+    readonly refManualReset: UnwrapRef<typeof import('@vueuse/core')['refManualReset']>
     readonly refThrottled: UnwrapRef<typeof import('@vueuse/core')['refThrottled']>
     readonly refWithControl: UnwrapRef<typeof import('@vueuse/core')['refWithControl']>
     readonly resolveAutoTheme: UnwrapRef<typeof import('../utils/themeAuto')['resolveAutoTheme']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
-    readonly resolveRef: UnwrapRef<typeof import('@vueuse/core')['resolveRef']>
-    readonly resolveUnref: UnwrapRef<typeof import('@vueuse/core')['resolveUnref']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setLocale: UnwrapRef<typeof import('../utils/i18n')['setLocale']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
@@ -577,6 +593,7 @@ declare module 'vue' {
     readonly useCountdown: UnwrapRef<typeof import('@vueuse/core')['useCountdown']>
     readonly useCounter: UnwrapRef<typeof import('@vueuse/core')['useCounter']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
+    readonly useCssSupports: UnwrapRef<typeof import('@vueuse/core')['useCssSupports']>
     readonly useCssVar: UnwrapRef<typeof import('@vueuse/core')['useCssVar']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useCurrentElement: UnwrapRef<typeof import('@vueuse/core')['useCurrentElement']>
@@ -599,6 +616,7 @@ declare module 'vue' {
     readonly useElementBounding: UnwrapRef<typeof import('@vueuse/core')['useElementBounding']>
     readonly useElementByPoint: UnwrapRef<typeof import('@vueuse/core')['useElementByPoint']>
     readonly useElementHover: UnwrapRef<typeof import('@vueuse/core')['useElementHover']>
+    readonly useElementOverflow: UnwrapRef<typeof import('@vueuse/core')['useElementOverflow']>
     readonly useElementSize: UnwrapRef<typeof import('@vueuse/core')['useElementSize']>
     readonly useElementVisibility: UnwrapRef<typeof import('@vueuse/core')['useElementVisibility']>
     readonly useEventBus: UnwrapRef<typeof import('@vueuse/core')['useEventBus']>
@@ -706,6 +724,7 @@ declare module 'vue' {
     readonly useThrottleFn: UnwrapRef<typeof import('@vueuse/core')['useThrottleFn']>
     readonly useThrottledRefHistory: UnwrapRef<typeof import('@vueuse/core')['useThrottledRefHistory']>
     readonly useTimeAgo: UnwrapRef<typeof import('@vueuse/core')['useTimeAgo']>
+    readonly useTimeAgoIntl: UnwrapRef<typeof import('@vueuse/core')['useTimeAgoIntl']>
     readonly useTimeout: UnwrapRef<typeof import('@vueuse/core')['useTimeout']>
     readonly useTimeoutFn: UnwrapRef<typeof import('@vueuse/core')['useTimeoutFn']>
     readonly useTimeoutPoll: UnwrapRef<typeof import('@vueuse/core')['useTimeoutPoll']>
@@ -731,6 +750,7 @@ declare module 'vue' {
     readonly useWindowFocus: UnwrapRef<typeof import('@vueuse/core')['useWindowFocus']>
     readonly useWindowScroll: UnwrapRef<typeof import('@vueuse/core')['useWindowScroll']>
     readonly useWindowSize: UnwrapRef<typeof import('@vueuse/core')['useWindowSize']>
+    readonly validateProfileDraft: UnwrapRef<typeof import('../stores/profiles')['validateProfileDraft']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchArray: UnwrapRef<typeof import('@vueuse/core')['watchArray']>
     readonly watchAtMost: UnwrapRef<typeof import('@vueuse/core')['watchAtMost']>
