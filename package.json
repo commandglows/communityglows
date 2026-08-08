@@ -43,7 +43,7 @@
     "commander": "^13.1.0",
     "concurrently": "^10.0.4",
     "convex-test": "^0.0.55",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "daisyui": "^5.7.16",
     "dotenv": "^16.6.1",
     "eslint": "^9.39.4",
