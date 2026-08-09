@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockState = vi.hoisted(() => {
   return {
@@ -108,6 +108,10 @@ beforeEach(() => {
   });
 });
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("convexAuth client boundaries", () => {
   it("restores a session only when both namespaced JWT and refresh token exist", async () => {
     localStorage.setItem(JWT_STORAGE_KEY, "jwt-1");
@@ -197,6 +201,19 @@ describe("convexAuth client boundaries", () => {
       signIn("password", { email: "user@test.com", password: "secret" }),
     ).rejects.toThrow("session valide");
     expect(isAuthenticated.value).toBe(false);
+  });
+
+  it("fails terminally when realtime sign-in never resolves", async () => {
+    vi.useFakeTimers();
+    mockState.realtimeAction.mockReturnValue(new Promise(() => undefined));
+    const { setupConvexAuth, signIn } = await loadAuthModule();
+    await setupConvexAuth(createMockClient() as never, CONVEX_URL);
+
+    const signInPromise = signIn("password", { email: "user@test.com", password: "secret" });
+    const rejection = expect(signInPromise).rejects.toThrow("serveur a expiré");
+    await vi.advanceTimersByTimeAsync(15_000);
+
+    await rejection;
   });
 
   it("retries refresh over unauthenticated HTTP without using the realtime client", async () => {

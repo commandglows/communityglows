@@ -361,6 +361,7 @@ let hydratePromise: Promise<void> | null = null;
 const REOPEN_SETTINGS_AFTER_AUTH_KEY = "communityglows_reopen_settings_after_auth";
 const CLOUD_SYNC_USER_ID_KEY = "communityglows_cloud_sync_user_id";
 const AUTH_RELOAD_DELAY_MS = 3000;
+const CLOUD_QUERY_TIMEOUT_MS = 15_000;
 
 function canUseStorage() {
   return typeof window !== "undefined" && typeof localStorage !== "undefined";
@@ -381,6 +382,37 @@ function clearRememberedCloudUserId() {
   localStorage.removeItem(CLOUD_SYNC_USER_ID_KEY);
 }
 
+export async function waitForCloudQuery<T>(
+  stage: string,
+  queryPromise: Promise<T>,
+  timeoutMs = CLOUD_QUERY_TIMEOUT_MS,
+): Promise<T> {
+  let timedOut = false;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  recordDiagnosticEvent({ area: "cloud-sync", stage: `query-${stage}`, status: "start" });
+  try {
+    const result = await Promise.race([
+      queryPromise,
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          timedOut = true;
+          recordDiagnosticEvent({ area: "cloud-sync", stage: `query-${stage}`, status: "timeout" });
+          reject(new Error(`Le chargement cloud a expiré (${stage}). Réessayez.`));
+        }, timeoutMs);
+      }),
+    ]);
+    recordDiagnosticEvent({ area: "cloud-sync", stage: `query-${stage}`, status: "success" });
+    return result;
+  } catch (error) {
+    if (!timedOut) {
+      recordDiagnosticEvent({ area: "cloud-sync", stage: `query-${stage}`, status: "error" });
+    }
+    throw error;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): Promise<CloudSnapshot> {
   const [
     settings,
@@ -391,13 +423,13 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
     activeAccounts,
     workspaceState,
   ] = await Promise.all([
-    client.query(api.settings.get, {}),
-    client.query(api.profiles.list, {}),
-    client.query(api.customLinks.list, {}),
-    client.query(api.friendsFilters.list, {}),
-    client.query(api.socialAccounts.list, {}),
-    client.query(api.socialAccounts.listActive, {}),
-    client.query(api.workspaceState.get, {}),
+    waitForCloudQuery("settings", client.query(api.settings.get, {})),
+    waitForCloudQuery("profiles", client.query(api.profiles.list, {})),
+    waitForCloudQuery("custom-links", client.query(api.customLinks.list, {})),
+    waitForCloudQuery("friends-filters", client.query(api.friendsFilters.list, {})),
+    waitForCloudQuery("social-accounts", client.query(api.socialAccounts.list, {})),
+    waitForCloudQuery("active-accounts", client.query(api.socialAccounts.listActive, {})),
+    waitForCloudQuery("workspace", client.query(api.workspaceState.get, {})),
   ]);
 
   return {
@@ -563,7 +595,7 @@ export async function hydrateCloudState(options?: {
 
   hydratePromise = (async () => {
     const client = getConvexClient();
-    const user = await client.query(api.users.getMe, {});
+    const user = await waitForCloudQuery("current-user", client.query(api.users.getMe, {}));
     if (!user?._id) {
       recordDiagnosticEvent({
         area: "cloud-sync",

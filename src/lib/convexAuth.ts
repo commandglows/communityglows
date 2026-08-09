@@ -18,6 +18,7 @@ const SESSION_PIN_HASH_KEY = "communityglows_session_pin_hash";
 const SESSION_PIN_SALT_KEY = "communityglows_session_pin_salt";
 const DEFAULT_SESSION_LOCK_IDLE_MS = 15 * 60 * 1000;
 const AUTH_CONFIRMATION_TIMEOUT_MS = 12_000;
+const AUTH_ACTION_TIMEOUT_MS = 15_000;
 const AUTH_RETRY_BACKOFF_MS = [500, 2_000] as const;
 const AUTH_RETRY_JITTER_MS = 100;
 
@@ -90,18 +91,33 @@ async function callRealtimeAuthAction(
   if (!_client) {
     throw new Error("Le service de connexion n’est pas initialisé.");
   }
+  let timedOut = false;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
   try {
     recordDiagnosticEvent({ area: "cloud-auth", stage, status: "realtime-start" });
-    const result = await _client.action(action, args as never);
+    const result = await Promise.race([
+      _client.action(action, args as never),
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          timedOut = true;
+          recordDiagnosticEvent({ area: "cloud-auth", stage, status: "realtime-timeout" });
+          reject(new Error("La connexion au serveur a expiré. Vérifiez votre réseau puis réessayez."));
+        }, AUTH_ACTION_TIMEOUT_MS);
+      }),
+    ]);
     recordDiagnosticEvent({ area: "cloud-auth", stage, status: "realtime-success" });
     return result;
   } catch (error) {
-    recordDiagnosticEvent({
-      area: "cloud-auth",
-      stage,
-      status: `realtime-${authFailureStatus(error)}`,
-    });
+    if (!timedOut) {
+      recordDiagnosticEvent({
+        area: "cloud-auth",
+        stage,
+        status: `realtime-${authFailureStatus(error)}`,
+      });
+    }
     throw error;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
   }
 }
 

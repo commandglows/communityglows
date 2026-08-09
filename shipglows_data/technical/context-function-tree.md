@@ -106,7 +106,7 @@ Vue fonctionnelle du cœur de CommunityGlows sans lire tout le projet.
 - `src/lib/communityGlowsDeepLinks.ts`
   - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
 - `src/lib/cloudSync*.ts`
-  - Sync settings, queue de sync, feedback post-auth et échec explicite si la session n'expose aucun utilisateur cloud.
+  - Sync settings, queue de sync, feedback post-auth, diagnostics et délais terminaux par lecture cloud; échec explicite si la session n'expose aucun utilisateur cloud.
 - `src/utils/disableCopyProtection.ts`
   - Effet anti-copie, hooks installés côté entrée UI.
 - `src/composables/*`

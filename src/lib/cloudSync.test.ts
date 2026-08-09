@@ -11,9 +11,21 @@ import {
   asCloudProfiles,
   asCloudSettings,
   asCloudSocialAccounts,
+  waitForCloudQuery,
 } from "@/lib/cloudSync";
 
 describe("cloud sync runtime payload validation", () => {
+  it("fails terminally when a cloud query never resolves", async () => {
+    vi.useFakeTimers();
+    const pending = waitForCloudQuery("profiles", new Promise<never>(() => undefined), 1000);
+    const rejection = expect(pending).rejects.toThrow("profiles");
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    await rejection;
+    vi.useRealTimers();
+  });
+
   it("keeps only valid settings fields", () => {
     expect(
       asCloudSettings({
