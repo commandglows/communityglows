@@ -7,13 +7,11 @@ import type { Locale } from '../../i18n'
 interface Props { lang: Locale }
 const { lang } = Astro.props
 const copy = lang === 'fr' ? {
-  eyebrow: 'Téléchargements CommunityGlows', title: 'Choisissez votre plateforme.', intro: 'Téléchargez CommunityGlows lorsqu’une version est publiée. Les autres plateformes restent visibles afin que vous sachiez précisément ce qui est disponible aujourd’hui.', available: 'Disponible', releasePage: 'Voir les releases', comingSoon: 'Bientôt disponible',
-  windows: { title: 'Windows', detail: 'Téléchargement direct de la dernière version Windows publiée.', action: 'Télécharger pour Windows' }, linux: { title: 'Linux', detail: 'Consultez les assets publiés dans les releases du projet.', action: 'Voir les releases Linux' }, android: { title: 'Android', detail: 'La distribution Android publique est en préparation.', action: '' }, apple: { title: 'iPhone et iPad', detail: 'La version iOS est prévue, sans date de sortie annoncée.', action: '' },
-  noteTitle: 'Un téléchargement clair, sans devinette', note: 'Nous n’installons rien automatiquement et ne masquons aucune plateforme. Une carte active mène vers une version ou une page de releases réellement publiée.',
+  eyebrow: 'Télécharger CommunityGlows', title: 'Choisissez votre plateforme.', intro: 'Accédez à la dernière version disponible de CommunityGlows.', available: 'Disponible', releasePage: 'Voir les releases', comingSoon: 'Bientôt disponible',
+  windows: { title: 'Windows', detail: 'Téléchargement direct de la dernière version Windows publiée.', action: 'Télécharger pour Windows' }, linux: { title: 'Linux', detail: 'Retrouvez les fichiers Linux dans les dernières releases du projet.', action: 'Voir les releases Linux' }, android: { title: 'Android', detail: 'Le téléchargement Android public n’est pas encore disponible.', action: '' }, apple: { title: 'iPhone et iPad', detail: 'CommunityGlows n’est pas encore disponible sur iPhone et iPad.', action: '' },
 } : {
-  eyebrow: 'CommunityGlows downloads', title: 'Choose your platform.', intro: 'Download CommunityGlows when a release is published. Other platforms stay visible so you can see exactly what is available today.', available: 'Available', releasePage: 'View releases', comingSoon: 'Coming soon',
-  windows: { title: 'Windows', detail: 'Direct download of the latest published Windows version.', action: 'Download for Windows' }, linux: { title: 'Linux', detail: 'Browse the assets published in the project releases.', action: 'View Linux releases' }, android: { title: 'Android', detail: 'Public Android distribution is being prepared.', action: '' }, apple: { title: 'iPhone and iPad', detail: 'The iOS version is planned, with no release date announced.', action: '' },
-  noteTitle: 'A clear download path, without guesswork', note: 'We never install anything automatically or hide a platform. An active card leads to a genuinely published version or release page.',
+  eyebrow: 'Download CommunityGlows', title: 'Choose your platform.', intro: 'Get the latest available version of CommunityGlows.', available: 'Available', releasePage: 'View releases', comingSoon: 'Coming soon',
+  windows: { title: 'Windows', detail: 'Direct download of the latest published Windows version.', action: 'Download for Windows' }, linux: { title: 'Linux', detail: 'Find Linux files in the project’s latest releases.', action: 'View Linux releases' }, android: { title: 'Android', detail: 'A public Android download is not available yet.', action: '' }, apple: { title: 'iPhone and iPad', detail: 'CommunityGlows is not yet available for iPhone and iPad.', action: '' },
 }
 ---
 
@@ -38,6 +36,5 @@ const copy = lang === 'fr' ? {
       })}
     </div>
   </section>
-  <section class="border-y border-border bg-card py-16 sm:py-20"><div class="mx-auto max-w-3xl px-4 text-center" data-reveal><h2 class="animate-fade-up text-2xl font-semibold text-foreground sm:text-3xl">{copy.noteTitle}</h2><p class="animate-fade-up delay-100 mt-4 leading-relaxed text-muted-foreground">{copy.note}</p></div></section>
   <Footer lang={lang} />
 </main>

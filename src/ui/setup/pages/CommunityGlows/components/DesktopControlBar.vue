@@ -1,37 +1,46 @@
 <template>
   <div
     class="desktop-control-bar"
-    :class="`desktop-control-bar--${position}`"
+    :class="[
+      `desktop-control-bar--${position}`,
+      { 'desktop-control-bar--with-leading': hasLeadingContent },
+    ]"
     :style="barStyle"
     role="toolbar"
     aria-label="Contrôles des panneaux"
   >
-    <SgButton
-      v-if="leftHidden"
-      v-sg-tooltip.right="'Ouvrir le panneau gauche'"
-      icon="pi pi-bars"
-      text
-      aria-label="Ouvrir le panneau gauche"
-      @click="$emit('open-left')"
-    />
-    <span v-else />
+    <div class="desktop-control-bar__leading">
+      <SgButton
+        v-if="leftHidden"
+        v-sg-tooltip.right="'Ouvrir le panneau gauche'"
+        icon="pi pi-bars"
+        text
+        aria-label="Ouvrir le panneau gauche"
+        @click="$emit('open-left')"
+      />
+      <span v-else />
+      <slot name="after-left" />
+    </div>
 
     <div class="desktop-control-bar__actions">
       <slot />
     </div>
 
-    <SgButton
-      v-if="rightHidden"
-      v-sg-tooltip.left="'Ouvrir le panneau droit'"
-      icon="pi pi-bars"
-      text
-      aria-label="Ouvrir le panneau droit"
-      @click="$emit('open-right')"
-    />
-    <span v-else />
+    <div class="desktop-control-bar__trailing">
+      <SgButton
+        v-if="rightHidden"
+        v-sg-tooltip.left="'Ouvrir le panneau droit'"
+        icon="pi pi-bars"
+        text
+        aria-label="Ouvrir le panneau droit"
+        @click="$emit('open-right')"
+      />
+      <span v-else />
+    </div>
 
     <div
       v-if="resizable && minimumHeight > 0"
+      ref="resizeHandleRef"
       class="desktop-control-bar__resize-handle"
       :class="`desktop-control-bar__resize-handle--${position}`"
       role="separator"
@@ -48,12 +57,13 @@
       @pointercancel="finishResize"
       @lostpointercapture="finishResize"
       @keydown="onResizeKeydown"
+      @mousedown="onResizeMouseDown"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO,
   type DesktopControlBarPosition,
@@ -66,8 +76,10 @@ const props = withDefaults(defineProps<{
   rightHidden: boolean
   position: DesktopControlBarPosition
   resizable?: boolean
+  hasLeadingContent?: boolean
 }>(), {
   resizable: false,
+  hasLeadingContent: false,
 })
 
 defineEmits<{
@@ -80,8 +92,10 @@ const controlBarStore = useDesktopControlBarStore()
 const minimumHeight = ref(0)
 const viewportHeight = ref(0)
 const activePointerId = ref<number | null>(null)
+const resizeHandleRef = ref<HTMLDivElement | null>(null)
 const pointerStartY = ref(0)
 const pointerStartHeight = ref(0)
+const wasDraggingWithMouse = ref(false)
 
 const maximumHeight = computed(() =>
   Math.max(
@@ -98,6 +112,24 @@ const barStyle = computed(() => {
     '--sg-control-bar-current-height': `${currentHeight.value}px`,
   }
 })
+
+function onGlobalPointerMove(event: PointerEvent) {
+  onResizePointerMove(event)
+}
+
+function onGlobalPointerEnd(event: PointerEvent) {
+  finishResize(event)
+}
+
+function onGlobalMouseMove(event: MouseEvent) {
+  if (!wasDraggingWithMouse.value || activePointerId.value !== -1) return
+  const direction = props.position === 'top' ? 1 : -1
+  setHeight(pointerStartHeight.value + direction * (event.clientY - pointerStartY.value))
+}
+
+function onGlobalMouseEnd() {
+  finishResize()
+}
 
 function resolveControlBarHeight() {
   if (typeof window === 'undefined') return 0
@@ -135,13 +167,25 @@ function resizeBy(delta: number) {
   setHeight(currentHeight.value + direction * delta)
 }
 
+function beginResize(pointerId: number, clientY: number) {
+  if (!props.resizable || minimumHeight.value <= 0) return
+  if (activePointerId.value !== null) return
+  activePointerId.value = pointerId
+  pointerStartY.value = clientY
+  pointerStartHeight.value = currentHeight.value
+}
+
 function onResizePointerDown(event: PointerEvent) {
   if (event.pointerType === 'mouse' && event.button !== 0) return
+  event.preventDefault()
+  beginResize(event.pointerId, event.clientY)
+
   const target = event.currentTarget as HTMLElement
-  target.setPointerCapture(event.pointerId)
-  activePointerId.value = event.pointerId
-  pointerStartY.value = event.clientY
-  pointerStartHeight.value = currentHeight.value
+  try {
+    target.setPointerCapture(event.pointerId)
+  } catch {
+    // Pointer capture can be unsupported in some embedded webviews.
+  }
 }
 
 function onResizePointerMove(event: PointerEvent) {
@@ -150,9 +194,30 @@ function onResizePointerMove(event: PointerEvent) {
   setHeight(pointerStartHeight.value + direction * (event.clientY - pointerStartY.value))
 }
 
-function finishResize(event?: PointerEvent) {
-  if (event && activePointerId.value !== event.pointerId) return
+function onResizeMouseDown(event: MouseEvent) {
+  if (event.button !== 0 || activePointerId.value !== null) return
+  event.preventDefault()
+  beginResize(-1, event.clientY)
+  wasDraggingWithMouse.value = true
+}
+
+function finishResize(event?: PointerEvent | MouseEvent) {
+  if (activePointerId.value === null) return
+  if (event && 'pointerId' in event && activePointerId.value !== event.pointerId) return
+
+  const target = resizeHandleRef.value
+  if (target) {
+    try {
+      if ('hasPointerCapture' in target && target.hasPointerCapture(activePointerId.value)) {
+        target.releasePointerCapture(activePointerId.value)
+      }
+    } catch {
+      // Ignore browsers where pointer capture methods are unavailable.
+    }
+  }
+
   activePointerId.value = null
+  wasDraggingWithMouse.value = false
 }
 
 function onResizeKeydown(event: KeyboardEvent) {
@@ -185,11 +250,33 @@ function onResizeKeydown(event: KeyboardEvent) {
 onMounted(() => {
   refreshAvailableHeight()
   window.addEventListener('resize', refreshAvailableHeight)
+
+  document.addEventListener('pointermove', onGlobalPointerMove)
+  document.addEventListener('pointerup', onGlobalPointerEnd)
+  document.addEventListener('pointercancel', onGlobalPointerEnd)
+  document.addEventListener('mousemove', onGlobalMouseMove)
+  document.addEventListener('mouseup', onGlobalMouseEnd)
+  window.addEventListener('blur', onGlobalMouseEnd)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', refreshAvailableHeight)
+  document.removeEventListener('pointermove', onGlobalPointerMove)
+  document.removeEventListener('pointerup', onGlobalPointerEnd)
+  document.removeEventListener('pointercancel', onGlobalPointerEnd)
+  document.removeEventListener('mousemove', onGlobalMouseMove)
+  document.removeEventListener('mouseup', onGlobalMouseEnd)
+  window.removeEventListener('blur', onGlobalMouseEnd)
 })
+
+watch(
+  () => props.resizable,
+  (resizable) => {
+    if (!resizable) {
+      finishResize()
+    }
+  },
+)
 </script>
 
 <style scoped>
@@ -208,17 +295,32 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(var(--sg-control-bar-blur));
 }
 
+.desktop-control-bar--with-leading {
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr) var(--sg-control-bar-edge-column);
+}
 .desktop-control-bar--top { border-bottom: 1px solid var(--sg-color-border); }
 .desktop-control-bar--bottom { border-top: 1px solid var(--sg-color-border); }
+.desktop-control-bar__leading,
+.desktop-control-bar__trailing {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: visible;
+}
+.desktop-control-bar__leading {
+  gap: var(--sg-control-bar-navigation-gap);
+}
+.desktop-control-bar__trailing {
+  justify-self: end;
+}
 .desktop-control-bar__actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--sg-space-2);
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
-.desktop-control-bar > :last-child { justify-self: end; }
 .desktop-control-bar__resize-handle {
   position: absolute;
   z-index: var(--sg-sidebar-overlay-z-index);
@@ -236,7 +338,7 @@ onBeforeUnmount(() => {
   top: var(--sg-position-center);
   width: var(--sg-size-100pct);
   height: var(--sg-control-bar-handle-thickness);
-  background: var(--sg-color-transparent);
+  background: color-mix(in srgb, var(--sg-color-surface-muted) 80%, transparent);
   content: '';
   transform: translateY(var(--sg-position-center-transform));
   transition: var(--sg-sidebar-gutter-transition);
@@ -249,7 +351,7 @@ onBeforeUnmount(() => {
 }
 .desktop-control-bar__resize-handle:hover::before,
 .desktop-control-bar__resize-handle:focus-visible::before {
-  background: var(--sg-color-text-on-action);
+  background: color-mix(in srgb, var(--sg-color-surface-hover) 75%, transparent);
 }
 .desktop-control-bar__resize-handle:focus-visible {
   outline: var(--sg-focus-ring);

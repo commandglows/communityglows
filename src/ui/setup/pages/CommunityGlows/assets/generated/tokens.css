@@ -364,8 +364,8 @@
   --sg-right-sidebar-widget-crm-max-height: min(45vh, 28rem);
   --sg-right-sidebar-widget-kanban-max-height: min(60vh, 40rem);
   --sg-scrollbar-radius: 999px;
-  --sg-scrollbar-thumb: color-mix(in srgb, var(--sg-color-text-muted) 34%, transparent);
-  --sg-scrollbar-thumb-hover: color-mix(in srgb, var(--sg-color-text-muted) 52%, transparent);
+  --sg-scrollbar-thumb: color-mix(in srgb, var(--sg-color-surface-muted) 84%, transparent);
+  --sg-scrollbar-thumb-hover: color-mix(in srgb, var(--sg-color-surface-hover) 84%, transparent);
   --sg-scrollbar-width: 4px;
   --sg-select-content-max-height: 16rem;
   --sg-select-item-padding: 0.625rem 0.75rem;
@@ -663,4 +663,3 @@
   --surface-color: var(--sg-color-surface-muted);
   --text-color: var(--sg-color-text);
 }
-

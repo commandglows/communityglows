@@ -1,6 +1,7 @@
 <template>
   <div class="desktop-quick-navigation">
     <ProfileSwitcher
+      v-if="showProfileSelector"
       :icons-only="false"
       embedded
       control-bar
@@ -38,7 +39,7 @@
 import { computed } from "vue"
 import { useRouter } from "vue-router"
 import {
-  builtInSocialNetworks,
+  getVisibleBuiltInSocialNetworks,
   type BuiltInSocialNetwork,
 } from "@/config/socialNetworks"
 import type { DesktopControlBarPosition } from "@/stores/desktopControlBar"
@@ -47,9 +48,12 @@ import { useWebviewStore } from "@/stores/webviewState"
 import NetworkBrandIcon from "./NetworkBrandIcon.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
 
-defineProps<{
+withDefaults(defineProps<{
   position: DesktopControlBarPosition
-}>()
+  showProfileSelector?: boolean
+}>(), {
+  showProfileSelector: true,
+})
 
 const emit = defineEmits<{
   "manage-profiles": []
@@ -63,10 +67,7 @@ const webviewStore = useWebviewStore()
 const visibleNetworks = computed(() => {
   const profile = profilesStore.activeProfile
   if (!profile) return []
-  const hiddenNetworkIds = new Set(profile.hiddenNetworks ?? [])
-  return builtInSocialNetworks.filter(
-    (network) => !hiddenNetworkIds.has(network.id),
-  )
+  return getVisibleBuiltInSocialNetworks(profile.hiddenNetworks)
 })
 
 function navigateToNetwork(network: BuiltInSocialNetwork) {
@@ -94,6 +95,14 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
   gap: var(--sg-control-bar-navigation-gap);
   min-width: 0;
   max-width: var(--sg-size-100pct);
+  --desktop-quick-navigation-icon-size: clamp(
+    var(--sg-control-bar-navigation-icon-size),
+    calc(var(--sg-control-bar-current-height) - var(--sg-space-2rem)),
+    calc(var(--sg-control-height-sm) * 3)
+  );
+  --desktop-quick-navigation-brand-icon-size: calc(
+    var(--desktop-quick-navigation-icon-size) - var(--sg-space-4)
+  );
 }
 
 .desktop-quick-navigation__networks {
@@ -113,9 +122,9 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 var(--sg-control-bar-navigation-icon-size);
-  width: var(--sg-control-bar-navigation-icon-size);
-  height: var(--sg-control-bar-navigation-icon-size);
+  flex: 0 0 var(--desktop-quick-navigation-icon-size);
+  width: var(--desktop-quick-navigation-icon-size);
+  height: var(--desktop-quick-navigation-icon-size);
   padding: 0;
   border: var(--sg-border-1px) solid transparent;
   border-radius: var(--sg-radius-pill);
@@ -138,7 +147,7 @@ function navigateToNetwork(network: BuiltInSocialNetwork) {
 }
 
 .desktop-quick-navigation__network :deep(.network-brand-icon) {
-  width: var(--sg-control-bar-navigation-brand-icon-size);
-  height: var(--sg-control-bar-navigation-brand-icon-size);
+  width: var(--desktop-quick-navigation-brand-icon-size);
+  height: var(--desktop-quick-navigation-brand-icon-size);
 }
 </style>

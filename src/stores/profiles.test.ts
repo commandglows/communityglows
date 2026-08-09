@@ -17,6 +17,7 @@ vi.mock("@/lib/cloudSettings", () => ({
 }))
 
 import { useProfilesStore } from "./profiles"
+import { builtInSocialNetworks } from "@/config/socialNetworks"
 
 describe("profiles store atomic drafts", () => {
   beforeEach(() => {
@@ -71,6 +72,31 @@ describe("profiles store atomic drafts", () => {
 
     expect(store.profiles).toHaveLength(1)
     expect(store.profiles[0].name).toBe("Personnel")
+    expect(store.profiles[0].hiddenNetworks).toEqual(
+      builtInSocialNetworks
+        .filter((network) => !network.defaultSelected)
+        .map((network) => network.id),
+    )
+  })
+
+  it("starts a legacy profile visibility toggle from catalogue defaults", () => {
+    const store = useProfilesStore()
+    const optionalNetwork = builtInSocialNetworks.find(
+      (network) => !network.defaultSelected,
+    )!
+    store.profiles = [{
+      id: "legacy-profile",
+      name: "Legacy",
+      emoji: "🟦",
+      createdAt: 1,
+    }]
+    store.activeProfileId = "legacy-profile"
+
+    expect(store.isNetworkHidden("legacy-profile", optionalNetwork.id)).toBe(true)
+
+    store.toggleNetworkHidden("legacy-profile", optionalNetwork.id)
+
+    expect(store.isNetworkHidden("legacy-profile", optionalNetwork.id)).toBe(false)
   })
 
   it("rejects an invalid draft before mutating local or cloud state", () => {

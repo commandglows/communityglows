@@ -1,10 +1,44 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  builtInSocialNetworks,
+  getVisibleBuiltInSocialNetworks,
   getNetworkIsolationOriginsByNetwork,
   getNetworkIsolationOrigins,
   getNetworkIsolationPolicy,
+  resolveHiddenNetworkIds,
 } from '@/config/socialNetworks'
+
+describe('social network visibility', () => {
+  it('uses only catalogue defaults when a legacy profile has no selection', () => {
+    const expectedVisibleIds = builtInSocialNetworks
+      .filter(network => network.defaultSelected)
+      .map(network => network.id)
+
+    expect(getVisibleBuiltInSocialNetworks().map(network => network.id)).toEqual(
+      expectedVisibleIds,
+    )
+  })
+
+  it('removes hidden networks completely while preserving dense catalogue order', () => {
+    expect(
+      getVisibleBuiltInSocialNetworks(['facebook', 'tiktok']).map(
+        network => network.id,
+      ),
+    ).toEqual(
+      builtInSocialNetworks
+        .filter(network => network.id !== 'facebook' && network.id !== 'tiktok')
+        .map(network => network.id),
+    )
+  })
+
+  it('preserves an explicit empty exclusion list as show everything', () => {
+    expect(getVisibleBuiltInSocialNetworks([])).toHaveLength(
+      builtInSocialNetworks.length,
+    )
+    expect(resolveHiddenNetworkIds([])).toEqual([])
+  })
+})
 
 describe('social network isolation policy', () => {
   it('uses global defaults for networks without overrides', () => {

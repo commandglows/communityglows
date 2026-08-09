@@ -198,7 +198,10 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref, watch } from "vue"
 import { useMediaQuery } from "@/composables/useMediaQuery"
-import { builtInSocialNetworks } from "@/config/socialNetworks"
+import {
+  builtInSocialNetworks,
+  getVisibleBuiltInSocialNetworks,
+} from "@/config/socialNetworks"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import { PROFILE_NAME_MAX_LENGTH, useProfilesStore } from "@/stores/profiles"
 import SgSheet from "./ui/SgSheet.vue"
@@ -240,10 +243,10 @@ const selectedProfile = computed(() =>
   ),
 )
 
-function visibleNetworksFor(hiddenNetworks: string[] = []) {
-  return builtInSocialNetworks
-    .filter((network) => !hiddenNetworks.includes(network.id))
-    .map((network) => network.id)
+function visibleNetworksFor(hiddenNetworks?: string[]) {
+  return getVisibleBuiltInSocialNetworks(hiddenNetworks).map(
+    (network) => network.id,
+  )
 }
 
 function resetDraft(profileId = profilesStore.activeProfileId) {

@@ -195,6 +195,7 @@ watch(filters, (newFilters) => {
   display: flex;
   align-items: center;
   width: var(--sg-size-100pct);
+  min-width: 0;
 }
 
 .filters-group {
@@ -202,15 +203,20 @@ watch(filters, (newFilters) => {
   align-items: center;
   gap: var(--sg-filter-gap);
   flex: 1;
+  width: var(--sg-size-100pct);
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .quick-filters {
   display: flex;
-  gap: var(--sg-space-2);
-  flex-wrap: nowrap;
+  gap: var(--sg-space-0d5rem);
+  flex-wrap: wrap;
   overflow-x: auto;
   scrollbar-width: var(--sg-size-none);
   -ms-overflow-style: none;
+  width: var(--sg-size-100pct);
+  min-width: 0;
 }
 
 .quick-filters::-webkit-scrollbar {
@@ -264,11 +270,37 @@ watch(filters, (newFilters) => {
   align-items: stretch;
 }
 
-.filters-wrapper.is-compact .search-container {
-  min-width: var(--sg-size-unset);
-}
-
 .filters-wrapper.is-compact .filters-group {
   flex-wrap: wrap;
+  gap: var(--sg-space-0d5rem);
+}
+
+.filters-wrapper.is-compact :deep(.sg-multiselect),
+.filters-wrapper.is-compact .sort-select,
+.filters-wrapper.is-compact .date-range-fields,
+.filters-wrapper.is-compact .quick-filters,
+.filters-wrapper.is-compact :deep(button),
+.filters-wrapper.is-compact .date-input {
+  width: var(--sg-sidebar-fill-size);
+}
+
+@media (max-width: 1180px) {
+  .filters-group {
+    gap: var(--sg-space-0d5rem);
+  }
+
+  .date-input {
+    width: min(100%, var(--sg-filter-date-width));
+  }
+
+  .sort-select {
+    width: var(--sg-sidebar-fill-size);
+    min-width: 0;
+  }
+
+  .filters-wrapper.is-compact .sort-select,
+  .filters-wrapper.is-compact :deep(.sg-multiselect) {
+    width: var(--sg-sidebar-fill-size);
+  }
 }
 </style>

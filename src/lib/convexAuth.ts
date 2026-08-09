@@ -18,6 +18,8 @@ const SESSION_PIN_HASH_KEY = "communityglows_session_pin_hash";
 const SESSION_PIN_SALT_KEY = "communityglows_session_pin_salt";
 const DEFAULT_SESSION_LOCK_IDLE_MS = 15 * 60 * 1000;
 const AUTH_CONFIRMATION_TIMEOUT_MS = 12_000;
+const AUTH_RETRY_BACKOFF_MS = [500, 2_000] as const;
+const AUTH_RETRY_JITTER_MS = 100;
 
 function storageKey(key: string, namespace: string) {
   return `${key}_${namespace.replace(/[^a-zA-Z0-9]/g, "")}`;
@@ -69,6 +71,68 @@ function getHttpClient() {
   return new ConvexHttpClient(_namespace);
 }
 
+function isNetworkAuthError(error: unknown) {
+  if (error instanceof TypeError) return true;
+  if (!(error instanceof Error)) return false;
+  return /network|fetch|cors|connection|socket|timed? ?out/i.test(error.message);
+}
+
+function authFailureStatus(error: unknown) {
+  if (isNetworkAuthError(error)) return "network-error";
+  return error instanceof Error ? "action-error" : `non-error-${typeof error}`;
+}
+
+async function callRealtimeAuthAction(
+  action: ConvexActionRef,
+  args: Record<string, unknown>,
+  stage: "password-sign-in" | "sign-out",
+) {
+  if (!_client) {
+    throw new Error("Le service de connexion n’est pas initialisé.");
+  }
+  try {
+    recordDiagnosticEvent({ area: "cloud-auth", stage, status: "realtime-start" });
+    const result = await _client.action(action, args as never);
+    recordDiagnosticEvent({ area: "cloud-auth", stage, status: "realtime-success" });
+    return result;
+  } catch (error) {
+    recordDiagnosticEvent({
+      area: "cloud-auth",
+      stage,
+      status: `realtime-${authFailureStatus(error)}`,
+    });
+    throw error;
+  }
+}
+
+async function callUnauthenticatedAuthActionWithRetry(
+  action: ConvexActionRef,
+  args: Record<string, unknown>,
+) {
+  let lastError: unknown;
+  let retry = 0;
+  while (retry < AUTH_RETRY_BACKOFF_MS.length) {
+    try {
+      recordDiagnosticEvent({ area: "cloud-auth", stage: "token-refresh", status: "http-start" });
+      const result = await getHttpClient().action(action, args as never);
+      recordDiagnosticEvent({ area: "cloud-auth", stage: "token-refresh", status: "http-success" });
+      return result;
+    } catch (error) {
+      lastError = error;
+      recordDiagnosticEvent({
+        area: "cloud-auth",
+        stage: "token-refresh",
+        status: `http-${authFailureStatus(error)}`,
+      });
+      if (!isNetworkAuthError(error)) throw error;
+      const waitMs = AUTH_RETRY_BACKOFF_MS[retry] + AUTH_RETRY_JITTER_MS * Math.random();
+      retry += 1;
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+  }
+  throw lastError;
+}
+
 function detachClientAuth() {
   _client?.setAuth(async () => null, (authenticated) => {
     isAuthenticated.value = authenticated;
@@ -107,8 +171,7 @@ function configureClientAuth(options?: { waitForConfirmation?: boolean }) {
             return null;
           }
           try {
-            const httpClient = new ConvexHttpClient(_namespace);
-            const result = (await httpClient.action(AUTH_SIGN_IN, {
+            const result = (await callUnauthenticatedAuthActionWithRetry(AUTH_SIGN_IN, {
               refreshToken,
             })) as AuthResult | null;
             if (result?.tokens) {
@@ -212,11 +275,16 @@ export async function signIn(
     );
   }
 
-  const httpClient = getHttpClient();
-  const result = (await httpClient.action(AUTH_SIGN_IN, {
-    provider,
-    params: params ?? {},
-  })) as AuthResult | null;
+  let result: AuthResult | null;
+  try {
+    result = (await callRealtimeAuthAction(AUTH_SIGN_IN, {
+      provider,
+      params: params ?? {},
+    }, "password-sign-in")) as AuthResult | null;
+  } catch (error) {
+    if (error instanceof Error) throw error;
+    throw new Error("La connexion au cloud a échoué. Réessayez.");
+  }
 
   if (result?.tokens) {
     persistTokens(result.tokens);
@@ -234,9 +302,7 @@ export async function signIn(
 export async function signOut() {
   if (!_client) return;
   try {
-    const httpClient = getHttpClient();
-    if (_currentToken) httpClient.setAuth(_currentToken);
-    await httpClient.action(AUTH_SIGN_OUT, {});
+    await callRealtimeAuthAction(AUTH_SIGN_OUT, {}, "sign-out");
   } catch (e) {
     console.warn("[ConvexAuth] Sign-out failed (already signed out?)", e);
   }

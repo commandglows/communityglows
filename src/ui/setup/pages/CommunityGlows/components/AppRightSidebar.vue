@@ -47,11 +47,22 @@
         </div>
 
         <!-- Section profil -->
-        <div
-          v-show="!iconsOnly"
-          class="profile-section"
-        >
-          <div class="profile-avatar">
+        <div class="profile-section">
+          <div
+            v-if="iconsOnly"
+            class="profile-section__compact"
+          >
+            <ProfileSwitcher
+              :icons-only="true"
+              menu-direction="down"
+              :show-avatar-trigger="true"
+              avatar-trigger-size="large"
+              @manage-profiles="emit('manage-profiles')"
+              @open-settings="emit('open-settings')"
+            />
+          </div>
+          <template v-if="!iconsOnly">
+            <div class="profile-avatar">
             <Avatar
               :image="profilesStore.activeProfile?.avatar"
               :label="profilesStore.activeProfile?.emoji ?? '👤'"
@@ -68,13 +79,14 @@
               <SgIcon icon="pi pi-pencil" />
             </button>
           </div>
-          <ProfileSwitcher
-            :icons-only="false"
-            menu-direction="down"
-            trigger-variant="avatar-heading"
-            @manage-profiles="emit('manage-profiles')"
-            @open-settings="emit('open-settings')"
-          />
+            <ProfileSwitcher
+              :icons-only="false"
+              menu-direction="down"
+              trigger-variant="avatar-heading"
+              @manage-profiles="emit('manage-profiles')"
+              @open-settings="emit('open-settings')"
+            />
+          </template>
         </div>
 
         <!-- Menu principal -->
@@ -150,62 +162,78 @@
 
         <div
           v-if="!iconsOnly"
-          class="kanban-host"
+          class="sidebar-widget-stack"
         >
-          <div class="sidebar-widget">
-            <button
-              class="sidebar-widget__toggle"
-              type="button"
-              :aria-label="
-                isKanbanCollapsed ? 'Ouvrir Kanban' : 'Replier Kanban'
-              "
-              :aria-expanded="String(!isKanbanCollapsed)"
-              @click="isKanbanCollapsed = !isKanbanCollapsed"
-            >
-              <span class="sidebar-widget__title">Kanban</span>
-              <SgIcon
-                :icon="[
-                  'pi',
-                  isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
-                ]"
-              />
-            </button>
-            <div
-              class="sidebar-widget__body sidebar-widget__body--kanban"
-              :class="{
-                'sidebar-widget__body--collapsed': isKanbanCollapsed,
-              }"
-            >
-              <KanbanSidebar />
+          <div class="kanban-host">
+            <div class="sidebar-widget">
+              <button
+                class="sidebar-widget__toggle"
+                type="button"
+                :aria-label="
+                  isKanbanCollapsed ? 'Ouvrir Kanban' : 'Replier Kanban'
+                "
+                :aria-expanded="String(!isKanbanCollapsed)"
+                @click="isKanbanCollapsed = !isKanbanCollapsed"
+              >
+                <span class="sidebar-widget__title">Kanban</span>
+                <Button
+                  class="sidebar-widget__link-action"
+                  icon="pi pi-external-link"
+                  text
+                  size="small"
+                  aria-label="Ouvrir Kanban"
+                  @click.stop="openKanbanPage"
+                />
+                <span aria-hidden="true" class="sidebar-widget__spacer"></span>
+                <SgIcon
+                  :icon="[
+                    'pi',
+                    isKanbanCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                  ]"
+                />
+              </button>
+              <div
+                class="sidebar-widget__body sidebar-widget__body--kanban"
+                :class="{
+                  'sidebar-widget__body--collapsed': isKanbanCollapsed,
+                }"
+              >
+                <KanbanSidebar />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div
-          v-if="!iconsOnly"
-          class="crm-host"
-        >
-          <div class="sidebar-widget">
-            <button
-              class="sidebar-widget__toggle"
-              type="button"
-              :aria-label="isCrmCollapsed ? 'Ouvrir CRM' : 'Replier CRM'"
-              :aria-expanded="String(!isCrmCollapsed)"
-              @click="isCrmCollapsed = !isCrmCollapsed"
-            >
-              <span class="sidebar-widget__title">CRM</span>
-              <SgIcon
-                :icon="[
-                  'pi',
-                  isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
-                ]"
-              />
-            </button>
-            <div
-              class="sidebar-widget__body sidebar-widget__body--crm"
-              :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
-            >
-              <CrmSidebarWidget />
+          <div class="crm-host">
+            <div class="sidebar-widget">
+              <button
+                class="sidebar-widget__toggle"
+                type="button"
+                :aria-label="isCrmCollapsed ? 'Ouvrir CRM' : 'Replier CRM'"
+                :aria-expanded="String(!isCrmCollapsed)"
+                @click="isCrmCollapsed = !isCrmCollapsed"
+              >
+                <span class="sidebar-widget__title">CRM</span>
+                <Button
+                  class="sidebar-widget__link-action"
+                  icon="pi pi-external-link"
+                  text
+                  size="small"
+                  aria-label="Ouvrir CRM"
+                  @click.stop="openCrmPage"
+                />
+                <SgIcon
+                  :icon="[
+                    'pi',
+                    isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
+                  ]"
+                />
+              </button>
+              <div
+                class="sidebar-widget__body sidebar-widget__body--crm"
+                :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
+              >
+                <CrmSidebarWidget />
+              </div>
             </div>
           </div>
         </div>
@@ -233,6 +261,7 @@ import { nextTick, onMounted, ref, watch } from "vue"
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
 import Button from "./ui/SgButton.vue"
 import Avatar from "./ui/SgAvatar.vue"
+import { useRouter } from "vue-router"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { useProfilesStore } from "@/stores/profiles"
 import {
@@ -265,6 +294,7 @@ const isSidebarMobile = useMediaQuery(
   `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
 )
 const profilesStore = useProfilesStore()
+const router = useRouter()
 
 const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
@@ -296,6 +326,14 @@ const writeBoolToStorage = (key: string, value: boolean) => {
   } catch {
     // noop
   }
+}
+
+const openCrmPage = () => {
+  router.push("/gmail")
+}
+
+const openKanbanPage = () => {
+  router.push("/tasks")
 }
 
 onMounted(() => {
@@ -353,11 +391,23 @@ const handleResize = (sizes: number[]) => {
   height: var(--sg-right-sidebar-viewport-height);
   margin-top: 0;
   transition: var(--sg-right-sidebar-transition);
+  --right-sidebar-compact-icon-size: var(--sg-size-1rem);
 }
 
 .sidebar.icons-only {
   min-width: var(--sg-right-sidebar-compact-width);
   max-width: var(--sg-right-sidebar-compact-width);
+  --right-sidebar-compact-icon-size: calc(var(--sg-size-1rem) * 3);
+}
+
+.sidebar.icons-only .menu-section :deep(.sg-button) {
+  height: calc(var(--sg-right-sidebar-menu-row-height) * 1.33);
+}
+
+.sidebar.icons-only :deep(.sg-button__content .sg-icon),
+.sidebar.icons-only :deep(.sidebar-toggle-button .sg-icon) {
+  width: var(--right-sidebar-compact-icon-size);
+  height: var(--right-sidebar-compact-icon-size);
 }
 
 .sidebar:not(.icons-only) {
@@ -463,13 +513,26 @@ const handleResize = (sizes: number[]) => {
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
   cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--sg-motion-opacity-0d15s), var(--sg-motion-transform-0d15s);
+  transform: scale(0.9);
 }
+
 .profile-avatar__edit:hover {
   background: var(--sg-color-surface-hover);
 }
+
 .profile-avatar__edit:focus-visible {
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
+}
+
+.profile-avatar:hover .profile-avatar__edit,
+.profile-avatar:focus-within .profile-avatar__edit {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 .menu-section {
@@ -506,13 +569,24 @@ const handleResize = (sizes: number[]) => {
 }
 
 .kanban-host {
-  margin-top: var(--sg-sidebar-section-spacing);
-  min-height: 0;
+  width: var(--sg-sidebar-fill-size);
 }
 
 .crm-host {
-  margin-top: var(--sg-sidebar-section-spacing);
+  width: var(--sg-sidebar-fill-size);
+}
+
+.sidebar-widget-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-sidebar-section-spacing);
   min-height: 0;
+}
+
+.kanban-host,
+.crm-host {
+  min-height: 0;
+  position: relative;
 }
 
 .sidebar-widget {
@@ -553,6 +627,25 @@ const handleResize = (sizes: number[]) => {
   font-size: var(--sg-sidebar-section-title-size);
   font-weight: 600;
   color: var(--sg-color-text-muted);
+}
+
+.sidebar-widget__spacer {
+  flex: 1;
+}
+
+.sidebar-widget__link-action {
+  flex-shrink: 0;
+  width: auto;
+  min-width: auto;
+  padding: 0;
+}
+
+.sidebar-widget__link-action :deep(.sg-button__icon) {
+  margin: 0;
+}
+
+.sidebar-widget__link-action:deep(.sg-button__content) {
+  gap: 0;
 }
 
 .sidebar-widget__body {
@@ -596,10 +689,10 @@ const handleResize = (sizes: number[]) => {
   transition: var(--sg-right-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {
-  background: var(--sg-color-text-on-action);
+  background: var(--sg-color-surface-muted);
 }
 .sidebar-resize-handle:focus-visible {
-  background: var(--sg-color-text-on-action);
+  background: var(--sg-color-surface-hover);
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
 }

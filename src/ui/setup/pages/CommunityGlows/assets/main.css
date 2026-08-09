@@ -33,8 +33,8 @@
   --sg-opacity-disabled: 0.52;
   --sg-scrollbar-width: 4px;
   --sg-scrollbar-radius: 999px;
-  --sg-scrollbar-thumb: color-mix(in srgb, var(--sg-color-text-muted) 34%, transparent);
-  --sg-scrollbar-thumb-hover: color-mix(in srgb, var(--sg-color-text-muted) 52%, transparent);
+  --sg-scrollbar-thumb: color-mix(in srgb, var(--sg-color-surface-muted) 84%, transparent);
+  --sg-scrollbar-thumb-hover: color-mix(in srgb, var(--sg-color-surface-hover) 84%, transparent);
   --sg-border-1px: 1px;
   --sg-border-2px: 2px;
   --sg-layer-modal: 2000;

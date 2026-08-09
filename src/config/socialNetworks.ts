@@ -361,6 +361,32 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
   },
 ]
 
+/**
+ * Resolve a profile's persisted exclusions.
+ *
+ * Older/local placeholder profiles may not have a visibility preference yet.
+ * In that case the catalogue's default selection is authoritative. An explicit
+ * empty array is preserved because it means the user chose to show everything.
+ */
+export function resolveHiddenNetworkIds(
+  hiddenNetworkIds?: readonly string[],
+): string[] {
+  if (hiddenNetworkIds !== undefined) {
+    return [...new Set(hiddenNetworkIds)]
+  }
+
+  return builtInSocialNetworks
+    .filter((network) => !network.defaultSelected)
+    .map((network) => network.id)
+}
+
+export function getVisibleBuiltInSocialNetworks(
+  hiddenNetworkIds?: readonly string[],
+): BuiltInSocialNetwork[] {
+  const hiddenIds = new Set(resolveHiddenNetworkIds(hiddenNetworkIds))
+  return builtInSocialNetworks.filter((network) => !hiddenIds.has(network.id))
+}
+
 const NETWORK_ISOLATION_NOT_COVERED = [
   'sessionStorage',
   'indexedDB',

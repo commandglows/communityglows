@@ -349,7 +349,7 @@
         <!-- Profile switcher (global — one profile = all networks) -->
         <ProfileSwitcher
           :icons-only="iconsOnly"
-          menu-direction="up"
+          :menu-direction="iconsOnly ? 'down' : 'up'"
           class="profile-switcher-bottom"
           @manage-profiles="emit('manage-profiles')"
           @open-settings="emit('open-settings')"
@@ -637,12 +637,31 @@ onUnmounted(() => {
   background-color: var(--sg-color-surface-raised);
   height: var(--sg-sidebar-viewport-height);
   margin-top: 0;
-  transition: var(--sg-sidebar-transition);
+  transition: var(--sg-sidebar-panel-transition);
+  will-change: flex-basis;
+  --left-sidebar-compact-icon-size: var(--sg-sidebar-network-icon-size);
 }
 
 .sidebar.icons-only {
   min-width: var(--sg-sidebar-compact-width);
   max-width: var(--sg-sidebar-compact-width);
+  --left-sidebar-compact-icon-size: calc(var(--sg-sidebar-network-icon-size) * 3);
+}
+
+.sidebar.icons-only .network-btn,
+.sidebar.icons-only .friends-toggle .sg-button,
+.sidebar.icons-only .section-footer .sg-button {
+  min-height: calc(var(--sg-sidebar-network-row-height) * 1.35);
+}
+
+.sidebar.icons-only .sg-button__content .sg-icon {
+  width: var(--left-sidebar-compact-icon-size);
+  height: var(--left-sidebar-compact-icon-size);
+}
+
+.sidebar.icons-only :deep(.network-brand-icon) {
+  width: var(--left-sidebar-compact-icon-size);
+  height: var(--left-sidebar-compact-icon-size);
 }
 
 .sidebar:not(.icons-only) {
@@ -662,9 +681,15 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
+.sidebar.icons-only .sidebar-content {
+  overflow: visible;
+}
+
 .profile-switcher-bottom {
   width: var(--sg-sidebar-fill-size);
   flex: 0 0 auto;
+  position: relative;
+  z-index: var(--sg-layer-1000);
 }
 
 .sidebar-bottom-toggle {
@@ -986,10 +1011,10 @@ onUnmounted(() => {
   transition: var(--sg-sidebar-gutter-transition);
 }
 .sidebar-resize-handle:hover {
-  background: var(--sg-color-text-on-action);
+  background: var(--sg-color-surface-muted);
 }
 .sidebar-resize-handle:focus-visible {
-  background: var(--sg-color-text-on-action);
+  background: var(--sg-color-surface-hover);
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
 }

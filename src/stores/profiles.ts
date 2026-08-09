@@ -1,4 +1,5 @@
 import { defineStore } from "pinia"
+import { resolveHiddenNetworkIds } from "@/config/socialNetworks"
 import { syncSettingsPatch } from "@/lib/cloudSettings"
 import {
   enqueueProfileRemove,
@@ -56,7 +57,7 @@ export function validateProfileDraft(draft: ProfileDraft): ProfileDraft {
     name,
     emoji,
     avatar: draft.avatar,
-    hiddenNetworks: [...new Set(draft.hiddenNetworks ?? [])],
+    hiddenNetworks: resolveHiddenNetworkIds(draft.hiddenNetworks),
   }
 }
 
@@ -190,7 +191,7 @@ export const useProfilesStore = defineStore("profiles", {
     toggleNetworkHidden(profileId: string, networkId: string) {
       const profile = this.profiles.find((p) => p.id === profileId)
       if (!profile) return
-      if (!profile.hiddenNetworks) profile.hiddenNetworks = []
+      profile.hiddenNetworks = resolveHiddenNetworkIds(profile.hiddenNetworks)
       const idx = profile.hiddenNetworks.indexOf(networkId)
       if (idx === -1) {
         profile.hiddenNetworks.push(networkId)
@@ -204,7 +205,8 @@ export const useProfilesStore = defineStore("profiles", {
     /** Check if a network is hidden for a profile. */
     isNetworkHidden(profileId: string, networkId: string): boolean {
       const profile = this.profiles.find((p) => p.id === profileId)
-      return profile?.hiddenNetworks?.includes(networkId) ?? false
+      if (!profile) return false
+      return resolveHiddenNetworkIds(profile.hiddenNetworks).includes(networkId)
     },
 
     /**
@@ -217,6 +219,7 @@ export const useProfilesStore = defineStore("profiles", {
           id: crypto.randomUUID(),
           name: "Profile 1",
           emoji: DEFAULT_EMOJIS[0],
+          hiddenNetworks: resolveHiddenNetworkIds(),
           createdAt: Date.now(),
           localOnly: true,
         }
@@ -250,7 +253,7 @@ export const useProfilesStore = defineStore("profiles", {
           name: profile.name,
           emoji: profile.emoji,
           avatar: profile.avatar,
-          hiddenNetworks: profile.hiddenNetworks ?? [],
+          hiddenNetworks: resolveHiddenNetworkIds(profile.hiddenNetworks),
           createdAt: profile.createdAt,
           localOnly: false,
         }))
@@ -268,7 +271,7 @@ export const useProfilesStore = defineStore("profiles", {
         name: profile.name,
         emoji: profile.emoji,
         avatar: profile.avatar,
-        hiddenNetworks: profile.hiddenNetworks ?? [],
+        hiddenNetworks: resolveHiddenNetworkIds(profile.hiddenNetworks),
         createdAt: profile.createdAt,
       })
       await flushCloudSyncQueue()

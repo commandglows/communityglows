@@ -39,13 +39,26 @@
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
                   :resizable="bothSidebarsHidden"
+                  :has-leading-content="bothSidebarsHidden"
                   position="top"
                   @open-left="sidebarVisible = true"
                   @open-right="rightSidebarVisible = true"
                 >
+                  <template #after-left>
+                    <ProfileSwitcher
+                      v-if="bothSidebarsHidden"
+                      :icons-only="false"
+                      embedded
+                      control-bar
+                      menu-direction="down"
+                      @manage-profiles="profileManagerVisible = true"
+                      @open-settings="settingsVisible = true"
+                    />
+                  </template>
                   <DesktopQuickNavigation
                     v-if="bothSidebarsHidden"
                     position="top"
+                    :show-profile-selector="false"
                     @manage-profiles="profileManagerVisible = true"
                     @open-settings="settingsVisible = true"
                   />
@@ -72,13 +85,26 @@
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
                   :resizable="bothSidebarsHidden"
+                  :has-leading-content="bothSidebarsHidden"
                   position="bottom"
                   @open-left="sidebarVisible = true"
                   @open-right="rightSidebarVisible = true"
                 >
+                  <template #after-left>
+                    <ProfileSwitcher
+                      v-if="bothSidebarsHidden"
+                      :icons-only="false"
+                      embedded
+                      control-bar
+                      menu-direction="up"
+                      @manage-profiles="profileManagerVisible = true"
+                      @open-settings="settingsVisible = true"
+                    />
+                  </template>
                   <DesktopQuickNavigation
                     v-if="bothSidebarsHidden"
                     position="bottom"
+                    :show-profile-selector="false"
                     @manage-profiles="profileManagerVisible = true"
                     @open-settings="settingsVisible = true"
                   />
@@ -159,6 +185,7 @@ import AppSidebar from "./components/AppSidebar.vue"
 import AppRightSidebar from "./components/AppRightSidebar.vue"
 import DesktopControlBar from "./components/DesktopControlBar.vue"
 import DesktopQuickNavigation from "./components/DesktopQuickNavigation.vue"
+import ProfileSwitcher from "./components/ProfileSwitcher.vue"
 import NetworkWebviewHost from "./components/NetworkWebviewHost.vue"
 import MobileLayout from "./components/MobileLayout.vue"
 import MobileSettingsSheet from "./components/MobileSettingsSheet.vue"

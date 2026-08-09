@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue"
-import { builtInSocialNetworks } from "@/config/socialNetworks"
+import { getVisibleBuiltInSocialNetworks } from "@/config/socialNetworks"
 import { i18n, setLocale } from "@/utils/i18n"
 import { useProfilesStore } from "@/stores/profiles"
 import { useCustomLinksStore } from "@/stores/customLinks"
@@ -79,8 +79,9 @@ const activeProfileId = computed({
 const activeProfile = computed(() => profilesStore.activeProfile)
 
 const visibleNetworks = computed(() => {
-  const hiddenIds = new Set(activeProfile.value?.hiddenNetworks ?? [])
-  const allNetworks = builtInSocialNetworks.filter((network) => !hiddenIds.has(network.id))
+  const allNetworks = getVisibleBuiltInSocialNetworks(
+    activeProfile.value?.hiddenNetworks,
+  )
   if (props.compact) {
     return allNetworks.slice(0, 8)
   }

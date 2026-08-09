@@ -1,10 +1,5 @@
 <template>
   <div class="kanban-sidebar">
-    <div class="kanban-header">
-      <h3>Kanban</h3>
-      <span class="item-count">{{ totalItems }}</span>
-    </div>
-
     <div class="kanban-sections">
       <div 
         v-for="column in store.columns" 
@@ -57,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useKanbanStore } from '@/stores/kanban'
 import Button from '../ui/SgButton.vue'
 import type { KanbanItem, KanbanColumnId } from '@/services/kanbanService'
@@ -66,10 +61,6 @@ const store = useKanbanStore()
 
 onMounted(() => {
   store.initialize()
-})
-
-const totalItems = computed(() => {
-  return store.columns.reduce((total, column) => total + column.items.length, 0)
 })
 
 const getColumnItems = (columnId: KanbanColumnId) => {
@@ -123,27 +114,6 @@ const deleteItem = (itemId: string) => {
   display: flex;
   flex-direction: column;
   background: var(--sg-color-surface-muted);
-}
-
-.kanban-header {
-  padding: var(--sg-space-1rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--sg-color-border);
-}
-
-.kanban-header h3 {
-  margin: 0;
-  font-size: var(--sg-font-size-1d1rem);
-}
-
-.item-count {
-  background: var(--sg-color-action);
-  color: var(--sg-color-text-on-action);
-  padding: var(--sg-space-0d2rem-0d6rem);
-  border-radius: var(--sg-radius-1rem);
-  font-size: var(--sg-font-size-0d8rem);
 }
 
 .kanban-sections {

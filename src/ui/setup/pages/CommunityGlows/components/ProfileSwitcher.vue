@@ -20,14 +20,23 @@
       :aria-label="iconsOnly ? 'Switch profile' : undefined"
       aria-haspopup="listbox"
       :aria-expanded="menuVisible"
-      @click="toggleMenu"
+      @click.stop="toggleMenu"
     >
       <span
-        v-if="triggerVariant !== 'avatar-heading'"
+        v-if="triggerVariant !== 'avatar-heading' && !showAvatarTrigger"
         class="profile-emoji"
       >
         {{ profilesStore.activeProfile?.emoji ?? "👤" }}
       </span>
+      <Avatar
+        v-if="showAvatarTrigger"
+        :size="avatarTriggerSize"
+        :image="profilesStore.activeProfile?.avatar"
+        :label="profilesStore.activeProfile?.emoji ?? '👤'"
+        :alt="profilesStore.activeProfile?.name ?? 'Profil'"
+        class="profile-trigger-avatar"
+        shape="circle"
+      />
       <span
         v-if="!iconsOnly"
         class="profile-name"
@@ -108,9 +117,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref, watch, onMounted, onUnmounted, onBeforeUnmount } from "vue"
 import { COMMUNITYGLOWS_PROFILE_PICKED_EVENT } from "@/lib/communityGlowsDeepLinks"
 import { useProfilesStore } from "@/stores/profiles"
+import Avatar from "./ui/SgAvatar.vue"
 
 const emit = defineEmits<{
   "manage-profiles": []
@@ -123,6 +133,8 @@ defineProps<{
   embedded?: boolean
   triggerVariant?: "default" | "avatar-heading"
   controlBar?: boolean
+  showAvatarTrigger?: boolean
+  avatarTriggerSize?: "small" | "normal" | "large" | "xlarge"
 }>()
 
 const profilesStore = useProfilesStore()
@@ -133,40 +145,62 @@ function toggleMenu() {
   menuVisible.value = !menuVisible.value
 }
 
+function closeMenu() {
+  if (!menuVisible.value) return
+  menuVisible.value = false
+}
+
+function syncWebviewOverlayState(active: boolean) {
+  window.dispatchEvent(
+    new CustomEvent("communityglows-webview-overlay-state", {
+      detail: { active },
+    }),
+  )
+}
+
 function selectProfile(profileId: string) {
+  closeMenu()
   window.dispatchEvent(
     new CustomEvent(COMMUNITYGLOWS_PROFILE_PICKED_EVENT, {
       detail: { profileId },
     }),
   )
   if (profileId === profilesStore.activeProfileId) {
-    menuVisible.value = false
     return
   }
   // NetworkWebviewHost watcher will reopen the active network with the new profile session.
   profilesStore.setActive(profileId)
-  menuVisible.value = false
 }
 
 function openManager() {
-  menuVisible.value = false
+  closeMenu()
   emit("manage-profiles")
 }
 
 function openSettings() {
-  menuVisible.value = false
+  closeMenu()
   emit("open-settings")
 }
 
 // Close menu on outside click
 function handleOutsideClick(e: MouseEvent) {
-  const el = (e.target as HTMLElement).closest(".profile-switcher")
-  if (!el) menuVisible.value = false
+  const target = e.target
+  if (!(target instanceof Element)) return
+  const el = target.closest(".profile-switcher")
+  if (!el) closeMenu()
 }
 
 function openProfileMenu() {
   menuVisible.value = true
 }
+
+watch(menuVisible, (visible) => {
+  syncWebviewOverlayState(visible)
+})
+
+onBeforeUnmount(() => {
+  closeMenu()
+})
 
 onMounted(() => {
   document.addEventListener("click", handleOutsideClick)
@@ -241,6 +275,12 @@ onUnmounted(() => {
   transition: var(--sg-motion-backgroundneg-color-0d15s);
 }
 
+.profile-trigger-avatar {
+  width: var(--sg-sidebar-compact-avatar-size, var(--sg-avatar-size-lg));
+  height: var(--sg-sidebar-compact-avatar-size, var(--sg-avatar-size-lg));
+  --sg-avatar-fallback-size: 1rem;
+}
+
 .profile-trigger:hover,
 .profile-trigger.active {
   background-color: var(--sg-color-surface-hover);
@@ -302,7 +342,7 @@ onUnmounted(() => {
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
   box-shadow: var(--sg-shadow-modal);
-  z-index: var(--sg-layer-200);
+  z-index: var(--sg-layer-modal);
   overflow: hidden;
   backdrop-filter: none;
 }

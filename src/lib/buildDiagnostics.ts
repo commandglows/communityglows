@@ -24,6 +24,19 @@ function redactDiagnosticValue(value: string): string {
 }
 
 export function recordDiagnosticEvent(event: Omit<DiagnosticEvent, "at">): void {
+  const previousEvent = recentDiagnosticEvents[recentDiagnosticEvents.length - 1];
+  if (
+    event.area === "windows-webview" &&
+    event.stage === "resize-webview" &&
+    event.status === "success" &&
+    previousEvent?.area === event.area &&
+    previousEvent.stage === event.stage &&
+    previousEvent.status === event.status
+  ) {
+    previousEvent.at = new Date().toISOString();
+    previousEvent.detail = event.detail ? redactDiagnosticValue(event.detail) : undefined;
+    return;
+  }
   recentDiagnosticEvents.push({
     ...event,
     at: new Date().toISOString(),
