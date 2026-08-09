@@ -58,7 +58,7 @@ jobs:
           targets: aarch64-linux-android
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --force
 
       - name: Initialize Android target
         run: pnpm exec tauri android init --ci
