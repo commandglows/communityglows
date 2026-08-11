@@ -1,11 +1,10 @@
 ---
-import { appUrl, winflowzCheckoutUrl } from '../config/site'
+import { appUrl, authenticatedPurchaseUrl } from '../config/site'
 import { getTranslations, type Locale } from '../i18n'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
-const offerId = 'communityglows/lifetime_deal'
-const checkoutUrl = winflowzCheckoutUrl(offerId, { source: 'direct', sourceRef: 'communityglows-home-pricing' })
+const purchaseUrl = authenticatedPurchaseUrl()
 ---
 
 <section id="pricing" class="py-16 sm:py-24 bg-background">
@@ -26,7 +25,7 @@ const checkoutUrl = winflowzCheckoutUrl(offerId, { source: 'direct', sourceRef: 
           <p class="mt-2 text-sm text-muted-foreground">{t.pricing.priceSuffix}</p>
           <div class="mt-7 flex flex-col gap-3">
             <a href={appUrl()} class="shimmer-btn inline-flex w-full items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200">{t.pricing.cta}</a>
-            <a href={checkoutUrl} class="inline-flex w-full items-center justify-center rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">{t.pricing.purchaseCta}</a>
+            <a href={purchaseUrl} class="inline-flex w-full items-center justify-center rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">{t.pricing.purchaseCta}</a>
           </div>
         </div>
 

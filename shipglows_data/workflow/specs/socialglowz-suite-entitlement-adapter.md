@@ -1,13 +1,14 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: "socialglowz"
 created: "2026-05-30"
 created_at: "2026-05-30 07:45:11 UTC"
-updated: "2026-05-30"
+updated: "2026-08-11"
 updated_at: "2026-05-30 17:17:01 UTC"
-status: ready
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "architecture-migration / entitlement-ledger"
@@ -50,7 +51,8 @@ evidence:
   - "/home/claude/winflowz/winflowz_site/convex/bridge.ts exposes suite identity and entitlement snapshot patterns."
   - "/home/claude/socialglowz/convex/schema.ts currently defines local entitlements, redemptionCodes and billingEvents, creating a second ledger."
   - "/home/claude/socialglowz/convex/billing.ts currently grants SocialGlowz access from local Convex tables."
-next_step: "/102-sg-start socialglowz-suite-entitlement-adapter"
+  - "Superseded on 2026-08-11 after the CommunityGlows adapter adopted the unified suite trial and Stripe contract."
+next_step: "Historical migration evidence only; follow /home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md."
 ---
 
 # Title

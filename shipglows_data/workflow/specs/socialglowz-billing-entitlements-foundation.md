@@ -1,11 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: socialglowz
 created: "2026-05-29"
-updated: "2026-05-29"
-status: ready
+updated: "2026-08-11"
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: 001-sg-build
 scope: billing-entitlements
 owner: "Diane"
@@ -23,7 +24,8 @@ supersedes: []
 evidence:
   - "SocialGlowz has no AI/provider usage cost in its current documented product model."
   - "Existing Convex schema has a simple subscriptions table but no processor-agnostic entitlement ledger."
-next_step: "/102-sg-start socialglowz-billing-entitlements-foundation"
+  - "Superseded on 2026-08-11 by the central suite ledger, unified 30-day three-cycle policy, and Stripe-only contract."
+next_step: "Historical evidence only; follow /home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md."
 ---
 
 # SocialGlowz Billing Entitlements Foundation

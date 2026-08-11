@@ -6,6 +6,11 @@ import {
 } from './communityGlowsDeepLinks'
 
 describe('parseCommunityGlowsDeepLink', () => {
+  it('routes the public purchase CTA into the authenticated billing surface', () => {
+    expect(parseCommunityGlowsDeepLink('communityglows://app/billing')).toEqual({
+      type: 'open-billing',
+    })
+  })
   it('parses a launcher deep link for the current profile', () => {
     expect(parseCommunityGlowsDeepLink('communityglows://app/open?network=instagram')).toEqual({
       type: 'open-network',

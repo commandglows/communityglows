@@ -183,7 +183,17 @@ CONVEX_DEPLOYMENT=            # Déploiement Convex (local/dev), si utilisé
 VITE_CONVEX_SITE_URL=         # Site URL Convex (optionnel)
 COMMUNITYGLOWS_SUITE_BRIDGE_URL= # Endpoint suite bridge (suite entitlement ledger)
 COMMUNITYGLOWS_SUITE_BRIDGE_SECRET= # Secret serveur->serveur pour bridge suite
+COMMUNITYGLOWS_BILLING_ADMIN_SECRET= # Secret opérateur pour les imports de codes d’activation
+COMMUNITYGLOWS_PUBLIC_SITE_URL=https://communityglows.com # Origine non secrète des retours Stripe
 ```
+
+Stripe est entièrement centralisé dans CommandGlows : aucun secret, Price ID,
+SDK ou webhook Stripe ne doit être ajouté à CommunityGlows. Le contrat d'accès
+est de 30 jours par période, deux relances maximum, puis achat obligatoire. Le
+client envoie uniquement un hash pseudonymisé de son identifiant d'installation
+aléatoire; le bridge CommandGlows applique ensuite un HMAC serveur avant toute
+persistance ou comparaison. Le secret HMAC et le handoff d'achat signé restent
+exclusivement côté serveur CommandGlows.
 
 ## Scripts
 

@@ -9,9 +9,10 @@ import { requireAuthUserId } from './authHelpers'
  */
 
 const PRODUCT_COMMUNITYGLOWS = 'communityglows'
-const PLAN_FREE = 'free'
 const PLAN_LIFETIME_DEAL = 'lifetime_deal'
 const PLAN_FOUNDER_LTD = 'founder_ltd'
+const COMMUNITYGLOWS_OFFER_ID = 'communityglows/lifetime_deal'
+const DEFAULT_COMMUNITYGLOWS_SITE_URL = 'https://communityglows.com'
 
 type EntitlementSnapshot = {
   hasAccess: boolean
@@ -19,15 +20,24 @@ type EntitlementSnapshot = {
   planId: string | null
   source: string | null
   reasonCode: string
-  accessState?: 'trial_active' | 'trial_expired' | 'lifetime_active'
+  accessState?:
+    | 'inactive'
+    | 'trial_active'
+    | 'trial_expired'
+    | 'trial_exhausted'
+    | 'lifetime_active'
   trialStartedAt?: number | null
   trialEndsAt?: number | null
   trialExpiresAt?: number | null
+  trialAttempt?: number | null
+  trialRestartsRemaining?: number
+  trialRestartEligible?: boolean
 }
 
 type BridgeResponseOk<T extends Record<string, unknown> = Record<string, unknown>> = {
   status: 'ok'
   snapshot?: EntitlementSnapshot
+  checkoutIdentityToken?: string
   redemption?: {
     hasAccess: boolean
     planId: string | null
@@ -79,11 +89,31 @@ function getSuiteBridgeSecret() {
   return secret
 }
 
+function getSuiteCommerceCheckoutUrl(): string {
+  const bridgeUrl = new URL(getSuiteBridgeUrl(process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL))
+  return new URL('/api/commerce/checkout', bridgeUrl.origin).toString()
+}
+
+function getCommunityGlowsSiteUrl(): string {
+  const configured = process.env.COMMUNITYGLOWS_PUBLIC_SITE_URL?.trim()
+  try {
+    return new URL(configured || DEFAULT_COMMUNITYGLOWS_SITE_URL).origin
+  } catch {
+    return DEFAULT_COMMUNITYGLOWS_SITE_URL
+  }
+}
+
 function normalizeCode(code: string) {
   return code.trim().toUpperCase().replace(/\s+/g, '-')
 }
 
 function mapBridgeError(message: string) {
+  if (/trial_restart_not_eligible|trial_exhausted|restart_limit/i.test(message)) {
+    return 'trial_restart_not_eligible'
+  }
+  if (/checkout.*not configured|stripe.*not configured|missing.*price/i.test(message)) {
+    return 'checkout_not_configured'
+  }
   if (/invalid_payload|missing|provider_account_id_required|code_required/i.test(message)) {
     return 'invalid_payload'
   }
@@ -110,6 +140,7 @@ function isAllowedPlanForCommunityGlows(planId: string) {
 type SuiteBridgeArgs = {
   operation:
     | 'snapshot'
+    | 'restart_trial'
     | 'redeem_code'
     | 'manual_grant'
     | 'revoke'
@@ -124,6 +155,7 @@ type SuiteBridgeArgs = {
   email?: string
   sourceRef?: string
   status?: string
+  installationHash?: string
 }
 
 async function callSuiteBridge<T extends Record<string, unknown> = Record<string, unknown>>(
@@ -167,116 +199,197 @@ async function callSuiteBridge<T extends Record<string, unknown> = Record<string
   return payload
 }
 
-export const getProductAccess = action({
-  args: {
-    productId: v.optional(v.string()),
-  },
-  handler: async (ctx) => {
-    const userId = await requireAuthUserId(ctx)
-    const response = await callSuiteBridge({
-      operation: 'snapshot',
-      providerAccountId: userId,
-      sourceRef: userId,
+async function createSuiteCheckout(checkoutIdentityToken: string): Promise<string> {
+  let response: Response
+  try {
+    response = await fetch(getSuiteCommerceCheckoutUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        offerId: COMMUNITYGLOWS_OFFER_ID,
+        provider: 'stripe',
+        source: 'direct',
+        sourceRef: 'communityglows-app',
+        identityToken: checkoutIdentityToken,
+        successUrl: `${getCommunityGlowsSiteUrl()}/purchase/success?offerId=${encodeURIComponent(COMMUNITYGLOWS_OFFER_ID)}`,
+        cancelUrl: `${getCommunityGlowsSiteUrl()}/purchase/cancel?offerId=${encodeURIComponent(COMMUNITYGLOWS_OFFER_ID)}`,
+      }),
     })
+  } catch (error) {
+    throw new Error(`checkout_request_failed: ${error instanceof Error ? error.message : 'network_error'}`)
+  }
 
-    const snapshot = response.snapshot
-    if (!snapshot) {
-      throw new Error('invalid_snapshot')
-    }
+  let payload: { checkoutUrl?: unknown; message?: unknown }
+  try {
+    payload = await response.json() as { checkoutUrl?: unknown; message?: unknown }
+  } catch {
+    throw new Error('checkout_malformed_response')
+  }
 
-    const trialEndsAt = snapshot.trialEndsAt ?? snapshot.trialExpiresAt ?? null
-    const normalizedAccessState = snapshot.accessState ?? (
-      snapshot.planId === 'trial'
-        ? (typeof trialEndsAt === 'number' && trialEndsAt > Date.now() ? 'trial_active' : 'trial_expired')
-        : undefined
-    )
-    const isLifetime = snapshot.hasAccess && snapshot.planId != null &&
-      isAllowedPlanForCommunityGlows(snapshot.planId)
-    const hasTrustedTrialWindow =
-      typeof snapshot.trialStartedAt === 'number' &&
-      typeof trialEndsAt === 'number' &&
-      snapshot.trialStartedAt < trialEndsAt
+  if (!response.ok || typeof payload.checkoutUrl !== 'string' || !payload.checkoutUrl.trim()) {
+    const message = typeof payload.message === 'string' ? payload.message : `checkout_http_${response.status}`
+    throw new Error(mapBridgeError(message))
+  }
 
-    if (normalizedAccessState === 'trial_active') {
-      if (!snapshot.hasAccess || !hasTrustedTrialWindow || trialEndsAt! <= Date.now()) {
-        return {
-          productId: PRODUCT_COMMUNITYGLOWS,
-          planId: 'trial',
-          status: 'free' as const,
-          accessState: 'trial_expired' as const,
-          source: snapshot.source ?? 'suite',
-          entitlementId: null,
-          expiresAt: trialEndsAt,
-          trialStartedAt: snapshot.trialStartedAt ?? null,
-          trialEndsAt,
-          legacyFallback: false,
-          reasonCode: hasTrustedTrialWindow ? 'trial_expired' : 'trial_window_unverified',
-        }
-      }
+  return payload.checkoutUrl.trim()
+}
 
+function normalizeProductAccess(snapshot: EntitlementSnapshot) {
+  const trialEndsAt = snapshot.trialEndsAt ?? snapshot.trialExpiresAt ?? null
+  const normalizedAccessState = snapshot.accessState ?? (
+    snapshot.planId === 'trial'
+      ? (typeof trialEndsAt === 'number' && trialEndsAt > Date.now() ? 'trial_active' : 'trial_expired')
+      : undefined
+  )
+  const trialAttempt = typeof snapshot.trialAttempt === 'number' ? snapshot.trialAttempt : null
+  const trialRestartsRemaining = typeof snapshot.trialRestartsRemaining === 'number'
+    ? Math.max(0, Math.min(2, snapshot.trialRestartsRemaining))
+    : 0
+  const trialRestartEligible = snapshot.trialRestartEligible === true
+  const isLifetime = snapshot.hasAccess && snapshot.planId != null &&
+    isAllowedPlanForCommunityGlows(snapshot.planId)
+  const hasTrustedTrialWindow =
+    typeof snapshot.trialStartedAt === 'number' &&
+    typeof trialEndsAt === 'number' &&
+    snapshot.trialStartedAt < trialEndsAt
+  const trialFields = {
+    trialStartedAt: snapshot.trialStartedAt ?? null,
+    trialEndsAt,
+    trialAttempt,
+    trialRestartsRemaining,
+    trialRestartEligible,
+  }
+
+  if (normalizedAccessState === 'trial_active') {
+    if (!snapshot.hasAccess || !hasTrustedTrialWindow || trialEndsAt! <= Date.now()) {
       return {
         productId: PRODUCT_COMMUNITYGLOWS,
-        planId: snapshot.planId ?? 'trial',
-        status: 'active' as const,
-        accessState: 'trial_active' as const,
-        source: snapshot.source ?? 'suite',
-        entitlementId: null,
-        expiresAt: trialEndsAt!,
-        trialStartedAt: snapshot.trialStartedAt!,
-        trialEndsAt: trialEndsAt!,
-        legacyFallback: false,
-        reasonCode: snapshot.reasonCode || 'trial_active',
-      }
-    }
-
-    if (normalizedAccessState === 'trial_expired') {
-      return {
-        productId: PRODUCT_COMMUNITYGLOWS,
-        planId: snapshot.planId ?? 'trial',
-        status: 'free' as const,
+        planId: 'trial',
+        status: 'inactive' as const,
         accessState: 'trial_expired' as const,
         source: snapshot.source ?? 'suite',
         entitlementId: null,
         expiresAt: trialEndsAt,
-        trialStartedAt: snapshot.trialStartedAt ?? null,
-        trialEndsAt,
         legacyFallback: false,
-        reasonCode: snapshot.reasonCode || 'trial_expired',
+        reasonCode: hasTrustedTrialWindow ? 'trial_expired' : 'trial_window_unverified',
+        ...trialFields,
+        trialRestartEligible: false,
       }
-    }
-
-    if (!snapshot.hasAccess) {
-      return {
-        productId: PRODUCT_COMMUNITYGLOWS,
-        planId: PLAN_FREE,
-        status: 'free' as const,
-        source: 'default' as const,
-        entitlementId: null,
-        expiresAt: null,
-        legacyFallback: false,
-        accessState: 'trial_expired' as const,
-        trialStartedAt: snapshot.trialStartedAt ?? null,
-        trialEndsAt,
-        reasonCode: snapshot.reasonCode,
-      }
-    }
-
-    if (!isLifetime) {
-      throw new Error('unverified_access_state')
     }
 
     return {
       productId: PRODUCT_COMMUNITYGLOWS,
-      planId: snapshot.planId ?? PLAN_FREE,
+      planId: snapshot.planId ?? 'trial',
       status: 'active' as const,
-      source: snapshot.source ?? 'manual',
+      accessState: 'trial_active' as const,
+      source: snapshot.source ?? 'suite',
+      entitlementId: null,
+      expiresAt: trialEndsAt!,
+      legacyFallback: false,
+      reasonCode: snapshot.reasonCode || 'trial_active',
+      ...trialFields,
+      trialRestartEligible: false,
+    }
+  }
+
+  if (normalizedAccessState === 'trial_expired' || normalizedAccessState === 'trial_exhausted') {
+    return {
+      productId: PRODUCT_COMMUNITYGLOWS,
+      planId: snapshot.planId ?? 'trial',
+      status: 'inactive' as const,
+      accessState: normalizedAccessState,
+      source: snapshot.source ?? 'suite',
+      entitlementId: null,
+      expiresAt: trialEndsAt,
+      legacyFallback: false,
+      reasonCode: snapshot.reasonCode || normalizedAccessState,
+      ...trialFields,
+      trialRestartEligible: normalizedAccessState === 'trial_expired' && trialRestartEligible,
+    }
+  }
+
+  if (!snapshot.hasAccess) {
+    return {
+      productId: PRODUCT_COMMUNITYGLOWS,
+      planId: snapshot.planId,
+      status: 'inactive' as const,
+      source: snapshot.source ?? 'suite',
       entitlementId: null,
       expiresAt: null,
       legacyFallback: false,
-      accessState: 'lifetime_active' as const,
-      trialStartedAt: snapshot.trialStartedAt ?? null,
-      trialEndsAt,
+      accessState: 'inactive' as const,
       reasonCode: snapshot.reasonCode,
+      ...trialFields,
+      trialRestartEligible: false,
+    }
+  }
+
+  if (!isLifetime) {
+    throw new Error('unverified_access_state')
+  }
+
+  return {
+    productId: PRODUCT_COMMUNITYGLOWS,
+    planId: snapshot.planId,
+    status: 'active' as const,
+    source: snapshot.source ?? 'manual',
+    entitlementId: null,
+    expiresAt: null,
+    legacyFallback: false,
+    accessState: 'lifetime_active' as const,
+    reasonCode: snapshot.reasonCode,
+    ...trialFields,
+    trialRestartEligible: false,
+  }
+}
+
+async function getSuiteAccessForUser(
+  userId: string,
+  operation: 'snapshot' | 'restart_trial',
+  installationHash: string,
+) {
+  const response = await callSuiteBridge({
+    operation,
+    providerAccountId: userId,
+    sourceRef: userId,
+    installationHash,
+  })
+  if (!response.snapshot) throw new Error('invalid_snapshot')
+  return { access: normalizeProductAccess(response.snapshot), checkoutIdentityToken: response.checkoutIdentityToken }
+}
+
+export const getProductAccess = action({
+  args: {
+    productId: v.optional(v.string()),
+    installationHash: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await requireAuthUserId(ctx)
+    return (await getSuiteAccessForUser(userId, 'snapshot', args.installationHash)).access
+  },
+})
+
+export const restartTrial = action({
+  args: { installationHash: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await requireAuthUserId(ctx)
+    const access = (await getSuiteAccessForUser(userId, 'restart_trial', args.installationHash)).access
+    if (access.accessState !== 'trial_active') {
+      throw new Error('trial_restart_not_eligible')
+    }
+    return access
+  },
+})
+
+export const startCheckout = action({
+  args: { installationHash: v.string() },
+  handler: async (ctx, args) => {
+    const userId = await requireAuthUserId(ctx)
+    const response = await getSuiteAccessForUser(userId, 'snapshot', args.installationHash)
+    if (!response.checkoutIdentityToken) throw new Error('checkout_handoff_unavailable')
+    return {
+      provider: 'stripe' as const,
+      checkoutUrl: await createSuiteCheckout(response.checkoutIdentityToken),
     }
   },
 })
@@ -306,8 +419,8 @@ export const redeemCode = action({
 
     return {
       productId: PRODUCT_COMMUNITYGLOWS,
-      planId: redemption.planId ?? PLAN_FREE,
-      status: redemption.hasAccess ? ('active' as const) : ('free' as const),
+      planId: redemption.planId,
+      status: redemption.hasAccess ? ('active' as const) : ('inactive' as const),
       source: redemption.source ?? 'manual',
       entitlementId: null,
       expiresAt: null,

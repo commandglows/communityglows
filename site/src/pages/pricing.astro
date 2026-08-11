@@ -8,12 +8,12 @@ import { siteUrl } from '../config/site'
 
 const jsonLd = [{
   '@context': 'https://schema.org', '@type': 'Product', name: 'CommunityGlows',
-  description: 'Try every CommunityGlows feature available today for 30 days with no credit card or automatic billing, then optionally buy lifetime access for €79.',
+  description: 'Use 30-day trial cycles with two restarts maximum, then purchase lifetime access through Stripe to continue protected CommunityGlows actions.',
   offers: { '@type': 'Offer', price: '79', priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: siteUrl('/lifetime-deal') },
 }]
 ---
 
-<Layout title="30-day full trial, then €79 once — CommunityGlows" description="Try every feature available today for 30 days with no credit card and no automatic billing. Then choose lifetime access for €79 once, with no subscription." path="/pricing" lang="en" jsonLd={jsonLd}>
+<Layout title="30-day cycles, then €79 once — CommunityGlows" description="Start with 30 days and restart twice at most. After the third cycle, purchase lifetime access through Stripe to continue, with no subscription." path="/pricing" lang="en" jsonLd={jsonLd}>
   <main id="main-content" class="min-h-screen bg-background text-foreground">
     <Navbar languageHref="/fr/pricing" />
     <div class="pt-20"><Pricing lang="en" /></div>

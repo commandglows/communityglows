@@ -1,11 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "2.0.0"
 project: communityglows
 created: "2026-08-06"
-updated: "2026-08-06"
-status: reviewed
+updated: "2026-08-11"
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: shipglows
 scope: "shared trial entitlement and cross-platform access gates"
 owner: Diane
@@ -29,10 +30,17 @@ supersedes: []
 evidence:
   - "CommunityGlows billing adapter consumes the suite entitlement snapshot and normalizes trialExpiresAt/trialEndsAt."
   - "Operator approved a 30-day no-card trial with no automatic billing and requested shared Windows/Android gates and recovery UX."
-next_step: "Run deployed bridge smoke and Windows/Android device proof"
+  - "Operator decision later on 2026-08-11: CommunityGlows receives the same two restart allowance and Stripe-only provider contract as every suite product."
+next_step: "Implement the canonical suite spec; retain this document as historical single-cycle provenance only."
 ---
 
 # CommunityGlows Trial Access Gates
+
+> **Superseded on 2026-08-11.** The single-cycle CommunityGlows contract below
+> is historical. The sole active authority is
+> `/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md`:
+> 30 days per cycle, two maximum restarts, purchase mandatory after three
+> cycles, no permanent freemium, and Stripe Managed Payments only.
 
 ## Contract
 
@@ -74,11 +82,12 @@ The entitlement ledger remains the source of truth. Windows and Android consume 
 | 2026-08-06 | shipglows | GPT-5 Codex | Formalized the shared 30-day trial, access states, cross-platform gate, UX invariants, and proof obligations after inspecting the current free/active billing adapter. | draft | Readiness review and suite bridge contract |
 | 2026-08-06 | sg-engineering access | GPT-5 Codex | Added trusted trial snapshot handling, fail-closed access interpretation, bounded bridge grace, and shared Windows/Android recovery gate UI. | partial | Implement unique trial start in the CommandGlows bridge/ledger |
 | 2026-08-06 | sg-engineering access | GPT-5 Codex | Added idempotent 30-day server trial creation in the suite bridge, paid-entitlement precedence, expired-trial timestamps, CommunityGlows route alias, and shared secret header compatibility. | reviewed | Run deployed bridge smoke and Windows/Android device proof |
+| 2026-08-11 | sg-development | GPT-5 Codex | Renamed the CommunityGlows checkout contract from WinFlowz to CommandGlows, aligned active environment templates with runtime `COMMUNITYGLOWS_*` keys, documented that the 30-day trial has no permanent-free fallback, and passed the site build, billing tests, core typecheck, metadata lint, and generated-checkout URL check. | implemented | Run the existing deployed bridge and Windows/Android device proof |
+| 2026-08-11 | sg-docs | GPT-5 Codex | Marked the single-cycle/product-provider exception superseded and transferred active authority to the unified suite 30-day × three-cycle, Stripe-only contract. | superseded | Implement the canonical suite spec before hosted/device proof. |
 
 ## Current Chantier Flow
 
-- shipglows: routed and specified
-- sg-development: implemented locally
-- sg-engineering access: reviewed; bridge start and snapshot contract implemented
-- sg-experience: implemented locally
-- verification: local targeted tests, typechecks, and suite build check passed; deployed/device proof pending
+- historical product chantier: superseded; prior local implementation remains evidence
+- canonical authority: unified suite commercial entitlement and Stripe spec
+- implementation: add two CommunityGlows restarts and replace Lemon Squeezy with Stripe
+- verification: rerun local contract tests before deferred hosted/device proof

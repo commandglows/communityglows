@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.3.1"
+artifact_version: "1.5.0"
 project: "communityglows"
 created: "2026-05-14"
-updated: "2026-08-04"
+updated: "2026-08-11"
 status: active
 source_skill: 300-sg-docs
 scope: code_docs_map
@@ -74,7 +74,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - Design drift scan and clean PrimeVue source/declaration/bundle inventories
   - Manual Windows executable proof remains required
 
-## Processor-agnostic product access
+## Unified suite product access and Stripe checkout
 
 - Code:
   - `convex/schema.ts`
@@ -84,7 +84,11 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - `scripts/importCommunityGlowsActivationCodes.test.ts`
   - `src/composables/useBillingAccess.ts`
   - `src/composables/useBillingAccess.test.ts`
+  - `src/lib/communityGlowsInstallation.ts`
+  - `src/lib/communityGlowsInstallation.test.ts`
   - `src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue`
+  - `src/ui/setup/pages/CommunityGlows/components/ProductAccessGate.vue`
+  - `src/ui/setup/pages/CommunityGlows/components/billingAccessComponents.test.ts`
   - `src/ui/setup/pages/CommunityGlows/components/AppSettings.vue`
   - `src/ui/setup/pages/CommunityGlows/components/MobileSettingsSheet.vue`
   - `site/src/config/site.ts`
@@ -92,20 +96,23 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - `site/src/pages/purchase/success.astro`
   - `site/src/pages/purchase/cancel.astro`
 - Behavior:
-  - CommunityGlows lit l’accès produit via le bridge suite WinFlowz ; les tables locales `entitlements`/`redemptionCodes`/`billingEvents` ne sont plus des sources de vérité, elles servent au passage/compatibilité de migration.
+  - CommunityGlows lit l’accès produit via le bridge suite CommandGlows ; les tables locales `entitlements`/`redemptionCodes`/`billingEvents` ne sont plus des sources de vérité, elles servent au passage/compatibilité de migration.
+  - Le contrat partagé accorde des périodes de 30 jours, deux relances maximum, puis exige l'achat; les snapshots propagent `trialAttempt`, `trialRestartsRemaining`, `trialRestartEligible` et `trial_exhausted` sans recomputage client.
+  - `communityGlowsInstallation.ts` persiste un identifiant aléatoire propre à l'app et envoie uniquement son hash pseudonymisé; l'API CommandGlows le re-pseudonymise par HMAC serveur avant stockage, et aucun identifiant matériel n'est lu.
+  - `billing.startCheckout` conserve le handoff signé côté serveur, appelle le checkout Stripe central et retourne uniquement l'URL Stripe finale. Les pages publiques ouvrent `communityglows://app/billing` au lieu d'un checkout non signé.
   - `billing.redeemCode` permet à un user authentifié d’activer un code Lifetime Deal, early-bird, partner, ou manual dans l’entitlement ledger suite (`productId=communityglows`, `plan=lifetime_deal` par défaut).
   - `billing.adminUpsertRedemptionCode` est protégé par `COMMUNITYGLOWS_BILLING_ADMIN_SECRET` et réservé aux imports/ops serveur.
   - `scripts/importCommunityGlowsActivationCodes.ts` importe des batches JSON/JSONL/CSV de codes Lifetime Deal ou early-bird via l'action admin existante, redige les codes dans la sortie, et ne contourne pas le bridge suite.
   - `billing.getProductAccess` renvoie une réponse suite-driven et retourne un état sûr si le bridge est indisponible ou mal configuré.
-  - `billingEvents` records redemption/admin events for auditability without coupling the app UI to AppSumo, Lemon Squeezy, Polar, Stripe, Paddle, or another provider.
-  - `BillingAccessPanel.vue` exposes redemption from both desktop and mobile settings, while `useBillingAccess.ts` keeps raw codes in component/composable memory and maps backend errors to safe i18n keys.
+  - `billingEvents` conserve les événements historiques de redemption/admin sans devenir une autorité d'accès; les types provider actifs locaux sont limités à Stripe avec les sources manuelles/partenaires nécessaires aux codes.
+  - `BillingAccessPanel.vue` et `ProductAccessGate.vue` exposent relance, compteur restant, épuisement et achat Stripe; `useBillingAccess.ts` conserve les données sensibles en mémoire et mappe les erreurs vers des clés i18n sûres.
 - Docs:
   - `shipglows_data/workflow/specs/communityglows-billing-entitlements-foundation.md`
   - `shipglows_data/workflow/specs/communityglows-redemption-ui.md`
   - `shipglows_data/workflow/specs/communityglows-suite-entitlement-adapter.md`
   - `shipglows_data/workflow/specs/communityglows-processor-agnostic-ltd-commerce.md`
   - `shipglows_data/technical/billing-activation-code-import.md`
-  - `shipglows_data/technical/platforms/lemonsqueezy.md`
+  - `shipglows_data/technical/platforms/stripe-managed-payments.md`
   - `shipglows_data/technical/context.md`
 
 ## Auth/session hardening (Android)

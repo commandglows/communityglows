@@ -8,7 +8,7 @@ const features = ref([
   {
     title: "Seamless Payment Processing",
     description:
-      "Get paid faster with pre-configured Stripe and Lemon Squeezy integrations. Includes customizable payment forms and subscription handling, making transactions hassle-free for both you and your users.",
+      "Get paid through the suite's secure Stripe integration. Checkout and entitlement handling stay centralized so payment credentials never enter this client.",
   },
   {
     title: "Smart Storage Solutions",

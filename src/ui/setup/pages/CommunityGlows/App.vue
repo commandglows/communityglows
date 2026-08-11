@@ -266,11 +266,7 @@ const isMobile = useMediaQuery(
 )
 const shouldBlockProductAccess = computed(() => {
   if (!onboardingStore.completed || !isAuthenticated.value) return false
-  if (billingAccess.status.value === "trial_expired") return true
-  return (
-    billingAccess.status.value === "bridge_unavailable" &&
-    !billingAccess.canAccessProtected.value
-  )
+  return !billingAccess.canAccessProtected.value
 })
 
 let unlistenTray: (() => void) | undefined
@@ -685,6 +681,12 @@ function onWebviewOverlayState(event: Event) {
 function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
   if (!onboardingStore.completed) {
     queuedDeepLinkAction.value = action
+    return
+  }
+
+  if (action.type === "open-billing") {
+    webviewStore.clearNetwork()
+    settingsVisible.value = true
     return
   }
 

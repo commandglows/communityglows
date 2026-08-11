@@ -100,7 +100,7 @@ export default {
   },
   pricing: {
     title: 'Essayez tout ce qui est disponible pendant 30 jours.',
-    subtitle: 'Sans carte bancaire et sans facturation automatique. L’essai complet couvre toutes les fonctions disponibles aujourd’hui, pas les éléments de la feuille de route. Achetez ensuite l’accès à vie uniquement si vous le souhaitez.',
+    subtitle: 'Sans carte bancaire ni facturation automatique. Chaque période dure 30 jours et vous pouvez la relancer deux fois. Après la troisième période, l’achat est obligatoire pour continuer les actions protégées.',
     badge: 'Essai complet de 30 jours',
     name: 'CommunityGlows',
     price: 79,
@@ -114,9 +114,9 @@ export default {
     planned: ['Recherche globale dans l’espace de travail', 'Notifications configurables par réseau et application', 'Mode Concentration avancé', 'Extensions Chrome et Firefox', 'Ouvrir des liens sur Windows avec choix du profil', 'Verrouillage local après une période d’inactivité', 'Application Linux', 'Application macOS', 'Application iPhone'],
     plannedNote: 'Ces plateformes et améliorations de workflow sont prévues, mais leur développement n’a pas commencé et aucune date de sortie n’est promise.',
     cta: 'Essayer 30 jours gratuitement',
-    purchaseCta: 'Acheter l’accès à vie pour 79 €',
+    purchaseCta: 'Ouvrir l’app pour payer avec Stripe',
     whyTitle: 'Pourquoi un prix unique ?',
-    whyBody: 'À la fin de l’essai, rien n’est facturé automatiquement. Si CommunityGlows vous convient, vous pouvez choisir de payer 79 € une seule fois pour l’accès à vie. CommunityGlows fonctionne principalement sur vos appareils : aucun abonnement.',
+    whyBody: 'Rien n’est facturé automatiquement. Vous disposez d’une période de 30 jours et de deux relances ; après ces trois périodes, payez 79 € une seule fois via Stripe pour conserver l’accès protégé. CommunityGlows fonctionne principalement sur vos appareils : aucun abonnement.',
   },
   finalCta: {
     title: 'Faites de la place au travail qui compte.',

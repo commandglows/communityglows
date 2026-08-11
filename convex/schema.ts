@@ -112,10 +112,7 @@ export default defineSchema({
     source: v.union(
       v.literal("appsumo"),
       v.literal("manual"),
-      v.literal("lemon_squeezy"),
-      v.literal("polar"),
       v.literal("stripe"),
-      v.literal("paddle"),
     ),
     sourceEventId: v.optional(v.string()),
     externalCustomerId: v.optional(v.string()),
@@ -157,10 +154,7 @@ export default defineSchema({
     source: v.union(
       v.literal("appsumo"),
       v.literal("manual"),
-      v.literal("lemon_squeezy"),
-      v.literal("polar"),
       v.literal("stripe"),
-      v.literal("paddle"),
     ),
     eventType: v.string(),
     sourceEventId: v.optional(v.string()),

@@ -4,12 +4,12 @@ This file provides guidance to coding agents working in this repository.
 
 ## Project Overview
 
-- Project: `tubeflow-site`
+- Project: `communityglows-site`
 - Type: Astro marketing site
 - Runtime: Node.js `>=24.0.0`
 - Styling: Tailwind CSS v4 through Vite
 - Locales: `en` and `fr`
-- Purpose: public-facing site for TubeFlow, with marketing pages and blog content that route users into the app
+- Purpose: public-facing site for CommunityGlows, with marketing pages and blog content that route users into the authenticated app purchase flow
 
 ## Commands
 
@@ -44,6 +44,7 @@ Use safe placeholders in `.env.example`. Do not commit production-only secrets o
 - Preserve the Astro structure unless there is a clear reason to refactor.
 - Keep all canonical URLs, structured-data URLs, and app CTA destinations flowing through `src/config/site.ts`.
 - Treat this repo as a marketing site, not the product app. Marketing copy must not promise features that the product cannot currently support.
+- Never link directly to the central checkout without a signed identity handoff. Public purchase CTAs must enter `communityglows://app/billing`; Stripe secrets, Price IDs, SDKs, and webhooks remain outside this repo.
 - Keep English and French content aligned in meaning, not just wording.
 - When editing docs, maintain valid YAML frontmatter where present and prefer explicit dates over `unknown`.
 

@@ -10,16 +10,18 @@ Copy `.env.example` and override these values when the domains change:
 PUBLIC_SITE_URL=https://communityglows.com
 PUBLIC_APP_URL=https://communityglows.com
 PUBLIC_EMAIL_DOMAIN=communityglows.com
-PUBLIC_WINFLOWZ_CHECKOUT_URL=https://winflowz.com
 ```
 
 All canonicals, structured data URLs, and marketing CTA links read from these variables through `src/config/site.ts`.
 
-### Checkout/Payment links
+### Checkout and payment flow
 
-- `PUBLIC_WINFLOWZ_CHECKOUT_URL`: URL of the WinFlowz suite commerce endpoint used for direct LTD checkout redirects.
-  - Default: `https://winflowz.com`
-  - Checkout CTA currently targets `/api/commerce/checkout?offerId=communityglows/lifetime_deal`.
+- Public purchase CTAs use `communityglows://app/billing` to enter the
+  authenticated app flow.
+- The static site never creates an unsigned checkout and owns no Stripe secret,
+  Price ID, SDK, or webhook.
+- The authenticated app obtains a server-side signed handoff and opens the
+  central Stripe checkout. A return page alone never grants access.
 
 Required result pages:
 

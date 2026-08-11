@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.4.2"
+artifact_version: "1.6.0"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-09"
+updated: "2026-08-11"
 status: reviewed
 source_skill: 300-sg-docs
 scope: context
@@ -32,6 +32,8 @@ evidence:
   - "convex/schema.ts"
   - "convex/billing.ts"
   - "src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue"
+  - "src/ui/setup/pages/CommunityGlows/components/ProductAccessGate.vue"
+  - "src/lib/communityGlowsInstallation.ts"
   - "manifest.config.ts"
 depends_on:
   - "README.md"
@@ -107,7 +109,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 #### Android deeplinks (mobile/desktop Tauri)
 
 1. `main.ts` écoute les événements `deep-link://new-url` du plugin deep-link et lit aussi `plugin:deep-link|get_current` au démarrage.
-2. Les deeplinks applicatifs `communityglows://app/open?network=<id>` ouvrent un réseau dans CommunityGlows avec le profil courant par défaut.
+2. Les deeplinks applicatifs `communityglows://app/open?network=<id>` ouvrent un réseau dans CommunityGlows avec le profil courant par défaut; `communityglows://app/billing` ouvre la surface de facturation authentifiée sans transporter de jeton ni d'identité.
 3. Le même deeplink accepte `profile=choose` ou `chooseProfile=1` pour ouvrir le sélecteur de profil puis lancer le réseau choisi après sélection.
 4. Sur Android, CommunityGlows apparaît aussi dans la feuille de partage système pour les contenus texte/URL (`ACTION_SEND` avec `text/*`).
 5. Quand une URL est partagée depuis Android, l'app ouvre le formulaire `/tasks` avec l'URL HTTPS préremplie; elle ne lit pas la page et ne navigue pas automatiquement vers le réseau. Les deep links applicatifs `communityglows://app/open` conservent leur comportement d'ouverture de réseau/profil.
@@ -129,7 +131,8 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - Tâches contextuelles : `src/stores/contextualTasks.ts` et `src/services/contextualTasksService.ts`, stockage local versionné `contextual-tasks-v1`, sans sync Convex en V1.
 - Sync cloud : `src/lib/cloudSyncQueue.ts`, `src/lib/cloudSettings.ts`, `src/lib/cloudSync.ts`.
 - Backend : tables Convex (`users`, `socialAccounts`, `activeAccounts`, `settings`, `profiles`, `customLinks`, `friendsFilters`, `entitlements`, `redemptionCodes`, `billingEvents`, `subscriptions`). Les tables `entitlements`/`redemptionCodes`/`billingEvents` sont des surfaces de compatibilité locale en transition pendant la migration vers le ledger canonique de suite.
-- Accès produit : `convex/billing.ts` agit comme adaptateur `server -> suite bridge`, avec un point de vérité durable côté WinFlowz (`globalUsers`/`identityAccounts`/`productEntitlements`/`productAccessEvents`). La couche locale ne sert pas d'autorité durable pour CommunityGlows ; elle reste utilisée uniquement pour audit/migration manuelle non destructive.
+- Accès produit : `convex/billing.ts` agit comme adaptateur `server -> suite bridge`, avec un point de vérité durable côté CommandGlows (`globalUsers`/`identityAccounts`/`productEntitlements`/`productAccessEvents`). Chaque période d'essai dure 30 jours; deux relances utilisateur sont autorisées, puis l'achat est obligatoire après la troisième période. Aucun fallback gratuit permanent n'est autorisé. Le client persiste un identifiant d'installation aléatoire local et n'envoie qu'un hash pseudonymisé au bridge; l'API CommandGlows applique un second HMAC avec `SUITE_TRIAL_SIGNAL_SECRET` avant persistance ou comparaison. La couche locale ne sert pas d'autorité durable ; elle reste utilisée uniquement pour audit/migration manuelle non destructive.
+- Achat : l'action Convex CommunityGlows demande au bridge central un handoff d'identité signé, l'utilise côté serveur pour démarrer `communityglows/lifetime_deal` sur le checkout Stripe central, puis ne retourne au client que l'URL Stripe finale. Aucun secret Stripe, Price ID, webhook ou handoff brut n'est exposé dans CommunityGlows.
 - Android WebView (plugin natif) : quand Android WebKit `MULTI_PROFILE` est disponible, chaque session `${profileId}-${networkId}` utilise un profil WebKit natif distinct et un hôte WebView chaud dans un pool LRU borné. En fallback, le plugin revient au mode single-WebView avec cookies + snapshots `localStorage` persistés par session et par origin exacte. CinderReels déclare une origin explicite car son auth utilise `localStorage`; les autres réseaux utilisent le même mécanisme via leur URL principale.
 - Les origins additionnelles où l'isolation scriptée s'applique sont déclarées côté front dans `src/config/socialNetworks.ts` puis transmises à `open_webview` et `set_bar_networks` (validation HTTPS/allowlist côté Rust Android), afin de couvrir les réseaux dont l'auth/app traverse plusieurs domaines et les switches natifs de la bottom bar Android.
 - Mode dégradé explicite si `DOCUMENT_START_SCRIPT` ou `WEB_MESSAGE_LISTENER` ne sont pas disponibles.
@@ -164,9 +167,9 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - `src/lib/cloudSync.ts` : sync de settings et données entre local et Convex.
 - `src-tauri/src/lib.rs` : commandes natives critiques (webview, session, commande Android).
 - `convex/socialAccounts.ts`, `convex/settings.ts`, `convex/profiles.ts` : tables cœur métier.
-- `convex/billing.ts` : adaptateur serveur suite-bridge pour l’accès produit et le redemption code, en lecture/écriture via le bridge WinFlowz.
+- `convex/billing.ts` : adaptateur serveur suite-bridge pour l’accès produit et le redemption code, en lecture/écriture via le bridge CommandGlows.
 - `src/ui/setup/pages/CommunityGlows/components/BillingAccessPanel.vue` : entrée settings desktop/mobile pour lire l'accès produit et activer un code Lifetime Deal ou early-bird.
-- `site/src/config/site.ts` + `site/src/pages/pricing.astro` : route la CTA de Lifetime Deal vers le checkout WinFlowz.
+- `site/src/config/site.ts` + `site/src/pages/pricing.astro` : route le CTA d'achat vers `communityglows://app/billing`; seul le parcours authentifié de l'app peut démarrer le checkout Stripe central.
 - `site/src/pages/purchase/success.astro` et `site/src/pages/purchase/cancel.astro` : pages post-webhook de reprise du parcours direct.
 
 ## Read by Task

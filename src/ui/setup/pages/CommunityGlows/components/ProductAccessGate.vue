@@ -5,11 +5,28 @@
       <p class="product-access-eyebrow">{{ $t('billing.title') }}</p>
       <h1 id="product-access-gate-title">{{ $t(titleKey) }}</h1>
       <p class="product-access-copy">{{ $t(messageKey) }}</p>
+      <p v-if="isTrialDecision" class="product-access-copy">{{ restartAllowanceLabel }}</p>
 
       <div class="product-access-actions">
-        <a class="product-access-primary" href="https://communityglows.com/lifetime-deal" target="_blank" rel="noopener noreferrer">
-          {{ $t('billing.buy_lifetime') }}
-        </a>
+        <button
+          v-if="canRestartTrial"
+          class="product-access-primary"
+          type="button"
+          :disabled="isRestarting"
+          @click="restart"
+        >
+          <SgIcon :icon="isRestarting ? 'pi pi-spin pi-spinner' : 'pi pi-replay'" />
+          {{ isRestarting ? $t('billing.restarting_trial') : $t('billing.restart_trial') }}
+        </button>
+        <button
+          :class="canRestartTrial ? 'product-access-secondary' : 'product-access-primary'"
+          type="button"
+          :disabled="!canStartCheckout"
+          @click="purchase"
+        >
+          <SgIcon :icon="isStartingCheckout ? 'pi pi-spin pi-spinner' : 'pi pi-credit-card'" />
+          {{ isStartingCheckout ? $t('billing.opening_checkout') : $t('billing.buy_lifetime') }}
+        </button>
         <button class="product-access-secondary" type="button" :disabled="isLoading" @click="retry">
           <SgIcon :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
           {{ $t('billing.retry_access') }}
@@ -20,24 +37,62 @@
       </div>
 
       <p class="product-access-recovery">{{ $t('billing.recovery_paths_available') }}</p>
+      <p v-if="successKey" class="product-access-feedback success">{{ $t(successKey) }}</p>
+      <p v-else-if="errorKey" class="product-access-feedback error">{{ $t(errorKey) }}</p>
     </section>
   </main>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useBillingAccess } from '@/composables/useBillingAccess'
 
-const { isLoading, refreshAccess, status } = useBillingAccess()
+const { t } = useI18n()
+const {
+  canRestartTrial,
+  canStartCheckout,
+  errorKey,
+  isLoading,
+  isRestarting,
+  isStartingCheckout,
+  refreshAccess,
+  restartTrial,
+  startPurchase,
+  status,
+  successKey,
+  trialRestartsRemaining,
+} = useBillingAccess()
+const isTrialDecision = computed(() =>
+  status.value === 'trial_expired' || status.value === 'trial_exhausted')
 const titleKey = computed(() => status.value === 'trial_expired'
   ? 'billing.gate_trial_expired_title'
+  : status.value === 'trial_exhausted'
+    ? 'billing.gate_trial_exhausted_title'
+  : status.value === 'free'
+    ? 'billing.gate_access_required_title'
   : 'billing.gate_unverified_title')
 const messageKey = computed(() => status.value === 'trial_expired'
   ? 'billing.gate_trial_expired_message'
+  : status.value === 'trial_exhausted'
+    ? 'billing.gate_trial_exhausted_message'
+  : status.value === 'free'
+    ? 'billing.gate_access_required_message'
   : 'billing.gate_unverified_message')
+const restartAllowanceLabel = computed(() => trialRestartsRemaining.value > 0
+  ? t('billing.restarts_remaining', { count: trialRestartsRemaining.value })
+  : t('billing.restarts_exhausted'))
 
 function retry() {
   void refreshAccess()
+}
+
+function restart() {
+  void restartTrial()
+}
+
+function purchase() {
+  void startPurchase()
 }
 </script>
 
@@ -75,4 +130,7 @@ function retry() {
 .product-access-secondary:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
 .product-access-secondary:disabled { cursor: wait; opacity: .6; }
 .product-access-recovery { font-size: .8rem; }
+.product-access-feedback { margin: 0; font-size: .85rem; }
+.product-access-feedback.success { color: var(--sg-color-success, #22c55e); }
+.product-access-feedback.error { color: var(--sg-color-danger, #ef4444); }
 </style>

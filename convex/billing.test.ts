@@ -33,6 +33,7 @@ beforeEach(() => {
   process.env.COMMUNITYGLOWS_SUITE_BRIDGE_SECRET = "suite-secret";
   process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL =
     "https://suite.example/api/bridge/communityglows";
+  process.env.COMMUNITYGLOWS_PUBLIC_SITE_URL = "https://communityglows.com";
 
   fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
@@ -60,11 +61,11 @@ describe("billing bridge adapter", () => {
     const t = convexTest(schema, modules);
 
     await expect(
-      t.action(api.billing.getProductAccess, {}),
+      t.action(api.billing.getProductAccess, { installationHash: "install-hash" }),
     ).rejects.toThrow(/suite_bridge_not_configured/i);
   });
 
-  it("reads free access from suite snapshot", async () => {
+  it("keeps missing entitlement access inactive", async () => {
     const t = convexTest(schema, modules);
     mockFetchResponse(200, {
       status: "ok",
@@ -77,13 +78,14 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
       productId: "communityglows",
-      planId: "free",
-      status: "free",
-      source: "default",
+      planId: null,
+      status: "inactive",
+      source: "suite",
+      accessState: "inactive",
       legacyFallback: false,
     });
   });
@@ -101,7 +103,7 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
       productId: "communityglows",
@@ -131,7 +133,7 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
       status: "active",
@@ -159,7 +161,7 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
       status: "active",
@@ -182,10 +184,10 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
-      status: "free",
+      status: "inactive",
       accessState: "trial_expired",
       reasonCode: "trial_window_unverified",
     });
@@ -208,13 +210,142 @@ describe("billing bridge adapter", () => {
       },
     });
 
-    const access = await t.action(api.billing.getProductAccess, {});
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
 
     expect(access).toMatchObject({
-      status: "free",
+      status: "inactive",
       accessState: "trial_expired",
       reasonCode: "trial_expired",
     });
+  });
+
+  it("forwards an authenticated restart and propagates the suite counters", async () => {
+    const t = convexTest(schema, modules);
+    authState.userId = "community-user";
+    const now = Date.now();
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: true,
+        globalUserId: "gu-restart",
+        planId: "trial",
+        source: "product_trial",
+        reasonCode: "trial_active",
+        accessState: "trial_active",
+        trialStartedAt: now,
+        trialEndsAt: now + 30 * 24 * 60 * 60 * 1000,
+        trialAttempt: 2,
+        trialRestartsRemaining: 1,
+        trialRestartEligible: false,
+      },
+    });
+
+    const access = await t.action(api.billing.restartTrial, { installationHash: "hashed-installation" });
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const body = JSON.parse(String(request.body));
+
+    expect(body).toMatchObject({
+      operation: "restart_trial",
+      providerAccountId: "community-user",
+      installationHash: "hashed-installation",
+    });
+    expect(access).toMatchObject({
+      accessState: "trial_active",
+      trialAttempt: 2,
+      trialRestartsRemaining: 1,
+      trialRestartEligible: false,
+    });
+  });
+
+  it("propagates exhausted state and disables further restarts", async () => {
+    const t = convexTest(schema, modules);
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: false,
+        globalUserId: "gu-exhausted",
+        planId: "trial",
+        source: "product_trial",
+        reasonCode: "trial_exhausted",
+        accessState: "trial_exhausted",
+        trialAttempt: 3,
+        trialRestartsRemaining: 0,
+        trialRestartEligible: false,
+      },
+    });
+
+    const access = await t.action(api.billing.getProductAccess, { installationHash: "install-hash" });
+    expect(access).toMatchObject({
+      status: "inactive",
+      accessState: "trial_exhausted",
+      trialAttempt: 3,
+      trialRestartsRemaining: 0,
+      trialRestartEligible: false,
+    });
+  });
+
+  it("returns an explicit refusal when the suite does not grant a restarted cycle", async () => {
+    const t = convexTest(schema, modules);
+    mockFetchResponse(200, {
+      status: "ok",
+      snapshot: {
+        hasAccess: false,
+        globalUserId: "gu-exhausted",
+        planId: "trial",
+        source: "product_trial",
+        reasonCode: "trial_exhausted",
+        accessState: "trial_exhausted",
+        trialAttempt: 3,
+        trialRestartsRemaining: 0,
+        trialRestartEligible: false,
+      },
+    });
+
+    await expect(
+      t.action(api.billing.restartTrial, { installationHash: "install-hash" }),
+    ).rejects.toThrow(/trial_restart_not_eligible/);
+  });
+
+  it("starts Stripe checkout server-side with a signed suite handoff", async () => {
+    const t = convexTest(schema, modules);
+    authState.userId = "community-user";
+    fetchMock
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        status: "ok",
+        snapshot: {
+          hasAccess: false,
+          globalUserId: "gu-checkout",
+          planId: "trial",
+          source: "product_trial",
+          reasonCode: "trial_exhausted",
+          accessState: "trial_exhausted",
+          trialAttempt: 3,
+          trialRestartsRemaining: 0,
+          trialRestartEligible: false,
+        },
+        checkoutIdentityToken: "signed-short-lived-token",
+      }), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        ok: true,
+        provider: "stripe",
+        checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_123",
+      }), { status: 200 }));
+
+    const checkout = await t.action(api.billing.startCheckout, { installationHash: "install-hash" });
+    const checkoutRequest = fetchMock.mock.calls[1];
+    const checkoutBody = JSON.parse(String((checkoutRequest?.[1] as RequestInit).body));
+
+    expect(checkoutRequest?.[0]).toBe("https://suite.example/api/commerce/checkout");
+    expect(checkoutBody).toMatchObject({
+      offerId: "communityglows/lifetime_deal",
+      provider: "stripe",
+      identityToken: "signed-short-lived-token",
+    });
+    expect(checkout).toEqual({
+      provider: "stripe",
+      checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_123",
+    });
+    expect(JSON.stringify(checkout)).not.toContain("signed-short-lived-token");
   });
 
   it("redeems code for suite-backed entitlement", async () => {

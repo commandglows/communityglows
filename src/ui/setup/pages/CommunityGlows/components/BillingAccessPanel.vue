@@ -36,23 +36,36 @@
       >
         <span :style="{ width: `${trialProgress}%` }" />
       </div>
+      <p class="billing-recovery-note">{{ restartAllowanceLabel }}</p>
     </div>
 
     <div
-      v-if="status === 'trial_expired'"
+      v-if="status === 'trial_expired' || status === 'trial_exhausted'"
       class="billing-recovery"
     >
       <p>{{ $t('billing.expired_data_safe') }}</p>
+      <p>{{ restartAllowanceLabel }}</p>
       <div class="billing-actions">
-        <a
+        <button
+          v-if="canRestartTrial"
           class="billing-action primary"
-          href="https://communityglows.com/lifetime-deal"
-          target="_blank"
-          rel="noopener noreferrer"
+          type="button"
+          :disabled="isRestarting"
+          @click="restart"
         >
-          <SgIcon icon="pi pi-gift" />
-          {{ $t('billing.buy_lifetime') }}
-        </a>
+          <SgIcon :icon="isRestarting ? 'pi pi-spin pi-spinner' : 'pi pi-replay'" />
+          {{ isRestarting ? $t('billing.restarting_trial') : $t('billing.restart_trial') }}
+        </button>
+        <button
+          class="billing-action"
+          :class="{ primary: !canRestartTrial }"
+          type="button"
+          :disabled="!canStartCheckout"
+          @click="purchase"
+        >
+          <SgIcon :icon="isStartingCheckout ? 'pi pi-spin pi-spinner' : 'pi pi-credit-card'" />
+          {{ isStartingCheckout ? $t('billing.opening_checkout') : $t('billing.buy_lifetime') }}
+        </button>
         <button
           class="billing-action"
           type="button"
@@ -168,15 +181,22 @@ const redemptionCode = ref('')
 const {
   access,
   canRedeem,
+  canRestartTrial,
+  canStartCheckout,
   errorKey,
   isLifetimeDeal,
   isLoading,
   isRedeeming,
+  isRestarting,
+  isStartingCheckout,
   redeemCode,
   refreshAccess,
+  restartTrial,
+  startPurchase,
   status,
   successKey,
   canAccessProtected,
+  trialRestartsRemaining,
 } = useBillingAccess()
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -191,7 +211,7 @@ const statusClass = computed(() => ({
     status.value === 'signed_out' ||
     status.value === 'loading' ||
     status.value === 'bridge_unavailable',
-  error: status.value === 'error' || status.value === 'trial_expired',
+  error: status.value === 'error' || status.value === 'trial_expired' || status.value === 'trial_exhausted',
 }))
 
 const statusLabel = computed(() => {
@@ -203,6 +223,7 @@ const statusLabel = computed(() => {
   if (status.value === 'loading') return t('billing.status_loading')
   if (status.value === 'trial_active') return t('billing.status_trial_active')
   if (status.value === 'trial_expired') return t('billing.status_trial_expired')
+  if (status.value === 'trial_exhausted') return t('billing.status_trial_exhausted')
   if (status.value === 'lifetime_active') return t('billing.status_lifetime_active')
   if (status.value === 'bridge_unavailable') return t('billing.status_bridge_unavailable')
   if (status.value === 'signed_out') return t('billing.status_signed_out')
@@ -220,6 +241,7 @@ const helperText = computed(() => {
   if (status.value === 'bridge_unavailable') return t('billing.bridge_unavailable_hint')
   if (status.value === 'trial_active') return t('billing.trial_active_hint')
   if (status.value === 'trial_expired') return t('billing.trial_expired_hint')
+  if (status.value === 'trial_exhausted') return t('billing.trial_exhausted_hint')
   if (status.value === 'lifetime_active') return t('billing.lifetime_active_hint')
   if (status.value === 'active') {
     return isLifetimeDeal.value
@@ -232,6 +254,7 @@ const helperText = computed(() => {
 const planLabel = computed(() => {
   if (status.value === 'trial_active') return t('billing.plan_trial')
   if (status.value === 'trial_expired') return t('billing.plan_trial_expired')
+  if (status.value === 'trial_exhausted') return t('billing.plan_trial_exhausted')
   if (status.value === 'lifetime_active' || isLifetimeDeal.value) return t('billing.plan_lifetime_deal')
   if (access.value?.status === 'active') return t('billing.plan_active')
   return t('billing.plan_free')
@@ -242,6 +265,7 @@ const showPlanDetails = computed(() =>
   status.value === 'free' ||
   status.value === 'trial_active' ||
   status.value === 'trial_expired' ||
+  status.value === 'trial_exhausted' ||
   status.value === 'lifetime_active',
 )
 const showRedeemForm = computed(() =>
@@ -271,6 +295,10 @@ const trialTimeLabel = computed(() => t('billing.trial_days_remaining', {
   count: trialDaysRemaining.value,
 }))
 
+const restartAllowanceLabel = computed(() => trialRestartsRemaining.value > 0
+  ? t('billing.restarts_remaining', { count: trialRestartsRemaining.value })
+  : t('billing.restarts_exhausted'))
+
 const trialEndLabel = computed(() => {
   const trialEndsAt = access.value?.trialEndsAt
   if (typeof trialEndsAt !== 'number') return ''
@@ -288,6 +316,14 @@ const trialProgress = computed(() => {
 
 function retryAccess() {
   void refreshAccess()
+}
+
+function restart() {
+  void restartTrial()
+}
+
+function purchase() {
+  if (canStartCheckout.value) void startPurchase()
 }
 </script>
 

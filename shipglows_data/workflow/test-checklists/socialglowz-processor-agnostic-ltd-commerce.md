@@ -1,13 +1,14 @@
 ---
 artifact: manual_test_checklist
 metadata_schema_version: "1.0"
-artifact_version: "0.1.0"
+artifact_version: "0.1.1"
 project: "socialglowz"
 created: "2026-05-30"
 created_at: "2026-05-30 18:58:12 UTC"
-updated: "2026-05-30"
+updated: "2026-08-11"
 updated_at: "2026-05-30 20:04:18 UTC"
-status: draft
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: "102-sg-start"
 scope: "socialglowz-processor-agnostic-ltd-commerce"
 owner: "Diane"
@@ -25,7 +26,8 @@ depends_on:
 supersedes: []
 evidence:
   - "shipglows_data/workflow/specs/socialglowz-processor-agnostic-ltd-commerce.md"
-next_step: "/103-sg-verify socialglowz-processor-agnostic-ltd-commerce"
+  - "Superseded by the unified Stripe-only suite acceptance matrix on 2026-08-11."
+next_step: "Historical Lemon Squeezy/Polar proof only; do not execute as an active checklist."
 ---
 
 # Manual Test Checklist: socialglowz-processor-agnostic-ltd-commerce

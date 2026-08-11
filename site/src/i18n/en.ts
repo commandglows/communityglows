@@ -100,7 +100,7 @@ export default {
   },
   pricing: {
     title: 'Try everything available today for 30 days.',
-    subtitle: 'No credit card and no automatic billing. The full trial covers all features available today—not roadmap items. Keep lifetime access afterward only if you choose to buy it.',
+    subtitle: 'No credit card and no automatic billing. Each cycle lasts 30 days and you may restart twice. After the third cycle, purchase is required to continue protected actions.',
     badge: '30-day full trial',
     name: 'CommunityGlows',
     price: 79,
@@ -114,9 +114,9 @@ export default {
     planned: ['Global workspace search', 'Configurable notifications for each network and app', 'Advanced Focus mode', 'Chrome and Firefox extensions', 'Open links on Windows with profile choice', 'Local inactivity lock', 'Linux app', 'macOS app', 'iPhone app'],
     plannedNote: 'These platform and workflow improvements are planned, but development has not started and no release date is promised.',
     cta: 'Try 30 days free',
-    purchaseCta: 'Buy lifetime access for €79',
+    purchaseCta: 'Open the app to buy with Stripe',
     whyTitle: 'Why a one-time price?',
-    whyBody: 'After the trial ends, nothing is billed automatically. If CommunityGlows fits your workflow, you can choose to pay €79 once for lifetime access. CommunityGlows runs primarily on your devices, so there is no subscription.',
+    whyBody: 'Nothing is billed automatically. You receive one 30-day cycle and may restart twice; after all three cycles, pay €79 once through Stripe to keep protected access. CommunityGlows runs primarily on your devices, so there is no subscription.',
   },
   finalCta: {
     title: 'Make room for the work that matters.',

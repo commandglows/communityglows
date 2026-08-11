@@ -1,11 +1,15 @@
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 
-export type CommunityGlowsDeepLinkAction = {
+export type CommunityGlowsNetworkDeepLinkAction = {
   type: 'open-network' | 'create-task'
   networkId: string
   profileId?: string
   chooseProfile: boolean
   urlOverride?: string
+}
+
+export type CommunityGlowsDeepLinkAction = CommunityGlowsNetworkDeepLinkAction | {
+  type: 'open-billing'
 }
 
 export const COMMUNITYGLOWS_DEEP_LINK_EVENT = 'communityglows:deep-link-action'
@@ -107,6 +111,10 @@ export function parseCommunityGlowsDeepLink(rawUrl: string): CommunityGlowsDeepL
     return null
   }
 
+  if (url.protocol === 'communityglows:' && url.host === 'app' && url.pathname === '/billing') {
+    return { type: 'open-billing' }
+  }
+
   if (!isLauncherDeepLink(url)) return null
 
   const networkId = normalizeNetworkId(
@@ -135,7 +143,7 @@ export function consumePendingCommunityGlowsDeepLinkAction() {
   return action
 }
 
-export function resolveCommunityGlowsSharedUrl(rawUrl: string): CommunityGlowsDeepLinkAction | null {
+export function resolveCommunityGlowsSharedUrl(rawUrl: string): CommunityGlowsNetworkDeepLinkAction | null {
   let parsedUrl: URL
   try {
     parsedUrl = new URL(rawUrl)

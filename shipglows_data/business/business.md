@@ -50,8 +50,8 @@ Core value:
 
 ## Monetization
 
-- The current public offer is a **30-day full trial without a payment card**, followed by an optional **€79 one-time founder license**. The trial does not start an automatic charge.
-- A progressive 10 × €8 option has been approved for later implementation. It is not a subscription or debt commitment: users may stop without further charges, retain completed-payment progress, resume later, and receive lifetime access after the tenth successful payment. It must not be advertised as available before checkout and entitlement support are verified.
+- The current public offer is a **30-day trial**, then one-time purchase required to keep premium access. No perpetual free access and no legacy fallback path is maintained.
+- A progressive 10 × €8 option was scoped separately and is not part of the active contract.
 - Windows and Android are available now.
 - Linux, macOS, and iPhone are planned for later, but development has not started and no release date is committed.
 - Lightweight profile and preference sync is included. Login sessions remain local to each device.

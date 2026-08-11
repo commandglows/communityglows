@@ -1,10 +1,10 @@
 ---
 artifact: runbook
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: "communityglows"
 created: "2026-05-30"
-updated: "2026-05-30"
+updated: "2026-08-11"
 status: active
 source_skill: 001-sg-build
 scope: "billing / activation-code-import"
@@ -16,13 +16,13 @@ docs_impact: yes
 linked_systems:
   - "scripts/importCommunityGlowsActivationCodes.ts"
   - "convex/billing.ts"
-  - "WinFlowz suite entitlement bridge"
+  - "CommandGlows suite entitlement bridge"
   - "COMMUNITYGLOWS_BILLING_ADMIN_SECRET"
 depends_on:
   - artifact: "shipglows_data/workflow/specs/communityglows-suite-entitlement-adapter.md"
     artifact_version: "1.0.0"
     required_status: "ready"
-  - artifact: "/home/claude/shipflow/skills/references/product-entitlements-playbook.md"
+  - artifact: "/home/claude/shipglows/skills/references/product-entitlements-playbook.md"
     artifact_version: "1.0.1"
     required_status: "active"
 supersedes: []
@@ -41,7 +41,7 @@ The import path is intentionally provider-agnostic:
 1. Operator prepares a batch file.
 2. `scripts/importCommunityGlowsActivationCodes.ts` validates and normalizes the batch.
 3. The script calls `billing.adminUpsertRedemptionCode`.
-4. `convex/billing.ts` sends `operation=upsert_code` to the WinFlowz suite bridge.
+4. `convex/billing.ts` sends `operation=upsert_code` to the CommandGlows suite bridge.
 5. The suite entitlement ledger remains the durable source of truth.
 
 Do not write directly to CommunityGlows local `redemptionCodes` or `entitlements` tables. Those tables are migration/compat surfaces only.

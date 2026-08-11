@@ -1,11 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: socialglowz
 created: "2026-05-29"
-updated: "2026-05-29"
-status: ready
+updated: "2026-08-11"
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: 001-sg-build
 scope: billing-redemption-ui
 owner: "Diane"
@@ -27,7 +28,8 @@ supersedes: []
 evidence:
   - "Backend entitlement layer is shipped in commit 46d6341."
   - "TASKS.md lists sg-billing-redemption-ui as the next billing step."
-next_step: "/102-sg-start socialglowz-redemption-ui"
+  - "Superseded on 2026-08-11 by the CommunityGlows three-cycle restart, fail-closed gate, and authenticated Stripe purchase UX."
+next_step: "Historical evidence only; follow /home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md."
 ---
 
 # SocialGlowz Redemption UI

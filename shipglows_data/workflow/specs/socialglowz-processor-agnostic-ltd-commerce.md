@@ -1,13 +1,14 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.1"
 project: "socialglowz"
 created: "2026-05-30"
 created_at: "2026-05-30 17:54:09 UTC"
-updated: "2026-05-30"
+updated: "2026-08-11"
 updated_at: "2026-05-30 21:01:19 UTC"
-status: ready
+status: superseded
+superseded_by: "/home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md"
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "commerce / payment-provider-agnostic-ltd"
@@ -49,7 +50,8 @@ evidence:
   - "/home/claude/winflowz/winflowz_site/convex/schema.ts:27 defines the canonical productEntitlements ledger used by SocialGlowz through the suite adapter."
   - "Official Lemon Squeezy docs checked 2026-05-30: checkouts are created via POST /v1/checkouts, use product_options.redirect_url for the success redirect, accept checkout_data.custom, and return a hosted checkout URL."
   - "Official Lemon Squeezy docs checked 2026-05-30: webhooks use X-Event-Name and X-Signature headers, HMAC SHA-256 signatures, meta.custom_data, and order_created/order_refunded events for single payments."
-next_step: "/103-sg-verify socialglowz-processor-agnostic-ltd-commerce after Lemon Squeezy test-mode and hosted Convex refund/replay smoke"
+  - "Superseded on 2026-08-11 by the Stripe-only suite contract and authenticated handoff checkout path."
+next_step: "Historical Lemon Squeezy/Polar evidence only; follow /home/claude/shipglows/shipglows_data/workflow/specs/unified-suite-commercial-entitlement-and-stripe.md."
 ---
 
 # Title

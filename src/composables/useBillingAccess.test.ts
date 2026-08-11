@@ -4,6 +4,8 @@ import {
   getSafeAccessCheckError,
   getSafeBillingError,
   isAccessWithinGrace,
+  isTrialRestartAllowed,
+  isTrustedStripeCheckoutUrl,
 } from './useBillingAccess'
 
 describe('billing access grace', () => {
@@ -19,6 +21,9 @@ describe('billing access grace', () => {
     trialEndsAt: null,
     legacyFallback: false,
     reasonCode: 'active_entitlement',
+    trialAttempt: null,
+    trialRestartsRemaining: 0,
+    trialRestartEligible: false,
   } as const
 
   it('keeps a recently verified entitlement during a bounded outage', () => {
@@ -40,8 +45,44 @@ describe('billing access grace', () => {
       accessState: 'trial_active',
       trialStartedAt: 100,
       trialEndsAt: 2_000,
+      expiresAt: 2_000,
     } as const
     expect(isAccessWithinGrace(trial, 1_900, 2_000)).toBe(false)
+  })
+})
+
+describe('trial restart eligibility', () => {
+  const expired = {
+    productId: 'communityglows',
+    planId: 'trial',
+    status: 'inactive',
+    accessState: 'trial_expired',
+    source: 'product_trial',
+    entitlementId: null,
+    expiresAt: 2_000,
+    trialStartedAt: 1_000,
+    trialEndsAt: 2_000,
+    trialAttempt: 2,
+    trialRestartsRemaining: 1,
+    trialRestartEligible: true,
+    legacyFallback: false,
+    reasonCode: 'trial_expired',
+  } as const
+
+  it('uses only the server eligibility and remaining counter', () => {
+    expect(isTrialRestartAllowed(expired)).toBe(true)
+    expect(isTrialRestartAllowed({ ...expired, trialRestartEligible: false })).toBe(false)
+    expect(isTrialRestartAllowed({ ...expired, trialRestartsRemaining: 0 })).toBe(false)
+    expect(isTrialRestartAllowed({ ...expired, accessState: 'trial_exhausted' })).toBe(false)
+  })
+})
+
+describe('Stripe checkout URL boundary', () => {
+  it('accepts only secure Stripe-owned hosts', () => {
+    expect(isTrustedStripeCheckoutUrl(new URL('https://checkout.stripe.com/c/pay/test'))).toBe(true)
+    expect(isTrustedStripeCheckoutUrl(new URL('https://stripe.com/pay/test'))).toBe(true)
+    expect(isTrustedStripeCheckoutUrl(new URL('https://stripe.example/pay/test'))).toBe(false)
+    expect(isTrustedStripeCheckoutUrl(new URL('http://checkout.stripe.com/c/pay/test'))).toBe(false)
   })
 })
 
@@ -60,6 +101,8 @@ describe('getSafeBillingError', () => {
     [new Error('invalid communityglows bridge secret'), 'billing.errors.bridge_unavailable'],
     [new Error('Malformed response from bridge'), 'billing.errors.bridge_unavailable'],
     [new Error('Unexpected backend detail'), 'billing.errors.generic'],
+    [new Error('trial_restart_not_eligible'), 'billing.errors.restart_not_eligible'],
+    [new Error('checkout_handoff_unavailable'), 'billing.errors.checkout_unavailable'],
   ])('maps %s to %s', (error, key) => {
     expect(getSafeBillingError(error)).toBe(key)
   })
