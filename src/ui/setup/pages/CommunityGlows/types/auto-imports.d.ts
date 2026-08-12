@@ -7,6 +7,7 @@
 export {}
 declare global {
   const BILLING_ACCESS_GRACE_MS: typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']
+  const DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: typeof import('../../../../../stores/desktopControlBar')['DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO']
   const EffectScope: typeof import('vue')['EffectScope']
   const PROFILE_AVATAR_MAX_LENGTH: typeof import('../../../../../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']
   const PROFILE_EMOJI_MAX_LENGTH: typeof import('../../../../../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']
@@ -72,6 +73,7 @@ declare global {
   const markRaw: typeof import('vue')['markRaw']
   const mockPosts: typeof import('../../../../../stores/mockData/facebookMock')['mockPosts']
   const nextTick: typeof import('vue')['nextTick']
+  const normalizeDesktopControlBarHeight: typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarHeight']
   const normalizeDesktopControlBarPosition: typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarPosition']
   const normalizeShortcutEvent: typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']
   const notivue: typeof import('../../../../../utils/notifications')['notivue']
@@ -399,6 +401,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly BILLING_ACCESS_GRACE_MS: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']>
+    readonly DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly PROFILE_AVATAR_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']>
     readonly PROFILE_EMOJI_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']>
@@ -462,6 +465,7 @@ declare module 'vue' {
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeDesktopControlBarHeight: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarHeight']>
     readonly normalizeDesktopControlBarPosition: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['normalizeDesktopControlBarPosition']>
     readonly normalizeShortcutEvent: UnwrapRef<typeof import('../../../../../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../../../../../utils/notifications')['notivue']>
