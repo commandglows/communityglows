@@ -17,7 +17,7 @@ const t = getTranslations(lang)
   <div class="relative z-10 max-w-5xl mx-auto text-center">
     <!-- Badge -->
     <div class="animate-fade-up delay-200 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border mb-8">
-      <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+      <span class="w-2 h-2 rounded-full bg-[var(--sg-color-success)] pulse-glow"></span>
       <span class="text-sm text-muted-foreground">{t.hero.badge}</span>
     </div>
 
@@ -40,7 +40,7 @@ const t = getTranslations(lang)
     <div class="animate-fade-up delay-600 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
       <a
         href={appUrl()}
-        class="shimmer-btn inline-flex items-center gap-2 bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-8 h-12 text-base font-medium shadow-lg shadow-white/10 transition-colors"
+  class="shimmer-btn inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-8 h-12 text-base font-medium shadow-lg shadow-primary/10 transition-colors"
       >
         {t.hero.cta}
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -56,7 +56,7 @@ const t = getTranslations(lang)
     <!-- Social Proof -->
     <div class="animate-fade-up delay-700 flex flex-col items-center gap-4">
       <div class="flex items-center gap-2 text-sm text-muted-foreground">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+      <span class="w-2 h-2 rounded-full bg-[var(--sg-color-success)] pulse-glow"></span>
         <span>{t.hero.socialProof}</span>
       </div>
     </div>

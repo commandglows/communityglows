@@ -146,22 +146,22 @@
               >
                 <ThreadsIcon
                   v-if="nw.id === 'threads'"
-                  size="0.9rem"
+                  size="var(--sg-font-size-0d9rem)"
                   class="clear-cookie-icon"
                 />
                 <SnapchatIcon
                   v-else-if="nw.id === 'snapchat'"
-                  size="0.9rem"
+                  size="var(--sg-font-size-0d9rem)"
                   class="clear-cookie-icon"
                 />
                 <NextdoorIcon
                   v-else-if="nw.id === 'nextdoor'"
-                  size="0.9rem"
+                  size="var(--sg-font-size-0d9rem)"
                   class="clear-cookie-icon"
                 />
                 <QuoraIcon
                   v-else-if="nw.id === 'quora'"
-                  size="0.9rem"
+                  size="var(--sg-font-size-0d9rem)"
                   class="clear-cookie-icon"
                 />
                 <SgIcon
@@ -539,7 +539,7 @@ onUnmounted(() => {
   width: var(--sg-size-100pct);
   background: var(--sg-color-surface-raised);
   border-radius: var(--sg-nudge-sheet-radius);
-  padding-bottom: env(safe-area-inset-bottom, 16px);
+  padding-bottom: var(--sg-space-env-safeneg-areaneg-insetneg-bottom-16px);
   max-height: var(--sg-nudge-sheet-max-height);
   display: flex;
   flex-direction: column;
@@ -617,7 +617,7 @@ onUnmounted(() => {
 }
 
 .sheet-profile-row--active {
-  background: color-mix(in srgb, var(--sg-color-action) 8%, transparent);
+  background: var(--sg-color-translucent-surface);
 }
 
 .sheet-avatar {
@@ -652,7 +652,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--sg-color-action) 75%, transparent);
+  background: var(--sg-color-action);
   color: var(--sg-color-text-on-action);
   font-size: var(--sg-font-size-0d9rem);
   border-radius: var(--sg-radius-50pct);
@@ -686,7 +686,7 @@ onUnmounted(() => {
   flex: 1;
   font-size: var(--sg-font-size-0d9rem);
   background: var(--sg-color-surface-muted);
-  border: 1.5px solid var(--sg-color-action);
+  border: var(--sg-size-1d5px) solid var(--sg-color-action);
   border-radius: var(--sg-radius-6px);
   padding: var(--sg-space-0d3rem) var(--sg-space-0d5rem);
   color: var(--sg-color-text);
@@ -725,7 +725,7 @@ onUnmounted(() => {
 
 /* Clear cookies section */
 .clear-cookies-section {
-  border-top: 1px solid var(--sg-color-border);
+  border-top: var(--sg-border-1px) solid var(--sg-color-border);
   padding: var(--sg-space-0d5rem-0d75rem);
 }
 
@@ -791,7 +791,7 @@ onUnmounted(() => {
 
 /* Footer */
 .sheet-footer {
-  border-top: 1px solid var(--sg-color-border);
+  border-top: var(--sg-border-1px) solid var(--sg-color-border);
   padding: var(--sg-space-0d6rem) var(--sg-space-0d75rem);
   flex-shrink: 0;
 }
@@ -809,7 +809,7 @@ onUnmounted(() => {
   width: var(--sg-size-100pct);
   padding: var(--sg-space-0d7rem) var(--sg-space-0d75rem);
   background: none;
-  border: 1.5px dashed var(--sg-color-border);
+  border: var(--sg-size-1d5px) dashed var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
   cursor: pointer;
   font-size: var(--sg-font-size-0d9rem);

@@ -18,8 +18,8 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
   <nav class="relative flex items-center justify-between px-4 py-3 rounded-full bg-background/60 backdrop-blur-md border border-border">
     <!-- Logo -->
     <a href={homeHref} class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
-        <svg viewBox="0 0 32 32" class="w-5 h-5 text-zinc-900" fill="currentColor" aria-hidden="true"><path d="M12 9.5v13l11-6.5L12 9.5Z"/><rect x="20" y="14" width="2.5" height="9" rx="1.25"/></svg>
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <svg viewBox="0 0 32 32" class="w-5 h-5 text-primary-foreground" fill="currentColor" aria-hidden="true"><path d="M12 9.5v13l11-6.5L12 9.5Z"/><rect x="20" y="14" width="2.5" height="9" rx="1.25"/></svg>
       </div>
       <span class="font-semibold text-foreground hidden sm:block">CommunityGlows</span>
     </a>
@@ -41,7 +41,7 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
     <div class="hidden lg:flex items-center gap-3">
       <a
         href={localizeHref('/download', lang)}
-        class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-2 text-sm font-medium transition-colors"
+          class="shimmer-btn bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-4 py-2 text-sm font-medium transition-colors"
       >
         {t.nav.download}
       </a>
@@ -74,7 +74,7 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
         </a>
       ))}
       <hr class="border-border my-2" />
-      <a href={localizeHref('/download', lang)} class="shimmer-btn bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.download}</a>
+      <a href={localizeHref('/download', lang)} class="shimmer-btn bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.download}</a>
     </div>
   </div>
 </header>

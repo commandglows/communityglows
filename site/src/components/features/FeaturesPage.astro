@@ -103,7 +103,7 @@ const copy = lang === 'fr' ? {
     <h1 class="animate-fade-up delay-100 mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">{copy.hero.title}</h1>
     <p class="animate-fade-up delay-200 mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{copy.hero.body}</p>
     <div class="animate-fade-up delay-300 mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-      <a href={appUrl()} class="shimmer-btn inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-6 py-3 text-sm font-medium transition-colors">{copy.hero.primary}</a>
+<a href={appUrl()} class="shimmer-btn inline-flex items-center bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-6 py-3 text-sm font-medium transition-colors">{copy.hero.primary}</a>
       <a href="#features" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">{copy.hero.secondary}</a>
     </div>
   </section>
@@ -168,7 +168,7 @@ const copy = lang === 'fr' ? {
     <div class="max-w-3xl mx-auto rounded-2xl border border-border bg-card px-6 py-12 text-center sm:px-10" data-reveal>
       <h2 class="animate-fade-up text-3xl sm:text-4xl font-bold text-foreground">{copy.closing.title}</h2>
       <p class="animate-fade-up delay-100 mt-5 text-lg leading-relaxed text-muted-foreground">{copy.closing.body}</p>
-      <a href={appUrl()} class="animate-fade-up delay-200 shimmer-btn mt-8 inline-flex items-center bg-white text-zinc-950 hover:bg-zinc-200 rounded-full px-8 py-3 text-base font-medium transition-colors">{copy.closing.cta}</a>
+<a href={appUrl()} class="animate-fade-up delay-200 shimmer-btn mt-8 inline-flex items-center bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-8 py-3 text-base font-medium transition-colors">{copy.closing.cta}</a>
     </div>
   </section>
 

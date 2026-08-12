@@ -1,17 +1,13 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
-
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: var(--surface-ground);
-  color: var(--text-color);
+  min-width: var(--sg-size-320px);
+  min-height: var(--sg-size-100vh);
+  font-family: var(--sg-font-family);
+  line-height: var(--sg-line-height-1d5);
+  background-color: var(--sg-color-background);
+  color: var(--sg-color-text);
 }
 
 .cursor-pointer {
   cursor: pointer;
-} 
+}

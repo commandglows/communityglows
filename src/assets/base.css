@@ -33,7 +33,7 @@ textarea {
 }
 
 input[type="radio"] {
-  accent-color: var(--p-primary-color, #4318ff);
+  accent-color: var(--sg-color-action);
 }
 
 input[type="file"] {
@@ -41,7 +41,7 @@ input[type="file"] {
 }
 
 input[type="range"] {
-  accent-color: var(--p-primary-color, #4318ff);
+  accent-color: var(--sg-color-action);
 }
 
 select {

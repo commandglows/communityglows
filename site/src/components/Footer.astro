@@ -35,14 +35,14 @@ const languageHref = languageHrefProp ?? (lang === 'fr' ? '/' : '/fr')
       <!-- Brand -->
       <div class="col-span-2 md:col-span-1 animate-fade-up">
         <a href={homeHref} class="flex items-center gap-2 mb-4">
-          <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
-            <svg viewBox="0 0 32 32" class="w-5 h-5 text-zinc-900" fill="currentColor" aria-hidden="true"><path d="M12 9.5v13l11-6.5L12 9.5Z"/><rect x="20" y="14" width="2.5" height="9" rx="1.25"/></svg>
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <svg viewBox="0 0 32 32" class="w-5 h-5 text-primary-foreground" fill="currentColor" aria-hidden="true"><path d="M12 9.5v13l11-6.5L12 9.5Z"/><rect x="20" y="14" width="2.5" height="9" rx="1.25"/></svg>
           </div>
           <span class="font-semibold text-foreground">CommunityGlows</span>
         </a>
         <p class="text-sm text-muted-foreground/70 mb-4">{t.footer.tagline}</p>
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-glow"></span>
+        <span class="w-2 h-2 rounded-full bg-[var(--sg-color-success)] pulse-glow"></span>
           <span class="text-xs text-muted-foreground">{t.footer.status}</span>
         </div>
       </div>

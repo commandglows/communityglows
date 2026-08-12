@@ -656,45 +656,28 @@ onUnmounted(() => {
 
 <style scoped>
 .settings-sheet {
-  --settings-account-card-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-action) 12%),
-    color-mix(in srgb, var(--sg-color-surface-raised) 94%, var(--sg-color-surface-muted) 6%)
-  );
-  --settings-account-card-border:
-    color-mix(in srgb, var(--sg-color-border) 68%, var(--sg-color-action) 32%);
-  --settings-account-card-shadow: 0 18px 38px var(--sg-color-slate-alpha-08);
+  --settings-account-card-bg: var(--sg-color-surface-raised);
+  --settings-account-card-border: var(--sg-color-border-strong);
+  --settings-account-card-shadow: var(--sg-shadow-0-28px-70px-rgba-15-23-42-0d22);
   --settings-account-status-bg: var(--sg-color-slate-alpha-18);
   --settings-account-status-color: var(--sg-color-text-muted);
-  --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--sg-color-action) 14%, var(--sg-color-white-transparent) 86%);
+  --settings-account-status-connected-bg: var(--sg-color-translucent-surface);
   --settings-account-status-connected-color: var(--sg-color-action);
-  --settings-sync-info-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--sg-color-surface-muted) 90%, var(--sg-color-action) 10%),
-    color-mix(in srgb, var(--sg-color-surface-raised) 88%, var(--sg-color-surface-muted) 12%)
-  );
-  --settings-sync-info-border:
-    color-mix(in srgb, var(--sg-color-border) 80%, var(--sg-color-action) 20%);
-  --settings-sync-warning-icon:
-    color-mix(in srgb, var(--sg-color-action) 55%, var(--sg-palette-amber-500) 45%);
-  --settings-cta-gradient-start:
-    color-mix(in srgb, var(--sg-color-action) 88%, var(--sg-color-white) 12%);
-  --settings-cta-gradient-end:
-    color-mix(in srgb, var(--sg-palette-blue-600) 72%, var(--sg-color-action) 28%);
-  --settings-cta-shadow: 0 14px 28px var(--sg-color-blue-alpha-20);
-  --settings-secondary-auth-bg:
-    color-mix(in srgb, var(--sg-color-action) 10%, var(--sg-color-surface-raised) 90%);
-  --settings-secondary-auth-border:
-    color-mix(in srgb, var(--sg-color-action) 22%, var(--sg-color-border) 78%);
+  --settings-sync-info-bg: var(--sg-color-surface-muted);
+  --settings-sync-info-border: var(--sg-color-border);
+  --settings-sync-warning-icon: var(--sg-color-warning);
+  --settings-cta-gradient-start: var(--sg-color-action);
+  --settings-cta-gradient-end: var(--sg-color-action-hover);
+  --settings-cta-shadow: var(--sg-shadow-0-8px-20px-rgba-15-23-42-d08);
+  --settings-secondary-auth-bg: var(--sg-color-surface-muted);
+  --settings-secondary-auth-border: var(--sg-color-border-strong);
   --settings-danger-bg: var(--sg-color-danger-alpha-04);
   --settings-danger-border: var(--sg-color-danger-alpha-36);
   --settings-danger-color: var(--sg-palette-red-600);
   --settings-error-bg: var(--sg-color-danger-alpha-08);
   --settings-error-border: var(--sg-color-danger-alpha-108);
   --settings-error-text: var(--sg-palette-red-600);
-  --settings-error-btn-bg:
-    color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-white-alpha-08) 8%);
+  --settings-error-btn-bg: var(--sg-color-surface-raised);
   --settings-error-btn-border: var(--sg-color-danger-alpha-20);
   --settings-error-btn-text: var(--sg-palette-red-700);
   --settings-backup-divider: var(--sg-color-slate-alpha-18);
@@ -703,46 +686,28 @@ onUnmounted(() => {
 .settings-sheet.is-dark,
 :global(html.dark) .settings-sheet,
 :global(.dark) .settings-sheet {
-  --settings-account-card-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--sg-color-surface-raised) 92%, var(--sg-color-action) 8%),
-    color-mix(in srgb, var(--sg-color-surface-raised) 96%, var(--sg-palette-slate-950) 4%)
-  );
-  --settings-account-card-border:
-    color-mix(in srgb, var(--sg-color-border) 76%, var(--sg-color-action) 24%);
-  --settings-account-card-shadow: 0 24px 48px var(--sg-color-slate-scrim-38);
+  --settings-account-card-bg: var(--sg-color-surface-raised);
+  --settings-account-card-border: var(--sg-color-border-strong);
+  --settings-account-card-shadow: var(--sg-shadow-0-28px-70px-rgba-2-6-23-0d56);
   --settings-account-status-bg: var(--sg-color-white-alpha-06);
-  --settings-account-status-color:
-    color-mix(in srgb, var(--sg-color-text-muted) 88%, white 12%);
-  --settings-account-status-connected-bg:
-    color-mix(in srgb, var(--sg-color-action) 20%, var(--sg-color-slate-overlay-60) 80%);
+  --settings-account-status-color: var(--sg-color-text-muted);
+  --settings-account-status-connected-bg: var(--sg-color-translucent-surface);
   --settings-account-status-connected-color: var(--sg-palette-blue-300);
-  --settings-sync-info-bg: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--sg-color-surface-muted) 64%, var(--sg-color-surface-raised) 36%),
-    color-mix(in srgb, var(--sg-color-surface-raised) 90%, var(--sg-palette-slate-950) 10%)
-  );
-  --settings-sync-info-border:
-    color-mix(in srgb, var(--sg-color-border) 78%, var(--sg-color-action) 22%);
-  --settings-sync-warning-icon:
-    color-mix(in srgb, var(--sg-palette-amber-500) 74%, var(--sg-color-action) 26%);
-  --settings-cta-gradient-start:
-    color-mix(in srgb, var(--sg-color-action) 92%, white 8%);
-  --settings-cta-gradient-end:
-    color-mix(in srgb, var(--sg-palette-sky-500) 72%, var(--sg-color-action) 28%);
-  --settings-cta-shadow: 0 18px 32px var(--sg-color-slate-scrim-42);
-  --settings-secondary-auth-bg:
-    color-mix(in srgb, var(--sg-color-surface-raised) 86%, var(--sg-color-action) 14%);
-  --settings-secondary-auth-border:
-    color-mix(in srgb, var(--sg-color-border) 72%, var(--sg-color-action) 28%);
+  --settings-sync-info-bg: var(--sg-color-surface-muted);
+  --settings-sync-info-border: var(--sg-color-border);
+  --settings-sync-warning-icon: var(--sg-color-warning);
+  --settings-cta-gradient-start: var(--sg-color-action);
+  --settings-cta-gradient-end: var(--sg-color-action-hover);
+  --settings-cta-shadow: var(--sg-shadow-0-8px-24px-rgba-0-0-0-0d15);
+  --settings-secondary-auth-bg: var(--sg-color-surface-muted);
+  --settings-secondary-auth-border: var(--sg-color-border-strong);
   --settings-danger-bg: var(--sg-color-danger-alpha-10);
   --settings-danger-border: var(--sg-color-danger-light-alpha-32);
   --settings-danger-color: var(--sg-palette-red-300);
   --settings-error-bg: var(--sg-color-danger-dark-alpha-26);
   --settings-error-border: var(--sg-color-danger-light-alpha-22);
   --settings-error-text: var(--sg-palette-red-200);
-  --settings-error-btn-bg:
-    color-mix(in srgb, var(--sg-color-surface-raised) 86%, var(--sg-color-danger-light-alpha-12) 14%);
+  --settings-error-btn-bg: var(--sg-color-surface-raised);
   --settings-error-btn-border: var(--sg-color-danger-light-alpha-22);
   --settings-error-btn-text: var(--sg-palette-red-300);
   --settings-backup-divider: var(--sg-color-neutral-alpha-16);
@@ -807,7 +772,7 @@ onUnmounted(() => {
   min-height: var(--sg-size-2d4rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
-  border: 1px solid var(--sg-color-border);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   background: var(--sg-color-surface-muted);
   color: var(--sg-color-text);
   font-size: var(--sg-font-size-0d8rem);
@@ -816,13 +781,13 @@ onUnmounted(() => {
 }
 
 .settings-sound-variant-btn.active {
-  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
-  border-color: color-mix(in srgb, var(--sg-color-action) 42%, var(--sg-color-border) 58%);
+  background: var(--sg-color-translucent-surface);
+  border-color: var(--sg-color-action);
   color: var(--sg-color-action);
 }
 
 .settings-sound-variant-btn.disabled {
-  opacity: 0.45;
+  opacity: var(--sg-opacity-disabled);
 }
 
 .settings-field {
@@ -848,7 +813,7 @@ onUnmounted(() => {
   padding: var(--sg-space-0d6rem-0d75rem);
   font-size: var(--sg-font-size-0d9rem);
   background: var(--sg-color-surface-muted);
-  border: 1px solid var(--sg-color-border);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   border-radius: var(--sg-radius-10px);
   color: var(--sg-color-text);
   outline: none;
@@ -875,7 +840,7 @@ onUnmounted(() => {
   margin-bottom: var(--sg-space-1rem);
   border-radius: var(--sg-radius-16px);
   background: var(--settings-account-card-bg);
-  border: 1px solid var(--settings-account-card-border);
+  border: var(--sg-border-1px) solid var(--settings-account-card-border);
   box-shadow: var(--settings-account-card-shadow);
 }
 
@@ -930,7 +895,7 @@ onUnmounted(() => {
   padding: var(--sg-space-0d7rem-0d8rem);
   border-radius: var(--sg-radius-14px);
   background: var(--settings-sync-info-bg);
-  border: 1px solid var(--settings-sync-info-border);
+  border: var(--sg-border-1px) solid var(--settings-sync-info-border);
 }
 
 .settings-sync-info-row,
@@ -997,20 +962,20 @@ onUnmounted(() => {
 }
 
 .settings-signup-form .nudge-cta:disabled {
-  opacity: 0.6;
+  opacity: var(--sg-opacity-muted);
 }
 
 .secondary-auth-btn {
   background: var(--settings-secondary-auth-bg);
   color: var(--sg-color-action);
-  border: 1px solid var(--settings-secondary-auth-border);
+  border: var(--sg-border-1px) solid var(--settings-secondary-auth-border);
   box-shadow: var(--sg-shadow-none);
 }
 
 .sign-out-btn {
   background: var(--settings-danger-bg);
   color: var(--settings-danger-color);
-  border: 1px solid var(--settings-danger-border);
+  border: var(--sg-border-1px) solid var(--settings-danger-border);
   margin-top: 0;
   box-shadow: var(--sg-shadow-none);
 }
@@ -1022,7 +987,7 @@ onUnmounted(() => {
   padding: var(--sg-space-0d7rem-0d8rem);
   border-radius: var(--sg-radius-12px);
   background: var(--settings-error-bg);
-  border: 1px solid var(--settings-error-border);
+  border: var(--sg-border-1px) solid var(--settings-error-border);
 }
 
 .nudge-error {
@@ -1045,7 +1010,7 @@ onUnmounted(() => {
   align-items: center;
   gap: var(--sg-space-0d35rem);
   padding: var(--sg-space-0d3rem-0d6rem);
-  border: 1px solid var(--settings-error-btn-border);
+  border: var(--sg-border-1px) solid var(--settings-error-btn-border);
   border-radius: var(--sg-radius-999px);
   background: var(--settings-error-btn-bg);
   color: var(--settings-error-btn-text);
@@ -1065,7 +1030,7 @@ onUnmounted(() => {
   flex-direction: column;
   gap: var(--sg-space-0d6rem);
   padding-top: var(--sg-space-0d05rem);
-  border-top: 1px solid var(--settings-backup-divider);
+  border-top: var(--sg-border-1px) solid var(--settings-backup-divider);
 }
 
 .settings-backup-hint {
@@ -1080,7 +1045,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: var(--sg-space-0d65rem-0);
-  border-bottom: 1px solid var(--sg-color-border);
+  border-bottom: var(--sg-border-1px) solid var(--sg-color-border);
 }
 
 .settings-toggle-row:last-child {
@@ -1100,7 +1065,7 @@ onUnmounted(() => {
   min-height: var(--sg-size-2d45rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
-  border: 1px solid var(--sg-color-border);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   background: var(--sg-color-surface-muted);
   color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d8rem);
@@ -1109,8 +1074,8 @@ onUnmounted(() => {
 }
 
 .settings-theme-mode-btn.active {
-  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
-  border-color: color-mix(in srgb, var(--sg-color-action) 42%, var(--sg-color-border) 58%);
+  background: var(--sg-color-translucent-surface);
+  border-color: var(--sg-color-action);
   color: var(--sg-color-action);
 }
 
@@ -1166,7 +1131,7 @@ onUnmounted(() => {
 }
 
 .friends-toggle-pill.enabled .toggle-thumb {
-  transform: translateX(1.2rem);
+  transform: translateX(var(--sg-space-1d2rem));
 }
 
 .text-zoom-value {
@@ -1188,7 +1153,7 @@ onUnmounted(() => {
   padding: var(--sg-space-0d75rem-1rem);
   margin-top: var(--sg-space-0d5rem);
   border-radius: var(--sg-radius-10px);
-  border: 1px solid var(--sg-color-border);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d9rem);

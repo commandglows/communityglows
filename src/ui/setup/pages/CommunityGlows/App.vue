@@ -1108,40 +1108,20 @@ textarea,
   overflow: hidden;
 }
 
-:root {
-  /* Compatibility aliases for views that have not adopted the sg-* names yet. */
-  --primary-color: var(--sg-color-action);
-  --text-color: var(--sg-color-text);
-  --text-color-secondary: var(--sg-color-text-muted);
-  --surface-ground: var(--sg-color-background);
-  --surface-card: var(--sg-color-surface-raised);
-  --surface-border: var(--sg-color-border);
-  --surface-hover: var(--sg-color-surface-hover);
-  --card-shadow: var(--sg-shadow-control);
-
-  /* Spacing scale */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-}
-
 html.dark {
   color-scheme: dark;
 }
 
 body {
   margin: 0;
-  font-family: var(--font-family);
-  color: var(--text-color);
-  background: var(--surface-ground);
+  font-family: var(--sg-font-family);
+  color: var(--sg-color-text);
+  background: var(--sg-color-background);
 }
 
 html.dark body {
-  background: var(--surface-ground);
-  color: var(--text-color);
+  background: var(--sg-color-background);
+  color: var(--sg-color-text);
 }
 
 .sg-error {

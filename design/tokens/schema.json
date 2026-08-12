@@ -47,7 +47,7 @@
     },
     "android_mappings": {
       "type": "object",
-      "required": ["color", "dimension"],
+      "required": ["color", "dimension", "fraction", "integer", "string"],
       "properties": {
         "color": {
           "type": "array",
@@ -56,8 +56,21 @@
         "dimension": {
           "type": "array",
           "items": { "$ref": "#/definitions/androidResource" }
+        },
+        "fraction": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/androidResource" }
+        },
+        "integer": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/androidResource" }
+        },
+        "string": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/androidResource" }
         }
-      }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false,

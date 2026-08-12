@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="flex justify-between bg-base-200 text-base-content items-center p-2 text-xs"
+    class="app-footer flex justify-between items-center p-2 text-xs"
   >
     <aside>
       <p>Copyright © {{ new Date().getFullYear() }} - All right reserved</p>
@@ -48,3 +48,10 @@
     </nav>
   </footer>
 </template>
+
+<style scoped>
+.app-footer {
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
+}
+</style>

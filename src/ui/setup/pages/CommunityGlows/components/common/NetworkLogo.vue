@@ -32,21 +32,21 @@ const handleError = () => {
 <style scoped>
 .network-logo {
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--sg-radius-8px);
 }
 
 .small {
-  width: 24px;
-  height: 24px;
+  width: var(--sg-size-1d5rem);
+  height: var(--sg-size-1d5rem);
 }
 
 .medium {
-  width: 32px;
-  height: 32px;
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
 }
 
 .large {
-  width: 48px;
-  height: 48px;
+  width: var(--sg-size-3rem);
+  height: var(--sg-size-3rem);
 }
 </style> 

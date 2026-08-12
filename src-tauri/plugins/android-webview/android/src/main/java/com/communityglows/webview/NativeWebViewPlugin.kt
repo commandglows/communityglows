@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.util.Patterns
+import android.util.TypedValue
 import android.view.Gravity
 import android.media.AudioAttributes
 import android.media.SoundPool
@@ -411,7 +412,7 @@ function forceLinkedInTheme(enabled) {
 
 // Document-start dark-mode bridge. Reads the last preference we stored in page-local
 // storage so new navigations pick the right theme before site JS finishes booting.
-private val DARK_MODE_DOC_START_SCRIPT = """
+private fun buildDarkModeDocStartScript(darkSurfaceCss: String): String = """
 (function() {
   try {
     function isFacebook() {
@@ -474,9 +475,9 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         style.textContent = dark
           ? (linkedIn
               ? ':root{color-scheme:dark !important;}'
-              : ':root{color-scheme:dark !important;} html,body{background:#0f172a !important;}') +
+              : ':root{color-scheme:dark !important;} html,body{background:$darkSurfaceCss !important;}') +
             (fb
-              ? 'html.__communityglows-facebook-dark-fallback{background:#0f172a !important;filter:invert(1) hue-rotate(180deg) !important;}' +
+              ? 'html.__communityglows-facebook-dark-fallback{background:$darkSurfaceCss !important;filter:invert(1) hue-rotate(180deg) !important;}' +
                 'html.__communityglows-facebook-dark-fallback img,' +
                 'html.__communityglows-facebook-dark-fallback video,' +
                 'html.__communityglows-facebook-dark-fallback canvas,' +
@@ -504,6 +505,21 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
 
     private fun tokenColor(resourceId: Int): Int = ContextCompat.getColor(activity, resourceId)
+    private fun tokenDimensionOffset(resourceId: Int): Int = activity.resources.getDimensionPixelOffset(resourceId)
+    private fun tokenDimensionPixels(resourceId: Int): Float = activity.resources.getDimension(resourceId)
+    private fun tokenFraction(resourceId: Int): Float = activity.resources.getFraction(resourceId, 1, 1)
+    private fun tokenInteger(resourceId: Int): Int = activity.resources.getInteger(resourceId)
+    private fun tokenString(resourceId: Int): String = activity.getString(resourceId)
+    private fun TextView.setTokenTextSize(resourceId: Int) {
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, tokenDimensionPixels(resourceId))
+    }
+    private fun tokenMediumTypeface(): Typeface = Typeface.create(
+        tokenString(R.string.communityglows_type_family_medium),
+        tokenInteger(R.integer.communityglows_type_weight_medium),
+        false,
+    )
+    private fun tokenCssColor(resourceId: Int): String =
+        String.format("#%06X", tokenColor(resourceId) and 0xFFFFFF)
 
     // Main Tauri WebView (the one running Vue) — used to dispatch CustomEvents to Vue
     // via evaluateJavascript(). This is the reliable Kotlin→Vue communication channel.
@@ -1692,7 +1708,7 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
         val windowInsets = activity.window.decorView.rootWindowInsets
         val statusBarHeight = windowInsets?.systemWindowInsetTop ?: 0
         val navBarHeight = windowInsets?.systemWindowInsetBottom ?: 0
-        val barHeight = (52 * density).toInt()
+        val barHeight = tokenDimensionOffset(R.dimen.communityglows_bottom_bar_height)
 
         val root = FrameLayout(activity)
         val webView = createWebView(webkitProfileNameForSession(session.sessionKey))
@@ -2151,6 +2167,7 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
             // Older / vendor WebViews may expose a feature flag but still fail at runtime.
         }
 
+        val darkSurfaceCss = tokenCssColor(R.color.communityglows_window_surface)
         val darkModeScript = """
             (function() {
               try {
@@ -2205,13 +2222,13 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 function baseCss(enabled) {
                   if (!enabled) return ':root{color-scheme:light !important;}';
                   if (isLinkedIn()) return ':root{color-scheme:dark !important;}';
-                  return ':root{color-scheme:dark !important;} html,body{background:#0f172a !important;}';
+                  return ':root{color-scheme:dark !important;} html,body{background:$darkSurfaceCss !important;}';
                 }
                 function fallbackCss(enabled) {
                   if (!enabled) return '';
                   if (!isFacebook()) return '';
                   return [
-                    'html.__communityglows-facebook-dark-fallback{background:#0f172a !important;filter:invert(1) hue-rotate(180deg) !important;}',
+                    'html.__communityglows-facebook-dark-fallback{background:$darkSurfaceCss !important;filter:invert(1) hue-rotate(180deg) !important;}',
                     'html.__communityglows-facebook-dark-fallback img,',
                     'html.__communityglows-facebook-dark-fallback video,',
                     'html.__communityglows-facebook-dark-fallback canvas,',
@@ -2989,7 +3006,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val newBar = buildBottomBar(density, navBarHeight, activeId, sortedNetworks())
         bottomBarView = newBar
 
-        val barHeight = (52 * density).toInt()
+        val barHeight = tokenDimensionOffset(R.dimen.communityglows_bottom_bar_height)
         val params = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             barHeight + navBarHeight
@@ -3013,7 +3030,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val newBar = buildBottomBar(density, navBarHeight, activeId, sortedNetworks())
         host.bottomBar = newBar
 
-        val barHeight = (52 * density).toInt()
+        val barHeight = tokenDimensionOffset(R.dimen.communityglows_bottom_bar_height)
         val params = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             barHeight + navBarHeight
@@ -3047,7 +3064,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val innerRow = LinearLayout(activity)
         innerRow.orientation = LinearLayout.HORIZONTAL
         innerRow.gravity = Gravity.CENTER_VERTICAL
-        val innerHeight = (52 * density).toInt()
+        val innerHeight = tokenDimensionOffset(R.dimen.communityglows_bottom_bar_height)
         innerRow.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             innerHeight
@@ -3072,7 +3089,9 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                         for (i in 0 until row.childCount) {
                             val child = row.getChildAt(i)
                             child.animate().cancel()
-                            child.animate().alpha(1f).setDuration(600).start()
+                            child.animate().alpha(1f)
+                                .setDuration(tokenInteger(R.integer.communityglows_motion_duration_enter).toLong())
+                                .start()
                         }
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -3082,9 +3101,12 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                             val child = row.getChildAt(i)
                             val netId = child.tag as? String
                             if (netId != null) {
-                                val targetAlpha = if (netId == currentNetworkId) 1f else 0.45f
+                                val targetAlpha = if (netId == currentNetworkId) 1f else
+                                    tokenFraction(R.fraction.communityglows_opacity_inactive)
                                 child.animate().cancel()
-                                child.animate().alpha(targetAlpha).setDuration(800).start()
+                                child.animate().alpha(targetAlpha)
+                                    .setDuration(tokenInteger(R.integer.communityglows_motion_duration_state).toLong())
+                                    .start()
                             }
                         }
                     }
@@ -3119,8 +3141,12 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     private fun buildDivider(density: Float): View {
         val divider = View(activity)
         divider.setBackgroundColor(tokenColor(R.color.communityglows_window_border))
-        val params = LinearLayout.LayoutParams((1 * density).toInt(), (24 * density).toInt())
-        params.setMargins((4 * density).toInt(), 0, (4 * density).toInt(), 0)
+        val params = LinearLayout.LayoutParams(
+            tokenDimensionOffset(R.dimen.communityglows_chrome_separator_width),
+            tokenDimensionOffset(R.dimen.communityglows_chrome_separator_height),
+        )
+        val horizontalMargin = tokenDimensionOffset(R.dimen.communityglows_space_1)
+        params.setMargins(horizontalMargin, 0, horizontalMargin, 0)
         divider.layoutParams = params
         return divider
     }
@@ -3132,11 +3158,11 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val btn = TextView(activity)
         btn.text = "\ue941"  // pi-home — PrimeIcons home icon
         btn.typeface = primeIconsTypeface
-        btn.textSize = 18f
+        btn.setTokenTextSize(R.dimen.communityglows_type_size_18)
         btn.gravity = Gravity.CENTER
         btn.setTextColor(tokenColor(R.color.communityglows_window_text))
         btn.background = null
-        val size = (48 * density).toInt()
+        val size = tokenDimensionOffset(R.dimen.communityglows_control_height_lg)
         btn.layoutParams = LinearLayout.LayoutParams(size, size)
         btn.isClickable = true
         btn.isFocusable = true
@@ -3201,17 +3227,18 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val bgColor = tokenColor(R.color.communityglows_window_surface)
         val menuBg = GradientDrawable()
         menuBg.setColor(bgColor)
-        menuBg.cornerRadius = 16 * density
+        menuBg.cornerRadius = tokenDimensionPixels(R.dimen.communityglows_radius_lg)
         menu.background = menuBg
-        menu.elevation = 8 * density
-        val pad = (8 * density).toInt()
+        menu.elevation = tokenDimensionPixels(R.dimen.communityglows_chrome_elevation_raised)
+        val pad = tokenDimensionOffset(R.dimen.communityglows_space_2)
         menu.setPadding(pad, pad, pad, pad)
 
-        val menuWidth = (220 * density).toInt()
+        val menuWidth = tokenDimensionOffset(R.dimen.communityglows_chrome_menu_width)
         val menuParams = FrameLayout.LayoutParams(menuWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
         menuParams.gravity = Gravity.BOTTOM or Gravity.START
-        menuParams.leftMargin = (8 * density).toInt()
-        menuParams.bottomMargin = bar.layoutParams.height + (8 * density).toInt()
+        val menuMargin = tokenDimensionOffset(R.dimen.communityglows_space_2)
+        menuParams.leftMargin = menuMargin
+        menuParams.bottomMargin = bar.layoutParams.height + menuMargin
         menu.layoutParams = menuParams
         menu.isClickable = true
         menu.isFocusable = true
@@ -3224,11 +3251,16 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             val sectionColor = tokenColor(R.color.communityglows_window_text_muted)
             val sectionLabel = TextView(activity)
             sectionLabel.text = Strings.t("profiles")
-            sectionLabel.textSize = 11f
+            sectionLabel.setTokenTextSize(R.dimen.communityglows_type_size_11)
             sectionLabel.setTextColor(sectionColor)
-            sectionLabel.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-            val slPad = (12 * density).toInt()
-            sectionLabel.setPadding(slPad, (4 * density).toInt(), slPad, (2 * density).toInt())
+            sectionLabel.typeface = tokenMediumTypeface()
+            val slPad = tokenDimensionOffset(R.dimen.communityglows_chrome_space_12)
+            sectionLabel.setPadding(
+                slPad,
+                tokenDimensionOffset(R.dimen.communityglows_space_1),
+                slPad,
+                tokenDimensionOffset(R.dimen.communityglows_chrome_space_2),
+            )
             menu.addView(sectionLabel)
 
             for (profile in menuProfiles) {
@@ -3243,9 +3275,13 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             val divider = View(activity)
             val divColor = tokenColor(R.color.communityglows_window_border)
             divider.setBackgroundColor(divColor)
-            val divParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (1 * density).toInt())
-            val divMargin = (8 * density).toInt()
-            divParams.setMargins(divMargin, (4 * density).toInt(), divMargin, (4 * density).toInt())
+            val divParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                tokenDimensionOffset(R.dimen.communityglows_chrome_separator_width),
+            )
+            val divMargin = tokenDimensionOffset(R.dimen.communityglows_space_2)
+            val divVerticalMargin = tokenDimensionOffset(R.dimen.communityglows_space_1)
+            divParams.setMargins(divMargin, divVerticalMargin, divMargin, divVerticalMargin)
             divider.layoutParams = divParams
             menu.addView(divider)
         }
@@ -3311,9 +3347,9 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     private fun buildTextZoomControl(density: Float): LinearLayout {
         val wrap = LinearLayout(activity)
         wrap.orientation = LinearLayout.VERTICAL
-        val padH = (12 * density).toInt()
-        val padTop = (8 * density).toInt()
-        val padBottom = (10 * density).toInt()
+        val padH = tokenDimensionOffset(R.dimen.communityglows_chrome_space_12)
+        val padTop = tokenDimensionOffset(R.dimen.communityglows_space_2)
+        val padBottom = tokenDimensionOffset(R.dimen.communityglows_chrome_space_10)
         wrap.setPadding(padH, padTop, padH, padBottom)
 
         val textColor = tokenColor(R.color.communityglows_window_text)
@@ -3325,16 +3361,16 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
         val label = TextView(activity)
         label.text = Strings.t("text_zoom")
-        label.textSize = 14f
+        label.setTokenTextSize(R.dimen.communityglows_type_size_14)
         label.setTextColor(textColor)
-        label.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        label.typeface = tokenMediumTypeface()
         label.layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
 
         val value = TextView(activity)
         value.text = "${textZoomLevel}%"
-        value.textSize = 12f
+        value.setTokenTextSize(R.dimen.communityglows_type_size_12)
         value.setTextColor(secondaryColor)
-        value.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        value.typeface = tokenMediumTypeface()
 
         topRow.addView(label)
         topRow.addView(value)
@@ -3385,15 +3421,15 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val row = LinearLayout(activity)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
-        val rowPadH = (12 * density).toInt()
-        val rowPadV = (11 * density).toInt()
+        val rowPadH = tokenDimensionOffset(R.dimen.communityglows_chrome_space_12)
+        val rowPadV = tokenDimensionOffset(R.dimen.communityglows_chrome_space_11)
         row.setPadding(rowPadH, rowPadV, rowPadH, rowPadV)
         row.isClickable = true
         row.isFocusable = true
 
         // Rounded hover/press background
         val rippleBg = GradientDrawable()
-        rippleBg.cornerRadius = 10 * density
+        rippleBg.cornerRadius = tokenDimensionPixels(R.dimen.communityglows_chrome_interactive_radius)
         rippleBg.setColor(Color.TRANSPARENT)
         row.background = rippleBg
         row.setOnTouchListener { v, event ->
@@ -3419,24 +3455,27 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val icon = TextView(activity)
         icon.text = iconChar
         icon.typeface = primeIconsTypeface
-        icon.textSize = 16f
+        icon.setTokenTextSize(R.dimen.communityglows_type_size_16)
         icon.gravity = Gravity.CENTER
         icon.setTextColor(if (dimmed) dimColor else textColor)
-        val iconSize = (28 * density).toInt()
+        val iconSize = tokenDimensionOffset(R.dimen.communityglows_component_icon_size)
         icon.layoutParams = LinearLayout.LayoutParams(iconSize, iconSize)
         row.addView(icon)
 
         // Spacing
         val spacer = View(activity)
-        spacer.layoutParams = LinearLayout.LayoutParams((10 * density).toInt(), 1)
+        spacer.layoutParams = LinearLayout.LayoutParams(
+            tokenDimensionOffset(R.dimen.communityglows_chrome_space_10),
+            tokenDimensionOffset(R.dimen.communityglows_chrome_separator_width),
+        )
         row.addView(spacer)
 
         // Label
         val text = TextView(activity)
         text.text = label
-        text.textSize = 14f
+        text.setTokenTextSize(R.dimen.communityglows_type_size_14)
         text.setTextColor(if (dimmed) dimColor else textColor)
-        text.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        text.typeface = tokenMediumTypeface()
         text.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -3459,14 +3498,14 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val row = LinearLayout(activity)
         row.orientation = LinearLayout.HORIZONTAL
         row.gravity = Gravity.CENTER_VERTICAL
-        val rowPadH = (12 * density).toInt()
-        val rowPadV = (11 * density).toInt()
+        val rowPadH = tokenDimensionOffset(R.dimen.communityglows_chrome_space_12)
+        val rowPadV = tokenDimensionOffset(R.dimen.communityglows_chrome_space_11)
         row.setPadding(rowPadH, rowPadV, rowPadH, rowPadV)
         row.isClickable = true
         row.isFocusable = true
 
         val rippleBg = GradientDrawable()
-        rippleBg.cornerRadius = 10 * density
+        rippleBg.cornerRadius = tokenDimensionPixels(R.dimen.communityglows_chrome_interactive_radius)
         rippleBg.setColor(Color.TRANSPARENT)
         row.background = rippleBg
         row.setOnTouchListener { v, event ->
@@ -3487,11 +3526,11 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
         val textColor = tokenColor(R.color.communityglows_window_text)
         val dimColor = tokenColor(R.color.communityglows_window_text_muted)
-        val avatarSize = (28 * density).toInt()
+        val avatarSize = tokenDimensionOffset(R.dimen.communityglows_component_avatar_size)
 
         val avatarFrame = FrameLayout(activity)
         avatarFrame.layoutParams = LinearLayout.LayoutParams(avatarSize, avatarSize)
-        avatarFrame.alpha = if (dimmed) 0.72f else 1f
+        avatarFrame.alpha = if (dimmed) tokenFraction(R.fraction.communityglows_opacity_dimmed) else 1f
         avatarFrame.clipToOutline = true
         avatarFrame.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
@@ -3519,9 +3558,9 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
         avatarText.gravity = Gravity.CENTER
-        avatarText.textSize = 13f
+        avatarText.setTokenTextSize(R.dimen.communityglows_type_size_13)
         avatarText.setTextColor(if (dimmed) dimColor else textColor)
-        avatarText.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        avatarText.typeface = tokenMediumTypeface()
         avatarText.text = profile.emoji.ifBlank { "👤" }
         avatarFrame.addView(avatarText)
 
@@ -3529,14 +3568,17 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         row.addView(avatarFrame)
 
         val spacer = View(activity)
-        spacer.layoutParams = LinearLayout.LayoutParams((10 * density).toInt(), 1)
+        spacer.layoutParams = LinearLayout.LayoutParams(
+            tokenDimensionOffset(R.dimen.communityglows_chrome_space_10),
+            tokenDimensionOffset(R.dimen.communityglows_chrome_separator_width),
+        )
         row.addView(spacer)
 
         val text = TextView(activity)
         text.text = profile.name
-        text.textSize = 14f
+        text.setTokenTextSize(R.dimen.communityglows_type_size_14)
         text.setTextColor(if (dimmed) dimColor else textColor)
-        text.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        text.typeface = tokenMediumTypeface()
         text.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -3628,26 +3670,51 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     private fun showBlockedPage(view: WebView, blockedUrl: String) {
         val siteName = try { android.net.Uri.parse(blockedUrl).host?.removePrefix("www.") ?: blockedUrl } catch (_: Exception) { blockedUrl }
         val encodedUrl = android.net.Uri.encode(blockedUrl)
+        val surfaceCss = tokenCssColor(R.color.communityglows_blocked_surface)
+        val textCss = tokenCssColor(R.color.communityglows_blocked_text)
+        val mutedTextCss = tokenCssColor(R.color.communityglows_blocked_text_muted)
+        val actionCss = tokenCssColor(R.color.communityglows_blocked_action)
+        val actionTextCss = tokenCssColor(R.color.communityglows_icon_on_brand)
+        val bodyPadding = tokenString(R.string.communityglows_blocked_body_padding)
+        val cardMaxWidth = tokenString(R.string.communityglows_blocked_card_max_width)
+        val iconSize = tokenString(R.string.communityglows_blocked_icon_size)
+        val iconMarginBottom = tokenString(R.string.communityglows_blocked_icon_margin_bottom)
+        val titleSize = tokenString(R.string.communityglows_blocked_title_size)
+        val titleMarginBottom = tokenString(R.string.communityglows_blocked_title_margin_bottom)
+        val titleWeight = tokenString(R.string.communityglows_blocked_title_weight)
+        val copySize = tokenString(R.string.communityglows_blocked_copy_size)
+        val copyLineHeight = tokenString(R.string.communityglows_blocked_copy_line_height)
+        val copyMarginBottom = tokenString(R.string.communityglows_blocked_copy_margin_bottom)
+        val actionsGap = tokenString(R.string.communityglows_blocked_actions_gap)
+        val buttonPaddingBlock = tokenString(R.string.communityglows_blocked_button_padding_block)
+        val buttonPaddingInline = tokenString(R.string.communityglows_blocked_button_padding_inline)
+        val buttonRadius = tokenString(R.string.communityglows_blocked_button_radius)
+        val buttonSize = tokenString(R.string.communityglows_blocked_button_size)
+        val buttonWeight = tokenString(R.string.communityglows_blocked_button_weight)
+        val borderWidth = tokenString(R.string.communityglows_blocked_border_width)
+        val ghostSize = tokenString(R.string.communityglows_blocked_ghost_size)
+        val ghostPaddingBlock = tokenString(R.string.communityglows_blocked_ghost_padding_block)
+        val ghostPaddingInline = tokenString(R.string.communityglows_blocked_ghost_padding_inline)
         val html = """
             <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
                     * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body { font-family: -apple-system, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #f8f9fa; color: #333; }
-                    .card { text-align: center; max-width: 360px; }
-                    .icon { font-size: 3.5rem; margin-bottom: 1rem; }
-                    h1 { font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 600; }
-                    p { font-size: 0.9rem; color: #666; line-height: 1.5; margin-bottom: 1.25rem; }
-                    .actions { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; }
-                    .btn { display: inline-block; padding: 0.6rem 1.5rem; border-radius: 8px; background: #3b82f6; color: #fff; text-decoration: none; font-size: 0.9rem; font-weight: 500; }
-                    .btn.outline { background: none; border: 1px solid #3b82f6; color: #3b82f6; }
-                    .btn.ghost { background: none; color: #3b82f6; font-size: 0.8rem; padding: 0.4rem 1rem; }
+                    body { font-family: -apple-system, system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: $bodyPadding; background: $surfaceCss; color: $textCss; }
+                    .card { text-align: center; max-width: $cardMaxWidth; }
+                    .icon { font-size: $iconSize; margin-bottom: $iconMarginBottom; }
+                    h1 { font-size: $titleSize; margin-bottom: $titleMarginBottom; font-weight: $titleWeight; }
+                    p { font-size: $copySize; color: $mutedTextCss; line-height: $copyLineHeight; margin-bottom: $copyMarginBottom; }
+                    .actions { display: flex; flex-direction: column; gap: $actionsGap; align-items: center; }
+                    .btn { display: inline-block; padding: $buttonPaddingBlock $buttonPaddingInline; border-radius: $buttonRadius; background: $actionCss; color: $actionTextCss; text-decoration: none; font-size: $buttonSize; font-weight: $buttonWeight; }
+                    .btn.outline { background: none; border: $borderWidth solid $actionCss; color: $actionCss; }
+                    .btn.ghost { background: none; color: $actionCss; font-size: $ghostSize; padding: $ghostPaddingBlock $ghostPaddingInline; }
                     @media (prefers-color-scheme: dark) {
-                        body { background: #09090b; color: #e4e4e7; }
-                        p { color: #a1a1aa; }
-                        .btn.outline { border-color: #5BA8F5; color: #5BA8F5; }
-                        .btn.ghost { color: #5BA8F5; }
+                        body { background: $surfaceCss; color: $textCss; }
+                        p { color: $mutedTextCss; }
+                        .btn.outline { border-color: $actionCss; color: $actionCss; }
+                        .btn.ghost { color: $actionCss; }
                     }
                 </style>
             </head>
@@ -3827,12 +3894,12 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         val btn = TextView(activity)
         btn.text = net.iconChar
         btn.typeface = primeIconsTypeface
-        btn.textSize = 15f
+        btn.setTokenTextSize(R.dimen.communityglows_type_size_15)
         btn.gravity = Gravity.CENTER
-        btn.setTextColor(Color.WHITE)
+        btn.setTextColor(tokenColor(R.color.communityglows_icon_on_brand))
 
-        val size = (36 * density).toInt()
-        val margin = (2 * density).toInt()
+        val size = tokenDimensionOffset(R.dimen.communityglows_component_network_button_size)
+        val margin = tokenDimensionOffset(R.dimen.communityglows_component_network_button_margin)
         val params = LinearLayout.LayoutParams(size, size)
         params.setMargins(margin, margin, margin, margin)
         btn.layoutParams = params
@@ -3892,7 +3959,11 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             val baseR = Color.red(baseColor)
             val baseG = Color.green(baseColor)
             val baseB = Color.blue(baseColor)
-            val brandWeight = if (isDarkMode) 0.25f else 0.3f
+            val brandWeight = if (isDarkMode) {
+                tokenFraction(R.fraction.communityglows_brand_mix_dark)
+            } else {
+                tokenFraction(R.fraction.communityglows_brand_mix_light)
+            }
             val baseWeight = 1f - brandWeight
             val r = ((Color.red(net.color) * brandWeight) + (baseR * baseWeight)).toInt()
             val g = ((Color.green(net.color) * brandWeight) + (baseG * baseWeight)).toInt()
@@ -3901,7 +3972,11 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         }
         btn.background = bg
         // Icon color: white on dark, darker on light (for inactive with light bg)
-        val iconColor = if (isActive) Color.WHITE else tokenColor(R.color.communityglows_window_text)
+        val iconColor = if (isActive) {
+            tokenColor(R.color.communityglows_icon_on_brand)
+        } else {
+            tokenColor(R.color.communityglows_window_text)
+        }
         if (btn is TextView) {
             btn.setTextColor(iconColor)
         } else if (btn is FrameLayout && btn.childCount > 0) {
@@ -3912,14 +3987,14 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         }
 
         // Active icon: full opacity + slight scale-up; inactive: dimmed — smooth transition
-        val targetAlpha = if (isActive) 1f else 0.45f
-        val targetScale = if (isActive) 1.12f else 1f
+        val targetAlpha = if (isActive) 1f else tokenFraction(R.fraction.communityglows_opacity_inactive)
+        val targetScale = if (isActive) tokenFraction(R.fraction.communityglows_scale_active) else 1f
         btn.animate().cancel()
         btn.animate()
             .alpha(targetAlpha)
             .scaleX(targetScale)
             .scaleY(targetScale)
-            .setDuration(300)
+            .setDuration(tokenInteger(R.integer.communityglows_motion_duration_fast).toLong())
             .start()
     }
 
@@ -3930,8 +4005,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         isActive: Boolean,
         svgPathData: String,
     ): View {
-        val size = (36 * density).toInt()
-        val margin = (2 * density).toInt()
+        val size = tokenDimensionOffset(R.dimen.communityglows_component_network_button_size)
+        val margin = tokenDimensionOffset(R.dimen.communityglows_component_network_button_margin)
         val hasStroke = net.id == "snapchat"
 
         val iconView = object : View(activity) {
@@ -4110,7 +4185,11 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         // The only document-start script retained is the user's cosmetic theme preference.
         val useDocStart = WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)
         if (useDocStart) {
-            WebViewCompat.addDocumentStartJavaScript(webView, DARK_MODE_DOC_START_SCRIPT, setOf("*"))
+            WebViewCompat.addDocumentStartJavaScript(
+                webView,
+                buildDarkModeDocStartScript(tokenCssColor(R.color.communityglows_window_surface)),
+                setOf("*"),
+            )
         }
 
         webView.webViewClient = object : WebViewClient() {

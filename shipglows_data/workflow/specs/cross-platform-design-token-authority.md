@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.3.2"
 project: "socialglowz"
 created: "2026-08-04"
 created_at: "2026-08-04 11:27:34 UTC"
-updated: "2026-08-04"
-updated_at: "2026-08-04 21:47:00 UTC"
+updated: "2026-08-12"
+updated_at: "2026-08-12 18:10:02 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -42,7 +42,7 @@ evidence:
   - "Android is not currently represented in the design-system authority and has no generated color or dimension resource layer from SocialGlowz tokens."
   - "The Windows Reka migration establishes a sound behavior/visual ownership bridge but does not create cross-platform token authority."
   - "The 2026-08-04 drift scan reported 160 candidates across 237 files; the authority document still records an older 508-finding snapshot."
-next_step: "/102-sg-start cross-platform-design-token-authority"
+next_step: "/102-sg-start cross-platform-design-token-authority R0"
 ---
 
 # Cross-Platform Design Token Authority
@@ -53,7 +53,7 @@ Cross-Platform Design Token Authority
 
 ## Status
 
-Ready refinement revision. The shared authority and first convergence wave are implemented; this revision adds the bounded visual-hierarchy and theme-quality pass requested after rendered Windows review.
+Ready residual-remediation revision. The shared authority and earlier convergence waves remain historical evidence; R0 is the next action and must pass before any parallel CommunityGlows consumer write begins.
 
 ## User Story
 
@@ -284,6 +284,124 @@ Generated files include a warning header and canonical source version. Authored 
   - Action: consume the refined roles consistently for page titles, section titles, body, metadata, selected rows, fields, cards and overlays; remove component forks that flatten hierarchy or bypass semantic state roles.
   - Validate with: desktop light/dark screenshots at 1440x900, focus/hover/selected/disabled checks, 200% zoom sanity, reduced-motion check, unit tests, typecheck and Tauri frontend build.
 
+## Residual Token-Consumption Wave — CommunityGlows
+
+This is the current active remediation wave for **CommunityGlows**, not SocialGlowz. Historical SocialGlowz wording and records elsewhere in this document are preserved as prior lifecycle evidence; they do not authorize deprecated paths, identifiers or carriers in this wave.
+
+Outcome: reconcile every stale generated carrier from the canonical CommunityGlows JSON authority, then remove all non-exception visual literals from the active app/Tauri web, extension, marketing site and Android WebView native surfaces without rebranding, changing layout, changing navigation, or changing runtime behavior.
+
+This revision is ready for implementation: `101-sg-ready` has approved the precondition, boundaries and proof plan. R0 remains the mandatory first dispatch boundary.
+
+### Sequential Precondition R0 — Authority And Carrier Reconciliation
+
+R0 is the first and only sequential implementation unit before consumer work:
+
+- Owned authority inputs: `design/tokens/reference.json`, the existing schema/mapping documents under `design/tokens/` when required by a named semantic role, and the existing generator mapping/serialization files and focused tests under `scripts/design-tokens/`.
+- Purpose: add every missing semantic role required by the audited consumers, complete platform mappings, and make generation deterministic for the current CommunityGlows carriers. No product rebrand, layout, navigation, copy, interaction, timing, or behavior change is permitted.
+- Single-write rule: canonical token source and generator mappings may be edited in this one authority pass only. R0 then runs `pnpm run design:tokens:validate`, `pnpm run design:tokens:generate`, and `pnpm run design:tokens:check`, records the resulting source version/hash, and freezes authority inputs for Batches A, B and C.
+- Generated-output rule: the generated Vue/Tauri CSS, site CSS and Android day/night XML files are outputs of R0. They may change only through `pnpm run design:tokens:generate`; they are never edited manually by R0, a consumer batch, or the integration owner.
+- Stop condition: if any consumer batch discovers a missing or incorrect semantic role, all parallel writes stop. The batch must not add a local literal or edit authority files; the spec returns to a new sequential authority revision and requires readiness again.
+
+All consumer batches depend only on a passing and frozen R0. After that gate, A, B and C have non-overlapping authored-file ownership and may run in parallel.
+
+### Execution Batches
+
+These batches are action-ready definitions subject to the mandatory `101-sg-ready` gate.
+
+#### Batch A — App/Tauri Web And Extension
+
+- Owned writes: authored files under `src/` for the CommunityGlows app/Tauri web frontend and browser-extension surfaces, including shared UI composition, `src/assets/base.css`, extension entry styling, content-script styling, and `src/ui/setup/pages/CommunityGlows/` consumers.
+- Forbidden writes: `src/types/`; `src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css`; all of `design/tokens/`, `scripts/`, `site/`, and `src-tauri/plugins/android-webview/`; package/config/status files; and every unrelated source surface.
+- Dependency: frozen R0 passes token validation, generation and freshness checks before Batch A starts.
+- Required change: replace DaisyUI/PrimeVue/Tailwind palette bypasses, token fallbacks and authored visual literals with canonical semantic roles or existing CommunityGlows primitives. Preserve layout, copy, interaction, extension permissions and runtime behavior.
+- Per-batch validation: `pnpm run design:tokens:check`; `pnpm run typecheck:core`; focused tests; `pnpm run build:chrome`; `pnpm run build:firefox`; `pnpm run tauri:build`; and an authored-source literal inventory scoped to Batch A with only the accepted exceptions below.
+- Visible proof: browser screenshots of representative extension entries and Tauri screenshots of representative shell, gate, dialog and content states in light/dark modes, including keyboard focus and reduced-motion behavior.
+
+#### Batch B — Marketing Site
+
+- Owned writes: authored files under `site/`, including Astro components/pages and authored styles.
+- Forbidden writes: `site/src/styles/generated/tokens.css`; all of `src/`, `src-tauri/`, `design/tokens/`, and `scripts/`; package/config/status files outside `site/`; and every unrelated source surface.
+- Dependency: frozen R0 passes token validation, generation and freshness checks before Batch B starts.
+- Required change: replace hardcoded Tailwind colors, local `oklch`/hex/`rgba` values, visual fallbacks, radii, shadows, spacing, typography and motion with canonical semantic tokens while preserving the approved CommunityGlows rendering, content, layout and responsive behavior.
+- Per-batch validation: `pnpm run design:tokens:check`; `pnpm --dir site run build`; an authored-site literal inventory with only accepted exceptions; and desktop/mobile visual comparison for representative home, feature, comparison, pricing and lifetime-deal states.
+- Visible proof: browser screenshots in light/dark where supported, at representative desktop/mobile widths, plus visible focus and reduced-motion proof with no unintended rebrand or layout shift.
+
+#### Batch C — Android WebView Native Plugin
+
+- Owned writes: authored files under `src-tauri/plugins/android-webview/`, including native Kotlin and authored Android resources used by CommunityGlows WebView chrome, fallback UI, menus and overlays.
+- Forbidden writes: generated `android/src/main/res/values/communityglows_tokens.xml` and `android/src/main/res/values-night/communityglows_tokens.xml`; autogenerated permission files; all of `src/`, `src/types/`, `site/`, `design/tokens/`, and `scripts/`; package/config/status files; and every unrelated Tauri surface.
+- Dependency: frozen R0 passes token validation, generation and freshness checks before Batch C starts.
+- Required change: consume generated Android resources or the existing generated bridge for every product-owned color, typography, spacing, radius, elevation, motion and fixed component dimension. Preserve WebView lifecycle, sessions, navigation, safe areas, haptics, protocol behavior and measured native geometry.
+- Per-batch validation: `pnpm run design:tokens:check`; Android resource validation; plugin/host Android compile through `pnpm run tauri:android:build` when the configured SDK/target makes it executable; focused Kotlin checks; and a native-source literal inventory with only accepted exceptions. An unavailable Android toolchain is recorded as missing proof, never as a pass.
+- Visible proof: day/night screenshots of the fallback/blocking page, bottom bar, menu, selected/disabled states and representative WebView transitions on an emulator/device or the configured Android proof environment, including safe-area and target-size checks.
+
+### Integration Ownership And Combined Validation
+
+- Integration owner: one sequential `102-sg-start` integration owner after A, B and C report completion. Batch agents do not integrate each other's files and do not modify the spec, authority inputs or generated carriers.
+- The integration owner checks that ownership did not overlap, resolves merge conflicts without broadening batch scope, and rejects any local fallback introduced to bypass a missing canonical role.
+- Combined automated proof: `pnpm run design:tokens:validate`; `pnpm run design:tokens:generate` followed by proof that generation produces no further diff; `pnpm run design:tokens:check`; `pnpm run test:once`; `pnpm run typecheck:core`; `pnpm run lint:check`; `pnpm run build:chrome`; `pnpm run build:firefox`; `pnpm run tauri:build`; `pnpm --dir site run build`; Android compile when executable; and one all-owned-surfaces visual-literal inventory.
+- Combined visible/manual proof: compare browser screenshots for the extension and site, Tauri screenshots for app states, and Android day/night captures against the approved pre-wave baseline. Prove visible focus, keyboard traversal, light/dark parity, reduced motion, 200% zoom where applicable, mobile widths, native safe areas and target sizes. No proof may rely on a changed layout, rebrand, copy change or interaction change.
+
+### Strict Accepted Exceptions
+
+Only these categories may retain literals, and each occurrence must be classified by the batch report:
+
+- official social-network brand metadata owned by the network registry, including official solid colors, gradients and logo-specific brand treatment;
+- SVG geometry such as paths, points, transforms, `viewBox`, masks and intrinsic coordinate dimensions; product visual fills, strokes, opacity, shadow and motion are not geometry and still require a token unless they are official brand metadata;
+- media-query breakpoints that express responsive conditions; visual values inside those queries remain tokenized;
+- browser, API and WebView protocol strings or selectors whose literal syntax is required by the platform contract; visual fallback values embedded in those strings are not exempt;
+- measured native bounds, safe-area/inset values and runtime dimensions obtained from platform measurement APIs; copied magic numbers or authored fixed visual dimensions are not measured bounds.
+
+Every other product-owned visual literal — color, gradient, opacity, spacing, size, typography, radius, border, shadow, elevation, z-index, motion duration/easing/distance, icon treatment or fixed component geometry — must resolve through a canonical semantic token. If no role exists, the batch stops under the R0 stop condition.
+
+### Residual-Wave Acceptance Criteria
+
+- [ ] R0 is completed exactly once, all generated carriers are reconciled through generation, and `pnpm run design:tokens:check` passes before A, B or C starts.
+- [ ] Authority inputs and generated outputs remain unchanged during parallel consumer batches.
+- [ ] Batch A owns only the declared authored `src/` consumers and leaves `src/types/` untouched.
+- [ ] Batch B owns only authored `site/` consumers.
+- [ ] Batch C owns only authored Android WebView plugin consumers and never hand-edits generated XML or autogenerated permissions.
+- [ ] Every product-owned visual value in the three batch scopes consumes a canonical semantic token; every retained literal matches one strict exception and has evidence.
+- [ ] CommunityGlows app/Tauri web, extension, site and Android WebView native surfaces build or compile with the declared environment; unavailable Android execution remains an explicit verification gap.
+- [ ] Browser/Tauri/site/Android visual proof shows the approved identity with no rebrand, layout, navigation, copy, permission, session, WebView lifecycle or interaction-behavior change.
+- [ ] Focus visibility, keyboard behavior, reduced motion, light/dark behavior, responsive states, 200% zoom where applicable, safe areas and native target sizes retain or improve their prior proof.
+- [ ] Combined generation is idempotent, all carriers are current, and the all-surface literal inventory contains no unclassified non-exception result.
+- [ ] Documentation and public claims are updated only after implementation evidence exists; this spec revision alone is not treated as remediation proof.
+
+### Residual-Wave Test Strategy
+
+- Authority first: validate schema/mappings, generate all carriers once, prove idempotence/freshness, then freeze the source version for the parallel wave.
+- Consumer proof: run each batch's focused build and literal inventory independently so one surface cannot mask another surface's debt.
+- Integration proof: rerun token checks, app/extension builds, site build and Android compile when executable from the integrated tree; any skipped executable is a named gap with owner and follow-up.
+- Visual proof: capture deterministic representative screenshots for browser extension, site, Tauri and Android day/night surfaces; compare semantic roles and layout bounds against the pre-wave baseline.
+- Accessibility proof: verify visible focus, keyboard traversal/restoration, reduced-motion behavior, text/non-text contrast, target sizes and 200% zoom/reflow where applicable.
+- Negative proof: a stale carrier, manually edited generated output, unclassified visual literal, missing semantic role, failed build or unavailable required screenshot prevents verification from passing.
+
+### Proportional ZOMBIES Coverage
+
+- Z — zero residual non-exception visual literals is the required inventory result for each authored batch scope.
+- O — one missing semantic role stops its batch and returns authority work to a sequential revision; one generated mismatch fails freshness.
+- M — three concurrent consumer batches are valid only after frozen R0 and must remain non-overlapping through integration.
+- B — light/dark, reduced-motion, focus, responsive breakpoints, 200% zoom, Android safe areas and target-size boundaries receive representative proof.
+- I — the JSON source -> generator/mappings -> generated carrier -> authored consumer interface is versioned and checked at every boundary.
+- E — generation failure, stale output, build failure, unavailable Android tooling and missing visual proof remain explicit failures or gaps; no local fallback is accepted.
+- S — use the smallest representative state set that proves all semantic roles while preserving the no-rebrand/no-layout/no-behavior contract.
+
+### OWASP Security Gate
+
+- Relevant lens: A02 Security Misconfiguration, A08 Software or Data Integrity Failures and A10 Mishandling of Exceptional Conditions apply proportionally to stale carriers, generated-file integrity and fail-closed generation/validation. A03 Software Supply Chain Failures is constrained by the ban on dependency/package changes in this wave.
+- Trust/data boundaries: no authentication, authorization, user data, secrets, cookies, private URLs or external provider behavior changes are in scope. Token generation remains local/build-time with fixed repository outputs.
+- ASVS v5.0.0: not applicable to this visual-consumption-only revision because it adds no runtime security control or externally reachable input boundary.
+- Proof: generated outputs are reproducible from reviewed canonical inputs, manual output edits fail freshness checks, and failed generation or conversion cannot be reported as success.
+- Residual gap and owner: Android compile/device proof may depend on the configured SDK/emulator; Batch C records the gap and the integration owner carries it into `103-sg-verify` rather than weakening closure.
+
+### Residual-Wave Documentation Impact
+
+- During implementation, update `shipglows_data/technical/design-system-authority.md` and contributor instructions only after the canonical source, carriers and active consumers are proven current.
+- Update README architecture statements only when all declared CommunityGlows carriers are actually generated and consumed at that commit.
+- Record the strict exception taxonomy and generated-file editing rule in the design-system authority; do not duplicate token values in documentation.
+- Do not publish or restore an all-surface parity claim until combined automated and visible/manual proof passes.
+
 ## Acceptance Criteria
 
 - [ ] `design/tokens/` is the only editable source of shared semantic token values.
@@ -468,7 +586,11 @@ None. The site-led direction, source format, platform footprint, dark-reference/
 | 2026-08-04 22:26:30 UTC | 006-sg-design | GPT-5 Codex | Formalized the remaining shared extension-shell dimensions in the canonical token source, regenerated every platform carrier, and migrated the historical extension CSS to consume them. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
 | 2026-08-04 22:28:09 UTC | 006-sg-design | GPT-5 Codex | Corrected the extension carrier order so every historical extension entry loads the generated semantic tokens after legacy compatibility aliases, removing the remaining active palette divergence from Windows/Tauri. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
 | 2026-08-04 22:50:29 UTC | 006-sg-design | GPT-5 Codex | Migrated the historical feed components to semantic surface, spacing, border, sizing and state roles; Chrome build and changed-file drift validation confirm no newly introduced visual literals. | implemented | Collect authenticated Windows visual proof and Android day/night rendered proof before cross-platform closure. |
+| 2026-08-12 17:44:40 UTC | 706-continue | GPT-5 Codex | Resumed the paused chantier and revised the spec with the CommunityGlows residual authority precondition, strict exceptions, non-overlapping consumer batches A/B/C, integration proof, accessibility, ZOMBIES, OWASP and documentation gates. | revised | Run `101-sg-ready` on the residual remediation revision before any authority or consumer write. |
+| 2026-08-12 17:44:40 UTC | 100-sg-spec | GPT-5 Codex | Recorded the residual CommunityGlows token-consumption remediation: sequential canonical token/generator preparation, then bounded non-overlapping A/B/C consumer batches with integration ownership and proof gates. | revised | Run `101-sg-ready`; no implementation or readiness claim is made by this revision. |
+| 2026-08-12 18:08:00 UTC | 101-sg-ready | GPT-5 Codex | Reviewed the residual CommunityGlows revision for canonical authority sequencing, isolated consumer batches, generated-output integrity, strict exceptions, behavior preservation, accessibility, Android proof gaps, proportional ZOMBIES and OWASP gates, and documentation coherence. | ready | Execute the sequential R0 authority and carrier reconciliation; do not start Batches A/B/C until R0 passes and freezes the authority inputs. |
+| 2026-08-12 18:10:02 UTC | 101-sg-ready | GPT-5 Codex | Reconfirmed the residual CommunityGlows remediation is ready: R0 freezes canonical authority before non-overlapping A/B/C writes; behavior preservation, exact automated and visual proof, literal exceptions, Android gaps, ZOMBIES, OWASP and documentation gates are sufficient. | ready | Execute R0 only; begin A/B/C solely after the frozen authority checks pass. |
 
 ## Current Chantier Flow
 
-`006-sg-design redesign audited -> 100-sg-spec refinement revised -> 101-sg-ready complete -> 102-sg-start refinement implemented -> 006-sg-design representative desktop, network and mobile consumers implemented -> authenticated Windows/Android visual proof pending -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`
+`006-sg-design residual all-surface audit complete -> 100-sg-spec residual remediation revised -> 101-sg-ready residual remediation ready -> 102-sg-start sequential authority precondition R0 ready (next action) -> Execution Batches A/B/C parallel after frozen R0 -> 102-sg-start integration validation -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`

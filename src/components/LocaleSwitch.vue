@@ -18,7 +18,7 @@ const currentLocale = useLocale()
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] shadow-lg -ml-4 mt-4"
+        class="locale-menu dropdown-content menu rounded-box z-[1] -ml-4 mt-4"
       >
         <li
           v-for="locale in i18n.global.availableLocales"
@@ -36,4 +36,10 @@ const currentLocale = useLocale()
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.locale-menu {
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-text);
+  box-shadow: var(--sg-shadow-modal);
+}
+</style>
