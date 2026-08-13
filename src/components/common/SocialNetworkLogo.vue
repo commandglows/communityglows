@@ -59,7 +59,7 @@ const color = computed(() => getSocialNetworkColor(props.network))
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: var(--sg-radius-pill);
   background: var(--sg-color-surface-raised);
 }
 

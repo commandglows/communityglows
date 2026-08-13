@@ -1,13 +1,13 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.5.1"
+artifact_version: "1.5.5"
 project: "communityglows"
 created: "2026-08-04"
 created_at: "2026-08-04 11:27:34 UTC"
-updated: "2026-08-13"
-updated_at: "2026-08-13 22:50:03 UTC"
-status: ready
+updated: "2026-08-14"
+updated_at: "2026-08-13 23:15:59 UTC"
+status: reviewed
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
 scope: "cross-platform-design-token-authority"
@@ -45,7 +45,7 @@ evidence:
   - "The Windows Reka migration establishes a sound behavior/visual ownership bridge but does not create cross-platform token authority."
   - "The 2026-08-04 drift scan reported 160 candidates across 237 files; the authority document still records an older 508-finding snapshot."
   - "The 2026-08-13 post-unification audit validates the canonical source and generated carriers, inventories 20 shared UI components, and finds that residual consumer drift, duplicate component families and missing post-unification visual proof invalidate the previous remediation baseline."
-next_step: "/102-sg-start cross-platform-design-token-authority R0 post-unification"
+next_step: "/103-sg-verify cross-platform-design-token-authority rendered-and-android-proof"
 ---
 
 # Cross-Platform Design Token Authority
@@ -56,7 +56,7 @@ Cross-Platform Design Token Authority
 
 ## Status
 
-Draft post-unification audit revision. The shared authority and generated carriers validate successfully, but the 2026-08-13 shared-component pass changed consumer ownership after the previous readiness review. The remediation batches must be revalidated against the refreshed baseline before any consumer write begins.
+Implemented with automated integration proof; rendered multi-surface and Android compile/device proof remain pending. The residual scanner findings are the classified data-brand, browser-protocol and responsive-condition exceptions, not product-token fallbacks.
 
 ## User Story
 
@@ -370,6 +370,20 @@ This addendum supplies the eight corrections required by the preceding `not read
 - Result at this revision: 253 files scanned, 78 findings, warn-only result `drift candidates found`.
 - Finding kinds: 53 hardcoded colors, 22 hardcoded CSS dimensions, one hardcoded motion value, one JS/browser feature-string value and one Tailwind arbitrary visual utility.
 - Scanner boundary: the current tool searches its declared source directories and therefore covers active `src/` consumers but not the nested `site/src` or Android plugin tree. Batch B and C retain their explicit supplemental inventories and cannot infer zero drift from the 78-result scan.
+- Targeted site command: `& (uv python find) "$env:SHIPGLOWS_ROOT\tools\design_system_drift_check.py" --root site --format markdown --warn-only`.
+- Targeted site result: 50 files scanned, two findings: `site/src/styles/global.css:81` (`z-index: 9999`) and `site/src/styles/global.css:207` (`@media (min-width: 64rem)`). The layer finding was absent from the preceding seven-candidate supplemental ledger; the responsive condition is an accepted syntax candidate but still requires boundary proof.
+
+### Execution Audit Delta — 2026-08-14
+
+This delta supersedes only the ownership and occurrence dispositions below. The audit initially returned the spec to `draft`; this readiness review now authorizes R0 because the missing canonical roles and Android accessibility blocker are bounded implementation tasks with explicit stop conditions. The readiness decision does not authorize consumer writes before R0 and the ownership gate pass.
+
+- `src/assets/base.css` is imported only by `src/ui/setup/pages/CommunityGlows/main.ts`. It belongs to A2 CommunityGlows bootstrap/product, not A1 legacy extension.
+- `src/components/state/LoadingSpinner.vue` and `src/components/LocaleSwitch.vue` have no production template or script consumer. Their only detected references are generated component declarations under `src/types/` and the CommunityGlows generated types directory. Treat both as orphan candidates; generated declarations are not production evidence. No migration or deletion is permitted until the ownership gate records `remove`, `reserved with a named consumer`, or an actual production consumer.
+- R0 must add or confirm semantic roles for native/select padding, dropdown/menu stacking, the three supported dialog widths currently expressed as `70vw`, `75vw` and `90vw`, the site noise-overlay layer currently expressed as `9999`, and the blog-link underline offset currently expressed as `4px`. Value-shaped tokens owned by another component do not satisfy these roles. Any inability to preserve the exact resolved value stops readiness rather than authorizing a consumer fallback.
+- The four authored site radius calculations duplicate the generated Tailwind radius mappings exactly and should be removed from authored CSS after resolved-style/build proof; they do not require new roles.
+- `SectionHeading.astro` must replace `styleFont?: string` with a closed named variant API. Its complete production consumer set is `Hero.astro` (`--font-cal-sans`), `Pricing.astro` (`--font-instrument-sans`) and `SolutionSection.astro` (`--font-instrument-sans`). The implementation maps variants internally to those existing canonical font variables and accepts no arbitrary CSS string.
+- `Layout.astro` retains `rootMargin: '-50px'` only as a named IntersectionObserver protocol exception with reveal-threshold and reduced-motion proof. The Lenis `duration: 1.2`, numeric easing expression and observer `threshold: 0.1` are invisible to the current scanner; classify them occurrence by occurrence as canonical motion consumption or a documented library/browser protocol contract before Batch B can claim zero drift.
+- The Android supplemental set is closed at 35 authored findings: 34 `NetworkInfo` color literals in `NativeWebViewPlugin.kt` are data-brand candidates requiring per-network registry confirmation, while the generated `communityglows_component_network_button_size` resolves to `36dp`. The latter is a product-owned target-size blocker below the contract's 44dp primary mobile target baseline; R0 must provide a compliant semantic component-size role and Batch C must prove the rendered hit target. Generated day/night XML remains output-only.
 
 ### Occurrence-Level Disposition Ledger
 
@@ -410,7 +424,7 @@ Every row is a closed set for the 78-result scan. Implementation reports must sp
 | `SgTextarea` | 3 | native textarea | project wrapper; tokenized field contract |
 | `ActionLink` | 14 | native anchor | site wrapper; link/button presentation restricted to named variants |
 | `EyebrowPill` | 13 | semantic HTML | site wrapper; fixed tokenized presentation |
-| `SectionHeading` | 3 | semantic heading | site wrapper; `styleFont` accepts only the canonical display/body font variables through a typed/named variant, never arbitrary CSS text |
+| `SectionHeading` | 3 | semantic heading | site wrapper; replace `styleFont` with a closed named variant mapped internally to canonical Cal Sans or Instrument Sans variables; arbitrary CSS text is rejected |
 | `SiteLogo` | 2 | native anchor/image semantics | site wrapper; size and theme variants remain named |
 | `StatusBadge` | 5 | semantic HTML | site wrapper; named status variants only |
 
@@ -431,13 +445,13 @@ Every row is a closed set for the 78-result scan. Implementation reports must sp
 
 ### Supplemental Site And Android Ledger
 
-- Site targets: `site/src/layouts/Layout.astro` observer `rootMargin`; `site/src/styles/global.css` four radius calculations, one responsive condition and one underline offset; `SectionHeading.astro` dynamic font path. Responsive-condition syntax may be excepted; all other occurrences require canonical role or documented primitive proof.
-- Android targets: the 34 authored color candidates and one fixed-dimension candidate previously inventoried in the native WebView plugin. Classify official network-brand entries separately from product-owned chrome; product values must consume generated resources. The generated day/night XML files are outputs and never hand-edited.
+- Site targets: `site/src/layouts/Layout.astro` observer `rootMargin` plus scanner-invisible Lenis duration/easing and observer threshold; `site/src/styles/global.css` four duplicate radius calculations, the noise-overlay layer, one responsive condition and one underline offset; `SectionHeading.astro` dynamic font path. Responsive-condition syntax and named browser/library protocol contracts may be excepted with proof; product-owned layer and underline values require the R0 roles named above.
+- Android targets: 34 authored `NetworkInfo` color candidates and the `36dp` network-button size represented by the generated bridge. Classify every color against official/data-brand ownership; the component size is product-owned and must meet the declared target-size contract through canonical authority. The generated day/night XML files are outputs and never hand-edited.
 
 ### Bounded Target Batches
 
-- **A1 legacy extension:** `src/assets/base.css`, `src/components/AppSidebar.vue`, `src/components/AppRightSidebar.vue`, `src/components/LocaleSwitch.vue`, `src/components/common/SocialNetworkLogo.vue`, `src/components/state/LoadingSpinner.vue`, plus only their explicit legacy consumers and focused tests.
-- **A2 CommunityGlows bootstrap/product:** `src/ui/setup/pages/CommunityGlows/index.html`, `BillingAccessPanel.vue`, `CrmToolbar.vue`, the 15 app primitives and only consumers named by the ownership matrix when a wrapper contract changes.
+- **A1 legacy extension:** `src/components/AppSidebar.vue`, `src/components/AppRightSidebar.vue`, `src/components/common/SocialNetworkLogo.vue`, plus only their explicit legacy consumers and focused tests. `LocaleSwitch.vue` and `LoadingSpinner.vue` remain outside consumer writes until the ownership gate resolves their orphan status.
+- **A2 CommunityGlows bootstrap/product:** `src/assets/base.css`, `src/ui/setup/pages/CommunityGlows/index.html`, `BillingAccessPanel.vue`, `CrmToolbar.vue`, the 15 app primitives and only consumers named by the ownership matrix when a wrapper contract changes. `base.css` is here because its sole active import is the CommunityGlows entrypoint.
 - **A3 data/protocol:** `src/config/socialNetworks.ts` and `src/stores/socialNetworks.ts`; this batch classifies brand metadata and browser protocol text without changing product palette or popup behavior.
 - **B site:** the two supplemental site files, `SectionHeading.astro`, and only its three consumers if the named font variant API changes.
 - **C Android:** authored native WebView plugin files containing the 35 supplemental candidates; generated XML remains forbidden.
@@ -768,7 +782,11 @@ None. The site-led direction, source format, platform footprint, dark-reference/
 | 2026-08-13 22:15:06 UTC | 101-sg-ready | GPT-5 Codex | Reviewed the post-unification baseline against structure, execution, design-authority, proof, context and adversarial readiness gates. The outcome is resolved, but occurrence-level dispositions, component ownership, duplicate-family boundaries, wrapper guardrails, bounded target lists and rendered scenarios remain insufficient for safe implementation. | not ready | Revise the spec with all eight measurable recovery corrections, then repeat readiness review before any product-source write. |
 | 2026-08-13 22:50:03 UTC | 100-sg-spec | GPT-5 Codex | Completed the post-unification recovery addendum with the canonical 78-result scanner ledger, all 20 shared-component owners, ten duplicate-family boundaries, wrapper guardrails, explicit A1/A2/A3/B/C targets, uv runtime recovery and cross-surface proof scenarios. | revised | Repeat readiness review against the completed recovery conditions. |
 | 2026-08-13 22:50:03 UTC | 101-sg-ready | GPT-5 Codex | Re-reviewed the completed addendum against structure, design authority, execution isolation, exception integrity, component behavior ownership, proof scenarios, environment recovery, context sufficiency and adversarial bypasses. A fresh agent can now execute R0 without relying on conversation history; product remediation and rendered proof remain future work. | ready | Execute R0 only: freeze the authority, reproduce/classify the canonical and supplemental inventories, then open consumer batches only after both sequential gates pass. |
+| 2026-08-13 22:58:18 UTC | 006-sg-design | GPT-5 Codex | Consolidated the delegated read-only execution audit: corrected `base.css` ownership, recorded two orphan component candidates, added the missing R0 role set, captured the targeted site 50/2 scan and scanner-invisible motion contracts, closed the SectionHeading font API, and classified the Android 35-finding set including the 36dp target-size blocker. | revised-draft | Re-run readiness against the expanded R0 authority roles, orphan dispositions, site inventory and Android accessibility gate before any product-source write. |
+| 2026-08-13 22:59:23 UTC | 101-sg-ready | GPT-5 Codex | Re-reviewed the post-audit delta for autonomous execution, exact-value preservation, corrected batch ownership, orphan stop gates, closed site inventory, Android accessibility recovery, security proportionality and proof traceability. | ready | Execute R0 only; freeze the authority and occurrence ledger before opening the shared-component ownership gate or any A1/A2/A3/B/C consumer write. |
+| 2026-08-13 23:01:40 UTC | 006-sg-design | GPT-5 Codex | Added the audited R0 semantic roles for legacy select padding, dropdown and site layers, dialog viewport widths, blog underline offset, and separate Android 44dp target/36dp glyph sizing; regenerated every carrier and proved validation, freshness and idempotence. | implemented | Freeze these authority inputs and complete the occurrence-classification gate before opening consumer batches. |
+| 2026-08-13 23:13:36 UTC | 006-sg-design | GPT-5 Codex | Integrated R0 and consumer batches, corrected the Android active-state animation to scale the 36dp visual child rather than the 44dp hit-target wrapper, and passed token validation/generation/freshness/idempotence, 154 tests, core typecheck, lint with pre-existing warnings only, Chrome/Firefox/Tauri/site builds and drift inventories. Full scan retains 53 classified data-brand colors plus one popup protocol string; site scan retains only the 64rem media-query syntax exception. | implemented-pending-proof | Collect post-unification browser/Tauri visual and interaction evidence plus Android compile and day/night device evidence before verification or closure. |
 
 ## Current Chantier Flow
 
-`006-sg-design post-unification audit complete -> 100-sg-spec recovery addendum complete -> 101-sg-ready ready -> sequential R0 authority and occurrence-classification gate (next action) -> shared-component ownership gate -> Execution Batches A1/A2/A3/B/C after frozen authority and ownership -> integration validation -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`
+`006-sg-design delegated execution audit consolidated -> 101-sg-ready post-audit review ready -> R0 authority frozen -> ownership gate complete -> A1/A2/A3/B/C implemented -> automated integration validation passed -> rendered browser/Tauri and Android compile/device proof (next action) -> 103-sg-verify pending -> 104-sg-end pending -> 005-sg-ship pending`

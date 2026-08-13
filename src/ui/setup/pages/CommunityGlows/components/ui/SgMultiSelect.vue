@@ -1,6 +1,6 @@
 <template>
   <select
-    v-bind="$attrs"
+    v-bind="safeAttrs"
     v-model="model"
     multiple
     class="sg-multiselect"
@@ -16,9 +16,15 @@
 </template>
 
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+
 defineOptions({ inheritAttrs: false })
 defineProps<{ options: Array<{ label: string; value: string }> }>()
 const model = defineModel<string[]>({ default: () => [] })
+const attrs = useAttrs()
+const safeAttrs = computed(() => Object.fromEntries(
+  Object.entries(attrs).filter(([name]) => name !== 'class' && name !== 'style'),
+))
 </script>
 
 <style scoped>

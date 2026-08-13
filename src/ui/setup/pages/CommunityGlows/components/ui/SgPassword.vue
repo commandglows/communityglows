@@ -1,7 +1,7 @@
 <template>
   <span class="sg-password">
     <input
-      v-bind="$attrs"
+      v-bind="safeAttrs"
       :value="modelValue"
       :type="visible ? 'text' : 'password'"
       class="sg-password__input"
@@ -35,6 +35,9 @@ withDefaults(defineProps<{ modelValue?: string; toggleMask?: boolean }>(), {
 })
 defineEmits<{ 'update:modelValue': [value: string] }>()
 const attrs = useAttrs()
+const safeAttrs = computed(() => Object.fromEntries(
+  Object.entries(attrs).filter(([name]) => name !== 'class' && name !== 'style'),
+))
 const visible = ref(false)
 const disabled = computed(() => attrs.disabled === '' || attrs.disabled === true || attrs.disabled === 'disabled')
 </script>

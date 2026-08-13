@@ -9,7 +9,7 @@ interface Props {
   subtitleClass?: string
   as?: 'h1' | 'h2' | 'h3'
   id?: string
-  styleFont?: string
+  fontVariant?: 'display' | 'editorial'
   containerClass?: string
 }
 
@@ -23,7 +23,7 @@ const {
   subtitleClass = '',
   as = 'h2',
   id,
-  styleFont = '',
+  fontVariant,
   containerClass = '',
 } = Astro.props
 
@@ -33,6 +33,11 @@ const defaultTitleClass =
     ? 'text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground'
     : 'text-3xl sm:text-4xl font-bold text-foreground'
 const defaultEyebrowClass = 'text-sm font-medium text-muted-foreground uppercase tracking-widest mb-2'
+const fontVariantClass = fontVariant === 'display'
+  ? 'site-heading-font-display'
+  : fontVariant === 'editorial'
+    ? 'site-heading-font-editorial'
+    : ''
 
 const Tag = as
 ---
@@ -43,8 +48,7 @@ const Tag = as
   )}
   <Tag
     id={id}
-    class:list={[defaultTitleClass, titleClass]}
-    style={styleFont ? `font-family: ${styleFont};` : undefined}
+    class:list={[defaultTitleClass, fontVariantClass, titleClass]}
   >
     {title}
   </Tag>

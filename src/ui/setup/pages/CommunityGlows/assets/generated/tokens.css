@@ -162,6 +162,9 @@
   --sg-dialog-max-height: 48rem;
   --sg-dialog-post-wide-width: 37.5rem;
   --sg-dialog-post-width: 31.25rem;
+  --sg-dialog-viewport-width-70: 70vw;
+  --sg-dialog-viewport-width-75: 75vw;
+  --sg-dialog-viewport-width-90: 90vw;
   --sg-dialog-width: 42rem;
   --sg-empty-state-illustration-fill: #FF5678;
   --sg-extension-iframe-min-height: 340px;
@@ -222,7 +225,9 @@
   --sg-layer-10000: 10000;
   --sg-layer-10050: 10050;
   --sg-layer-200: 200;
+  --sg-layer-dropdown: 1;
   --sg-layer-modal: 2000;
+  --sg-legacy-select-padding: 0.5rem 2rem 0.5rem 0.75rem;
   --sg-letter-spacing-0d05em: 0.05em;
   --sg-letter-spacing-0d06em: 0.06em;
   --sg-letter-spacing-0d08em: 0.08em;

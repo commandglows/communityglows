@@ -40,6 +40,8 @@ const getNetworkTheme = (networkId: string, fallback: SocialNetworkTheme): Socia
 }
 
 export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
+  // These fallback literals are network-owned data-brand metadata, not product palette roles.
+  // Canonical product tokens override the networks represented by SOCIAL_NETWORK_THEME_PRESETS.
   {
     id: 'twitter',
     label: 'Twitter / X',

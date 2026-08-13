@@ -433,7 +433,7 @@ function purchase() {
 
 .billing-progress span {
   display: block;
-  height: 100%;
+  height: var(--sg-size-full);
   border-radius: inherit;
   background: var(--sg-color-action);
 }

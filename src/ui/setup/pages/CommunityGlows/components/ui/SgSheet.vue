@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
   border-radius: var(--sg-radius-20px-20px-0-0);
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
-  transform: translateY(var(--sheet-drag-offset, 0px));
+  transform: translateY(var(--sheet-drag-offset));
 }
 .sg-sheet:focus { outline: none; }
 .sg-sheet__drag-zone { flex-shrink: 0; touch-action: none; user-select: none; }
@@ -249,7 +249,7 @@ onBeforeUnmount(() => {
 .sheet-enter-from,
 .sheet-leave-to { opacity: 0; }
 .sheet-enter-from .sg-sheet,
-.sheet-leave-to .sg-sheet { transform: translateY(calc(100% + var(--sheet-drag-offset, 0px))); }
+.sheet-leave-to .sg-sheet { transform: translateY(calc(100% + var(--sheet-drag-offset))); }
 
 @media (prefers-reduced-motion: reduce) {
   .sheet-enter-active,

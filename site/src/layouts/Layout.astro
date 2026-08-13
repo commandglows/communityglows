@@ -130,13 +130,25 @@ const allSchemas = [...defaultSchemas, ...jsonLd]
     }
     <script>
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      // Named library/browser contracts preserve the approved behavior while keeping
+      // protocol values out of the product's visual-token surface.
+      const SMOOTH_SCROLL_DURATION_SECONDS = 1.2
+      const SMOOTH_SCROLL_EASING_OFFSET = 1.001
+      const SMOOTH_SCROLL_EASING_BASE = 2
+      const SMOOTH_SCROLL_EASING_STEEPNESS = 10
+      const REVEAL_INTERSECTION_THRESHOLD = 0.1
+      const REVEAL_ROOT_MARGIN = '-50px'
 
       // Lenis smooth scroll (skip if reduced motion)
       if (!prefersReducedMotion) {
         import('lenis').then(({ default: Lenis }) => {
           const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            duration: SMOOTH_SCROLL_DURATION_SECONDS,
+            easing: (t: number) => Math.min(
+              1,
+              SMOOTH_SCROLL_EASING_OFFSET
+                - Math.pow(SMOOTH_SCROLL_EASING_BASE, -SMOOTH_SCROLL_EASING_STEEPNESS * t),
+            ),
             smoothWheel: true,
           })
           function raf(time: number) {
@@ -161,7 +173,7 @@ const allSchemas = [...defaultSchemas, ...jsonLd]
               }
             })
           },
-          { threshold: 0.1, rootMargin: '-50px' }
+          { threshold: REVEAL_INTERSECTION_THRESHOLD, rootMargin: REVEAL_ROOT_MARGIN }
         )
         document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el))
       }

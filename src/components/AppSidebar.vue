@@ -36,7 +36,7 @@ const visible = computed({
 }
 
 .sidebar-content {
-  height: 100%;
+  height: var(--sg-size-full);
   padding: var(--sg-space-1rem);
 }
 

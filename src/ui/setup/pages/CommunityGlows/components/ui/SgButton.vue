@@ -1,6 +1,6 @@
 <template>
   <button
-    v-bind="$attrs"
+    v-bind="safeAttrs"
     :type="type"
     class="sg-button"
     :class="[
@@ -65,6 +65,9 @@ const props = withDefaults(defineProps<{
 })
 
 const attrs = useAttrs()
+const safeAttrs = computed(() => Object.fromEntries(
+  Object.entries(attrs).filter(([name]) => name !== 'class' && name !== 'style'),
+))
 const resolvedAriaLabel = computed(() => {
   const suppliedLabel = attrs['aria-label']
   if (typeof suppliedLabel === 'string' && suppliedLabel) return suppliedLabel

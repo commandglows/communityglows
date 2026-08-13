@@ -6,7 +6,7 @@
     aria-label="Loading"
   >
     <ProgressSpinner
-      style="width: 2rem; height: 2rem"
+      class="loading-spinner__indicator"
       stroke-width="4"
       animation-duration=".8s"
     />
@@ -18,3 +18,10 @@ defineProps<{
   loading: boolean
 }>()
 </script>
+
+<style scoped>
+.loading-spinner__indicator {
+  width: var(--sg-spinner-size);
+  height: var(--sg-spinner-size);
+}
+</style>

@@ -81,7 +81,7 @@ const isFiltersCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.fil
 
 .crm-search-field i {
   position: absolute;
-  top: 50%;
+  top: var(--sg-position-center);
   left: var(--sg-crm-search-icon-inset);
   transform: translateY(-50%);
   color: var(--sg-color-text-muted);

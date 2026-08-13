@@ -120,6 +120,7 @@
           "--sg-border-1px": "1px",
           "--sg-border-2px": "2px",
           "--sg-layer-modal": "2000",
+          "--sg-layer-dropdown": "1",
           "--sg-layer-10000": "10000",
           "--sg-layer-10050": "10050",
           "--sg-dialog-width": "42rem",
@@ -128,6 +129,9 @@
           "--sg-dialog-post-wide-width": "37.5rem",
           "--sg-nudge-dialog-width": "26.25rem",
           "--sg-settings-dialog-wide-width": "64rem",
+          "--sg-dialog-viewport-width-70": "70vw",
+          "--sg-dialog-viewport-width-75": "75vw",
+          "--sg-dialog-viewport-width-90": "90vw",
           "--sg-switch-width": "2.75rem",
           "--sg-switch-height": "1.5rem",
           "--sg-switch-padding": "0.125rem",
@@ -144,6 +148,7 @@
           "--sg-field-placeholder": "var(--sg-color-text-muted)",
           "--sg-select-content-max-height": "16rem",
           "--sg-select-item-padding": "0.625rem 0.75rem",
+          "--sg-legacy-select-padding": "0.5rem 2rem 0.5rem 0.75rem",
           "--sg-button-badge-size": "1.25rem",
           "--sg-button-badge-padding": "0.3rem",
           "--sg-button-badge-font-size": "0.75rem",
@@ -774,6 +779,8 @@
           "--site-radius-base": "1rem",
           "--site-radius-orbit": "16px",
           "--site-noise-opacity": "0.015",
+          "--site-noise-layer": "9999",
+          "--site-blog-underline-offset": "4px",
           "--site-opacity-hidden": "0",
           "--site-opacity-visible": "1",
           "--site-opacity-muted": "0.6",
@@ -884,6 +891,8 @@
           "--sg-android-component-icon-size": "28dp",
           "--sg-android-component-avatar-size": "28dp",
           "--sg-android-component-network-button-size": "36dp",
+          "--sg-android-component-network-button-target-size": "44dp",
+          "--sg-android-component-network-button-glyph-size": "36dp",
           "--sg-android-component-network-button-margin": "2dp",
           "--sg-android-opacity-inactive": "45%",
           "--sg-android-opacity-dimmed": "72%",
@@ -1126,6 +1135,14 @@
       {
         "name": "communityglows_component_network_button_size",
         "token": "--sg-android-component-network-button-size"
+      },
+      {
+        "name": "communityglows_component_network_button_target_size",
+        "token": "--sg-android-component-network-button-target-size"
+      },
+      {
+        "name": "communityglows_component_network_button_glyph_size",
+        "token": "--sg-android-component-network-button-glyph-size"
       },
       {
         "name": "communityglows_component_network_button_margin",

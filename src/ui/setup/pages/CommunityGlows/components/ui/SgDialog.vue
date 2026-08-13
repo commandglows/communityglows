@@ -109,7 +109,7 @@ function restoreFocus(event: Event) {
   color: var(--sg-color-text);
 }
 
-.sg-dialog__content--settings { width: min(70vw, var(--sg-settings-dialog-wide-width)); }
+.sg-dialog__content--settings { width: min(var(--sg-dialog-viewport-width-70), var(--sg-settings-dialog-wide-width)); }
 .sg-dialog__content--nudge { width: min(var(--sg-nudge-dialog-width), calc(100vw - var(--sg-space-6))); }
 .sg-dialog__content--sidebar { width: var(--sg-sidebar-dialog-width); max-width: var(--sg-sidebar-dialog-max-width); }
 .sg-dialog__content--friends { width: var(--sg-friends-dialog-width); max-width: var(--sg-sidebar-dialog-max-width); }
@@ -117,15 +117,15 @@ function restoreFocus(event: Event) {
 .sg-dialog__content--post-wide { width: min(var(--sg-dialog-post-wide-width), calc(100vw - var(--sg-space-6))); }
 
 .sg-dialog__content--settings {
-  width: min(70vw, var(--sg-settings-dialog-wide-width));
+  width: min(var(--sg-dialog-viewport-width-70), var(--sg-settings-dialog-wide-width));
 }
 
 .sg-dialog__content--settings-mobile {
-  width: min(75vw, var(--sg-dialog-width));
+  width: min(var(--sg-dialog-viewport-width-75), var(--sg-dialog-width));
 }
 
 .sg-dialog__content--settings-small {
-  width: min(90vw, var(--sg-dialog-width));
+  width: min(var(--sg-dialog-viewport-width-90), var(--sg-dialog-width));
 }
 
 .sg-dialog__header {

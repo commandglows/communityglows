@@ -70,6 +70,7 @@
   --site-blog-space-5: 1.5rem;
   --site-blog-space-6: 2rem;
   --site-blog-space-7: 2.5rem;
+  --site-blog-underline-offset: 4px;
   --site-distance-card-hover: -0.25rem;
   --site-distance-marquee: -50%;
   --site-distance-press: 2px;
@@ -98,6 +99,7 @@
   --site-motion-shimmer: 3s;
   --site-nav-inline-inset: 2rem;
   --site-nav-pill-height: 2.25rem;
+  --site-noise-layer: 9999;
   --site-noise-opacity: 0.015;
   --site-opacity-border-emphasis: 30%;
   --site-opacity-border-hover: 25%;

@@ -1,9 +1,9 @@
 <template>
   <SelectRoot v-model="model">
     <SelectTrigger
-      v-bind="$attrs"
+      v-bind="safeAttrs"
       class="sg-select__trigger"
-      :aria-label="ariaLabel || ($attrs['aria-label'] as string)"
+      :aria-label="ariaLabel || (attrs['aria-label'] as string)"
       :disabled="disabled"
     >
       <SelectValue :placeholder="placeholder">
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useAttrs } from 'vue'
 import {
   SelectContent,
   SelectIcon,
@@ -96,6 +96,10 @@ const props = withDefaults(defineProps<{
 })
 
 const model = defineModel<string>({ default: '' })
+const attrs = useAttrs()
+const safeAttrs = computed(() => Object.fromEntries(
+  Object.entries(attrs).filter(([name]) => name !== 'class' && name !== 'style'),
+))
 const selectedOption = computed(() => props.options.find(option => option.value === model.value))
 </script>
 

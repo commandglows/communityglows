@@ -53,6 +53,8 @@
   <dimen name="communityglows_component_icon_size">28dp</dimen>
   <dimen name="communityglows_component_avatar_size">28dp</dimen>
   <dimen name="communityglows_component_network_button_size">36dp</dimen>
+  <dimen name="communityglows_component_network_button_target_size">44dp</dimen>
+  <dimen name="communityglows_component_network_button_glyph_size">36dp</dimen>
   <dimen name="communityglows_component_network_button_margin">2dp</dimen>
   <!-- Fractions mapped from Android-only canonical tokens -->
   <fraction name="communityglows_opacity_inactive">45%</fraction>

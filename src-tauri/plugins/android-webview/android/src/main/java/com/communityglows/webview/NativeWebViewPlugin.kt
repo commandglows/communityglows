@@ -211,10 +211,16 @@ private object Strings {
     }
 }
 
-// Network metadata for the bottom bar switcher
+// Network-owned brand metadata for the bottom bar switcher. These colors preserve each
+// provider's identity and are intentionally not CommunityGlows product-theme tokens.
 // iconChar: PrimeIcons codepoint (same font as the Vue app, loaded from assets/primeicons.ttf)
 // color:    brand color shown as button background when active
 private data class NetworkInfo(val id: String, val iconChar: String, val color: Int, val url: String)
+
+private val SNAPCHAT_OUTLINE_COLOR = Color.BLACK
+private const val SNAPCHAT_OUTLINE_WIDTH_DP = 2.5f
+private const val SVG_ICON_VIEWBOX_SIZE = 24f
+private const val NETWORK_GLYPH_INSET_RATIO = 0.22f
 
 private val NETWORKS = listOf(
     NetworkInfo("twitter",   "\ue9b6", Color.parseColor("#000000"), "https://x.com"),
@@ -229,7 +235,6 @@ private val NETWORKS = listOf(
     NetworkInfo("cinderreels", "\ue96c", Color.parseColor("#E11D48"), "https://cinderreels.com/"),
     NetworkInfo("quora",     "\ue959", Color.parseColor("#A82400"), "https://www.quora.com"),
     NetworkInfo("pinterest", "\uea09", Color.parseColor("#E60023"), "https://www.pinterest.com"),
-    // NetworkInfo("whatsapp",  "\ue9d0", Color.parseColor("#25D366"), "https://web.whatsapp.com"), // disabled 2026-04-12 — see docs/whatsapp-web-integration.md
     NetworkInfo("telegram",  "\ue9d3", Color.parseColor("#0088CC"), "https://web.telegram.org"),
     NetworkInfo("nextdoor",  "\ue968", Color.parseColor("#8ED500"), "https://nextdoor.com"),
     NetworkInfo("patreon",   "\ue9da", Color.parseColor("#FF424D"), "https://www.patreon.com"),
@@ -3891,6 +3896,14 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
     private fun buildNetworkButton(density: Float, net: NetworkInfo, isActive: Boolean): View {
         SVG_ICONS[net.id]?.let { return buildSvgButton(density, net, isActive, it) }
 
+        val targetSize = tokenDimensionOffset(R.dimen.communityglows_component_network_button_target_size)
+        val glyphSize = tokenDimensionOffset(R.dimen.communityglows_component_network_button_glyph_size)
+        val margin = tokenDimensionOffset(R.dimen.communityglows_component_network_button_margin)
+        val wrapper = FrameLayout(activity)
+        val wrapperParams = LinearLayout.LayoutParams(targetSize, targetSize)
+        wrapperParams.setMargins(margin, margin, margin, margin)
+        wrapper.layoutParams = wrapperParams
+
         val btn = TextView(activity)
         btn.text = net.iconChar
         btn.typeface = primeIconsTypeface
@@ -3898,19 +3911,16 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         btn.gravity = Gravity.CENTER
         btn.setTextColor(tokenColor(R.color.communityglows_icon_on_brand))
 
-        val size = tokenDimensionOffset(R.dimen.communityglows_component_network_button_size)
-        val margin = tokenDimensionOffset(R.dimen.communityglows_component_network_button_margin)
-        val params = LinearLayout.LayoutParams(size, size)
-        params.setMargins(margin, margin, margin, margin)
-        btn.layoutParams = params
+        btn.layoutParams = FrameLayout.LayoutParams(glyphSize, glyphSize, Gravity.CENTER)
+        wrapper.addView(btn)
 
-        applyNetworkButtonBackground(btn, net, isActive, size)
-        btn.tag = net.id  // used by updateBottomBarActiveNetwork
+        applyNetworkButtonBackground(wrapper, net, isActive)
+        wrapper.tag = net.id  // used by updateBottomBarActiveNetwork
 
-        btn.isClickable = true
-        btn.isFocusable = true
-        btn.setOnClickListener {
-            haptic(btn)
+        wrapper.isClickable = true
+        wrapper.isFocusable = true
+        wrapper.setOnClickListener {
+            haptic(wrapper)
             dismissPopupMenu()
             if (net.id != currentNetworkId) {
                 dbg("⇄ SWITCH ${currentNetworkId} → ${net.id}")
@@ -3944,13 +3954,15 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             }
         }
 
-        return btn
+        return wrapper
     }
 
-    private fun applyNetworkButtonBackground(btn: View, net: NetworkInfo, isActive: Boolean, size: Int) {
+    private fun applyNetworkButtonBackground(btn: View, net: NetworkInfo, isActive: Boolean) {
+        val visual = if (btn is FrameLayout && btn.childCount > 0) btn.getChildAt(0) else btn
+        val glyphSize = tokenDimensionOffset(R.dimen.communityglows_component_network_button_glyph_size)
         val bg = GradientDrawable()
         bg.shape = GradientDrawable.RECTANGLE
-        bg.cornerRadius = size / 2f  // fully circular
+        bg.cornerRadius = glyphSize / 2f  // fully circular
         if (isActive) {
             bg.setColor(net.color)
         } else {
@@ -3970,27 +3982,26 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             val b = ((Color.blue(net.color) * brandWeight) + (baseB * baseWeight)).toInt()
             bg.setColor(Color.rgb(r, g, b))
         }
-        btn.background = bg
+        visual.background = bg
         // Icon color: white on dark, darker on light (for inactive with light bg)
         val iconColor = if (isActive) {
             tokenColor(R.color.communityglows_icon_on_brand)
         } else {
             tokenColor(R.color.communityglows_window_text)
         }
-        if (btn is TextView) {
-            btn.setTextColor(iconColor)
-        } else if (btn is FrameLayout && btn.childCount > 0) {
-            // Threads custom icon — pass color via tag and redraw
-            val child = btn.getChildAt(0)
-            child.tag = iconColor
-            child.invalidate()
+        if (visual is TextView) {
+            visual.setTextColor(iconColor)
+        } else {
+            // Custom SVG icon: pass color via tag and redraw.
+            visual.tag = iconColor
+            visual.invalidate()
         }
 
         // Active icon: full opacity + slight scale-up; inactive: dimmed — smooth transition
         val targetAlpha = if (isActive) 1f else tokenFraction(R.fraction.communityglows_opacity_inactive)
         val targetScale = if (isActive) tokenFraction(R.fraction.communityglows_scale_active) else 1f
-        btn.animate().cancel()
-        btn.animate()
+        visual.animate().cancel()
+        visual.animate()
             .alpha(targetAlpha)
             .scaleX(targetScale)
             .scaleY(targetScale)
@@ -4005,7 +4016,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         isActive: Boolean,
         svgPathData: String,
     ): View {
-        val size = tokenDimensionOffset(R.dimen.communityglows_component_network_button_size)
+        val targetSize = tokenDimensionOffset(R.dimen.communityglows_component_network_button_target_size)
+        val glyphSize = tokenDimensionOffset(R.dimen.communityglows_component_network_button_glyph_size)
         val margin = tokenDimensionOffset(R.dimen.communityglows_component_network_button_margin)
         val hasStroke = net.id == "snapchat"
 
@@ -4013,8 +4025,8 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             private val fillPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
             private val strokePaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
                 style = android.graphics.Paint.Style.STROKE
-                color = Color.BLACK
-                strokeWidth = 2.5f * density
+                color = SNAPCHAT_OUTLINE_COLOR
+                strokeWidth = SNAPCHAT_OUTLINE_WIDTH_DP * density
                 strokeJoin = android.graphics.Paint.Join.ROUND
             }
             override fun onDraw(canvas: android.graphics.Canvas) {
@@ -4025,7 +4037,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
                 val srcPath = PathParser.createPathFromPathData(svgPathData)
                 val scaled = android.graphics.Path()
                 val m = android.graphics.Matrix()
-                m.setScale(w / 24f, h / 24f)
+                m.setScale(w / SVG_ICON_VIEWBOX_SIZE, h / SVG_ICON_VIEWBOX_SIZE)
                 srcPath.transform(m, scaled)
 
                 val color = (tag as? Int) ?: tokenColor(R.color.communityglows_window_text)
@@ -4041,20 +4053,21 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
         }
 
         val wrapper = FrameLayout(activity)
-        val wrapperParams = LinearLayout.LayoutParams(size, size)
+        val wrapperParams = LinearLayout.LayoutParams(targetSize, targetSize)
         wrapperParams.setMargins(margin, margin, margin, margin)
         wrapper.layoutParams = wrapperParams
 
-        val iconPad = (size * 0.22f).toInt()
+        val iconPad = (glyphSize * NETWORK_GLYPH_INSET_RATIO).toInt()
         val iconParams = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            glyphSize,
+            glyphSize,
+            Gravity.CENTER
         )
         iconView.layoutParams = iconParams
         iconView.setPadding(iconPad, iconPad, iconPad, iconPad)
 
         wrapper.addView(iconView)
-        applyNetworkButtonBackground(wrapper, net, isActive, size)
+        applyNetworkButtonBackground(wrapper, net, isActive)
         wrapper.tag = net.id
         wrapper.isClickable = true
         wrapper.isFocusable = true
@@ -4109,7 +4122,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             val btn = networkRow.getChildAt(i)
             val netId = btn.tag as? String ?: continue
             val net = NETWORKS.find { it.id == netId } ?: continue
-            applyNetworkButtonBackground(btn, net, netId == activeNetworkId, btn.layoutParams.width)
+            applyNetworkButtonBackground(btn, net, netId == activeNetworkId)
         }
     }
 

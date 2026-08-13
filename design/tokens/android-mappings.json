@@ -50,6 +50,8 @@
     { "name": "communityglows_component_icon_size", "token": "--sg-android-component-icon-size" },
     { "name": "communityglows_component_avatar_size", "token": "--sg-android-component-avatar-size" },
     { "name": "communityglows_component_network_button_size", "token": "--sg-android-component-network-button-size" },
+    { "name": "communityglows_component_network_button_target_size", "token": "--sg-android-component-network-button-target-size" },
+    { "name": "communityglows_component_network_button_glyph_size", "token": "--sg-android-component-network-button-glyph-size" },
     { "name": "communityglows_component_network_button_margin", "token": "--sg-android-component-network-button-margin" }
   ],
   "fraction": [

@@ -5,6 +5,8 @@ import { gmailConfig } from '@/config/gmail'
 import type { Email } from '@/ui/setup/pages/CommunityGlows/types'
 
 const OAUTH_CALLBACK_TTL_MS = 5 * 60 * 1000
+// Browser protocol string: preserve popup geometry and features independently of rendered design tokens.
+const FACEBOOK_AUTH_WINDOW_FEATURES = 'width=600,height=600,scrollbars=yes'
 const consumedOAuthStates = new Map<string, number>()
 
 interface NetworkConnection {
@@ -105,7 +107,7 @@ export const useSocialNetworksStore = defineStore('socialNetworks', {
         const authWindow = window.open(
           `/api/auth/facebook?${authQuery.toString()}`,
           'Facebook Auth',
-          'width=600,height=600,scrollbars=yes'
+          FACEBOOK_AUTH_WINDOW_FEATURES
         )
         if (!authWindow) {
           throw new Error('La popup OAuth a été bloquée par le navigateur.')
