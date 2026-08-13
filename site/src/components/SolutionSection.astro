@@ -1,5 +1,6 @@
 ---
 import { getTranslations, type Locale } from '../i18n'
+import SectionHeading from './ui/SectionHeading.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -7,15 +8,16 @@ const t = getTranslations(lang)
 
 <section id="benefits" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
-    <div class="text-center mb-12 sm:mb-16" data-reveal>
-      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-2">{t.solution.label}</p>
-      <h2
-        class="animate-fade-up delay-100 text-3xl sm:text-4xl font-bold text-foreground mb-4"
-        style="font-family: var(--font-instrument-sans);"
-      >
-        {t.solution.title}
-      </h2>
-    </div>
+    <SectionHeading
+      eyebrow={t.solution.label}
+      title={t.solution.title}
+      align="center"
+      as="h2"
+      styleFont="var(--font-instrument-sans)"
+      containerClass="mb-12 sm:mb-16"
+      eyebrowClass="animate-fade-up"
+      titleClass="animate-fade-up delay-100"
+    />
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-reveal>
       {t.solution.items.map((solution, index) => (

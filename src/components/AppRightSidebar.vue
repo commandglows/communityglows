@@ -31,18 +31,18 @@ const visible = computed({
 
 <style scoped>
 .app-right-sidebar {
-  width: 300px;
-  height: 100vh;
+  width: var(--sg-size-300px);
+  height: var(--sg-size-100vh);
   padding: 0;
 }
 
 .right-sidebar-content {
   height: 100%;
-  padding: 1rem;
+  padding: var(--sg-space-1rem);
 }
 
 :deep(.p-sidebar) {
-  background: var(--surface-card);
-  border-left: 1px solid var(--surface-border);
+  background: var(--sg-color-surface-raised);
+  border-left: 1px solid var(--sg-color-border);
 }
 </style> 

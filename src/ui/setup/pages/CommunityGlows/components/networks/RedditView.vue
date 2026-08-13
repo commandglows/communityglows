@@ -2,92 +2,100 @@
   <div class="reddit-view">
     <template v-if="isConnected">
       <div class="header">
-        <SocialNetworkLogo 
+        <SocialNetworkLogo
           network="reddit"
           size="small"
           class="mr-2"
         />
         <h2>Reddit Feed</h2>
       </div>
-      <div class="reddit-content">
-        <div class="subreddits-sidebar">
-          <h3>Mes Subreddits</h3>
-          <div
-            v-for="sub in subreddits"
-            :key="sub.id"
-            class="subreddit-item"
-          >
-            <Avatar
-              :image="sub.icon"
-              shape="circle"
-              size="normal"
-            />
-            <span>r/{{ sub.name }}</span>
-            <span class="members">{{ sub.members }}</span>
-          </div>
-        </div>
-        <div class="posts-section">
-          <div
-            v-for="i in 5"
-            :key="i"
-            class="post-card"
-          >
-            <div class="vote-section">
-              <Button
-                icon="pi pi-chevron-up"
-                aria-label="Voter pour"
-                text
+      <NetworkTwoColumnLayout
+        class="reddit-content"
+        sidebar-width="var(--sg-size-300px)"
+      >
+        <template #sidebar>
+          <div class="subreddits-sidebar">
+            <h3>Mes Subreddits</h3>
+            <div
+              v-for="sub in subreddits"
+              :key="sub.id"
+              class="subreddit-item"
+            >
+              <Avatar
+                :image="sub.icon"
+                shape="circle"
+                size="normal"
               />
-              <span>{{ Math.floor(Math.random() * 1000) }}</span>
-              <Button
-                icon="pi pi-chevron-down"
-                aria-label="Voter contre"
-                text
-              />
-            </div>
-            <div class="post-content">
-              <div class="post-header">
-                <span class="subreddit">r/programming</span>
-                <span class="post-meta">Posted by u/user{{ i }} • {{ Math.floor(Math.random() * 24) }}h ago</span>
-              </div>
-              <h3>Post Title #{{ i }}</h3>
-              <p>This is a sample post content. Lorem ipsum dolor sit amet...</p>
-              <div class="post-actions">
-                <Button
-                  icon="pi pi-comments"
-                  text
-                >
-                  {{ Math.floor(Math.random() * 100) }} Comments
-                </Button>
-                <Button
-                  icon="pi pi-share-alt"
-                  text
-                >
-                  {{ $t('common.share') }}
-                </Button>
-                <Button
-                  icon="pi pi-bookmark"
-                  text
-                >
-                  {{ $t('reddit.save_button') }}
-                </Button>
-              </div>
+              <span>r/{{ sub.name }}</span>
+              <span class="members">{{ sub.members }}</span>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+
+        <template #main>
+          <div class="posts-section">
+            <div
+              v-for="i in 5"
+              :key="i"
+              class="post-card"
+            >
+              <div class="vote-section">
+                <Button
+                  icon="pi pi-chevron-up"
+                  aria-label="Voter pour"
+                  text
+                />
+                <span>{{ Math.floor(Math.random() * 1000) }}</span>
+                <Button
+                  icon="pi pi-chevron-down"
+                  aria-label="Voter contre"
+                  text
+                />
+              </div>
+              <div class="post-content">
+                <div class="post-header">
+                  <span class="subreddit">r/programming</span>
+                  <span class="post-meta">Posted by u/user{{ i }} â€¢ {{ Math.floor(Math.random() * 24) }}h ago</span>
+                </div>
+                <h3>Post Title #{{ i }}</h3>
+                <p>This is a sample post content. Lorem ipsum dolor sit amet...</p>
+                <div class="post-actions">
+                  <Button
+                    icon="pi pi-comments"
+                    text
+                  >
+                    {{ Math.floor(Math.random() * 100) }} Comments
+                  </Button>
+                  <Button
+                    icon="pi pi-share-alt"
+                    text
+                  >
+                    {{ $t('common.share') }}
+                  </Button>
+                  <Button
+                    icon="pi pi-bookmark"
+                    text
+                  >
+                    {{ $t('reddit.save_button') }}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </NetworkTwoColumnLayout>
     </template>
     <template v-else>
       <div class="connect-prompt">
-        <SocialNetworkLogo 
+        <SocialNetworkLogo
           network="reddit"
           size="large"
           class="mb-3"
         />
         <h3>{{ $t('reddit.connect_title') }}</h3>
         <p>{{ $t('reddit.connect_message') }}</p>
-        <Button 
-          icon="pi pi-reddit" 
+        <Button
+          icon="pi pi-reddit"
           :label="$t('reddit.connect_button')"
           class="sg-button-reddit"
           @click="connectReddit"
@@ -98,11 +106,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 import Button from '../ui/SgButton.vue'
 import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
+import NetworkTwoColumnLayout from './NetworkTwoColumnLayout.vue'
 
 const store = useSocialNetworksStore()
 const isConnected = computed(() => store.isConnected('reddit'))
@@ -127,7 +136,7 @@ const connectReddit = () => {
 
   window.addEventListener('message', async (event) => {
     if (event.origin !== window.location.origin) return
-    
+
     if (event.data.type === 'auth-callback') {
       const { authCode } = event.data
       await store.connectNetwork('reddit', authCode)
@@ -161,8 +170,6 @@ const connectReddit = () => {
 }
 
 .reddit-content {
-  display: grid;
-  grid-template-columns: 250px 1fr;
   gap: var(--sg-space-1rem);
 }
 
@@ -258,4 +265,4 @@ const connectReddit = () => {
 .header h2 {
   margin: 0;
 }
-</style> 
+</style>

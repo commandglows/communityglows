@@ -1,0 +1,24 @@
+---
+interface Props {
+  text: string
+  tone?: 'default' | 'success' | 'muted'
+  class?: string
+}
+
+const {
+  text,
+  tone = 'default',
+  class: className = '',
+} = Astro.props
+
+const toneClass =
+  tone === 'success'
+    ? 'border-[var(--sg-color-success)]/40 bg-[var(--sg-color-success)]/8 text-[var(--sg-color-success)]'
+    : tone === 'muted'
+      ? 'border-border bg-background text-muted-foreground'
+      : 'border-border bg-background text-muted-foreground'
+---
+
+<span class:list={['rounded-full border px-3 py-1 text-xs font-semibold', toneClass, className]}>
+  {text}
+</span>

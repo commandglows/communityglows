@@ -1,10 +1,10 @@
 ---
 artifact: design_system_authority
 metadata_schema_version: "1.0"
-artifact_version: "1.4.0"
+artifact_version: "1.4.1"
 project: "communityglows"
 created: "2026-06-12"
-updated: "2026-08-04"
+updated: "2026-08-13"
 status: "reviewed"
 source_skill: 001-sg-build
 scope: design-system-authority
@@ -62,6 +62,7 @@ next_step: "/300-sg-docs update shipglows_data/technical/design-system-authority
 - Site:
   - `site/src/styles/generated/tokens.css` (generated canonical roles and Tailwind mappings)
   - `site/src/styles/global.css` (component, animation and prose composition)
+  - `site/src/components/ui/` (shared marketing UI atoms and reusable components)
 - Brand contract:
   - `/home/claude/communityglows/shipglows_data/business/branding.md`
 
@@ -74,6 +75,7 @@ design_system_authority:
   technology_carriers:
     - src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css
     - site/src/styles/generated/tokens.css
+    - site/src/components/ui/
     - src-tauri/plugins/android-webview/android/src/main/res/values/communityglows_tokens.xml
     - src-tauri/plugins/android-webview/android/src/main/res/values-night/communityglows_tokens.xml
   canonical_source: design/tokens/reference.json

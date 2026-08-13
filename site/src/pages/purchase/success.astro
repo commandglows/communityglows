@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { appUrl } from '../../config/site'
+import ActionLink from '../../components/ui/ActionLink.astro'
 
 const offerId = Astro.url.searchParams.get('offerId')
 const isLifetimeDeal = offerId === 'communityglows/lifetime_deal'
@@ -25,18 +26,12 @@ const returnUrl = isLifetimeDeal ? '/lifetime-deal' : '/pricing'
         You can open CommunityGlows and check access in the billing section.
       </p>
       <div class="mt-8 flex flex-col gap-3">
-        <a
-          href={appUrl()}
-  class="inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-[var(--sg-color-action-hover)]"
-        >
+        <ActionLink href={appUrl()}>
           Open CommunityGlows
-        </a>
-        <a
-          href={returnUrl}
-          class="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-semibold text-foreground hover:bg-card"
-        >
+        </ActionLink>
+        <ActionLink href={returnUrl} variant="secondary">
           {isLifetimeDeal ? 'Return to Lifetime Deal' : 'Return to pricing'}
-        </a>
+        </ActionLink>
       </div>
     </section>
     <Footer />

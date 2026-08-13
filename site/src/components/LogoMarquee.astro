@@ -1,5 +1,6 @@
 ---
 import { getTranslations, type Locale } from '../i18n'
+import EyebrowPill from './ui/EyebrowPill.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -8,7 +9,7 @@ const logos = t.platforms.items
 
 <section class="py-16 overflow-hidden bg-background" data-reveal>
   <div class="text-center mb-10">
-    <p class="text-sm text-muted-foreground uppercase tracking-wider font-medium">{t.platforms.label}</p>
+    <EyebrowPill class="font-medium">{t.platforms.label}</EyebrowPill>
   </div>
 
   <div class="relative">

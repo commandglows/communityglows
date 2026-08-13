@@ -1,164 +1,175 @@
 <template>
-  <div class="twitter-view" :class="{ 'is-tablet': isTwitterCompact }">
+  <div
+    class="twitter-view"
+    :class="{ 'is-tablet': isTwitterCompact }"
+  >
     <template v-if="isConnected">
       <div class="header">
-        <SocialNetworkLogo 
+        <SocialNetworkLogo
           network="twitter"
           size="small"
           class="mr-2"
         />
         <h2>Twitter Feed</h2>
       </div>
-      <div class="twitter-content">
-        <div class="profile-sidebar">
-          <h3>{{ $t('twitter.my_profile') }}</h3>
-          <div class="profile-card">
-            <Avatar
-              :image="profileInfo.avatar"
-              size="xlarge"
-              shape="circle"
-            />
-            <h4>{{ profileInfo.name }}</h4>
-            <p class="handle">@{{ profileInfo.handle }}</p>
-            <div class="stats">
-              <div class="stat-item">
-                <strong>{{ profileInfo.following }}</strong>
-                <span>{{ $t('twitter.following') }}</span>
-              </div>
-              <div class="stat-item">
-                <strong>{{ profileInfo.followers }}</strong>
-                <span>{{ $t('twitter.followers') }}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="trends">
-            <h3>{{ $t('twitter.trends') }}</h3>
-            <div
-              v-for="trend in trends"
-              :key="trend.id"
-              class="trend-item"
-            >
-              <span class="category">{{ trend.category }}</span>
-              <h4>{{ trend.tag }}</h4>
-              <span class="tweets">{{ trend.tweets }} {{ $t('twitter.tweets_count') }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="tweets-section">
-          <div class="compose-tweet">
-            <Avatar
-              :image="profileInfo.avatar"
-              size="normal"
-              shape="circle"
-            />
-            <div class="compose-input">
-              <SgTextarea
-                v-model="newTweet" 
-                :placeholder="$t('twitter.compose_placeholder')"
-                :aria-label="$t('twitter.compose_placeholder')"
-                :auto-resize="true"
-                rows="2"
+      <NetworkTwoColumnLayout
+        class="twitter-content"
+        sidebar-width="var(--sg-size-300px)"
+        :single-column="isTwitterCompact"
+      >
+        <template #sidebar>
+          <div class="profile-sidebar">
+            <h3>{{ $t('twitter.my_profile') }}</h3>
+            <div class="profile-card">
+              <Avatar
+                :image="profileInfo.avatar"
+                size="xlarge"
+                shape="circle"
               />
-              <div class="compose-actions">
-                <div class="tweet-tools">
+              <h4>{{ profileInfo.name }}</h4>
+              <p class="handle">@{{ profileInfo.handle }}</p>
+              <div class="stats">
+                <div class="stat-item">
+                  <strong>{{ profileInfo.following }}</strong>
+                  <span>{{ $t('twitter.following') }}</span>
+                </div>
+                <div class="stat-item">
+                  <strong>{{ profileInfo.followers }}</strong>
+                  <span>{{ $t('twitter.followers') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="trends">
+              <h3>{{ $t('twitter.trends') }}</h3>
+              <div
+                v-for="trend in trends"
+                :key="trend.id"
+                class="trend-item"
+              >
+                <span class="category">{{ trend.category }}</span>
+                <h4>{{ trend.tag }}</h4>
+                <span class="tweets">{{ trend.tweets }} {{ $t('twitter.tweets_count') }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template #main>
+          <div class="tweets-section">
+            <div class="compose-tweet">
+              <Avatar
+                :image="profileInfo.avatar"
+                size="normal"
+                shape="circle"
+              />
+              <div class="compose-input">
+                <SgTextarea
+                  v-model="newTweet"
+                  :placeholder="$t('twitter.compose_placeholder')"
+                  :aria-label="$t('twitter.compose_placeholder')"
+                  :auto-resize="true"
+                  rows="2"
+                />
+                <div class="compose-actions">
+                  <div class="tweet-tools">
+                    <Button
+                      icon="pi pi-image"
+                      aria-label="Ajouter une image"
+                      text
+                      rounded
+                    />
+                    <Button
+                      icon="pi pi-video"
+                      aria-label="Ajouter une vidéo"
+                      text
+                      rounded
+                    />
+                    <Button
+                      icon="pi pi-list"
+                      aria-label="Créer un sondage"
+                      text
+                      rounded
+                    />
+                    <Button
+                      icon="pi pi-smile"
+                      aria-label="Ajouter un emoji"
+                      text
+                      rounded
+                    />
+                  </div>
                   <Button
-                    icon="pi pi-image"
-                    aria-label="Ajouter une image"
+                    label="Tweeter"
+                    :disabled="!newTweet.length"
+                    class="sg-button-twitter"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              v-for="tweet in tweets"
+              :key="tweet.id"
+              class="tweet-card"
+            >
+              <Avatar
+                :image="tweet.authorAvatar"
+                size="normal"
+                shape="circle"
+              />
+              <div class="tweet-content">
+                <div class="tweet-header">
+                  <span class="author-name">{{ tweet.authorName }}</span>
+                  <span class="author-handle">@{{ tweet.authorHandle }}</span>
+                  <span class="tweet-time">· {{ tweet.time }}</span>
+                </div>
+                <p class="tweet-text">{{ tweet.text }}</p>
+                <div class="tweet-actions">
+                  <Button
+                    icon="pi pi-comment"
                     text
                     rounded
-                  />
+                  >
+                    {{ tweet.replies }}
+                  </Button>
                   <Button
-                    icon="pi pi-video"
-                    aria-label="Ajouter une vidéo"
+                    icon="pi pi-refresh"
                     text
                     rounded
-                  />
+                  >
+                    {{ tweet.retweets }}
+                  </Button>
                   <Button
-                    icon="pi pi-list"
-                    aria-label="Créer un sondage"
+                    icon="pi pi-heart"
                     text
                     rounded
-                  />
+                  >
+                    {{ tweet.likes }}
+                  </Button>
                   <Button
-                    icon="pi pi-smile"
-                    aria-label="Ajouter un emoji"
+                    icon="pi pi-share-alt"
+                    aria-label="Partager le tweet"
                     text
                     rounded
                   />
                 </div>
-                <Button 
-                  label="Tweeter" 
-                  :disabled="!newTweet.length"
-                  class="sg-button-twitter"
-                />
               </div>
             </div>
           </div>
-
-          <div
-            v-for="tweet in tweets"
-            :key="tweet.id"
-            class="tweet-card"
-          >
-            <Avatar
-              :image="tweet.authorAvatar"
-              size="normal"
-              shape="circle"
-            />
-            <div class="tweet-content">
-              <div class="tweet-header">
-                <span class="author-name">{{ tweet.authorName }}</span>
-                <span class="author-handle">@{{ tweet.authorHandle }}</span>
-                <span class="tweet-time">· {{ tweet.time }}</span>
-              </div>
-              <p class="tweet-text">{{ tweet.text }}</p>
-              <div class="tweet-actions">
-                <Button
-                  icon="pi pi-comment"
-                  text
-                  rounded
-                >
-                  {{ tweet.replies }}
-                </Button>
-                <Button
-                  icon="pi pi-refresh"
-                  text
-                  rounded
-                >
-                  {{ tweet.retweets }}
-                </Button>
-                <Button
-                  icon="pi pi-heart"
-                  text
-                  rounded
-                >
-                  {{ tweet.likes }}
-                </Button>
-                <Button
-                  icon="pi pi-share-alt"
-                  aria-label="Partager le tweet"
-                  text
-                  rounded
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </template>
+      </NetworkTwoColumnLayout>
     </template>
     <template v-else>
       <div class="connect-prompt">
-        <SocialNetworkLogo 
+        <SocialNetworkLogo
           network="twitter"
           size="large"
           class="mb-3"
         />
         <h3>{{ $t('twitter.connect_title') }}</h3>
         <p>{{ $t('twitter.connect_message') }}</p>
-        <Button 
-          icon="pi pi-twitter" 
+        <Button
+          icon="pi pi-twitter"
           :label="$t('twitter.connect_button')"
           class="sg-button-twitter"
           @click="connectTwitter"
@@ -169,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useSocialNetworksStore } from '@/stores/socialNetworks'
 import Button from '../ui/SgButton.vue'
 import SgTextarea from '../ui/SgTextarea.vue'
@@ -177,6 +188,7 @@ import Avatar from '../ui/SgAvatar.vue'
 import { SocialNetworkLogo } from '../common'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
+import NetworkTwoColumnLayout from './NetworkTwoColumnLayout.vue'
 
 const store = useSocialNetworksStore()
 const isConnected = computed(() => store.isConnected('twitter'))
@@ -236,7 +248,7 @@ const connectTwitter = () => {
 
   window.addEventListener('message', async (event) => {
     if (event.origin !== window.location.origin) return
-    
+
     if (event.data.type === 'auth-callback') {
       const { authCode } = event.data
       await store.connectNetwork('twitter', authCode)
@@ -270,13 +282,7 @@ const connectTwitter = () => {
 }
 
 .twitter-content {
-  display: grid;
-  grid-template-columns: 300px 1fr;
   gap: var(--sg-space-2rem);
-}
-
-.twitter-view.is-tablet .twitter-content {
-  grid-template-columns: 1fr;
 }
 
 .twitter-view.is-tablet .profile-sidebar {
@@ -409,7 +415,8 @@ const connectTwitter = () => {
   font-weight: bold;
 }
 
-.author-handle, .tweet-time {
+.author-handle,
+.tweet-time {
   color: var(--sg-color-text-muted);
 }
 
@@ -454,4 +461,5 @@ const connectTwitter = () => {
 .header h2 {
   margin: 0;
 }
-</style> 
+</style>
+

@@ -1,7 +1,8 @@
 <template>
-  <div 
+  <div
     class="social-network-logo"
     :class="[size, network]"
+    :style="{ color }"
   >
     <i :class="getIconClass"></i>
   </div>
@@ -9,9 +10,19 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { getSocialNetworkColor } from '../../config/socialNetworks'
 
 const props = defineProps<{
-  network: 'twitter' | 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'threads' | 'discord' | 'reddit' | 'gmail'
+  network:
+    | 'twitter'
+    | 'facebook'
+    | 'instagram'
+    | 'linkedin'
+    | 'tiktok'
+    | 'threads'
+    | 'discord'
+    | 'reddit'
+    | 'gmail'
   size?: 'small' | 'medium' | 'large'
 }>()
 
@@ -39,6 +50,8 @@ const getIconClass = computed(() => {
       return 'pi pi-question'
   }
 })
+
+const color = computed(() => getSocialNetworkColor(props.network))
 </script>
 
 <style scoped>
@@ -47,61 +60,25 @@ const getIconClass = computed(() => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-raised);
 }
 
 .social-network-logo.small {
-  width: 2rem;
-  height: 2rem;
-  font-size: 1rem;
+  width: var(--sg-size-2rem);
+  height: var(--sg-size-2rem);
+  font-size: var(--sg-font-size-1rem);
 }
 
 .social-network-logo.medium {
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.5rem;
+  width: var(--sg-size-3rem);
+  height: var(--sg-size-3rem);
+  font-size: var(--sg-font-size-1d5rem);
 }
 
 .social-network-logo.large {
-  width: 4rem;
-  height: 4rem;
-  font-size: 2rem;
+  width: var(--sg-size-4rem);
+  height: var(--sg-size-4rem);
+  font-size: var(--sg-font-size-2rem);
 }
+</style>
 
-/* Couleurs spécifiques pour chaque réseau */
-.twitter {
-  color: #1DA1F2;
-}
-
-.facebook {
-  color: #1877F2;
-}
-
-.instagram {
-  color: #E4405F;
-}
-
-.linkedin {
-  color: #0A66C2;
-}
-
-.tiktok {
-  color: var(--text-color);
-}
-
-.threads {
-  color: var(--text-color);
-}
-
-.discord {
-  color: #5865F2;
-}
-
-.reddit {
-  color: #FF4500;
-}
-
-.gmail {
-  color: #EA4335;
-}
-</style> 

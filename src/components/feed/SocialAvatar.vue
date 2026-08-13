@@ -42,6 +42,6 @@ const classes = computed(() => [
 
 <style scoped>
 .social-avatar {
-  background: var(--surface-ground);
+  background: var(--sg-color-surface-raised);
 }
 </style> 

@@ -1,5 +1,6 @@
 ---
 import { getTranslations, type Locale } from '../i18n'
+import EyebrowPill from './ui/EyebrowPill.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -8,7 +9,7 @@ const t = getTranslations(lang)
 <section class="py-20 sm:py-28 bg-background overflow-hidden">
   <div class="max-w-6xl mx-auto px-4">
     <div class="max-w-3xl mx-auto text-center mb-14 sm:mb-16" data-reveal>
-      <p class="animate-fade-up text-sm font-medium text-muted-foreground uppercase tracking-wider mb-3">{t.humanConnection.label}</p>
+      <EyebrowPill class="animate-fade-up">{t.humanConnection.label}</EyebrowPill>
       <h2 class="animate-fade-up delay-100 text-3xl sm:text-5xl font-bold text-foreground mb-6" style="font-family: var(--font-instrument-sans);">
         {t.humanConnection.title}
       </h2>

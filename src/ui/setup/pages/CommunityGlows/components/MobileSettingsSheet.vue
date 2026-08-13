@@ -8,341 +8,345 @@
       class="settings-sheet"
       :class="{ 'is-dark': themeStore.isDarkMode, 'is-mobile-compact': isMobileSettingsNarrow }"
     >
-          <div
-            class="settings-content"
-            :class="{
-              'is-desktop-grid': isSettingsDesktop,
-              'is-ultrawide-grid': isSettingsUltraWide,
-            }"
-          >
-            <div class="settings-column settings-account-column">
-            <!-- Account + backup section -->
-            <p class="settings-section-label">{{ $t('account.section_title') }}</p>
-            <div class="settings-account-card">
-              <div class="settings-account-card-header">
-                <div>
-                  <p class="settings-account-hint">
-                    {{ isSignedIn && nudge.hasEmailAccount.value
-                      ? $t('account.signed_in_hint')
-                      : !isConvexConfigured
-                        ? $t('account.unavailable_hint')
-                        : $t('account.auth_hint') }}
-                  </p>
-                </div>
-              </div>
-
-              <div class="settings-account-actions-row">
-                <span
-                  class="settings-account-status"
-                  :class="{ connected: isSignedIn && nudge.hasEmailAccount.value }"
-                >
+      <div
+        class="settings-content"
+        :class="{
+          'is-desktop-grid': isSettingsDesktop,
+          'is-ultrawide-grid': isSettingsUltraWide,
+        }"
+      >
+        <div class="settings-column settings-account-column">
+          <!-- Account + backup section -->
+          <p class="settings-section-label">{{ $t('account.section_title') }}</p>
+          <div class="settings-account-card">
+            <div class="settings-account-card-header">
+              <div>
+                <p class="settings-account-hint">
                   {{ isSignedIn && nudge.hasEmailAccount.value
-                    ? $t('account.connected_status')
-                    : $t('account.disconnected_status') }}
-                </span>
-                <button
-                  type="button"
-                  class="settings-sync-toggle"
-                  @click="syncInfoExpanded = !syncInfoExpanded"
-                >
-                  <span>
-                    {{ syncInfoExpanded ? $t('account.sync_less') : $t('account.sync_more') }}
-                  </span>
-                  <SgIcon
-                    icon="pi"
-                    :class="syncInfoExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"
-                  />
-                </button>
+                    ? $t('account.signed_in_hint')
+                    : !isConvexConfigured
+                      ? $t('account.unavailable_hint')
+                      : $t('account.auth_hint') }}
+                </p>
               </div>
+            </div>
 
-              <div
-                v-if="syncInfoExpanded"
-                class="settings-sync-info-box"
+            <div class="settings-account-actions-row">
+              <span
+                class="settings-account-status"
+                :class="{ connected: isSignedIn && nudge.hasEmailAccount.value }"
               >
-                <div class="settings-sync-info-row">
-                  <SgIcon icon="pi pi-cloud" />
-                  <p>{{ $t('account.sync_info') }}</p>
-                </div>
-                <div class="settings-sync-warning-row">
-                  <SgIcon icon="pi pi-info-circle" />
-                  <p>{{ $t('account.cookies_info') }}</p>
-                </div>
+                {{ isSignedIn && nudge.hasEmailAccount.value
+                  ? $t('account.connected_status')
+                  : $t('account.disconnected_status') }}
+              </span>
+              <button
+                type="button"
+                class="settings-sync-toggle"
+                @click="syncInfoExpanded = !syncInfoExpanded"
+              >
+                <span>
+                  {{ syncInfoExpanded ? $t('account.sync_less') : $t('account.sync_more') }}
+                </span>
+                <SgIcon
+                  icon="pi"
+                  :class="syncInfoExpanded ? 'pi-chevron-up' : 'pi-chevron-down'"
+                />
+              </button>
+            </div>
+
+            <div
+              v-if="syncInfoExpanded"
+              class="settings-sync-info-box"
+            >
+              <div class="settings-sync-info-row">
+                <SgIcon icon="pi pi-cloud" />
+                <p>{{ $t('account.sync_info') }}</p>
               </div>
+              <div class="settings-sync-warning-row">
+                <SgIcon icon="pi pi-info-circle" />
+                <p>{{ $t('account.cookies_info') }}</p>
+              </div>
+            </div>
 
-              <template v-if="isSignedIn && nudge.hasEmailAccount.value">
-                <div class="settings-field">
-                  <label class="settings-label">
-                    <SgIcon icon="pi pi-envelope" />
-                    {{ $t('account.signed_in_as') }}
-                  </label>
-                  <span class="settings-email-display">{{ settingsEmail }}</span>
-                </div>
-                <button
-                  class="nudge-cta sign-out-btn"
-                  @click="handleSignOut"
-                >
-                  <SgIcon icon="pi pi-sign-out" />
-                  {{ $t('account.sign_out') }}
-                </button>
-              </template>
+            <template v-if="isSignedIn && nudge.hasEmailAccount.value">
+              <div class="settings-field">
+                <label class="settings-label">
+                  <SgIcon icon="pi pi-envelope" />
+                  {{ $t('account.signed_in_as') }}
+                </label>
+                <span class="settings-email-display">{{ settingsEmail }}</span>
+              </div>
+              <button
+                class="nudge-cta sign-out-btn"
+                @click="handleSignOut"
+              >
+                <SgIcon icon="pi pi-sign-out" />
+                {{ $t('account.sign_out') }}
+              </button>
+            </template>
 
-              <template v-else-if="isConvexConfigured">
-                <form
-                  class="settings-signup-form"
-                  @submit.prevent="handleAccountAuth('signIn')"
+            <template v-else-if="isConvexConfigured">
+              <form
+                class="settings-signup-form"
+                @submit.prevent="handleAccountAuth('signIn')"
+              >
+                <input
+                  v-model="signupEmail"
+                  type="email"
+                  class="settings-input"
+                  :placeholder="$t('account.email_placeholder')"
+                  required
+                />
+                <input
+                  v-model="signupPassword"
+                  type="password"
+                  class="settings-input"
+                  :placeholder="$t('account.password_placeholder')"
+                  minlength="8"
+                  required
+                />
+                <div
+                  v-if="signupError"
+                  class="signup-error-card"
                 >
-                  <input
-                    v-model="signupEmail"
-                    type="email"
-                    class="settings-input"
-                    :placeholder="$t('account.email_placeholder')"
-                    required
-                  />
-                  <input
-                    v-model="signupPassword"
-                    type="password"
-                    class="settings-input"
-                    :placeholder="$t('account.password_placeholder')"
-                    minlength="8"
-                    required
-                  />
-                  <div
-                    v-if="signupError"
-                    class="signup-error-card"
-                  >
-                    <p class="nudge-error">{{ displayedSignupError }}</p>
-                    <div class="signup-error-actions">
-                      <button
-                        type="button"
-                        class="signup-error-btn"
-                        @click="copySignupError"
-                      >
-                        <SgIcon
-                          icon="pi"
-                          :class="signupErrorCopied ? 'pi-check' : 'pi-copy'"
-                        />
-                        {{ signupErrorCopied ? $t('common.copied') : $t('common.copy') }}
-                      </button>
-                      <button
-                        v-if="signupErrorNeedsCollapse"
-                        type="button"
-                        class="signup-error-btn"
-                        @click="signupErrorExpanded = !signupErrorExpanded"
-                      >
-                        {{ signupErrorExpanded ? $t('common.show_less') : $t('common.show_more') }}
-                      </button>
-                    </div>
-                  </div>
-                  <div class="settings-auth-actions">
-                    <button
-                      type="submit"
-                      class="nudge-cta"
-                      :disabled="signupLoading"
-                    >
-                      <SgIcon
-                        v-if="signupLoading && authAction === 'signIn'"
-                        icon="pi pi-spin pi-spinner"
-                      />
-                      {{ signupLoading && authAction === 'signIn' ? '' : $t('account.sign_in_button') }}
-                    </button>
+                  <p class="nudge-error">{{ displayedSignupError }}</p>
+                  <div class="signup-error-actions">
                     <button
                       type="button"
-                      class="nudge-cta secondary-auth-btn"
-                      :disabled="signupLoading"
-                      @click="handleAccountAuth('signUp')"
+                      class="signup-error-btn"
+                      @click="copySignupError"
                     >
                       <SgIcon
-                        v-if="signupLoading && authAction === 'signUp'"
-                        icon="pi pi-spin pi-spinner"
+                        icon="pi"
+                        :class="signupErrorCopied ? 'pi-check' : 'pi-copy'"
                       />
-                      {{ signupLoading && authAction === 'signUp' ? '' : $t('account.create_button') }}
+                      {{ signupErrorCopied ? $t('common.copied') : $t('common.copy') }}
+                    </button>
+                    <button
+                      v-if="signupErrorNeedsCollapse"
+                      type="button"
+                      class="signup-error-btn"
+                      @click="signupErrorExpanded = !signupErrorExpanded"
+                    >
+                      {{ signupErrorExpanded ? $t('common.show_less') : $t('common.show_more') }}
                     </button>
                   </div>
-                </form>
-              </template>
+                </div>
+                <div class="settings-auth-actions">
+                  <button
+                    type="submit"
+                    class="nudge-cta"
+                    :disabled="signupLoading"
+                  >
+                    <SgIcon
+                      v-if="signupLoading && authAction === 'signIn'"
+                      icon="pi pi-spin pi-spinner"
+                    />
+                    {{ signupLoading && authAction === 'signIn' ? '' : $t('account.sign_in_button') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="nudge-cta secondary-auth-btn"
+                    :disabled="signupLoading"
+                    @click="handleAccountAuth('signUp')"
+                  >
+                    <SgIcon
+                      v-if="signupLoading && authAction === 'signUp'"
+                      icon="pi pi-spin pi-spinner"
+                    />
+                    {{ signupLoading && authAction === 'signUp' ? '' : $t('account.create_button') }}
+                  </button>
+                </div>
+              </form>
+            </template>
 
-              <div class="settings-backup-section">
-                <p class="settings-backup-hint">{{ $t('backup.inline_hint') }}</p>
-                <BackupRestore :show-info="false" />
-              </div>
-            </div>
-            </div>
-
-            <div class="settings-column settings-service-column">
-            <p class="settings-section-label">{{ $t('billing.section_title') }}</p>
-            <BillingAccessPanel />
-
-            <p class="settings-section-label">Support</p>
-            <div class="settings-account-card">
-              <p class="settings-account-hint">
-                Diagnostic de cette installation.
-              </p>
-              <div class="settings-account-actions-row">
-                <span class="settings-account-status">
-                  {{ buildIdentityLabel }}
-                </span>
-                <button
-                  type="button"
-                  class="settings-sync-toggle"
-                  @click="copyDiagnostics"
-                >
-                  <SgIcon
-                    icon="pi"
-                    :class="diagnosticsCopied ? 'pi-check' : 'pi-copy'"
-                  />
-                  <span>{{ diagnosticsCopied ? $t('common.copied') : $t('common.copy') }}</span>
-                </button>
-              </div>
-            </div>
-            </div>
-
-            <div class="settings-column settings-preferences-column">
-            <!-- Preferences section -->
-            <p class="settings-section-label">{{ $t('settings.preferences') }}</p>
-
-            <div class="settings-account-card">
-              <p class="settings-account-hint">Image du profil actif</p>
-              <button type="button" class="nudge-cta" @click="emit('edit-profile-avatar')">
-                <SgIcon icon="pi pi-pencil" />
-                Modifier la photo ou l’emoji
-              </button>
-            </div>
-
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-moon" />
-                {{ $t('theme.mode_label') }}
-              </span>
-            </div>
-            <div class="settings-theme-mode-group">
-              <button
-                v-for="mode in themeModes"
-                :key="mode.value"
-                type="button"
-                class="settings-theme-mode-btn"
-                :class="{ active: themeStore.themeMode === mode.value }"
-                @click="setThemeMode(mode.value)"
-              >
-                {{ $t(mode.labelKey) }}
-              </button>
-            </div>
-            <p
-              v-if="themeStore.themeMode === 'auto'"
-              class="settings-theme-hint"
-            >
-              {{ autoThemeHint }}
-            </p>
-
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-window-maximize" />
-                Position de la barre de contrôles
-              </span>
-            </div>
-            <div class="settings-theme-mode-group settings-control-bar-position">
-              <button
-                v-for="position in controlBarPositions"
-                :key="position.value"
-                type="button"
-                class="settings-theme-mode-btn"
-                :class="{ active: controlBarStore.position === position.value }"
-                @click="controlBarStore.setPosition(position.value)"
-              >
-                {{ position.label }}
-              </button>
-            </div>
-
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-palette" />
-                {{ $t('theme.focus_mode') }}
-              </span>
-              <button
-                class="friends-toggle-pill"
-                :class="{ enabled: themeStore.grayscaleEnabled }"
-                @click="themeStore.setGrayscale(!themeStore.grayscaleEnabled)"
-              >
-                <span class="toggle-thumb" />
-              </button>
-            </div>
-
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-mobile" />
-                {{ $t('settings.haptic_feedback') }}
-              </span>
-              <button
-                class="friends-toggle-pill"
-                :class="{ enabled: hapticEnabled }"
-                @click="toggleHaptic"
-              >
-                <span class="toggle-thumb" />
-              </button>
-            </div>
-
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-volume-up" />
-                {{ $t('settings.tap_sound') }}
-              </span>
-              <button
-                class="friends-toggle-pill"
-                :class="{ enabled: tapSoundEnabled }"
-                @click="toggleTapSound"
-              >
-                <span class="toggle-thumb" />
-              </button>
-            </div>
-            <div class="settings-sound-variant-row">
-              <span class="settings-label settings-sound-variant-label">
-                <SgIcon icon="pi pi-sliders-h" />
-                {{ $t('settings.tap_sound_variant') }}
-              </span>
-              <div class="settings-sound-variant-options">
-                <button
-                  v-for="option in TAP_SOUND_VARIANTS"
-                  :key="option.value"
-                  type="button"
-                  class="settings-sound-variant-btn"
-                  :class="{ active: tapSoundVariant === option.value, disabled: !tapSoundEnabled }"
-                  :disabled="!tapSoundEnabled"
-                  @click="selectTapSoundVariant(option.value)"
-                >
-                  {{ $t(option.labelKey) }}
-                </button>
-              </div>
-            </div>
-
-            <!-- Text zoom -->
-            <div class="settings-toggle-row">
-              <span class="settings-toggle-label">
-                <SgIcon icon="pi pi-search-plus" />
-                {{ $t('settings.text_zoom') }}
-              </span>
-              <span class="text-zoom-value">{{ textZoomLevel }}%</span>
-            </div>
-            <input
-              v-model.number="textZoomLevel"
-              type="range"
-              class="text-zoom-slider"
-              :min="TEXT_ZOOM_MIN"
-              :max="TEXT_ZOOM_MAX"
-              :step="TEXT_ZOOM_STEP"
-              @change="onTextZoomChange"
-            />
-
-            <KeyboardShortcuts />
-
-            <!-- Replay onboarding -->
-            <button
-              class="settings-replay-btn"
-              @click="replayOnboarding"
-            >
-              <SgIcon icon="pi pi-info-circle" />
-              {{ $t('onboarding.replay_button') }}
-            </button>
+            <div class="settings-backup-section">
+              <p class="settings-backup-hint">{{ $t('backup.inline_hint') }}</p>
+              <BackupRestore :show-info="false" />
             </div>
           </div>
+        </div>
+
+        <div class="settings-column settings-service-column">
+          <p class="settings-section-label">{{ $t('billing.section_title') }}</p>
+          <BillingAccessPanel />
+
+          <p class="settings-section-label">Support</p>
+          <div class="settings-account-card">
+            <p class="settings-account-hint">
+              Diagnostic de cette installation.
+            </p>
+            <div class="settings-account-actions-row">
+              <span class="settings-account-status">
+                {{ buildIdentityLabel }}
+              </span>
+              <button
+                type="button"
+                class="settings-sync-toggle"
+                @click="copyDiagnostics"
+              >
+                <SgIcon
+                  icon="pi"
+                  :class="diagnosticsCopied ? 'pi-check' : 'pi-copy'"
+                />
+                <span>{{ diagnosticsCopied ? $t('common.copied') : $t('common.copy') }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-column settings-preferences-column">
+          <!-- Preferences section -->
+          <p class="settings-section-label">{{ $t('settings.preferences') }}</p>
+
+          <div class="settings-account-card">
+            <p class="settings-account-hint">Image du profil actif</p>
+            <button
+              type="button"
+              class="nudge-cta"
+              @click="emit('edit-profile-avatar')"
+            >
+              <SgIcon icon="pi pi-pencil" />
+              Modifier la photo ou l’emoji
+            </button>
+          </div>
+
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-moon" />
+              {{ $t('theme.mode_label') }}
+            </span>
+          </div>
+          <div class="settings-theme-mode-group">
+            <button
+              v-for="mode in themeModes"
+              :key="mode.value"
+              type="button"
+              class="settings-theme-mode-btn"
+              :class="{ active: themeStore.themeMode === mode.value }"
+              @click="setThemeMode(mode.value)"
+            >
+              {{ $t(mode.labelKey) }}
+            </button>
+          </div>
+          <p
+            v-if="themeStore.themeMode === 'auto'"
+            class="settings-theme-hint"
+          >
+            {{ autoThemeHint }}
+          </p>
+
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-window-maximize" />
+              Position de la barre de contrôles
+            </span>
+          </div>
+          <div class="settings-theme-mode-group settings-control-bar-position">
+            <button
+              v-for="position in controlBarPositions"
+              :key="position.value"
+              type="button"
+              class="settings-theme-mode-btn"
+              :class="{ active: controlBarStore.position === position.value }"
+              @click="controlBarStore.setPosition(position.value)"
+            >
+              {{ position.label }}
+            </button>
+          </div>
+
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-palette" />
+              {{ $t('theme.focus_mode') }}
+            </span>
+            <button
+              class="friends-toggle-pill"
+              :class="{ enabled: themeStore.grayscaleEnabled }"
+              @click="themeStore.setGrayscale(!themeStore.grayscaleEnabled)"
+            >
+              <span class="toggle-thumb" />
+            </button>
+          </div>
+
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-mobile" />
+              {{ $t('settings.haptic_feedback') }}
+            </span>
+            <button
+              class="friends-toggle-pill"
+              :class="{ enabled: hapticEnabled }"
+              @click="toggleHaptic"
+            >
+              <span class="toggle-thumb" />
+            </button>
+          </div>
+
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-volume-up" />
+              {{ $t('settings.tap_sound') }}
+            </span>
+            <button
+              class="friends-toggle-pill"
+              :class="{ enabled: tapSoundEnabled }"
+              @click="toggleTapSound"
+            >
+              <span class="toggle-thumb" />
+            </button>
+          </div>
+          <div class="settings-sound-variant-row">
+            <span class="settings-label settings-sound-variant-label">
+              <SgIcon icon="pi pi-sliders-h" />
+              {{ $t('settings.tap_sound_variant') }}
+            </span>
+            <div class="settings-sound-variant-options">
+              <button
+                v-for="option in TAP_SOUND_VARIANTS"
+                :key="option.value"
+                type="button"
+                class="settings-sound-variant-btn"
+                :class="{ active: tapSoundVariant === option.value, disabled: !tapSoundEnabled }"
+                :disabled="!tapSoundEnabled"
+                @click="selectTapSoundVariant(option.value)"
+              >
+                {{ $t(option.labelKey) }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Text zoom -->
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-search-plus" />
+              {{ $t('settings.text_zoom') }}
+            </span>
+            <span class="text-zoom-value">{{ textZoomLevel }}%</span>
+          </div>
+          <input
+            v-model.number="textZoomLevel"
+            type="range"
+            class="text-zoom-slider"
+            :min="TEXT_ZOOM_MIN"
+            :max="TEXT_ZOOM_MAX"
+            :step="TEXT_ZOOM_STEP"
+            @change="onTextZoomChange"
+          />
+
+          <KeyboardShortcuts />
+
+          <!-- Replay onboarding -->
+          <button
+            class="settings-replay-btn"
+            @click="replayOnboarding"
+          >
+            <SgIcon icon="pi pi-info-circle" />
+            {{ $t('onboarding.replay_button') }}
+          </button>
+        </div>
+      </div>
     </div>
   </SgSheet>
 </template>

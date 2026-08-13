@@ -3,6 +3,8 @@ import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { appUrl, siteUrl } from '../../config/site'
+import ActionLink from '../../components/ui/ActionLink.astro'
+import EyebrowPill from '../../components/ui/EyebrowPill.astro'
 
 const approaches = [
   {
@@ -83,7 +85,7 @@ const jsonLd = [{
     <Navbar lang="fr" languageHref="/compare" />
 
     <section class="max-w-5xl mx-auto px-4 pt-32 pb-20 text-center">
-      <p class="site-tracking-label mb-5 inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase text-muted-foreground">Choisir une manière de travailler</p>
+      <EyebrowPill class="mb-5">Choisir une manière de travailler</EyebrowPill>
       <h1 class="site-tracking-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground" style="font-family: var(--font-cal-sans);">
         Tous les outils sociaux ne servent pas le même travail
       </h1>
@@ -91,8 +93,12 @@ const jsonLd = [{
         Certains outils aident les équipes à publier davantage. D’autres isolent les sessions de navigation. CommunityGlows part d’une autre priorité : être présent, préserver le contexte humain et construire une continuité avec les personnes derrière chaque compte.
       </p>
       <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-<a href={appUrl()} class="shimmer-btn inline-flex items-center bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-6 py-3 text-sm font-medium transition-colors">Tout essayer pendant 30 jours</a>
-        <a href="/fr/pricing" class="inline-flex items-center rounded-full px-6 py-3 text-sm font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground transition-colors">Voir les tarifs</a>
+        <ActionLink href={appUrl()} size="md">
+          Tout essayer pendant 30 jours
+        </ActionLink>
+        <ActionLink href="/fr/pricing" variant="secondary" size="md">
+          Voir les tarifs
+        </ActionLink>
       </div>
     </section>
 
@@ -115,9 +121,9 @@ const jsonLd = [{
     </section>
 
     <section class="max-w-6xl mx-auto px-4 py-20" aria-labelledby="philosophy-title">
-      <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <div class="grid site-ratio-grid gap-10">
         <div class="lg:sticky lg:top-32">
-          <p class="site-tracking-statement text-sm font-semibold uppercase text-muted-foreground">Notre point de vue</p>
+          <EyebrowPill>Notre point de vue</EyebrowPill>
           <h2 id="philosophy-title" class="mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">Le travail social est un travail de relation</h2>
           <p class="mt-5 leading-7 text-muted-foreground">L’efficacité compte. Mais lorsqu’elle retire le contexte qui rend une interaction humaine, elle peut desservir la communauté que l’on cherche à construire.</p>
         </div>
@@ -153,9 +159,9 @@ const jsonLd = [{
       <p class="mt-4 text-lg leading-8 text-muted-foreground">
         Si votre meilleur travail commence par écouter, comprendre et revenir avec attention, CommunityGlows donne à ce rythme un espace dédié.
       </p>
-<a href={appUrl()} class="shimmer-btn mt-8 inline-flex items-center bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-6 py-3 text-sm font-medium transition-colors">
+      <ActionLink href={appUrl()} size="md" class="mt-8">
         Essayer CommunityGlows gratuitement pendant 30 jours
-      </a>
+      </ActionLink>
     </section>
 
     <Footer lang="fr" languageHref="/compare" />

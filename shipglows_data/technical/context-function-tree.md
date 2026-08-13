@@ -1,10 +1,10 @@
----
+﻿---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.2"
+artifact_version: "1.2.3"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-09"
+updated: "2026-08-13"
 status: reviewed
 source_skill: 300-sg-docs
 scope: function_tree
@@ -23,6 +23,8 @@ evidence:
   - "src/ui/setup/pages/CommunityGlows/router/index.ts"
   - "src/stores/*.ts"
   - "src/lib/*.ts"
+  - "site/src/components/ui/*"
+  - "site/src/pages"
   - "src-tauri/src/lib.rs"
   - "convex/*.ts"
   - "manifest.config.ts"
@@ -43,78 +45,85 @@ next_step: "/300-sg-docs update shipglows_data/technical/context-function-tree.m
 
 ## Purpose
 
-Vue fonctionnelle du cœur de CommunityGlows sans lire tout le projet.
+Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
 
 ## Runtime Entry Points
 
 - `src/ui/setup/pages/CommunityGlows/main.ts`
   - Bootstrap Vue + Pinia + i18n + router + Notivue.
   - Enregistre `v-sg-tooltip`; ne charge plus PrimeVue dans le runtime Windows/Tauri.
-  - Appelle `setupConvexAuth()` si `VITE_CONVEX_URL` est configuré.
+  - Appelle `setupConvexAuth()` si `VITE_CONVEX_URL` est configurÃ©.
   - Monte `App.vue`.
 - `src/ui/setup/index.ts`
-  - Entrée page setup de l'extension.
-  - Route par défaut vers `/setup/install`.
+  - EntrÃ©e page setup de l'extension.
+  - Route par dÃ©faut vers `/setup/install`.
 - `src/ui/action-popup/index.ts`
-  - Entrée popup navigateur.
+  - EntrÃ©e popup navigateur.
 - `src/ui/side-panel/index.ts`
-  - Entrée panneau latéral navigateur.
+  - EntrÃ©e panneau latÃ©ral navigateur.
 - `src/ui/options-page/index.ts`
-  - Entrée page paramètres navigateur.
+  - EntrÃ©e page paramÃ¨tres navigateur.
 - `src-tauri/src/lib.rs`
-  - Exécuteur Rust/Tauri et expose les commandes IPC.
+  - ExÃ©cuteur Rust/Tauri et expose les commandes IPC.
 - `src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
-  - Reçoit les intents Android (barre native, partage texte/URL, commandes webview) et relaie les événements vers Vue.
+  - ReÃ§oit les intents Android (barre native, partage texte/URL, commandes webview) et relaie les Ã©vÃ©nements vers Vue.
 - `src-tauri/src/main.rs`
-  - Point d'entrée Rust.
+  - Point d'entrÃ©e Rust.
 - `convex/http.ts`
   - Expose les routes auth HTTP.
 - `convex/users.ts`, `convex/socialAccounts.ts`, `convex/settings.ts`, `convex/profiles.ts`
-  - Entrées backend métier.
+  - EntrÃ©es backend mÃ©tier.
+
+## Site Shared UI Layer
+
+- `site/src/components/ui/`
+  - Reusable Astro component layer for site pages (ActionLink, EyebrowPill, SectionHeading, SiteLogo, StatusBadge) used to avoid per-page duplication and keep shared surface patterns coherent.
 
 ## App Lifecycle (CommunityGlows)
 
 - `src/ui/setup/pages/CommunityGlows/main.ts`
 - `src/ui/setup/pages/CommunityGlows/App.vue`
-  - Gère onboarding, thèmes, synchronisation cloud, nudge, événements Tauri.
+  - GÃ¨re onboarding, thÃ¨mes, synchronisation cloud, nudge, Ã©vÃ©nements Tauri.
 - `src/ui/setup/pages/CommunityGlows/router/index.ts`
-  - Routes réseau + auth guard.
+  - Routes rÃ©seau + auth guard.
 - `src/ui/setup/pages/CommunityGlows/components/*`
-  - Layouts, vues réseau, sidebars, popups, overlays.
+  - Layouts, vues rÃ©seau, sidebars, popups, overlays.
 - `src/ui/setup/pages/CommunityGlows/components/ui/*`
-  - Wrappers CommunityGlows pour boutons, formulaires, dialogues, sélecteurs, avatars, badges et chargement.
-  - Reka UI porte la sémantique, le focus, le clavier, les overlays et les splitters complexes; les wrappers portent le rendu et les tokens.
+  - Wrappers CommunityGlows pour boutons, formulaires, dialogues, sÃ©lecteurs, avatars, badges et chargement.
+  - Reka UI porte la sÃ©mantique, le focus, le clavier, les overlays et les splitters complexes; les wrappers portent le rendu et les tokens.
+- `site/src/components/ui/*`
+  - Shared Astro UI atoms for site marketing surfaces (action links, section headings, status badges, logo block, contextual labels); use them before local duplication.
 - `design/tokens/reference.json`
-  - Source éditable unique des rôles sémantiques partagés et de leurs modes clair/sombre.
+  - Source Ã©ditable unique des rÃ´les sÃ©mantiques partagÃ©s et de leurs modes clair/sombre.
 - `src/ui/setup/pages/CommunityGlows/assets/generated/tokens.css`
-  - Carrier généré Windows/Tauri; `assets/main.css` conserve la composition et les alias de compatibilité.
+  - Carrier gÃ©nÃ©rÃ© Windows/Tauri; `assets/main.css` conserve la composition et les alias de compatibilitÃ©.
 - `src/ui/setup/pages/CommunityGlows/directives/tooltip.ts`
-  - Directive d'infobulle accessible `v-sg-tooltip`: focus/pointeur, `aria-describedby`, `Escape`, mise à jour et nettoyage.
+  - Directive d'infobulle accessible `v-sg-tooltip`: focus/pointeur, `aria-describedby`, `Escape`, mise Ã  jour et nettoyage.
 - `src/utils/notifications.ts` + `App.vue`
-  - Configuration Notivue, montage du carrier `Notivue`/`Notification` et rendu des notifications tokenisées.
+  - Configuration Notivue, montage du carrier `Notivue`/`Notification` et rendu des notifications tokenisÃ©es.
 - `src/stores/webviewState.ts`
-  - État `activeNetworkId`, `activeUrl`, mode profiles.
+  - Ã‰tat `activeNetworkId`, `activeUrl`, mode profiles.
 - `src/stores/profiles.ts`
-  - Gestion des profils utilisateur pour séparation de sessions.
+  - Gestion des profils utilisateur pour sÃ©paration de sessions.
 
 ## Shared Layer (`src/`)
 
 - `src/lib/convex.ts`
   - Construction du client Convex singleton.
 - `src/lib/convexAuth.ts`
-  - Wrapper Vue d'auth aligné sur l'adaptateur officiel: signIn/signOut temps réel, refresh HTTP avec retry, token storage et confirmation de session avant hydratation.
+  - Wrapper Vue d'auth alignÃ© sur l'adaptateur officiel: signIn/signOut temps rÃ©el, refresh HTTP avec retry, token storage et confirmation de session avant hydratation.
 - `src/lib/communityGlowsDeepLinks.ts`
-  - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de réseau/profil et les liens partagés destinés à créer une tâche.
+  - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de rÃ©seau/profil et les liens partagÃ©s destinÃ©s Ã  crÃ©er une tÃ¢che.
 - `src/lib/cloudSync*.ts`
-  - Sync settings, queue de sync, feedback post-auth, diagnostics et délais terminaux par lecture cloud; échec explicite si la session n'expose aucun utilisateur cloud.
+  - Sync settings, queue de sync, feedback post-auth, diagnostics et dÃ©lais terminaux par lecture cloud; Ã©chec explicite si la session n'expose aucun utilisateur cloud.
 - `src/utils/disableCopyProtection.ts`
-  - Effet anti-copie, hooks installés côté entrée UI.
+  - Effet anti-copie, hooks installÃ©s cÃ´tÃ© entrÃ©e UI.
 - `src/composables/*`
   - Hooks transverses (auth, locales, webviews, settings, signup nudge).
 - `src/stores/*`
-  - État applicatif global (theme, socialNetworks, settings, onboarding, kanban, contextualTasks, etc.).
+  - Ã‰tat applicatif global (theme, socialNetworks, settings, onboarding, kanban, contextualTasks, etc.).
 - `src/services/*`
-  - Appels API externes (Gmail, autres intégrations) et service local des tâches contextuelles.
+  - Appels API externes (Gmail, autres intÃ©grations) et service local des tÃ¢ches contextuelles.
 
 ## Tauri IPC Surface
 
@@ -148,39 +157,40 @@ Vue fonctionnelle du cœur de CommunityGlows sans lire tout le projet.
 - `convex/settings.ts`
   - getOrCreate, updateSettings, getSettings.
 - `convex/profiles.ts`
-  - liste/création/maj/suppression profils.
+  - liste/crÃ©ation/maj/suppression profils.
 - `convex/customLinks.ts`
-  - liens personnalisés.
+  - liens personnalisÃ©s.
 - `convex/friendsFilters.ts`
-  - filtres amis par réseau.
+  - filtres amis par rÃ©seau.
 - `convex/schema.ts`
-  - tables et indexes de données.
+  - tables et indexes de donnÃ©es.
 
 ## Extension Shell Flow
 
 - `manifest.config.ts` -> permissions + pages d'extension.
 - `manifest.chrome.config.ts` / `manifest.firefox.config.ts` -> variantes manifeste.
-- `src/platform/capabilities.ts` -> détection de capacité extension/Tauri (side panel, native webview, backup natif).
+- `src/platform/capabilities.ts` -> dÃ©tection de capacitÃ© extension/Tauri (side panel, native webview, backup natif).
 - `src/platform/extensionNetworkLauncher.ts` -> launcher onglets + validation URL HTTPS.
-- `src/platform/extensionTaskCapture.ts` -> capture explicite de l’URL de l’onglet actif pour le popup, sans lecture de page.
+- `src/platform/extensionTaskCapture.ts` -> capture explicite de lâ€™URL de lâ€™onglet actif pour le popup, sans lecture de page.
 - `src/background/index.ts`
   - hooks install/update et redirection setup.
 - `src/content-script/index.ts`
-  - no-op par défaut (pas d'injection globale).
+  - no-op par dÃ©faut (pas d'injection globale).
 
 ## High-change Areas
 
 - `src-tauri/src/lib.rs` et plugin Android: changements de commandes natives.
-- `src/stores/webviewState.ts`: impact direct sur comportement réseau multi-webview.
+- `src/stores/webviewState.ts`: impact direct sur comportement rÃ©seau multi-webview.
 - `src/ui/setup/pages/CommunityGlows/components/NetworkWebviewHost.vue` et `composables/useNetworkWebview.ts`: orchestration webview principale.
-- `src/ui/setup/pages/CommunityGlows/components/ui/`, `directives/tooltip.ts` et `assets/main.css`: contrats clavier/focus, composants visibles et autorité de tokens Windows.
+- `src/ui/setup/pages/CommunityGlows/components/ui/`, `directives/tooltip.ts` et `assets/main.css`: contrats clavier/focus, composants visibles et autoritÃ© de tokens Windows.
+- `site/src/components/ui/*`: shared marketing UI atoms now owned by the site surface for CTA/branding consistency.
 - `src/ui/setup/pages/CommunityGlows/main.ts`, `App.vue` et `src/utils/notifications.ts`: enregistrement de la directive et carrier global de notifications.
-- `convex/schema.ts`: changement de schéma de données.
+- `convex/schema.ts`: changement de schÃ©ma de donnÃ©es.
 
 ## Validation Routes
 
 - Composants et raccourcis: `pnpm test:once` puis `pnpm run typecheck:core`.
-- Source Windows: inventaire ciblé des imports/configurations PrimeVue sous `src/ui/setup/pages/CommunityGlows/` et `vite.tauri.config.ts`.
-- Bundle Windows: `pnpm run tauri:build`, puis inventaire du bundle propre et des déclarations générées.
+- Source Windows: inventaire ciblÃ© des imports/configurations PrimeVue sous `src/ui/setup/pages/CommunityGlows/` et `vite.tauri.config.ts`.
+- Bundle Windows: `pnpm run tauri:build`, puis inventaire du bundle propre et des dÃ©clarations gÃ©nÃ©rÃ©es.
 - Tokens: `python3 "${SHIPGLOWS_ROOT:-$HOME/shipglows}/tools/design_system_drift_check.py" --changed --format markdown`.
-- Preuve finale: parcours manuel dans l'exécutable Windows pour clavier/focus, sidebars, thèmes, notifications et WebViews.
+- Preuve finale: parcours manuel dans l'exÃ©cutable Windows pour clavier/focus, sidebars, thÃ¨mes, notifications et WebViews.

@@ -34,7 +34,7 @@
                 <DesktopControlBar
                   v-if="
                     showDesktopControlBar &&
-                    controlBarStore.position === 'top'
+                      controlBarStore.position === 'top'
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
@@ -69,9 +69,9 @@
                     v-if="webviewStore.activeUrl"
                     :suspended="
                       settingsVisible ||
-                      profileManagerVisible ||
-                      profileAvatarVisible ||
-                      webviewOverlayActive > 0
+                        profileManagerVisible ||
+                        profileAvatarVisible ||
+                        webviewOverlayActive > 0
                     "
                   />
                   <!-- Router-view for Gmail (API), login, and other non-webview pages -->
@@ -80,7 +80,7 @@
                 <DesktopControlBar
                   v-if="
                     showDesktopControlBar &&
-                    controlBarStore.position === 'bottom'
+                      controlBarStore.position === 'bottom'
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"

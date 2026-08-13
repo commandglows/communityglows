@@ -201,6 +201,15 @@
   border-color: color-mix(in srgb, var(--foreground) var(--site-opacity-border-emphasis), transparent);
   transform: translateY(var(--site-distance-card-hover));
 }
+.site-ratio-grid {
+  display: grid;
+}
+@media (min-width: 64rem) {
+  .site-ratio-grid {
+    grid-template-columns: 0.8fr 1.2fr;
+    align-items: start;
+  }
+}
 .site-tracking-label { letter-spacing: var(--site-tracking-eyebrow); }
 .site-tracking-display { letter-spacing: var(--site-tracking-display); }
 .site-tracking-statement { letter-spacing: var(--site-tracking-statement); }

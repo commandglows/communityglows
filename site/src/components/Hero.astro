@@ -1,6 +1,8 @@
 ---
 import { appUrl } from '../config/site'
 import { getTranslations, type Locale } from '../i18n'
+import ActionLink from './ui/ActionLink.astro'
+import SectionHeading from './ui/SectionHeading.astro'
 
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
@@ -14,43 +16,29 @@ const t = getTranslations(lang)
   <!-- Subtle radial glow -->
   <div class="site-hero-glow absolute top-1/4 left-1/2 -translate-x-1/2 bg-foreground/5 rounded-full blur-3xl pointer-events-none"></div>
 
-  <div class="relative z-10 max-w-5xl mx-auto text-center">
-    <!-- Badge -->
-    <div class="animate-fade-up delay-200 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border mb-8">
-      <span class="w-2 h-2 rounded-full bg-[var(--sg-color-success)] pulse-glow"></span>
-      <span class="text-sm text-muted-foreground">{t.hero.badge}</span>
-    </div>
-
-    <!-- Headline -->
-    <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-foreground mb-6" style="font-family: var(--font-cal-sans);">
-      <span class="block overflow-hidden">
-        <span class="block animate-text-reveal">{t.hero.title1}</span>
-      </span>
-      <span class="block overflow-hidden">
-        <span class="block animate-text-reveal delay-100 text-muted-foreground">{t.hero.title2}</span>
-      </span>
-    </h1>
-
-    <!-- Subtitle -->
-    <p class="animate-fade-up delay-500 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+    <div class="relative z-10 max-w-5xl mx-auto text-center">
+    <SectionHeading
+      eyebrow={t.hero.badge}
+      title={`${t.hero.title1} ${t.hero.title2}`}
+      align="center"
+      as="h1"
+      titleClass="tracking-tight"
+      containerClass="animate-fade-up delay-200"
+      styleFont="var(--font-cal-sans)"
+    />
+    <p class:list={['animate-fade-up', 'delay-500', 'text-lg', 'sm:text-xl', 'text-muted-foreground', 'max-w-2xl', 'mx-auto', 'mb-10', 'leading-relaxed']}>
       {t.hero.subtitle}
     </p>
 
     <!-- CTAs -->
     <div class="animate-fade-up delay-600 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-      <a
-        href={appUrl()}
-  class="shimmer-btn inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-8 h-12 text-base font-medium shadow-lg shadow-primary/10 transition-colors"
-      >
+      <ActionLink href={appUrl()} size="md">
         {t.hero.cta}
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </a>
-      <a
-        href="#features"
-        class="inline-flex items-center rounded-full px-8 h-12 text-base font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground bg-transparent transition-colors"
-      >
+      </ActionLink>
+      <ActionLink href="#features" variant="secondary" size="md">
         {t.hero.secondaryCta}
-      </a>
+      </ActionLink>
     </div>
 
     <!-- Social Proof -->

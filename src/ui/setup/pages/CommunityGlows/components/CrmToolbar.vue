@@ -1,5 +1,8 @@
 <template>
-  <div class="crm-toolbar">
+  <div
+    class="crm-toolbar"
+    :class="{ 'is-compact': isFiltersCompact }"
+  >
     <div class="crm-search">
       <label class="crm-search-field">
         <SgIcon icon="pi pi-search" />
@@ -18,6 +21,8 @@
 <script setup lang="ts">
 import DashboardFilters from './DashboardFilters.vue'
 import type { MenuItem } from '../types'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 
 const crmContext: MenuItem = {
   id: 0,
@@ -25,6 +30,8 @@ const crmContext: MenuItem = {
   icon: 'pi pi-briefcase',
   route: '/crm'
 }
+
+const isFiltersCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.filtersCompact}px)`)
 </script>
 
 <style scoped>
@@ -87,18 +94,16 @@ const crmContext: MenuItem = {
   max-width: var(--sg-size-100pct);
 }
 
-@media (max-width: 1180px) {
-  .crm-toolbar {
-    padding: var(--sg-space-0d75rem);
-    gap: var(--sg-space-0d75rem);
-  }
+.crm-toolbar.is-compact {
+  padding: var(--sg-space-0d75rem);
+  gap: var(--sg-space-0d75rem);
+}
 
-  .crm-search {
-    flex: 1 1 100%;
-  }
+.crm-toolbar.is-compact .crm-search {
+  flex: 1 1 100%;
+}
 
-  .crm-toolbar :deep(.dashboard-filters) {
-    flex-basis: 100%;
-  }
+.crm-toolbar.is-compact :deep(.dashboard-filters) {
+  flex-basis: 100%;
 }
 </style>

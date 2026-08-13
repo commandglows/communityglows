@@ -11,6 +11,34 @@ export type BuiltInSocialNetwork = {
   defaultSelected: boolean
 }
 
+type SocialNetworkTheme = {
+  color: string
+  tileColor?: string
+}
+
+type SocialNetworkThemeMap = Record<string, SocialNetworkTheme>
+
+const SOCIAL_NETWORK_THEME_PRESETS: SocialNetworkThemeMap = {
+  twitter: { color: 'var(--sg-color-twitter)' },
+  facebook: { color: 'var(--sg-color-facebook)' },
+  instagram: {
+    color: 'var(--sg-color-instagram-red)',
+    tileColor: 'linear-gradient(135deg, var(--sg-color-instagram-orange), var(--sg-color-instagram-coral), var(--sg-color-instagram-red), var(--sg-color-instagram-rose), var(--sg-color-instagram-magenta))',
+  },
+  linkedin: { color: 'var(--sg-color-linkedin)' },
+  discord: { color: 'var(--sg-color-discord)' },
+  reddit: { color: 'var(--sg-color-reddit)' },
+  gmail: { color: 'var(--sg-color-google)' },
+}
+
+const getNetworkTheme = (networkId: string, fallback: SocialNetworkTheme): SocialNetworkTheme => {
+  const override = SOCIAL_NETWORK_THEME_PRESETS[networkId]
+  return {
+    color: override?.color ?? fallback.color,
+    tileColor: override?.tileColor ?? fallback.tileColor,
+  }
+}
+
 export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
   {
     id: 'twitter',
@@ -18,8 +46,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/twitter',
     url: 'https://x.com',
     icon: 'pi pi-twitter',
-    color: '#1DA1F2',
-    tileColor: '#000000',
+    ...getNetworkTheme('twitter', { color: '#1DA1F2', tileColor: '#000000' }),
     onboarding: true,
     defaultSelected: true,
   },
@@ -29,7 +56,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/facebook',
     url: 'https://facebook.com',
     icon: 'pi pi-facebook',
-    color: '#1877F2',
+    ...getNetworkTheme('facebook', { color: '#1877F2' }),
     onboarding: true,
     defaultSelected: true,
   },
@@ -39,8 +66,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/instagram',
     url: 'https://instagram.com',
     icon: 'pi pi-instagram',
-    color: '#E4405F',
-    tileColor: 'linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
+    ...getNetworkTheme('instagram', { color: '#E4405F' }),
     onboarding: true,
     defaultSelected: true,
   },
@@ -50,7 +76,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/linkedin',
     url: 'https://linkedin.com',
     icon: 'pi pi-linkedin',
-    color: '#0A66C2',
+    ...getNetworkTheme('linkedin', { color: '#0A66C2' }),
     onboarding: true,
     defaultSelected: true,
   },
@@ -82,7 +108,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/discord',
     url: 'https://discord.com/app',
     icon: 'pi pi-discord',
-    color: '#5865F2',
+    ...getNetworkTheme('discord', { color: '#5865F2' }),
     onboarding: true,
     defaultSelected: false,
   },
@@ -92,7 +118,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/reddit',
     url: 'https://reddit.com',
     icon: 'pi pi-reddit',
-    color: '#FF4500',
+    ...getNetworkTheme('reddit', { color: '#FF4500' }),
     onboarding: true,
     defaultSelected: false,
   },
@@ -332,8 +358,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/gmail',
     url: 'https://mail.google.com',
     icon: 'pi pi-envelope',
-    color: '#EA4335',
-    tileColor: '#EA4335',
+    ...getNetworkTheme('gmail', { color: '#EA4335', tileColor: '#EA4335' }),
     onboarding: true,
     defaultSelected: false,
   },
@@ -360,6 +385,20 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     defaultSelected: false,
   },
 ]
+
+export const socialNetworkThemeMap: SocialNetworkThemeMap = builtInSocialNetworks.reduce(
+  (acc, network) => {
+    acc[network.id] = {
+      color: network.color,
+      ...(network.tileColor !== undefined ? { tileColor: network.tileColor } : {}),
+    }
+    return acc
+  },
+  {} as SocialNetworkThemeMap,
+)
+
+export const getSocialNetworkColor = (networkId: string): string =>
+  socialNetworkThemeMap[networkId]?.color ?? 'var(--sg-color-text)'
 
 /**
  * Resolve a profile's persisted exclusions.

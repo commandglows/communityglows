@@ -1,6 +1,7 @@
 ---
 import { appUrl } from '../config/site'
 import { getTranslations, type Locale } from '../i18n'
+import ActionLink from './ui/ActionLink.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -16,19 +17,13 @@ const t = getTranslations(lang)
     </p>
 
     <div class="animate-fade-up delay-300 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a
-        href={appUrl()}
-  class="shimmer-btn inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-8 h-14 text-base font-medium shadow-lg shadow-primary/20 transition-colors"
-      >
+      <ActionLink href={appUrl()} size="lg">
         {t.finalCta.cta}
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </a>
-      <a
-        href="#features"
-        class="inline-flex items-center rounded-full px-8 h-14 text-base font-medium border border-border text-muted-foreground hover:bg-card hover:text-foreground bg-transparent transition-colors"
-      >
+      </ActionLink>
+      <ActionLink href="#features" variant="secondary" size="lg">
         {t.finalCta.secondaryCta}
-      </a>
+      </ActionLink>
     </div>
   </div>
 </section>

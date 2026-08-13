@@ -1,0 +1,66 @@
+---
+interface Props {
+  href?: string
+  variant?: 'primary' | 'secondary'
+  size?: 'sm' | 'md' | 'lg'
+  fullWidth?: boolean
+  rel?: string
+  target?: string
+  ariaLabel?: string
+  type?: 'button' | 'submit' | 'reset'
+  class?: string
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'sm',
+  fullWidth = false,
+  rel,
+  target,
+  ariaLabel,
+  type = 'button',
+  class: className = '',
+} = Astro.props
+
+const sizeClass =
+  size === 'lg'
+    ? 'h-14 px-8 text-base'
+    : size === 'md'
+      ? 'h-12 px-6 text-sm'
+      : 'h-10 px-5 py-3 text-sm'
+
+const variantClass =
+  variant === 'secondary'
+    ? 'border border-border bg-card text-muted-foreground hover:bg-[var(--sg-color-surface-hover)]'
+    : 'shimmer-btn bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)]'
+
+const baseClass = [
+  'inline-flex items-center gap-2 justify-center rounded-full font-medium transition-colors',
+  sizeClass,
+  variantClass,
+  fullWidth && 'w-full',
+  className,
+]
+---
+
+{href ? (
+  <a
+    href={href}
+    rel={rel}
+    target={target}
+    aria-label={ariaLabel}
+    class:list={baseClass}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    aria-label={ariaLabel}
+    class:list={baseClass}
+  >
+    <slot />
+  </button>
+)}
+

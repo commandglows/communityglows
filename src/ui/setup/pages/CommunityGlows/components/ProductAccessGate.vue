@@ -1,8 +1,14 @@
 <template>
-  <main class="product-access-gate" aria-labelledby="product-access-gate-title">
+  <main
+    class="product-access-gate"
+    aria-labelledby="product-access-gate-title"
+  >
     <section class="product-access-card">
-      <SgIcon icon="pi pi-lock" class="product-access-icon" />
-      <p class="product-access-eyebrow">{{ $t('billing.title') }}</p>
+      <SgIcon
+        icon="pi pi-lock"
+        class="product-access-icon"
+      />
+      <SectionEyebrow>{{ $t('billing.title') }}</SectionEyebrow>
       <h1 id="product-access-gate-title">{{ $t(titleKey) }}</h1>
       <p class="product-access-copy">{{ $t(messageKey) }}</p>
       <p v-if="isTrialDecision" class="product-access-copy">{{ restartAllowanceLabel }}</p>
@@ -31,7 +37,10 @@
           <SgIcon :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
           {{ $t('billing.retry_access') }}
         </button>
-        <a class="product-access-secondary" href="mailto:support@communityglows.com">
+        <a
+          class="product-access-secondary"
+          href="mailto:support@communityglows.com"
+        >
           {{ $t('billing.contact_support') }}
         </a>
       </div>
@@ -47,6 +56,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBillingAccess } from '@/composables/useBillingAccess'
+import SectionEyebrow from './ui/SectionEyebrow.vue'
 
 const { t } = useI18n()
 const {
@@ -120,7 +130,6 @@ function purchase() {
 }
 
 .product-access-icon { font-size: var(--sg-font-size-2rem); }
-.product-access-eyebrow { margin: 0; color: var(--sg-color-text-muted); font-size: var(--sg-font-size-0d8rem); text-transform: uppercase; letter-spacing: var(--sg-letter-spacing-0d08em); }
 .product-access-card h1 { margin: 0; font-size: var(--sg-size-1d6rem); }
 .product-access-copy, .product-access-recovery { margin: 0; color: var(--sg-color-text-muted); line-height: var(--sg-access-gate-copy-line-height); }
 .product-access-actions { width: var(--sg-size-100pct); display: grid; gap: var(--sg-space-0d65rem); margin-top: var(--sg-space-0d5rem); }

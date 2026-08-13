@@ -10,6 +10,7 @@ import { useWebviewStore } from '@/stores/webviewState'
 import TaskForm from '../components/tasks/TaskForm.vue'
 import TaskBoard from '../components/tasks/TaskBoard.vue'
 import SgButton from '../components/ui/SgButton.vue'
+import SectionEyebrow from '../components/ui/SectionEyebrow.vue'
 
 const route = useRoute()
 const tasksStore = useContextualTasksStore()
@@ -76,7 +77,7 @@ onMounted(() => {
   >
     <header class="tasks-header">
       <div>
-        <p class="tasks-eyebrow">Organisation communautaire</p>
+        <SectionEyebrow>Organisation communautaire</SectionEyebrow>
         <h1>Tâches contextuelles</h1>
         <p class="tasks-description">Note ce que tu veux faire et garde le lien vers l’endroit où agir. CommunityGlows ne lit pas la page.</p>
       </div>
@@ -134,19 +135,12 @@ onMounted(() => {
 }
 
 .tasks-header h1,
-.tasks-description,
-.tasks-eyebrow {
+.tasks-description {
   margin: 0;
 }
 
 .tasks-header h1 {
   font-size: var(--sg-tasks-title-size);
-}
-
-.tasks-eyebrow {
-  color: var(--sg-color-action);
-  font-size: var(--sg-crm-secondary-copy-size);
-  font-weight: 600;
 }
 
 .tasks-description {

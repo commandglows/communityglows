@@ -1,11 +1,18 @@
 <template>
-  <div class="crm-sidebar-widget">
+  <div
+    class="crm-sidebar-widget"
+    :class="{ 'is-compact': isFiltersCompact }"
+  >
     <CrmToolbar />
   </div>
 </template>
 
 <script setup lang="ts">
 import CrmToolbar from './CrmToolbar.vue'
+import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
+import { useMediaQuery } from '@/composables/useMediaQuery'
+
+const isFiltersCompact = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.filtersCompact}px)`)
 </script>
 
 <style scoped>
@@ -36,9 +43,7 @@ import CrmToolbar from './CrmToolbar.vue'
   width: var(--sg-sidebar-fill-size);
 }
 
-@media (max-width: 1180px) {
-  .crm-sidebar-widget :deep(.crm-toolbar) {
-    padding: var(--sg-space-0d5rem);
-  }
+.crm-sidebar-widget.is-compact :deep(.crm-toolbar) {
+  padding: var(--sg-space-0d5rem);
 }
 </style>

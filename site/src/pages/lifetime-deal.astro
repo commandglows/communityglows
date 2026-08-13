@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro'
 import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
 import { appUrl, authenticatedPurchaseUrl, siteUrl } from '../config/site'
+import ActionLink from '../components/ui/ActionLink.astro'
+import EyebrowPill from '../components/ui/EyebrowPill.astro'
+import StatusBadge from '../components/ui/StatusBadge.astro'
 
 const offerId = 'communityglows/lifetime_deal'
 const purchaseUrl = authenticatedPurchaseUrl()
@@ -114,18 +117,12 @@ const jsonLd = [
             Bring your accounts, conversations, and next actions into one focused workspace—so more of your attention can go to the people behind the notifications.
           </p>
           <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={appUrl()}
-              class="shimmer-btn inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-[var(--sg-color-action-hover)]"
-            >
+            <ActionLink href={appUrl()} size="md">
               Try 30 days free
-            </a>
-            <a
-              href={purchaseUrl}
-              class="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-            >
+            </ActionLink>
+            <ActionLink href={purchaseUrl} variant="secondary" size="md">
               Buy lifetime access for €79
-            </a>
+            </ActionLink>
           </div>
         </div>
 
@@ -229,8 +226,8 @@ const jsonLd = [
         </div>
 
         <div class="mt-6 grid gap-3 sm:grid-cols-2">
-          <a href={appUrl()} class="shimmer-btn inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200">Try 30 days free</a>
-          <a href={purchaseUrl} class="inline-flex w-full items-center justify-center rounded-full border border-border px-6 py-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted">Open the app to buy with Stripe</a>
+          <ActionLink href={appUrl()} size="md" fullWidth>Try 30 days free</ActionLink>
+          <ActionLink href={purchaseUrl} variant="secondary" size="md" fullWidth>Open the app to buy with Stripe</ActionLink>
         </div>
       </div>
     </section>
@@ -270,8 +267,8 @@ const jsonLd = [
             </p>
           </div>
           <div class="flex flex-col gap-3 sm:flex-row">
-            <a href={appUrl()} class="inline-flex items-center justify-center rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800">Try 30 days free</a>
-            <a href={purchaseUrl} class="inline-flex items-center justify-center rounded-full border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-100">Open the app to buy with Stripe</a>
+            <ActionLink href={appUrl()} variant="secondary" size="md">Try 30 days free</ActionLink>
+            <ActionLink href={purchaseUrl} variant="secondary" size="md">Open the app to buy with Stripe</ActionLink>
           </div>
         </div>
       </div>

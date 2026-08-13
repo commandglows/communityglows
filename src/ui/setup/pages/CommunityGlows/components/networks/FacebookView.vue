@@ -1,115 +1,125 @@
-<template>
+﻿<template>
   <div class="facebook-view">
-    <div class="facebook-content">
+    <NetworkTwoColumnLayout
+      class="facebook-content"
+      sidebar-width="var(--sg-size-300px)"
+    >
       <!-- Feed principal -->
-      <div class="main-feed">
-        <!-- Stories -->
-        <div class="stories-section">
-          <div
-            class="stories-scroll"
-            tabindex="0"
-            aria-label="Stories"
-          >
-            <div class="stories-container">
-              <div
-                v-for="story in store.stories" 
-                :key="story.id" 
-                class="story-card"
-                :class="{ viewed: story.viewed }"
-                @click="store.viewStory(story.id)"
-              >
-                <img
-                  :src="story.image"
-                  :alt="story.author.name"
-                  class="story-image"
-                />
-                <div class="story-overlay">
-                  <SocialAvatar 
-                    :user="story.author"
-                    size="normal"
-                    :border-color="story.viewed ? 'var(--sg-color-border)' : 'var(--sg-color-action)'"
-                    border-width="3px"
+      <template #main>
+        <div class="main-feed">
+          <!-- Stories -->
+          <div class="stories-section">
+            <div
+              class="stories-scroll"
+              tabindex="0"
+              aria-label="Stories"
+            >
+              <div class="stories-container">
+                <div
+                  v-for="story in store.stories"
+                  :key="story.id"
+                  class="story-card"
+                  :class="{ viewed: story.viewed }"
+                  @click="store.viewStory(story.id)"
+                >
+                  <img
+                    :src="story.image"
+                    :alt="story.author.name"
+                    class="story-image"
                   />
-                  <span class="story-author">{{ story.author.name }}</span>
+                  <div class="story-overlay">
+                    <SocialAvatar
+                      :user="story.author"
+                      size="normal"
+                      :border-color="
+                        story.viewed
+                          ? 'var(--sg-color-border)'
+                          : 'var(--sg-color-action)'
+                      "
+                      border-width="3px"
+                    />
+                    <span class="story-author">{{ story.author.name }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Créer un post -->
-        <CreatePost 
-          :current-user="store.currentUser"
-          network="facebook"
-          @submit="handlePostSubmit"
-        />
-
-        <!-- Posts -->
-        <div class="posts-section">
-          <SocialPost
-            v-for="post in store.posts"
-            :key="post.id"
-            :post="post"
+          <!-- CrÃƒÂ©er un post -->
+          <CreatePost
+            :current-user="store.currentUser"
             network="facebook"
-            :show-comments="post.showComments"
-            @primary-action="store.addReaction(post.id, 'like')"
-            @comment="store.addComment(post.id, '')"
-            @share="store.sharePost(post.id)"
-            @toggle-comments="togglePostComments(post.id)"
-          >
-            <template
-              v-if="post.showComments"
-              #comments
-            >
-              <div
-                v-if="post.comments?.length"
-                class="comments-container"
-              >
-                <SocialComment
-                  v-for="comment in post.comments"
-                  :key="comment.id"
-                  :comment="comment"
-                  @like="handleCommentLike(post.id, comment.id)"
-                  @reply="handleCommentReply(post.id, comment.id)"
-                />
-              </div>
-              <div class="comment-composer">
-                <SocialAvatar 
-                  :user="store.currentUser"
-                  size="normal"
-                />
-                <SgInput
-                  v-model="newComments[post.id]" 
-                  :placeholder="$t('facebook.comment_placeholder')"
-                  :aria-label="$t('facebook.comment_placeholder')"
-                  class="flex-1"
-                  @keyup.enter="handleCommentSubmit(post.id)"
-                />
-              </div>
-            </template>
-          </SocialPost>
-        </div>
-      </div>
+            @submit="handlePostSubmit"
+          />
 
-      <!-- Sidebar droite -->
-      <div class="right-sidebar">
-        <div class="online-friends">
-          <h4>{{ $t('facebook.contacts') }}</h4>
-          <div
-            v-for="friend in store.onlineFriends" 
-            :key="friend.id" 
-            class="friend-item"
-          >
-            <SocialAvatar 
-              :user="friend"
-              size="normal"
-              :show-status="true"
-            />
-            <span class="friend-name">{{ friend.name }}</span>
+          <!-- Posts -->
+          <div class="posts-section">
+            <SocialPost
+              v-for="post in store.posts"
+              :key="post.id"
+              :post="post"
+              network="facebook"
+              :show-comments="post.showComments"
+              @primary-action="store.addReaction(post.id, 'like')"
+              @comment="store.addComment(post.id, '')"
+              @share="store.sharePost(post.id)"
+              @toggle-comments="togglePostComments(post.id)"
+            >
+              <template
+                v-if="post.showComments"
+                #comments
+              >
+                <div
+                  v-if="post.comments?.length"
+                  class="comments-container"
+                >
+                  <SocialComment
+                    v-for="comment in post.comments"
+                    :key="comment.id"
+                    :comment="comment"
+                    @like="handleCommentLike(post.id, comment.id)"
+                    @reply="handleCommentReply(post.id, comment.id)"
+                  />
+                </div>
+                <div class="comment-composer">
+                  <SocialAvatar
+                    :user="store.currentUser"
+                    size="normal"
+                  />
+                  <SgInput
+                    v-model="newComments[post.id]"
+                    :placeholder="$t('facebook.comment_placeholder')"
+                    :aria-label="$t('facebook.comment_placeholder')"
+                    class="flex-1"
+                    @keyup.enter="handleCommentSubmit(post.id)"
+                  />
+                </div>
+              </template>
+            </SocialPost>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+
+      <template #sidebar>
+        <div class="right-sidebar">
+          <div class="online-friends">
+            <h4>{{ $t('facebook.contacts') }}</h4>
+            <div
+              v-for="friend in store.onlineFriends"
+              :key="friend.id"
+              class="friend-item"
+            >
+              <SocialAvatar
+                :user="friend"
+                size="normal"
+                :show-status="true"
+              />
+              <span class="friend-name">{{ friend.name }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </NetworkTwoColumnLayout>
   </div>
 </template>
 
@@ -119,6 +129,7 @@ import SgInput from '../ui/SgInput.vue'
 import { SocialAvatar, SocialPost, SocialComment, CreatePost } from '../feed'
 import { useFacebookMockStore } from '../../stores/mockData/facebookMock'
 import type { FacebookPost } from '../../stores/mockData/facebookMock'
+import NetworkTwoColumnLayout from './NetworkTwoColumnLayout.vue'
 
 const store = useFacebookMockStore()
 const newComments = ref<Record<string, string>>({})
@@ -154,15 +165,15 @@ const handleCommentLike = (postId: string, commentId: string) => {
 }
 
 const handleCommentReply = (postId: string, commentId: string) => {
-  // Logique pour répondre à un commentaire
+  // Logique pour repondre a un commentaire
   void postId
   void commentId
 }
 
 const togglePostComments = (postId: string) => {
-  const post = store.posts.find(p => p.id === postId)
+  const post = store.posts.find((p) => p.id === postId)
   if (post) {
-    // Vous pouvez ajouter une propriété personnalisée pour suivre l'état des commentaires
+    // Vous pouvez ajouter une propriete personnalisee pour suivre l'etat des commentaires
     post.showComments = !post.showComments
   }
 }
@@ -176,9 +187,6 @@ const togglePostComments = (postId: string) => {
 }
 
 .facebook-content {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: var(--sg-space-1rem);
   max-width: var(--sg-size-1200px);
   margin: var(--sg-space-0-auto);
   padding: var(--sg-space-1rem);
@@ -204,7 +212,11 @@ const togglePostComments = (postId: string) => {
   overflow-y: hidden;
   scrollbar-gutter: stable;
 }
-.stories-scroll:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+
+.stories-scroll:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
 
 .stories-container {
   display: flex;
@@ -242,7 +254,7 @@ const togglePostComments = (postId: string) => {
 }
 
 .story-author {
-  color: white;
+  color: var(--sg-color-text-on-dark);
   font-size: var(--sg-font-size-0d9rem);
   font-weight: 500;
 }
@@ -303,4 +315,5 @@ const togglePostComments = (postId: string) => {
   padding: var(--sg-space-0d75rem-1rem);
   align-items: center;
 }
-</style> 
+</style>
+

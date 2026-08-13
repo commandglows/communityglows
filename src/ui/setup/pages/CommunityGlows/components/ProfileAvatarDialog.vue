@@ -6,11 +6,26 @@
     variant="sidebar"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <form class="avatar-dialog" @submit.prevent="save">
-      <ProfileAvatarEditor :avatar="draftAvatar" :emoji="draftEmoji" @change="updateDraft" />
+    <form
+      class="avatar-dialog"
+      @submit.prevent="save"
+    >
+      <ProfileAvatarEditor
+        :avatar="draftAvatar"
+        :emoji="draftEmoji"
+        @change="updateDraft"
+      />
       <div class="avatar-dialog__actions">
-        <Button label="Annuler" text type="button" @click="emit('update:modelValue', false)" />
-        <Button label="Enregistrer" type="submit" />
+        <Button
+          label="Annuler"
+          text
+          type="button"
+          @click="emit('update:modelValue', false)"
+        />
+        <Button
+          label="Enregistrer"
+          type="submit"
+        />
       </div>
     </form>
   </SgDialog>

@@ -1,7 +1,7 @@
 export const RESPONSIVE_BREAKPOINTS = {
   headerWide: 1200,
   sidebarTablet: 768,
-  filtersCompact: 1200,
+  filtersCompact: 1180,
   settingsDesktop: 1280,
   settingsUltraWide: 1600,
   billingCompact: 520,

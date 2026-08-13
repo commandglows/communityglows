@@ -266,15 +266,15 @@ onMounted(() => {
 }
 
 .type-email {
-  border-left: 4px solid var(--blue-500);
+  border-left: var(--sg-size-4px) solid var(--sg-color-info);
 }
 
 .type-task {
-  border-left: 4px solid var(--green-500);
+  border-left: var(--sg-size-4px) solid var(--sg-color-success);
 }
 
 .type-note {
-  border-left: 4px solid var(--yellow-500);
+  border-left: var(--sg-size-4px) solid var(--sg-color-warning);
 }
 
 /* Animations */

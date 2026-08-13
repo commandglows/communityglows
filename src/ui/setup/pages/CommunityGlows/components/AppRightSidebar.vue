@@ -63,22 +63,22 @@
           </div>
           <template v-if="!iconsOnly">
             <div class="profile-avatar">
-            <Avatar
-              :image="profilesStore.activeProfile?.avatar"
-              :label="profilesStore.activeProfile?.emoji ?? '👤'"
-              :alt="profilesStore.activeProfile?.name ?? 'Profil'"
-              size="xlarge"
-              shape="circle"
-            />
-            <button
-              type="button"
-              class="profile-avatar__edit"
-              aria-label="Modifier l’image du profil"
-              @click="emit('edit-profile-avatar')"
-            >
-              <SgIcon icon="pi pi-pencil" />
-            </button>
-          </div>
+              <Avatar
+                :image="profilesStore.activeProfile?.avatar"
+                :label="profilesStore.activeProfile?.emoji ?? '👤'"
+                :alt="profilesStore.activeProfile?.name ?? 'Profil'"
+                size="xlarge"
+                shape="circle"
+              />
+              <button
+                type="button"
+                class="profile-avatar__edit"
+                aria-label="Modifier l’image du profil"
+                @click="emit('edit-profile-avatar')"
+              >
+                <SgIcon icon="pi pi-pencil" />
+              </button>
+            </div>
             <ProfileSwitcher
               :icons-only="false"
               menu-direction="down"
@@ -184,7 +184,10 @@
                   aria-label="Ouvrir Kanban"
                   @click.stop="openKanbanPage"
                 />
-                <span aria-hidden="true" class="sidebar-widget__spacer"></span>
+                <span
+                  aria-hidden="true"
+                  class="sidebar-widget__spacer"
+                ></span>
                 <SgIcon
                   :icon="[
                     'pi',

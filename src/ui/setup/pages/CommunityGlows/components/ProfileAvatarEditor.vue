@@ -3,15 +3,34 @@
     class="avatar-editor"
     :class="{ 'avatar-editor--compact': compact }"
   >
-    <div class="avatar-editor__preview" aria-hidden="true">
-      <img v-if="draftAvatar" :src="draftAvatar" alt="" />
+    <div
+      class="avatar-editor__preview"
+      aria-hidden="true"
+    >
+      <img
+        v-if="draftAvatar"
+        :src="draftAvatar"
+        alt=""
+      />
       <span v-else>{{ draftEmoji || DEFAULT_EMOJI }}</span>
     </div>
 
     <div class="avatar-editor__content">
       <div class="avatar-editor__actions">
-        <Button label="Choisir une photo" icon="pi pi-camera" outlined size="small" @click="fileInput?.click()" />
-        <Button v-if="draftAvatar" label="Retirer la photo" text size="small" @click="removePhoto" />
+        <Button
+          label="Choisir une photo"
+          icon="pi pi-camera"
+          outlined
+          size="small"
+          @click="fileInput?.click()"
+        />
+        <Button
+          v-if="draftAvatar"
+          label="Retirer la photo"
+          text
+          size="small"
+          @click="removePhoto"
+        />
         <input
           ref="fileInput"
           class="avatar-editor__file"
@@ -37,7 +56,13 @@
         </button>
       </fieldset>
 
-      <p v-if="errorMessage" class="avatar-editor__error" role="alert">{{ errorMessage }}</p>
+      <p
+        v-if="errorMessage"
+        class="avatar-editor__error"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </p>
     </div>
   </div>
 </template>

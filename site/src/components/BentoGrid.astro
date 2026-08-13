@@ -1,5 +1,7 @@
 ---
 import { getTranslations, type Locale } from '../i18n'
+import EyebrowPill from './ui/EyebrowPill.astro'
+import StatusBadge from './ui/StatusBadge.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -12,7 +14,7 @@ const previewLabels = lang === 'fr'
 <section id="features" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
     <div class="text-center mb-12 sm:mb-16" data-reveal>
-      <p class="animate-fade-up site-tracking-label text-sm font-medium text-muted-foreground uppercase mb-2">{t.features.label}</p>
+      <EyebrowPill class="animate-fade-up mb-2">{t.features.label}</EyebrowPill>
       <h2 class="animate-fade-up delay-100 text-3xl sm:text-4xl font-bold text-foreground mb-4" style="font-family: var(--font-instrument-sans);">
         {t.features.title}
       </h2>
@@ -54,7 +56,7 @@ const previewLabels = lang === 'fr'
             </div>
           </div>
         </div>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm mt-2">{features[0].tag}</span>
+        <StatusBadge text={features[0].tag} class="mt-2" />
       </div>
 
       <!-- Network Dashboard -->
@@ -63,7 +65,7 @@ const previewLabels = lang === 'fr'
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
           {features[1].desc}
         </p>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm">{features[1].tag}</span>
+        <StatusBadge text={features[1].tag} />
       </div>
 
       <!-- Fast Switching -->
@@ -76,7 +78,7 @@ const previewLabels = lang === 'fr'
           <kbd class="kbd-key site-kbd px-2 py-1 text-xs bg-muted border border-border rounded font-mono transition-transform">⌘</kbd>
           <kbd class="kbd-key site-kbd px-2 py-1 text-xs bg-muted border border-border rounded font-mono transition-transform">K</kbd>
         </div>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm">{features[2].tag}</span>
+        <StatusBadge text={features[2].tag} />
       </div>
 
       <!-- Anti-Distraction Mode -->
@@ -85,7 +87,7 @@ const previewLabels = lang === 'fr'
         <p class="text-sm text-muted-foreground mb-4 leading-relaxed">
           {features[3].desc}
         </p>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm">{features[3].tag}</span>
+        <StatusBadge text={features[3].tag} />
       </div>
 
       <!-- Cross-Device Sync -->
@@ -104,7 +106,7 @@ const previewLabels = lang === 'fr'
           <path d="M 0 60 L 20 45 L 40 55 L 60 30 L 80 40 L 100 15 L 100 70 L 0 70 Z" fill="url(#chartGradient)" class="site-chart-fill" />
           <path d="M 0 60 L 20 45 L 40 55 L 60 30 L 80 40 L 100 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="draw-line" />
         </svg>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm">{features[4].tag}</span>
+        <StatusBadge text={features[4].tag} />
       </div>
 
       <!-- Privacy-First -->
@@ -114,9 +116,11 @@ const previewLabels = lang === 'fr'
           {features[5].desc}
         </p>
         <div class="flex items-center gap-2 mb-4">
-          {('badges' in features[5] ? features[5].badges : []).map((badge) => <span class="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">{badge}</span>)}
+          {('badges' in features[5] ? features[5].badges : []).map((badge) => (
+            <StatusBadge text={badge} tone="muted" class="px-2 py-1" />
+          ))}
         </div>
-        <span class="site-tag inline-block text-foreground rounded-full px-3 py-1 text-sm">{features[5].tag}</span>
+        <StatusBadge text={features[5].tag} />
       </div>
     </div>
   </div>

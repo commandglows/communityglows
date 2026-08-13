@@ -4,6 +4,8 @@ import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { getCollection, render } from 'astro:content'
 import { appUrl, siteUrl } from '../../config/site'
+import ActionLink from '../../components/ui/ActionLink.astro'
+import StatusBadge from '../../components/ui/StatusBadge.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
@@ -73,7 +75,7 @@ const jsonLd = [
         {post.data.tags && post.data.tags.length > 0 && (
           <div class="flex gap-2 mt-4">
             {post.data.tags.map((tag) => (
-              <span class="px-3 py-1 rounded-full bg-card border border-border text-xs text-muted-foreground">{tag}</span>
+              <StatusBadge text={tag} />
             ))}
           </div>
         )}
@@ -87,10 +89,10 @@ const jsonLd = [
       <div class="mt-16 p-8 rounded-2xl bg-card border border-border text-center">
         <h3 class="text-xl font-bold text-foreground mb-3">Ready to run social without the clutter?</h3>
         <p class="text-muted-foreground mb-6">Start with CommunityGlows’s profile-based workspace.</p>
-        <a href={appUrl()} class="shimmer-btn inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6 py-3 text-sm font-medium transition-colors">
+        <ActionLink href={appUrl()} size="md">
           Try 30 Days Free
           <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
+        </ActionLink>
       </div>
     </article>
 

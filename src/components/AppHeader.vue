@@ -57,21 +57,21 @@ const toggleRightSidebar = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background: var(--surface-card);
-  border-bottom: 1px solid var(--surface-border);
+  padding: var(--sg-space-0d5rem) var(--sg-space-1rem);
+  background: var(--sg-color-surface-raised);
+  border-bottom: 1px solid var(--sg-color-border);
 }
 
 .header-left, .header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sg-space-1rem);
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--sg-font-size-1d25rem);
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--sg-color-text);
 }
 </style>

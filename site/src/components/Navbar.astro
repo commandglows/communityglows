@@ -1,5 +1,7 @@
 ---
 import { getTranslations, localizeHref, type Locale } from '../i18n'
+import ActionLink from './ui/ActionLink.astro'
+import SiteLogo from './ui/SiteLogo.astro'
 
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
@@ -17,12 +19,7 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
 <header class="site-nav-shell fixed top-4 left-1/2 -translate-x-1/2 z-50 max-w-4xl animate-slide-down">
   <nav class="relative flex items-center justify-between px-4 py-3 rounded-full bg-background/60 backdrop-blur-md border border-border">
     <!-- Logo -->
-    <a href={homeHref} class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-          <svg viewBox="0 0 32 32" class="w-5 h-5 text-primary-foreground" fill="currentColor" aria-hidden="true"><path d="M12 9.5v13l11-6.5L12 9.5Z"/><rect x="20" y="14" width="2.5" height="9" rx="1.25"/></svg>
-      </div>
-      <span class="font-semibold text-foreground hidden sm:block">CommunityGlows</span>
-    </a>
+    <SiteLogo href={homeHref} size="sm" />
 
     <!-- Desktop Nav -->
     <div class="hidden lg:flex items-center gap-1 relative" id="desktop-nav">
@@ -39,12 +36,9 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
 
     <!-- CTA Buttons -->
     <div class="hidden lg:flex items-center gap-3">
-      <a
-        href={localizeHref('/download', lang)}
-          class="shimmer-btn bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-4 py-2 text-sm font-medium transition-colors"
-      >
+      <ActionLink href={localizeHref('/download', lang)} size="sm">
         {t.nav.download}
-      </a>
+      </ActionLink>
     </div>
 
     <!-- Mobile Menu Button -->
@@ -74,7 +68,9 @@ const homeHref = lang === 'fr' ? '/fr' : '/'
         </a>
       ))}
       <hr class="border-border my-2" />
-      <a href={localizeHref('/download', lang)} class="shimmer-btn bg-primary text-primary-foreground hover:bg-[var(--sg-color-action-hover)] rounded-full px-4 py-3 text-sm font-medium text-center transition-colors">{t.nav.download}</a>
+      <ActionLink href={localizeHref('/download', lang)} variant="primary" size="md" fullWidth>
+        {t.nav.download}
+      </ActionLink>
     </div>
   </div>
 </header>

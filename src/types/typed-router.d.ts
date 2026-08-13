@@ -159,6 +159,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/networks/GmailView'
       | '/setup/CommunityGlows/components/networks/InstagramView'
       | '/setup/CommunityGlows/components/networks/LinkedInView'
+      | '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout'
       | '/setup/CommunityGlows/components/networks/RedditView'
       | '/setup/CommunityGlows/components/networks/SnapchatView'
       | '/setup/CommunityGlows/components/networks/ThreadsView'
@@ -167,6 +168,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture'
       | '/setup/CommunityGlows/components/tasks/TaskBoard'
       | '/setup/CommunityGlows/components/tasks/TaskForm'
+      | '/setup/CommunityGlows/components/ui/SectionEyebrow'
       | '/setup/CommunityGlows/components/ui/SgAvatar'
       | '/setup/CommunityGlows/components/ui/SgBadge'
       | '/setup/CommunityGlows/components/ui/SgButton'
@@ -178,6 +180,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/ui/SgSelect'
       | '/setup/CommunityGlows/components/ui/SgSheet'
       | '/setup/CommunityGlows/components/ui/SgSpinner'
+      | '/setup/CommunityGlows/components/ui/SgStatusPill'
       | '/setup/CommunityGlows/components/ui/SgSwitch'
       | '/setup/CommunityGlows/components/ui/SgTextarea'
       | '/setup/CommunityGlows/views/LoginView'
@@ -436,6 +439,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout': RouteRecordInfo<
+      '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout',
+      '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/networks/RedditView': RouteRecordInfo<
       '/setup/CommunityGlows/components/networks/RedditView',
       '/setup/CommunityGlows/components/networks/RedditView',
@@ -562,6 +572,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/ui/SectionEyebrow': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SectionEyebrow',
+      '/setup/CommunityGlows/components/ui/SectionEyebrow',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/ui/SgAvatar': RouteRecordInfo<
       '/setup/CommunityGlows/components/ui/SgAvatar',
       '/setup/CommunityGlows/components/ui/SgAvatar',
@@ -635,6 +652,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/ui/SgSpinner': RouteRecordInfo<
       '/setup/CommunityGlows/components/ui/SgSpinner',
       '/setup/CommunityGlows/components/ui/SgSpinner',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/ui/SgStatusPill': RouteRecordInfo<
+      '/setup/CommunityGlows/components/ui/SgStatusPill',
+      '/setup/CommunityGlows/components/ui/SgStatusPill',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -837,6 +861,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/networks/GmailView'
         | '/setup/CommunityGlows/components/networks/InstagramView'
         | '/setup/CommunityGlows/components/networks/LinkedInView'
+        | '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout'
         | '/setup/CommunityGlows/components/networks/RedditView'
         | '/setup/CommunityGlows/components/networks/SnapchatView'
         | '/setup/CommunityGlows/components/networks/ThreadsView'
@@ -845,6 +870,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/tasks/ExtensionTaskCapture'
         | '/setup/CommunityGlows/components/tasks/TaskBoard'
         | '/setup/CommunityGlows/components/tasks/TaskForm'
+        | '/setup/CommunityGlows/components/ui/SectionEyebrow'
         | '/setup/CommunityGlows/components/ui/SgAvatar'
         | '/setup/CommunityGlows/components/ui/SgBadge'
         | '/setup/CommunityGlows/components/ui/SgButton'
@@ -856,6 +882,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/ui/SgSelect'
         | '/setup/CommunityGlows/components/ui/SgSheet'
         | '/setup/CommunityGlows/components/ui/SgSpinner'
+        | '/setup/CommunityGlows/components/ui/SgStatusPill'
         | '/setup/CommunityGlows/components/ui/SgSwitch'
         | '/setup/CommunityGlows/components/ui/SgTextarea'
         | '/setup/CommunityGlows/views/LoginView'
@@ -1080,6 +1107,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/CommunityGlows/components/networks/NetworkTwoColumnLayout.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout'
+      views:
+        | never
+    }
     'src/ui/setup/pages/CommunityGlows/components/networks/RedditView.vue': {
       routes:
         | '/setup/CommunityGlows/components/networks/RedditView'
@@ -1188,6 +1221,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/ui/setup/pages/CommunityGlows/components/ui/SectionEyebrow.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ui/SectionEyebrow'
+      views:
+        | never
+    }
     'src/ui/setup/pages/CommunityGlows/components/ui/SgAvatar.vue': {
       routes:
         | '/setup/CommunityGlows/components/ui/SgAvatar'
@@ -1251,6 +1290,12 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/ui/SgSpinner.vue': {
       routes:
         | '/setup/CommunityGlows/components/ui/SgSpinner'
+      views:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/ui/SgStatusPill.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/ui/SgStatusPill'
       views:
         | never
     }

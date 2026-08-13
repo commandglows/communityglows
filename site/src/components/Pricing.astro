@@ -1,6 +1,10 @@
 ---
 import { appUrl, authenticatedPurchaseUrl } from '../config/site'
 import { getTranslations, type Locale } from '../i18n'
+import ActionLink from './ui/ActionLink.astro'
+import SectionHeading from './ui/SectionHeading.astro'
+import StatusBadge from './ui/StatusBadge.astro'
+import EyebrowPill from './ui/EyebrowPill.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
 const t = getTranslations(lang)
@@ -9,23 +13,33 @@ const purchaseUrl = authenticatedPurchaseUrl()
 
 <section id="pricing" class="py-16 sm:py-24 bg-background">
   <div class="max-w-6xl mx-auto px-4">
-    <div class="text-center mb-12" data-reveal>
-      <p class="animate-fade-up inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{t.pricing.badge}</p>
-      <h2 class="animate-fade-up delay-100 mt-5 text-3xl sm:text-5xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">{t.pricing.title}</h2>
-      <p class="animate-fade-up delay-200 mt-5 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">{t.pricing.subtitle}</p>
-    </div>
+    <SectionHeading
+      eyebrow={t.pricing.badge}
+      title={t.pricing.title}
+      subtitle={t.pricing.subtitle}
+      as="h2"
+      styleFont="var(--font-instrument-sans)"
+      containerClass="mb-12 data-reveal"
+      titleClass="mt-5 animate-fade-up delay-100"
+      eyebrowClass="animate-fade-up"
+      subtitleClass="animate-fade-up delay-200 mt-5 text-lg max-w-2xl mx-auto leading-relaxed"
+    />
 
     <div class="mx-auto max-w-5xl rounded-2xl border border-foreground/30 bg-card p-6 shadow-2xl sm:p-10" data-reveal>
-      <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <div class="grid site-ratio-grid gap-10">
         <div class="text-center lg:text-left">
-          <p class="text-sm font-semibold uppercase tracking-widest text-muted-foreground">{t.pricing.name}</p>
+          <EyebrowPill tone="default" class="text-sm font-semibold text-muted-foreground">{t.pricing.name}</EyebrowPill>
           <div class="mt-5 flex items-baseline justify-center gap-2 lg:justify-start">
             <span class="text-6xl font-bold text-foreground">€{t.pricing.price}</span>
           </div>
           <p class="mt-2 text-sm text-muted-foreground">{t.pricing.priceSuffix}</p>
           <div class="mt-7 flex flex-col gap-3">
-            <a href={appUrl()} class="shimmer-btn inline-flex w-full items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200">{t.pricing.cta}</a>
-            <a href={purchaseUrl} class="inline-flex w-full items-center justify-center rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">{t.pricing.purchaseCta}</a>
+            <ActionLink href={appUrl()} fullWidth size="md">
+              {t.pricing.cta}
+            </ActionLink>
+            <ActionLink href={purchaseUrl} variant="secondary" fullWidth size="md">
+              {t.pricing.purchaseCta}
+            </ActionLink>
           </div>
         </div>
 
@@ -54,9 +68,9 @@ const purchaseUrl = authenticatedPurchaseUrl()
             <p class="mt-5 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">{t.pricing.roadmapNote}</p>
             <div class="mt-5 border-t border-border pt-5">
               <h4 class="text-sm font-semibold text-foreground">{t.pricing.plannedTitle}</h4>
-              <ul class="mt-3 flex flex-wrap gap-2">
+            <ul class="mt-3 flex flex-wrap gap-2">
                 {t.pricing.planned.map((platform) => (
-                  <li class="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">{platform}</li>
+                  <StatusBadge text={platform} />
                 ))}
               </ul>
               <p class="mt-4 text-xs leading-relaxed text-muted-foreground">{t.pricing.plannedNote}</p>

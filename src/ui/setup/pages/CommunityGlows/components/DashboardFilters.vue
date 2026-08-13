@@ -284,23 +284,12 @@ watch(filters, (newFilters) => {
   width: var(--sg-sidebar-fill-size);
 }
 
-@media (max-width: 1180px) {
-  .filters-group {
-    gap: var(--sg-space-0d5rem);
-  }
+.filters-wrapper.is-compact .date-input {
+  width: min(100%, var(--sg-filter-date-width));
+}
 
-  .date-input {
-    width: min(100%, var(--sg-filter-date-width));
-  }
-
-  .sort-select {
-    width: var(--sg-sidebar-fill-size);
-    min-width: 0;
-  }
-
-  .filters-wrapper.is-compact .sort-select,
-  .filters-wrapper.is-compact :deep(.sg-multiselect) {
-    width: var(--sg-sidebar-fill-size);
-  }
+.filters-wrapper.is-compact .sort-select {
+  width: var(--sg-sidebar-fill-size);
+  min-width: 0;
 }
 </style>

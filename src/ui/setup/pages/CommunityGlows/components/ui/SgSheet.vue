@@ -27,8 +27,17 @@
             <div class="sg-sheet__handle" />
             <header class="sg-sheet__header">
               <div>
-                <h2 :id="titleId" class="sg-sheet__title">{{ title }}</h2>
-                <p v-if="description" :id="descriptionId" class="sg-sheet__description">
+                <h2
+                  :id="titleId"
+                  class="sg-sheet__title"
+                >
+                  {{ title }}
+                </h2>
+                <p
+                  v-if="description"
+                  :id="descriptionId"
+                  class="sg-sheet__description"
+                >
                   {{ description }}
                 </p>
               </div>

@@ -8,12 +8,10 @@
         <SgIcon icon="pi pi-key" />
         <h3>{{ $t('billing.title') }}</h3>
       </div>
-      <span
-        class="billing-status-pill"
-        :class="statusClass"
-      >
-        {{ statusLabel }}
-      </span>
+      <SgStatusPill
+        :text="statusLabel"
+        :tone="statusTone"
+      />
     </div>
 
     <p class="billing-copy">{{ helperText }}</p>
@@ -175,6 +173,7 @@ import { useI18n } from 'vue-i18n'
 import { useBillingAccess } from '@/composables/useBillingAccess'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
+import SgStatusPill from './ui/SgStatusPill.vue'
 
 const { t } = useI18n()
 const redemptionCode = ref('')
@@ -201,18 +200,15 @@ const {
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-const statusClass = computed(() => ({
-  active:
-    status.value === 'active' ||
-    status.value === 'trial_active' ||
-    status.value === 'lifetime_active',
-  muted:
-    status.value === 'unconfigured' ||
-    status.value === 'signed_out' ||
-    status.value === 'loading' ||
-    status.value === 'bridge_unavailable',
-  error: status.value === 'error' || status.value === 'trial_expired' || status.value === 'trial_exhausted',
-}))
+const statusTone = computed<'default' | 'muted' | 'error'>(() => {
+  if (status.value === 'unconfigured' || status.value === 'signed_out' || status.value === 'loading' || status.value === 'bridge_unavailable') {
+    return 'muted'
+  }
+  if (status.value === 'error' || status.value === 'trial_expired' || status.value === 'trial_exhausted') {
+    return 'error'
+  }
+  return 'default'
+})
 
 const statusLabel = computed(() => {
   if (status.value === 'active') {
@@ -333,8 +329,6 @@ function purchase() {
   --billing-spacing-md: var(--sg-space-0d75rem);
   --billing-spacing-lg: var(--sg-space-1rem);
   --billing-title-font-size: var(--sg-font-size-0d95rem);
-  --billing-muted-bg: color-mix(in srgb, var(--sg-color-text-muted) 16%, transparent);
-  --billing-error-bg: color-mix(in srgb, var(--sg-color-danger) 8%, transparent);
   display: flex;
   flex-direction: column;
   gap: var(--sg-space-0d8rem);
@@ -374,27 +368,6 @@ function purchase() {
   color: var(--sg-color-text);
   font-size: var(--billing-title-font-size);
   line-height: var(--sg-line-height-1d2);
-}
-
-.billing-status-pill {
-  flex: 0 0 auto;
-  padding: var(--sg-space-0d3rem-0d55rem);
-  border-radius: var(--sg-radius-pill);
-  background: color-mix(in srgb, var(--sg-color-action) 12%, var(--sg-color-surface-raised) 88%);
-  color: var(--sg-color-action);
-  font-size: var(--sg-font-size-0d8rem);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.billing-status-pill.muted {
-  background: var(--billing-muted-bg);
-  color: var(--sg-color-text-muted);
-}
-
-.billing-status-pill.error {
-  background: var(--billing-error-bg);
-  color: var(--sg-color-danger-text);
 }
 
 .billing-copy {
@@ -455,7 +428,7 @@ function purchase() {
   margin-top: var(--billing-spacing-md);
   overflow: hidden;
   border-radius: var(--sg-radius-pill);
-  background: var(--billing-muted-bg);
+  background: color-mix(in srgb, var(--sg-color-text-muted) 16%, transparent);
 }
 
 .billing-progress span {
