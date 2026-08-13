@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { withDefaults, defineProps, defineEmits } from 'vue'
 import Button from 'primevue/button'
 
 const props = withDefaults(
