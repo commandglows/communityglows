@@ -130,8 +130,8 @@ importers:
         specifier: ^0.1.438
         version: 0.1.438
       commander:
-        specifier: ^13.1.0
-        version: 13.1.0
+        specifier: ^15.0.0
+        version: 15.0.0
       concurrently:
         specifier: ^10.0.4
         version: 10.0.4
@@ -3799,9 +3799,9 @@ packages:
     engines: {node: '>=18'}
     dev: true
 
-  /commander@13.1.0:
-    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
-    engines: {node: '>=18'}
+  /commander@15.0.0:
+    resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
+    engines: {node: '>=22.12.0'}
     dev: true
 
   /commander@2.20.3:

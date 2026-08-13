@@ -40,7 +40,7 @@
     "autoprefixer": "^10.5.4",
     "chalk": "^5.6.2",
     "chrome-types": "^0.1.438",
-    "commander": "^13.1.0",
+    "commander": "^15.0.0",
     "concurrently": "^10.0.4",
     "convex-test": "^0.0.55",
     "cross-env": "^10.1.0",
