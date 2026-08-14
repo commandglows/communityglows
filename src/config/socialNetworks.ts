@@ -141,6 +141,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/cinderreels',
     url: 'https://cinderreels.com/',
     icon: 'pi pi-camera',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#E11D48',
     tileColor: '#E11D48',
     onboarding: true,
@@ -206,6 +207,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/theresanaiforthat',
     url: 'https://theresanaiforthat.com',
     icon: 'pi pi-sparkles',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#111827',
     tileColor: '#111827',
     onboarding: true,
@@ -217,6 +219,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/industrysocial',
     url: 'https://industrysocial.net',
     icon: 'pi pi-building',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#2563EB',
     tileColor: '#2563EB',
     onboarding: true,
@@ -316,6 +319,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/folloverse',
     url: 'https://folloverse.com/?ref=betalist',
     icon: 'pi pi-users',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#7C3AED',
     tileColor: '#7C3AED',
     onboarding: true,
@@ -327,6 +331,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/industrysocial-waitlist',
     url: 'https://industrysocial.net/waitlist',
     icon: 'pi pi-bookmark',
+    // CommunityGlows-owned presentation fallback for the Industry Social waitlist entry.
     color: '#1D4ED8',
     tileColor: '#1D4ED8',
     onboarding: true,
@@ -338,6 +343,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/koru',
     url: 'https://koru.now',
     icon: 'pi pi-link',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#16A34A',
     tileColor: '#16A34A',
     onboarding: true,
@@ -381,6 +387,7 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     route: '/luma',
     url: 'https://luma.com',
     icon: 'pi pi-calendar',
+    // CommunityGlows-owned presentation fallback; no official brand-color source is recorded.
     color: '#7C3AED',
     tileColor: '#7C3AED',
     onboarding: true,

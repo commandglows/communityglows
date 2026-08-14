@@ -1,0 +1,70 @@
+{
+  "rules": [
+    {
+      "classification": "brand-data",
+      "paths": [
+        "src/config/socialNetworks.ts"
+      ],
+      "kinds": [
+        "hardcoded color"
+      ],
+      "pattern": "#[0-9A-Fa-f]{6,8}",
+      "reason": "Third-party and product-catalogue network identity colors are metadata, not CommunityGlows semantic UI palette values."
+    },
+    {
+      "classification": "accepted-exception",
+      "paths": [
+        "src/stores/socialNetworks.ts"
+      ],
+      "kinds": [
+        "hardcoded JS/RN/Flutter style value"
+      ],
+      "pattern": "FACEBOOK_AUTH_WINDOW_FEATURES = 'width=600,height=600,scrollbars=yes'",
+      "reason": "The dimensions are part of the browser popup feature-string protocol rather than rendered component styling."
+    },
+    {
+      "classification": "accepted-exception",
+      "paths": [
+        "site/src/styles/global.css"
+      ],
+      "kinds": [
+        "hardcoded CSS dimension"
+      ],
+      "pattern": "@media \\(min-width: 64rem\\)",
+      "reason": "CSS custom properties cannot be consumed in media-query conditions; this named site layout boundary is kept as a documented parser-level exception."
+    },
+    {
+      "classification": "brand-data",
+      "paths": [
+        "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
+      ],
+      "kinds": [
+        "hardcoded color"
+      ],
+      "pattern": "NetworkInfo\\(.*Color\\.parseColor\\(\"#[0-9A-Fa-f]{6,8}\"\\)",
+      "reason": "The native network registry mirrors catalogue identity colors used to distinguish third-party networks; these are metadata, not the CommunityGlows semantic palette."
+    },
+    {
+      "classification": "accepted-exception",
+      "paths": [
+        "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
+      ],
+      "kinds": [
+        "hardcoded CSS dimension"
+      ],
+      "pattern": "min-height: 100vh",
+      "reason": "The inline blocked-page document must fill its isolated WebView viewport; 100vh is a browser viewport contract while all authored component dimensions remain tokenized."
+    },
+    {
+      "classification": "accepted-exception",
+      "paths": [
+        "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
+      ],
+      "kinds": [
+        "hardcoded color"
+      ],
+      "pattern": "bg\\.setColor\\(Color\\.rgb\\(r, g, b\\)\\)",
+      "reason": "This call materializes a runtime RGB blend derived from a catalogue brand color, tokenized surface color, and tokenized blend fraction; it contains no raw palette literal."
+    }
+  ]
+}

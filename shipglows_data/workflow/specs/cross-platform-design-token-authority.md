@@ -385,6 +385,21 @@ This delta supersedes only the ownership and occurrence dispositions below. The 
 - `Layout.astro` retains `rootMargin: '-50px'` only as a named IntersectionObserver protocol exception with reveal-threshold and reduced-motion proof. The Lenis `duration: 1.2`, numeric easing expression and observer `threshold: 0.1` are invisible to the current scanner; classify them occurrence by occurrence as canonical motion consumption or a documented library/browser protocol contract before Batch B can claim zero drift.
 - The Android supplemental set is closed at 35 authored findings: 34 `NetworkInfo` color literals in `NativeWebViewPlugin.kt` are data-brand candidates requiring per-network registry confirmation, while the generated `communityglows_component_network_button_size` resolves to `36dp`. The latter is a product-owned target-size blocker below the contract's 44dp primary mobile target baseline; R0 must provide a compliant semantic component-size role and Batch C must prove the rendered hit target. Generated day/night XML remains output-only.
 
+### Network-Color Provenance Disposition — 2026-08-14
+
+Repository evidence supports treating the registry colors as network-owned display data, not CommunityGlows semantic palette roles. It does not establish an official external brand source for every entry. The ambiguous entries below are therefore explicitly classified as CommunityGlows-owned presentation fallbacks; this classification makes no official-brand claim and does not change their resolved values.
+
+| Registry entry | Disposition | Evidence boundary |
+| --- | --- | --- |
+| `cinderreels` | product-data presentation fallback | The repository establishes the network URL and Android session-isolation contract, but records no official color source. |
+| `theresanaiforthat` | product-data presentation fallback | The repository establishes the catalogue entry and consumer label only; no official color source is recorded. |
+| `industrysocial` and `industrysocial-waitlist` | product-data presentation fallbacks | Both entries are catalogue destinations with independently assigned display colors; no official color source is recorded. |
+| `folloverse` | product-data presentation fallback | The repository establishes the catalogue destination only; no official color source is recorded. |
+| `koru` | product-data presentation fallback | The repository establishes the catalogue destination only; no official color source is recorded. |
+| `luma` | product-data presentation fallback | The repository establishes the catalogue destination only; no official color source is recorded. |
+
+These literals remain permitted only inside the network registry and its generated/native data projection. Product surfaces must consume them as network identity metadata and must not reuse them for actions, status, focus, surfaces, text or other semantic UI roles. Official provenance can replace a fallback classification later only with a recorded primary source; it does not require turning the value into a product design token.
+
 ### Occurrence-Level Disposition Ledger
 
 | Target and exact lines | Count | Initial disposition | Required action/proof |
@@ -630,7 +645,7 @@ Every other product-owned visual literal — color, gradient, opacity, spacing, 
 
 ## Test Contract
 
-- Surface: Windows/Tauri application, Astro/Tailwind public site, Android native SocialGlowz chrome, and the canonical generator/CI path.
+- Surface: Windows/Tauri application, Astro/Tailwind public site, Android native CommunityGlows chrome, and the canonical generator/CI path.
 - Proof profile: site-led cross-platform visual convergence, accessibility preservation and deterministic build output.
 - Proof order: source/schema validation -> generator unit tests -> idempotence/stale-output checks -> resolved-value comparisons -> platform builds -> automated accessibility checks -> representative visual/manual scenarios.
 - Checklist path: create bounded evidence under `shipglows_data/workflow/test-checklists/cross-platform-design-token-authority/` during implementation; do not store generated screenshots in the spec.
@@ -786,6 +801,7 @@ None. The site-led direction, source format, platform footprint, dark-reference/
 | 2026-08-13 22:59:23 UTC | 101-sg-ready | GPT-5 Codex | Re-reviewed the post-audit delta for autonomous execution, exact-value preservation, corrected batch ownership, orphan stop gates, closed site inventory, Android accessibility recovery, security proportionality and proof traceability. | ready | Execute R0 only; freeze the authority and occurrence ledger before opening the shared-component ownership gate or any A1/A2/A3/B/C consumer write. |
 | 2026-08-13 23:01:40 UTC | 006-sg-design | GPT-5 Codex | Added the audited R0 semantic roles for legacy select padding, dropdown and site layers, dialog viewport widths, blog underline offset, and separate Android 44dp target/36dp glyph sizing; regenerated every carrier and proved validation, freshness and idempotence. | implemented | Freeze these authority inputs and complete the occurrence-classification gate before opening consumer batches. |
 | 2026-08-13 23:13:36 UTC | 006-sg-design | GPT-5 Codex | Integrated R0 and consumer batches, corrected the Android active-state animation to scale the 36dp visual child rather than the 44dp hit-target wrapper, and passed token validation/generation/freshness/idempotence, 154 tests, core typecheck, lint with pre-existing warnings only, Chrome/Firefox/Tauri/site builds and drift inventories. Full scan retains 53 classified data-brand colors plus one popup protocol string; site scan retains only the 64rem media-query syntax exception. | implemented-pending-proof | Collect post-unification browser/Tauri visual and interaction evidence plus Android compile and day/night device evidence before verification or closure. |
+| 2026-08-13 23:44:40 UTC | 006-sg-design | GPT-5 Codex | Classified the ambiguous network colors from repository evidence without changing values: CinderReels, There's An AI For That, Industry Social, Folloverse, Koru and Luma are product-data presentation fallbacks, not verified official brand colors or semantic product tokens; harmonized the active Android test-surface name to CommunityGlows while preserving historical evidence. | documented | Keep loader primitives available; finish scanner exception reporting and rendered browser/Tauri plus Android compile/device proof. |
 
 ## Current Chantier Flow
 

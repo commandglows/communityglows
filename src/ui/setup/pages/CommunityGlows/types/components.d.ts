@@ -34,7 +34,6 @@ declare module 'vue' {
     KeyboardShortcuts: typeof import('./../components/KeyboardShortcuts.vue')['default']
     LinkedInView: typeof import('./../components/networks/LinkedInView.vue')['default']
     LoadingSpinner: typeof import('./../../../../../components/state/LoadingSpinner.vue')['default']
-    LocaleSwitch: typeof import('./../../../../../components/LocaleSwitch.vue')['default']
     MobileLayout: typeof import('./../components/MobileLayout.vue')['default']
     MobileProfileSheet: typeof import('./../components/MobileProfileSheet.vue')['default']
     MobileSettingsSheet: typeof import('./../components/MobileSettingsSheet.vue')['default']
