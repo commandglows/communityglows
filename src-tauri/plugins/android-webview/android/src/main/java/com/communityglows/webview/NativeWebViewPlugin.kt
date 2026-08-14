@@ -518,11 +518,21 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
     private fun TextView.setTokenTextSize(resourceId: Int) {
         setTextSize(TypedValue.COMPLEX_UNIT_PX, tokenDimensionPixels(resourceId))
     }
-    private fun tokenMediumTypeface(): Typeface = Typeface.create(
-        tokenString(R.string.communityglows_type_family_medium),
-        tokenInteger(R.integer.communityglows_type_weight_medium),
-        false,
-    )
+    private fun tokenMediumTypeface(): Typeface {
+        val family = Typeface.create(
+            tokenString(R.string.communityglows_type_family_medium),
+            Typeface.NORMAL,
+        )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Typeface.create(
+                family,
+                tokenInteger(R.integer.communityglows_type_weight_medium),
+                false,
+            )
+        } else {
+            family
+        }
+    }
     private fun tokenCssColor(resourceId: Int): String =
         String.format("#%06X", tokenColor(resourceId) and 0xFFFFFF)
 

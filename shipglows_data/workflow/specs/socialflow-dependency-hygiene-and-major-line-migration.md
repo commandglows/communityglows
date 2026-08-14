@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.4"
+artifact_version: "1.0.5"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
 updated: "2026-08-14"
-updated_at: "2026-08-14 22:07:37 UTC"
+updated_at: "2026-08-14 23:07:27 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -614,7 +614,8 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 09:26:00 | 002-sg-maintain | GPT-5.6 | Resolved the four active GitHub alerts with targeted compatible lock updates, added `/site` Dependabot coverage, parsed both lock formats and configuration, and ran root/site audits | implemented pending integration verification: the four alert floors are satisfied; audits expose newer unrelated findings, including `nanoid <3.3.18`, that remain outside this bounded slice | Run integration verification; scope a separate dependency pass for the newly reported audit families |
 | 2026-08-14 10:28:33 | 002-sg-maintain | GPT-5.6 | Applied the approved Astro 7 replacement scope using official Astro 7 guidance, npm package metadata, and a date-bounded lock resolution | implemented, no-ship: Astro `^7.2.0` builds 21 static pages with the secure required transitive floors; both site audits now report only the deliberately held `nanoid@3.3.17` advisory | After 2026-08-14 18:41:05 Europe/Paris, resolve Nano ID 3.3.18, rerun audits/build, then verify for ship |
 | 2026-08-14 21:52:20 | 002-sg-maintain | GPT-5.6 | Finalized the approved site dependency remediation after the supply-chain deadline with a targeted lockfile-only Nano ID update | ship-ready locally: `nanoid@3.3.18`, frozen install, production and full site audits at zero vulnerabilities, and the 21-page Astro build pass; hosted alert closure remains unverified until push | Hand off the bounded approved file set for ship and hosted CI/Dependabot verification |
-| 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates and root production/site full audits passed, with Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh verified after the matching push | Verify the matching hosted checks, deployments, artifacts, release asset, and alert state |
+| 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates, root production/site full audits, Quality Checks, Vercel Production, and public smoke passed; Android debug failed during Kotlin compilation, so Windows was not dispatched and the Dependabot refresh remained unverified | Repair the Android Kotlin regression, rerun Android, then validate Windows and the hosted alert state |
+| 2026-08-14 23:07:27 | 106-sg-fix | GPT-5.6 | Diagnosed the hosted Android compile regression and implemented an API-compatible typeface fallback for the plugin's API 24 floor | fix attempted locally; focused source assertions and `git diff --check` pass, while authoritative Android proof requires a new hosted workflow run on the repair commit | Ship the bounded repair, then rerun Android on the repair commit before dispatching Windows |
 
 # Current Chantier Flow
 
@@ -625,6 +626,6 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | sf-start | implemented, ship-ready slice | The approved replacement slice migrates the site to Astro `^7.2.0`, resolves the required secure Vite/esbuild/Sharp/devalue/SVGO/js-yaml/PostCSS floors, advances `nanoid` to `3.3.18` after the mandated date boundary, and adds `/site` Dependabot coverage. Frozen install, both site audits, and the 21-page production build pass. |
 | sf-verify | bounded slice verified locally | The Dependabot/Astro slice has proportional local proof and is ready for bounded ship. The broader staged migration chantier retains its previously documented native/device and compatibility proof gaps outside this slice. |
 | sf-end | not launched | Use after verified task completion if not shipping immediately. |
-| sf-ship | shipped, hosted release proof pending | The approved all-dirty commit is published directly to `master` without force; matching Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh are the remaining hosted proof gates. |
+| sf-ship | shipped, native repair pending | The approved all-dirty commit is published directly to `master` without force. Quality Checks, Vercel Production, and public smoke passed; Android debug failed in Kotlin compilation, Windows was not dispatched, and the Dependabot refresh was not yet observed. |
 
-Next command: verify the matching hosted CI, production deployment, public smoke, native artifacts, Windows prerelease asset, and final GitHub Dependabot alert state.
+Next command: ship the bounded Android typeface repair, rerun Android debug, then validate the Windows prerelease asset and final GitHub Dependabot alert state.
