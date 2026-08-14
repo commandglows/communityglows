@@ -99,6 +99,8 @@
     "isReactive": true,
     "isReadonly": true,
     "isRef": true,
+    "isTrialRestartAllowed": true,
+    "isTrustedStripeCheckoutUrl": true,
     "makeDestructurable": true,
     "mapActions": true,
     "mapGetters": true,

@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.0.4"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
-updated: "2026-04-30"
-updated_at: "2026-04-30 16:20:48 UTC"
+updated: "2026-08-14"
+updated_at: "2026-08-14 22:07:37 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -19,6 +19,7 @@ security_impact: "yes"
 docs_impact: "yes"
 linked_systems:
   - "pnpm dependency graph"
+  - "Astro site npm dependency graph"
   - "Vite build configs"
   - "PrimeVue UI theme/runtime"
   - "Tailwind/PostCSS styling pipeline"
@@ -103,6 +104,8 @@ evidence:
   - "sf-ready 2026-04-30 found the draft not ready because `pnpm tauri:build` is only a Vite build, release RustSec coverage was ambiguous, fresh-docs coverage was partial, and Convex/Auth security checks were underspecified."
   - "package.json defines `tauri:build` as `vite build -c vite.tauri.config.ts`; native desktop packaging requires `pnpm exec tauri build` or the existing `tauri:bundle` script."
   - "Current Vite 8 and ESLint 10 docs require Node 20.19+; `.nvmrc` currently says `20` and must be treated as a Node-major pin, not proof of the patch-level floor."
+  - "Dependabot reported four open npm alerts on 2026-08-14: `js-yaml` in the root and site lockfiles, plus `nanoid` and `postcss` in the site lockfile."
+  - "The site uses an independent npm lockfile and was not covered by the existing `/` npm entry in `.github/dependabot.yml`."
 next_step: "/102-sg-start SocialGlowz Dependency Hygiene and Major-Line Migration"
 ---
 
@@ -573,6 +576,20 @@ Fresh-docs stop conditions:
 - Stop if native packaging cannot be validated after build tooling changes; do not treat `tauri:build` alone as release proof.
 - Stop if a Convex/Auth package update changes JWT, refresh-token, anonymous sign-in, password-provider, or authorization semantics beyond this spec's checks.
 
+## 2026-08-14 Dependabot Security Patch Slice
+
+This bounded slice extends the dependency hygiene chantier to the independent Astro site package graph. The approved replacement scope permits exactly one direct manifest migration, `astro` from `^6.1.6` to `^7.2.0`, plus compatible lockfile security updates. It does not add dependencies, overrides, or application behavior changes.
+
+- Root lockfile: resolve `js-yaml` from `4.3.0` to at least `4.3.1` for the ESLint and Vue i18n tooling paths.
+- Site lockfile: resolve `js-yaml` from `4.1.1` to at least `4.3.1`, `postcss` from `8.5.14` to at least `8.5.23`, and its `nanoid` dependency from `3.3.11` to at least `3.3.16`.
+- Astro migration: set the site manifest to exactly `^7.2.0` and resolve Vite `>=8.0.16`, esbuild `>=0.28.1`, Sharp `>=0.35.0`, devalue `>=5.8.1`, and SVGO `>=4.0.2` without changing any other direct dependency.
+- Fresh docs: the official Astro 7 upgrade guide states that Astro 7 adopts Vite 8 and that most sites require no source change unless they depend on Vite internals; the official Astro 7 release notes document the Rust compiler and Rolldown-based Vite 8 pipeline. npm metadata confirms Astro 7.2.0 requires Node `>=22.12.0`, compatible with this repository's Node 24 floor.
+- Resolution boundary: the initial npm resolution used the official `--before=2026-08-07T16:41:04Z` selection so `nanoid@3.3.18`, published one second after that boundary, could not enter before the operator-approved release-age deadline. After that deadline, a targeted lockfile-only npm update resolves `nanoid@3.3.18` without adding a direct dependency or override.
+- Dependabot: add a weekly npm entry for `/site`, grouped to minor and patch version updates consistently with the root policy.
+- Documentation: record the exact advisory paths, bounded remediation, audit results, and remaining unrelated audit findings in the dependency risk register.
+- Proof: exact manifest/lockfile versions, root and site audits, clean npm install, Astro production build, YAML/JSON parsing, and `git diff --check`.
+- Stop: do not modify the root or any other package manifest, add an override, or edit source/config outside the approved write-set. Do not claim GitHub alert closure until the bounded changes are pushed and GitHub confirms the hosted state.
+
 # Open Questions
 
 None blocking for spec readiness. This spec assumes the project remains private/proprietary, keeps Node 20, and prioritizes staged dependency safety over fastest possible latest-version adoption.
@@ -593,6 +610,11 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-05-30 21:38:22 | sf-start | GPT-5 Codex | Completed Stage 11/12 implementation slices: PrimeVue 4 + Tailwind 4 migration changes in `src/ui/setup/pages/SocialGlowz/main.ts`, `package.json`, `pnpm-lock.yaml`, `postcss.config.cjs`, `src/assets/base.scss`, `vite.config.ts`, and `vite.tauri.config.ts` | partial: `typecheck`, `lint:check`, `test:once`, `build:chrome`, `build:firefox`, `tauri:build`, and `lint:manifest` pass; `corepack pnpm build:web` is not defined; existing Sass `@import` deprecation warnings remain from `src/assets/base.scss` | /sf-verify SocialGlowz Dependency Hygiene and Major-Line Migration |
 | 2026-05-30 20:44:16 | sf-verify | GPT-5 Codex | Verified the Stage 11/12 PrimeVue 4 + Tailwind 4 migration slice with fresh Tailwind docs, frozen install, typecheck, lint, tests, Chrome/Firefox/Tauri frontend builds, manifest lint, and targeted diff inspection | partial: compile/build proof passes, but global ship-readiness is blocked by open high bugs, missing native/device proof, Sass/Tailwind v4 compatibility debt in `src/assets/base.scss`, `web-ext` warnings, and unrelated dirty billing/site/tracker changes | Fix or explicitly defer the proof gaps, then continue next isolated migration stage |
 | 2026-08-08 | 002-sg-maintain | GPT-5.6 | Triaged Dependabot updates: separated low-scope Rust and Actions updates from an unsafe 43-package npm batch, updated stale PR branches after the CI lockfile repair, and constrained npm grouping to minor/patch updates | in progress: PR #1 and PR #2 are awaiting refreshed CI; PR #4 was closed because it combined independent major migrations | Review refreshed CI, then merge only the proven low-scope updates |
+| 2026-08-14 09:22:00 | 002-sg-maintain | GPT-5.6 | Started the approved four-alert npm security patch slice, extended scope to the independent Astro site lockfile, and preserved a lock-only/no-override boundary | implementation in progress; targeted audits and lockfile/config validation required | Complete focused validation, then hand off for integration verification |
+| 2026-08-14 09:26:00 | 002-sg-maintain | GPT-5.6 | Resolved the four active GitHub alerts with targeted compatible lock updates, added `/site` Dependabot coverage, parsed both lock formats and configuration, and ran root/site audits | implemented pending integration verification: the four alert floors are satisfied; audits expose newer unrelated findings, including `nanoid <3.3.18`, that remain outside this bounded slice | Run integration verification; scope a separate dependency pass for the newly reported audit families |
+| 2026-08-14 10:28:33 | 002-sg-maintain | GPT-5.6 | Applied the approved Astro 7 replacement scope using official Astro 7 guidance, npm package metadata, and a date-bounded lock resolution | implemented, no-ship: Astro `^7.2.0` builds 21 static pages with the secure required transitive floors; both site audits now report only the deliberately held `nanoid@3.3.17` advisory | After 2026-08-14 18:41:05 Europe/Paris, resolve Nano ID 3.3.18, rerun audits/build, then verify for ship |
+| 2026-08-14 21:52:20 | 002-sg-maintain | GPT-5.6 | Finalized the approved site dependency remediation after the supply-chain deadline with a targeted lockfile-only Nano ID update | ship-ready locally: `nanoid@3.3.18`, frozen install, production and full site audits at zero vulnerabilities, and the 21-page Astro build pass; hosted alert closure remains unverified until push | Hand off the bounded approved file set for ship and hosted CI/Dependabot verification |
+| 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates and root production/site full audits passed, with Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh verified after the matching push | Verify the matching hosted checks, deployments, artifacts, release asset, and alert state |
 
 # Current Chantier Flow
 
@@ -600,9 +622,9 @@ None blocking for spec readiness. This spec assumes the project remains private/
 |------|--------|-------|
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
-| sf-start | partial | Stage 11/12 migration work executed in this pass (PrimeVue and Tailwind v4 migration steps, `@tailwindcss/vite`, package/config updates). Remaining migration stages remain blocked until `sf-verify` runs and completes. Dependabot major updates stay isolated; grouped npm updates are limited to minor and patch releases. |
-| sf-verify | partial | Stage 11/12 compile/build proof passes, but release readiness remains partial due open high bugs, native/device proof gap, Sass/Tailwind compatibility debt, manifest warnings, and unrelated dirty worktree changes. |
+| sf-start | implemented, ship-ready slice | The approved replacement slice migrates the site to Astro `^7.2.0`, resolves the required secure Vite/esbuild/Sharp/devalue/SVGO/js-yaml/PostCSS floors, advances `nanoid` to `3.3.18` after the mandated date boundary, and adds `/site` Dependabot coverage. Frozen install, both site audits, and the 21-page production build pass. |
+| sf-verify | bounded slice verified locally | The Dependabot/Astro slice has proportional local proof and is ready for bounded ship. The broader staged migration chantier retains its previously documented native/device and compatibility proof gaps outside this slice. |
 | sf-end | not launched | Use after verified task completion if not shipping immediately. |
-| sf-ship | not launched | Use only after checks and release decision. |
+| sf-ship | shipped, hosted release proof pending | The approved all-dirty commit is published directly to `master` without force; matching Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh are the remaining hosted proof gates. |
 
-Next command: fix or explicitly defer the Stage 11/12 proof gaps, then continue the next isolated migration stage.
+Next command: verify the matching hosted CI, production deployment, public smoke, native artifacts, Windows prerelease asset, and final GitHub Dependabot alert state.

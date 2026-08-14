@@ -1,10 +1,10 @@
 ---
 artifact: dependency_risk_register
 metadata_schema_version: "1.0"
-artifact_version: "1.0.2"
+artifact_version: "1.0.5"
 project: communityglows
 created: "2026-04-30"
-updated: "2026-08-04"
+updated: "2026-08-14"
 status: active
 source_skill: 102-sg-start
 scope: dependency-risk
@@ -21,6 +21,7 @@ supersedes: []
 evidence:
   - "Dependency hygiene and native RustSec migration specs define the accepted risk policy."
   - "Register entries document affected dependency paths, reachability, decision, and removal criteria."
+  - "The 2026-08-14 Dependabot pass records four npm alerts across the root pnpm lockfile and independent Astro site npm lockfile."
 next_review: "2026-09-03"
 next_step: "/103-sg-verify sg-extension-deps-audit-fixes"
 ---
@@ -28,6 +29,39 @@ next_step: "/103-sg-verify sg-extension-deps-audit-fixes"
 # Dependency Risk Register
 
 This register records dependency risks that are accepted, blocked, or still under staged migration review. Do not use a transitive major override to quiet an advisory unless the direct package officially supports that dependency major and the affected build surface passes.
+
+## 2026-08-14 Dependabot Security Patch
+
+The active alert set contains four GitHub alerts but three vulnerable package/version paths. The root remediation is lock-only. The independent site graph additionally moves its existing Astro dependency from `^6.1.6` to the approved `^7.2.0` line so current secure transitive floors can resolve without overrides.
+
+| Alert | Affected path | Previous lock | Patched lock | Reachability | Decision |
+| --- | --- | --- | --- | --- | --- |
+| `GHSA-5p4m-2wfm-xmqj` / root | ESLint and Vue i18n tooling -> `js-yaml` | `4.3.0` | `4.3.1` | Development/tooling | Resolve the existing compatible transitive patch in `pnpm-lock.yaml`; no direct dependency or override. |
+| `GHSA-5p4m-2wfm-xmqj` / site | Astro and `@astrojs/markdown-remark` -> `js-yaml` | `4.1.1` | `4.3.1` | Site build/runtime graph | Resolve the compatible transitive patch in `site/package-lock.json`. |
+| `GHSA-fxqj-rqcc-2cmp` | Site Vite -> `postcss` | `8.5.14` | `8.5.26` | Site build/runtime graph | Resolve the compatible PostCSS patch without changing Vite or Tailwind. |
+| `GHSA-28wg-ghj8-5hjv` | Site PostCSS -> `nanoid` | `3.3.11` | `3.3.18` | Site build/runtime graph | Resolve the compatible Nano ID patch through the updated PostCSS lock entry, with the final patch admitted only after the seven-day release-age boundary. |
+
+Dependabot coverage now includes a separate weekly npm entry for `/site`, using the same minor/patch grouping boundary as the root package graph. This prevents the independent npm lockfile from depending on root-only version update coverage.
+
+Required proof before integration verification:
+
+- exact lockfile versions remain at or above the GitHub patched floors;
+- `pnpm audit` and `npm audit --prefix site` are recorded without misrepresenting unrelated findings as part of this slice;
+- `pnpm-lock.yaml`, `site/package-lock.json`, and `.github/dependabot.yml` parse successfully;
+- the diff contains no package manifest change except the approved site Astro range, no override, and no unrelated direct dependency change;
+- `git diff --check` passes.
+
+Current targeted validation and fresh-docs verdict:
+
+- The official Astro 7 upgrade guide and Astro 7 release notes confirm the Vite 8 migration, Rust compiler, and general expectation that sites without Vite-internal integrations usually need no source change. npm metadata for Astro 7.2.0 requires Node `>=22.12.0`; the repository's Node 24 floor is compatible.
+- Date-bounded npm resolution initially used `--before=2026-08-07T16:41:04Z`. Package publication metadata confirms `nanoid@3.3.18` was published at `2026-08-07T16:41:05.696Z`; after the approved deadline, `npm update nanoid --prefix site --package-lock-only --ignore-scripts` moved only the existing transitive lock entry from `3.3.17` to `3.3.18`.
+- YAML/JSON parsing confirms root `js-yaml@4.3.1`, site Astro `7.2.0`, Vite `8.2.1`, nested esbuild `0.28.1`, Sharp `0.35.3`, devalue `5.9.0`, SVGO `4.0.2`, `js-yaml@4.3.1`, `postcss@8.5.26`, `nanoid@3.3.18`, and a distinct `/site` Dependabot npm entry.
+- `pnpm audit --prod --audit-level=low` passes with no known production vulnerabilities.
+- Full `pnpm audit --audit-level=low` no longer reports `js-yaml`; it remains non-zero for two new `image-size@2.0.2` advisories in the dev-only `web-ext -> addons-linter` path. Those advisories have no published patched version and are outside this four-alert slice.
+- Both `npm audit --prefix site --omit=dev --audit-level=low` and the full site audit report zero vulnerabilities after resolving `nanoid@3.3.18`. The prior Astro, devalue, esbuild, Sharp, SVGO, Vite, js-yaml, PostCSS, and Nano ID findings no longer appear locally.
+- `npm ci --prefix site` succeeds. `npm run build --prefix site` builds all 21 static pages; Lightning CSS emits a non-fatal pre-existing `Unknown at rule: @theme` warning that remains visible for integration review.
+- The repository's seven-day minimum release age prevented resolving `nanoid@3.3.18` before 2026-08-14 18:41:05 Europe/Paris. The final resolution occurred after that boundary without relaxing the policy.
+- The bounded dependency slice is ship-ready locally. GitHub alert closure is not claimed until push, hosted CI, and the GitHub Dependabot state are verified.
 
 ## Accepted And Tracked Risks
 
@@ -38,6 +72,7 @@ This register records dependency risks that are accepted, blocked, or still unde
 | DEP-RISK-003 | tracked upstream license review | `web-ext@10.1.0 -> update-notifier@7.3.1 -> configstore@7.0.0 -> atomically@2.0.3 -> stubborn-fs@1.2.5` | Dev/build only | Keep as a dev-tooling transitive license-review item while `web-ext` remains required for Firefox manifest linting | `pnpm why atomically` and `pnpm why stubborn-fs` resolve only through `web-ext` update notification tooling | Close if upstream changes dependency path or license metadata is confirmed acceptable for dev-only tooling | 2026-05-30 |
 | DEP-RISK-004 | accepted visible native risk | RustSec warning set through Tauri Linux desktop stack and Tauri parser/codegen paths: GTK3 bindings, `glib`, `rand@0.7.3`, `proc-macro-error`, and `unic-*` crates | Native desktop release path; GTK/WebKitGTK warnings are Linux-specific, parser/codegen warnings remain lockfile-visible for all native scans | Keep `cargo-audit` as the executable gate, fix safe direct drift, and keep remaining warnings visible with advisory-level rationale; no transitive overrides, `.cargo/audit.toml`, `deny.toml`, `cargo-deny`, or suppression config in this stage | 2026-05-02 native pass moved direct `rand@0.8.5` to `0.8.6`; final local `cargo audit --json` reports 0 vulnerabilities, 17 unmaintained warnings, and 2 unsound warnings | Close after GTK/glib and parser warnings are removed by supported Tauri/Wry/GTK/parser updates with native packaging proof, or after a separate dependency-policy spec explicitly accepts suppression tooling | 2026-06-02 |
 | DEP-RISK-005 | mitigated with bounded override | `@convex-dev/auth@0.0.92 -> convex@1.39.1 -> ws@8.18.0` (upstream pin) | Runtime + dev (Convex client and tests) | Keep Convex line upgraded (`convex@1.39.1`, `@convex-dev/auth@0.0.92`, `convex-test@0.0.53`) and enforce `pnpm.overrides.ws=8.20.1` because Convex latest still pins vulnerable `ws@8.18.0` | `pnpm audit --prod --audit-level low` now returns no vulnerabilities; `pnpm why ws` resolves to `8.20.1` through Convex paths; extension builds, lint:manifest, tests, typecheck, and `pnpm tauri:build` pass on this lockfile | Remove override once Convex releases a line that no longer pins vulnerable `ws`, then re-run full dependency validation without override | 2026-06-09 |
+| DEP-RISK-006 | accepted upstream risk | `web-ext -> addons-linter -> image-size@2.0.2` | Dev/build only; Firefox extension lint tooling | Keep both current `image-size` advisories visible; no patched upstream version exists and no transitive override is introduced | The earlier full root `pnpm audit --audit-level=low` reported the two advisories only on this dev-tooling path; production audit remained clean | Upgrade normally when `addons-linter`/`web-ext` provides a patched path, then rerun Firefox build and manifest lint | 2026-09-03 |
 
 ## Native RustSec Warning Migration Evidence
 
