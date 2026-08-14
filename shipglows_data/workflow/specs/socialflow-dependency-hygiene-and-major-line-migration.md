@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.5"
+artifact_version: "1.0.6"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
 updated: "2026-08-14"
-updated_at: "2026-08-14 23:07:27 UTC"
+updated_at: "2026-08-14 23:56:25 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -106,7 +106,7 @@ evidence:
   - "Current Vite 8 and ESLint 10 docs require Node 20.19+; `.nvmrc` currently says `20` and must be treated as a Node-major pin, not proof of the patch-level floor."
   - "Dependabot reported four open npm alerts on 2026-08-14: `js-yaml` in the root and site lockfiles, plus `nanoid` and `postcss` in the site lockfile."
   - "The site uses an independent npm lockfile and was not covered by the existing `/` npm entry in `.github/dependabot.yml`."
-next_step: "/102-sg-start SocialGlowz Dependency Hygiene and Major-Line Migration"
+next_step: "Reconcile the four still-open GitHub Dependabot alerts with the secure root and site lockfile versions."
 ---
 
 # Title
@@ -616,6 +616,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 21:52:20 | 002-sg-maintain | GPT-5.6 | Finalized the approved site dependency remediation after the supply-chain deadline with a targeted lockfile-only Nano ID update | ship-ready locally: `nanoid@3.3.18`, frozen install, production and full site audits at zero vulnerabilities, and the 21-page Astro build pass; hosted alert closure remains unverified until push | Hand off the bounded approved file set for ship and hosted CI/Dependabot verification |
 | 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates, root production/site full audits, Quality Checks, Vercel Production, and public smoke passed; Android debug failed during Kotlin compilation, so Windows was not dispatched and the Dependabot refresh remained unverified | Repair the Android Kotlin regression, rerun Android, then validate Windows and the hosted alert state |
 | 2026-08-14 23:07:27 | 106-sg-fix | GPT-5.6 | Diagnosed the hosted Android compile regression and implemented an API-compatible typeface fallback for the plugin's API 24 floor | fix attempted locally; focused source assertions and `git diff --check` pass, while authoritative Android proof requires a new hosted workflow run on the repair commit | Ship the bounded repair, then rerun Android on the repair commit before dispatching Windows |
+| 2026-08-14 23:56:25 | 003-sg-bug | GPT-5.6 | Integrated hosted closure proof for the Android regression and downstream release validation on repair commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3` | Android run `31849662558` passed and produced APK artifact `9237188425`; Quality Checks `31849434511` and Vercel deployment `5914826317` passed; Windows recovery run `31851650177` passed after run `31850004094` hit HTTP 502, producing artifact `9237788156` and restoring `windows-latest`; the dependency chantier remains open because GitHub still reports four Dependabot alerts | Reconcile the four hosted Dependabot alerts with the already-secure lockfile versions before closing the dependency chantier |
 
 # Current Chantier Flow
 
@@ -624,8 +625,8 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
 | sf-start | implemented, ship-ready slice | The approved replacement slice migrates the site to Astro `^7.2.0`, resolves the required secure Vite/esbuild/Sharp/devalue/SVGO/js-yaml/PostCSS floors, advances `nanoid` to `3.3.18` after the mandated date boundary, and adds `/site` Dependabot coverage. Frozen install, both site audits, and the 21-page production build pass. |
-| sf-verify | bounded slice verified locally | The Dependabot/Astro slice has proportional local proof and is ready for bounded ship. The broader staged migration chantier retains its previously documented native/device and compatibility proof gaps outside this slice. |
-| sf-end | not launched | Use after verified task completion if not shipping immediately. |
-| sf-ship | shipped, native repair pending | The approved all-dirty commit is published directly to `master` without force. Quality Checks, Vercel Production, and public smoke passed; Android debug failed in Kotlin compilation, Windows was not dispatched, and the Dependabot refresh was not yet observed. |
+| sf-verify | hosted build proof passed, alert reconciliation pending | Quality Checks `31849434511`, Vercel Production deployment `5914826317`, Android run `31849662558`, and Windows recovery run `31851650177` passed on commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3`. GitHub still reports four open Dependabot alerts despite the secure lockfile versions, so the dependency chantier is not fully verified or closed. |
+| sf-end | not launched | Closure remains pending until the four hosted Dependabot alerts are reconciled without weakening the secure dependency state. |
+| sf-ship | shipped, hosted builds verified | Android artifact `9237188425` is 43,994,444 bytes. Windows artifact `9237788156` is 6,798,513 bytes; after the initial HTTP 502 publication failure in run `31850004094`, recovery run `31851650177` restored `windows-latest` to the matching commit with a 2,883,975-byte executable. |
 
-Next command: ship the bounded Android typeface repair, rerun Android debug, then validate the Windows prerelease asset and final GitHub Dependabot alert state.
+Next command: reconcile the four still-open GitHub Dependabot alerts with the already-secure root and site lockfile versions; do not close the dependency chantier until GitHub confirms the hosted alert state.
