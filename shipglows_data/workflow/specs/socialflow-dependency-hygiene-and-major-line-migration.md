@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.8"
+artifact_version: "1.0.9"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
 updated: "2026-08-15"
-updated_at: "2026-08-15 10:07:21 UTC"
+updated_at: "2026-08-15 12:18:05 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -106,7 +106,9 @@ evidence:
   - "Current Vite 8 and ESLint 10 docs require Node 20.19+; `.nvmrc` currently says `20` and must be treated as a Node-major pin, not proof of the patch-level floor."
   - "Dependabot reported four open npm alerts on 2026-08-14: `js-yaml` in the root and site lockfiles, plus `nanoid` and `postcss` in the site lockfile."
   - "The site uses an independent npm lockfile and was not covered by the existing `/` npm entry in `.github/dependabot.yml`."
-next_step: "Reconcile the four still-open GitHub Dependabot alerts with the secure root and site lockfile versions."
+  - "Dependabot PRs #17, #18, #19, #20, #22, and #21 were squash-merged in the approved order; final code SHA 0fb768ae13f454b101dd954fad360628d20e2fe4 passed Quality, Production, public smoke, and Android/Windows/Linux artifact proof."
+  - "GitHub reports zero open pull requests and zero open Dependabot alerts; alerts #3, #4, #6, #7, and #11 are fixed, #9 and #10 are dismissed as approved tolerable risks, and #1/#2 remain auto-dismissed upstream-only image-size advisories."
+next_step: "Monitor accepted upstream risks at their recorded review triggers; open a new bounded chantier for any future major migration."
 ---
 
 # Title
@@ -638,6 +640,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 23:56:25 | 003-sg-bug | GPT-5.6 | Integrated hosted closure proof for the Android regression and downstream release validation on repair commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3` | Android run `31849662558` passed and produced APK artifact `9237188425`; Quality Checks `31849434511` and Vercel deployment `5914826317` passed; Windows recovery run `31851650177` passed after run `31850004094` hit HTTP 502, producing artifact `9237788156` and restoring `windows-latest`; the dependency chantier remains open because GitHub still reports four Dependabot alerts | Reconcile the four hosted Dependabot alerts with the already-secure lockfile versions before closing the dependency chantier |
 | 2026-08-15 09:39:13 | 002-sg-maintain / 010-sg-technical deps | GPT-5.6 | Applied the approved final Rust alert slice with an isolated verified Rust 1.88.0 toolchain and precise Cargo resolution | locally verified: `serde_with@3.21.0`, locked metadata/check, structural closure diff, and cargo-audit exit 0 pass; `glib` and old build-time `rand` remain documented upstream-constrained candidates, and all three GitHub alerts remain untouched/open pending publication | Hand off the exact three-file boundary for ship and hosted alert reconciliation |
 | 2026-08-15 10:07:21 | 106-sg-fix | GPT-5.6 | Diagnosed Linux packaging run `31878404710` and limited pnpm's forced optional-package reselection to both Linux frontend install steps | fix attempted locally: workflow parsing, platform-command assertions, syntax checks, four-file boundary, and whitespace proof pass; hosted AppImage/deb proof remains pending | Ship the bounded workflow/docs repair, rerun the manual Linux workflow, then dismiss only the two approved tolerated alerts after packaging succeeds |
+| 2026-08-15 12:18:05 | 002-sg-maintain / 004-sg-release | GPT-5.6 | Completed the approved sequential Dependabot PR program #17, #18, #19, #20, #22, #21, including deterministic generated declarations and the Vite 8 native-binding CI repair | shipped and verified: final code SHA `0fb768ae13f454b101dd954fad360628d20e2fe4`; Quality `31883332373`, Vercel Production `5920170434`, public smoke, Android `31883479399`, Windows `31883713271`, and Linux `31883973654` all passed with non-empty artifacts; GitHub reports 0 open PRs and 0 open Dependabot alerts | Ship this documentary closure and verify its Quality/Production state |
 
 # Current Chantier Flow
 
@@ -645,9 +648,9 @@ None blocking for spec readiness. This spec assumes the project remains private/
 |------|--------|-------|
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
-| sf-start | Linux workflow fix attempted locally | The npm/Astro and Rust remediation slices are shipped. The Linux-only install fix now forces pnpm to reselect the runner's optional native package without changing the Windows job. |
-| sf-verify | partial, hosted Linux packaging pending | Quality Checks, Vercel, Android, and Windows passed on the shipped dependency commit. Linux run `31878404710` failed before packaging on the missing Tailwind Oxide native binding; local workflow/config proof covers the fix attempt, not the AppImage/deb result. |
-| sf-end | not launched | Closure remains pending on a successful hosted Linux AppImage/deb run and verified hosted dismissal of the approved `glib` and old build-time `rand` risks. The residual Anyhow warning stays tracked separately. |
-| sf-ship | partial, Linux repair not shipped | Android and Windows artifacts remain previously verified. The Rust dependency commit is shipped, but Linux native packaging is not yet proven and this bounded workflow/docs repair remains local. |
+| sf-start | done | All approved dependency PR slices are integrated through final code SHA `0fb768ae13f454b101dd954fad360628d20e2fe4`; Vite 8 CI installs force platform-native optional binding selection in Quality and Windows, matching the already-hardened Android/Linux paths. |
+| sf-verify | done | Quality `31883332373`, Vercel Production `5920170434`, and public `/`, `/download`, `/privacy` smoke passed. Android `31883479399`, Windows `31883713271`, and Linux `31883973654` passed with non-empty APK, MSI/NSIS, EXE, AppImage, and DEB evidence. |
+| sf-end | done | GitHub reports 0 open PRs and 0 open Dependabot alerts. Alerts `#3/#4/#6/#7/#11` are fixed, `#9/#10` retain the approved `tolerable_risk` classifications, and `#1/#2` remain auto-dismissed because no upstream fix exists. |
+| sf-ship | done | The implementation and native artifacts are shipped on `0fb768ae13f454b101dd954fad360628d20e2fe4`; this exact spec/register commit is the durable closure record, with its Quality/Production proof attached externally after push. |
 
-Next command: ship only the two Linux workflow edits plus this spec and the dependency risk register, rerun the manual Linux workflow, verify its AppImage/deb artifact, then apply the approved hosted dismissal of alerts `#9` and `#10`; do not close the chantier while Linux packaging or the hosted alert state remains unverified.
+Next command: ship only this spec and the dependency risk register, then verify the documentary SHA with Quality Checks, Vercel Production, public smoke, 0 open pull requests, and 0 open Dependabot alerts.

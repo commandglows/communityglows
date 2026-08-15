@@ -1,7 +1,7 @@
 ---
 artifact: dependency_risk_register
 metadata_schema_version: "1.0"
-artifact_version: "1.0.7"
+artifact_version: "1.0.8"
 project: communityglows
 created: "2026-04-30"
 updated: "2026-08-15"
@@ -22,9 +22,10 @@ evidence:
   - "Dependency hygiene and native RustSec migration specs define the accepted risk policy."
   - "Register entries document affected dependency paths, reachability, decision, and removal criteria."
   - "The 2026-08-14 Dependabot pass records four npm alerts across the root pnpm lockfile and independent Astro site npm lockfile."
-  - "The 2026-08-15 Rust pass resolves the eligible serde_with alert and records the glib and rand alerts as approved upstream-constrained tolerated risks pending hosted dismissal."
+  - "The 2026-08-15 Rust pass resolved serde_with alert #11; GitHub records glib #9 and rand #10 as dismissed with the operator-approved tolerable-risk rationales."
+  - "The 2026-08-15 Dependabot PR program merged #17, #18, #19, #20, #22, and #21 and proved final code SHA 0fb768ae13f454b101dd954fad360628d20e2fe4 across Quality, Production, Android, Windows, and Linux."
 next_review: "2026-09-03"
-next_step: "/103-sg-verify sg-extension-deps-audit-fixes"
+next_step: "Review accepted upstream risks on trigger or by 2026-09-03; no current hosted alert is open."
 ---
 
 # Dependency Risk Register
@@ -66,22 +67,33 @@ Current targeted validation and fresh-docs verdict:
 
 ## 2026-08-15 Rust Dependabot Alert Treatment
 
-GitHub reported exactly three open Rust alerts on `src-tauri/Cargo.lock` before remediation. The eligible `serde_with` patch is resolved without changing `Cargo.toml`; the operator approved the upstream-constrained `glib` and old `rand` lines as tolerated risks, while their hosted dismissal remains pending.
+GitHub reported exactly three open Rust alerts on `src-tauri/Cargo.lock` before remediation. The eligible `serde_with` patch was resolved without changing `Cargo.toml`; GitHub now records the upstream-constrained `glib` and old `rand` lines with the operator-approved tolerated-risk dismissals.
 
 | GitHub alert | Advisory and locked version | Exact dependency chain | Reachability | Local decision | Review/removal trigger |
 | --- | --- | --- | --- | --- | --- |
-| `#9` medium | `GHSA-wrw7-89jp-8q8g` / `glib@0.18.5`; patched at `>=0.20.0` | Linux target: `app -> tauri@2.11.2 -> gtk/webkit2gtk/wry -> glib@0.18.5` | `cargo tree --target all` exposes the GTK/WebKit desktop path, while the active Windows target prints no `glib` reverse tree. Project source does not call `glib::VariantStrIter`; the affected iterator methods remain transitive Linux desktop risk. | Approved tolerated risk; hosted dismissal pending. Do not force `glib@0.20` across the GTK3/Tauri dependency boundary. | Re-review when Tauri/Wry/GTK moves to `glib>=0.20`, before a Linux native release, if direct `VariantStrIter` use appears, or if advisory severity/exploit evidence changes. |
-| `#10` low | `GHSA-cq8v-f236-94qc` / `rand@0.7.3`; patched on this line at `>=0.8.6` | `app -> tauri/tauri-build -> tauri-utils@2.9.3 -> kuchikiki@0.8.8-speedreader -> selectors@0.24.0 -> phf_codegen@0.8.0 -> phf_generator@0.8.0 -> rand@0.7.3` | This vulnerable line is build-time code generation. The application's direct runtime salt/nonce calls resolve to the separate patched `rand@0.8.6` line. | Approved tolerated risk; hosted dismissal pending. Do not override an old build-time PHF line with a semver-incompatible Rand major. | Re-review when `tauri-utils`/Kuchikiki/Selectors removes PHF 0.8, if the vulnerable line becomes runtime-reachable, or if advisory severity/exploit evidence changes. |
-| `#11` medium | `GHSA-7gcf-g7xr-8hxj` / `serde_with@3.17.0`; patched at `>=3.21.0` | `app -> tauri/tauri-build/plugins -> tauri-utils@2.9.3 -> serde_with` | Tauri runtime and build graph; the affected `KeyValueMap` implementation is transitive. | Resolved locally to `serde_with@3.21.0` with Cargo's precise resolver. Required subgraph changes are limited to `serde_with_macros`, Darling, BS58/TinyVec, and removal/deduplication of the obsolete Windows helper line; no manifest or override change. | Verify GitHub closes alert `#11` after push and hosted dependency refresh. Reopen if the lock regresses below `3.21.0`. |
+| `#9` medium | `GHSA-wrw7-89jp-8q8g` / `glib@0.18.5`; patched at `>=0.20.0` | Linux target: `app -> tauri@2.11.2 -> gtk/webkit2gtk/wry -> glib@0.18.5` | `cargo tree --target all` exposes the GTK/WebKit desktop path, while the active Windows target prints no `glib` reverse tree. Project source does not call `glib::VariantStrIter`; the affected iterator methods remain transitive Linux desktop risk. | Dismissed on GitHub at `2026-08-15T10:24:42Z` as `tolerable_risk` with the approved transitive Tauri/GTK constraint rationale. Do not force `glib@0.20` across the GTK3/Tauri dependency boundary. | Re-review when Tauri/Wry/GTK moves to `glib>=0.20`, before a Linux native release, if direct `VariantStrIter` use appears, or if advisory severity/exploit evidence changes. |
+| `#10` low | `GHSA-cq8v-f236-94qc` / `rand@0.7.3`; patched on this line at `>=0.8.6` | `app -> tauri/tauri-build -> tauri-utils@2.9.3 -> kuchikiki@0.8.8-speedreader -> selectors@0.24.0 -> phf_codegen@0.8.0 -> phf_generator@0.8.0 -> rand@0.7.3` | This vulnerable line is build-time code generation. The application's direct runtime salt/nonce calls resolve to the separate patched `rand@0.8.6` line. | Dismissed on GitHub at `2026-08-15T10:24:43Z` as `tolerable_risk` with the approved build-time PHF and non-reentrant runtime rationale. Do not override an old build-time PHF line with a semver-incompatible Rand major. | Re-review when `tauri-utils`/Kuchikiki/Selectors removes PHF 0.8, if the vulnerable line becomes runtime-reachable, or if advisory severity/exploit evidence changes. |
+| `#11` medium | `GHSA-7gcf-g7xr-8hxj` / `serde_with@3.17.0`; patched at `>=3.21.0` | `app -> tauri/tauri-build/plugins -> tauri-utils@2.9.3 -> serde_with` | Tauri runtime and build graph; the affected `KeyValueMap` implementation is transitive. | Fixed on GitHub at `2026-08-15T09:45:17Z` after resolving `serde_with@3.21.0`; no manifest or override change. | Reopen if the lock regresses below `3.21.0`. |
 
 Current proof:
 
 - Official isolated Rust `1.88.0` toolchains were installed under a task-specific temporary root; the official `rustup-init.exe` SHA-256 matched `86478e53f769379d7f0ebfa7c9aa97cb76ca92233f79aa2cc0dbee2efaac73c7`, and no persistent `PATH` change was made.
 - `cargo metadata --locked --offline` passes. `cargo check --locked --offline` passes with the GNU host after the MSVC host reported the local environment gap `link.exe not found`; the only successful-check warning is the pre-existing unread `AndroidOAuthReplayState` field.
 - `cargo-audit@0.22.1` reports exit `0`, `0` vulnerabilities, and `20` allowed warnings: `17` unmaintained and `3` unsound. `serde_with` is absent. The unsound warnings are `glib@0.18.5`, `rand@0.7.3`, and a newly observed `anyhow@1.0.102` / `RUSTSEC-2026-0190` warning patched at `1.0.103`; Anyhow is not one of the three open GitHub alerts and remains outside this approved lock update.
-- Hosted Linux run `31878404710` failed before packaging because Vite could not load the `@tailwindcss/oxide` native Linux binding; the platform-specific optional package was absent after the frozen pnpm install.
-- The local fix attempt adds `--force` only to the frontend install steps of the manual Linux workflow and the tagged-release Linux job so pnpm reselects the runner's optional native package. The tagged-release Windows install remains unchanged. Hosted Linux packaging proof is pending.
-- Hosted dismissal of alerts `#9` and `#10` is pending. No global-clean claim is made: the residual `anyhow@1.0.102` warning remains visible and outside this approved change.
+- Hosted Linux run `31883973654` passed after forced optional-package reselection and produced non-empty AppImage (`79,694,328` bytes) and DEB (`5,307,440` bytes) files in artifact `9246805107`.
+- GitHub alert `#11` is fixed; `#9` and `#10` retain the exact approved `tolerable_risk` classifications and comments. GitHub reports zero open Dependabot alerts. The residual `anyhow@1.0.102` RustSec warning remains visible in the local audit record and outside GitHub's open alert set.
+
+## 2026-08-15 Dependabot Version PR Closure
+
+The approved sequential maintenance program merged PRs `#17`, `#18`, `#19`, `#20`, `#22`, and `#21`. It covered the independent Astro site, root minor/patch updates, auto-import and component generators, PrimeIcons 8, and Vite 8.2.1. Generated declarations were committed only after repeat-generation byte stability.
+
+- Final implementation SHA: `0fb768ae13f454b101dd954fad360628d20e2fe4`.
+- Vite 8's Rolldown binding failure on CI was corrected by adding `--force` to the frozen pnpm install in Quality and Windows; Android and Linux already used the same platform-native optional dependency reselection.
+- Quality `31883332373`, Vercel Production deployment `5920170434`, and public smoke on `/`, `/download`, and `/privacy` passed.
+- Android run `31883479399` produced APK artifact `9246668047` (`44,048,463` bytes).
+- Windows run `31883713271` produced MSI/NSIS artifact `9246739145` (`6,854,357` bytes) and published `CommunityGlows-Windows-latest.exe` (`2,912,209` bytes) with `windows-latest` targeting the final implementation SHA.
+- Linux run `31883973654` produced artifact `9246805107` (`84,336,865` bytes), containing the non-empty AppImage and DEB listed above.
+- Final hosted state before the documentary closure commit: zero open pull requests and zero open Dependabot alerts. No alert was newly dismissed during the PR program.
 
 ## Accepted And Tracked Risks
 
