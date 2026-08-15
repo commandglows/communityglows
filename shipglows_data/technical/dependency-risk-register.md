@@ -1,10 +1,10 @@
 ---
 artifact: dependency_risk_register
 metadata_schema_version: "1.0"
-artifact_version: "1.0.5"
+artifact_version: "1.0.6"
 project: communityglows
 created: "2026-04-30"
-updated: "2026-08-14"
+updated: "2026-08-15"
 status: active
 source_skill: 102-sg-start
 scope: dependency-risk
@@ -22,6 +22,7 @@ evidence:
   - "Dependency hygiene and native RustSec migration specs define the accepted risk policy."
   - "Register entries document affected dependency paths, reachability, decision, and removal criteria."
   - "The 2026-08-14 Dependabot pass records four npm alerts across the root pnpm lockfile and independent Astro site npm lockfile."
+  - "The 2026-08-15 Rust pass resolves the eligible serde_with alert locally and records the glib and rand alerts as upstream-constrained tolerated candidates pending hosted treatment."
 next_review: "2026-09-03"
 next_step: "/103-sg-verify sg-extension-deps-audit-fixes"
 ---
@@ -63,6 +64,23 @@ Current targeted validation and fresh-docs verdict:
 - The repository's seven-day minimum release age prevented resolving `nanoid@3.3.18` before 2026-08-14 18:41:05 Europe/Paris. The final resolution occurred after that boundary without relaxing the policy.
 - The bounded dependency slice is ship-ready locally. GitHub alert closure is not claimed until push, hosted CI, and the GitHub Dependabot state are verified.
 
+## 2026-08-15 Rust Dependabot Alert Treatment
+
+GitHub reported exactly three open Rust alerts on `src-tauri/Cargo.lock` before this local remediation. The eligible `serde_with` patch is resolved without changing `Cargo.toml`; the `glib` and old `rand` lines remain upstream-owned tolerated candidates and have not been dismissed by this local run.
+
+| GitHub alert | Advisory and locked version | Exact dependency chain | Reachability | Local decision | Review/removal trigger |
+| --- | --- | --- | --- | --- | --- |
+| `#9` medium | `GHSA-wrw7-89jp-8q8g` / `glib@0.18.5`; patched at `>=0.20.0` | Linux target: `app -> tauri@2.11.2 -> gtk/webkit2gtk/wry -> glib@0.18.5` | `cargo tree --target all` exposes the GTK/WebKit desktop path, while the active Windows target prints no `glib` reverse tree. Project source does not call `glib::VariantStrIter`; the affected iterator methods remain transitive Linux desktop risk. | Tolerated candidate, not dismissed. Do not force `glib@0.20` across the GTK3/Tauri dependency boundary. | Re-review when Tauri/Wry/GTK moves to `glib>=0.20`, before a Linux native release, if direct `VariantStrIter` use appears, or if advisory severity/exploit evidence changes. |
+| `#10` low | `GHSA-cq8v-f236-94qc` / `rand@0.7.3`; patched on this line at `>=0.8.6` | `app -> tauri/tauri-build -> tauri-utils@2.9.3 -> kuchikiki@0.8.8-speedreader -> selectors@0.24.0 -> phf_codegen@0.8.0 -> phf_generator@0.8.0 -> rand@0.7.3` | This vulnerable line is build-time code generation. The application's direct runtime salt/nonce calls resolve to the separate patched `rand@0.8.6` line. | Tolerated candidate, not dismissed. Do not override an old build-time PHF line with a semver-incompatible Rand major. | Re-review when `tauri-utils`/Kuchikiki/Selectors removes PHF 0.8, if the vulnerable line becomes runtime-reachable, or if advisory severity/exploit evidence changes. |
+| `#11` medium | `GHSA-7gcf-g7xr-8hxj` / `serde_with@3.17.0`; patched at `>=3.21.0` | `app -> tauri/tauri-build/plugins -> tauri-utils@2.9.3 -> serde_with` | Tauri runtime and build graph; the affected `KeyValueMap` implementation is transitive. | Resolved locally to `serde_with@3.21.0` with Cargo's precise resolver. Required subgraph changes are limited to `serde_with_macros`, Darling, BS58/TinyVec, and removal/deduplication of the obsolete Windows helper line; no manifest or override change. | Verify GitHub closes alert `#11` after push and hosted dependency refresh. Reopen if the lock regresses below `3.21.0`. |
+
+Current proof:
+
+- Official isolated Rust `1.88.0` toolchains were installed under a task-specific temporary root; the official `rustup-init.exe` SHA-256 matched `86478e53f769379d7f0ebfa7c9aa97cb76ca92233f79aa2cc0dbee2efaac73c7`, and no persistent `PATH` change was made.
+- `cargo metadata --locked --offline` passes. `cargo check --locked --offline` passes with the GNU host after the MSVC host reported the local environment gap `link.exe not found`; the only successful-check warning is the pre-existing unread `AndroidOAuthReplayState` field.
+- `cargo-audit@0.22.1` reports exit `0`, `0` vulnerabilities, and `20` allowed warnings: `17` unmaintained and `3` unsound. `serde_with` is absent. The unsound warnings are `glib@0.18.5`, `rand@0.7.3`, and a newly observed `anyhow@1.0.102` / `RUSTSEC-2026-0190` warning patched at `1.0.103`; Anyhow is not one of the three open GitHub alerts and remains outside this approved lock update.
+- GitHub alert state is not changed or claimed by this local run: `#9`, `#10`, and `#11` were still open when read before publication.
+
 ## Accepted And Tracked Risks
 
 | ID | Status | Affected path | Production reachability | Decision | Evidence | Removal criteria | Next review |
@@ -70,7 +88,7 @@ Current targeted validation and fresh-docs verdict:
 | DEP-RISK-001 | accepted upstream risk | `web-ext@10.1.0 -> node-notifier@10.0.1 -> uuid@8.3.2` | Dev/build only; Firefox lint and extension tooling path | Do not force `uuid@14` through `pnpm.overrides`; keep the advisory tracked until `web-ext` or `node-notifier` ships a compatible fix | `pnpm audit --prod --audit-level low` is clean and full `pnpm audit --audit-level low` reports only this advisory; `pnpm why uuid` resolves only through `web-ext`; npm metadata still reports `web-ext@10.1.0` as latest and still depends on `node-notifier@10.0.1` | Upgrade normally when upstream removes the vulnerable path and `build:firefox` plus `lint:manifest` pass | 2026-06-09 |
 | DEP-RISK-002 | mitigated in CI | RustSec scan execution gap for native release artifacts | Release path; desktop and Android native packages include Rust crates | Run `cargo audit` before Android debug APK builds and before Linux/Windows Tauri release builds | `.github/workflows/dev-builds.yml` and `.github/workflows/build.yml` install and run `cargo-audit` before native artifact builds; local `cargo audit` runs with exit 0 | Close after both workflows show RustSec audit logs before native artifacts | 2026-05-30 |
 | DEP-RISK-003 | tracked upstream license review | `web-ext@10.1.0 -> update-notifier@7.3.1 -> configstore@7.0.0 -> atomically@2.0.3 -> stubborn-fs@1.2.5` | Dev/build only | Keep as a dev-tooling transitive license-review item while `web-ext` remains required for Firefox manifest linting | `pnpm why atomically` and `pnpm why stubborn-fs` resolve only through `web-ext` update notification tooling | Close if upstream changes dependency path or license metadata is confirmed acceptable for dev-only tooling | 2026-05-30 |
-| DEP-RISK-004 | accepted visible native risk | RustSec warning set through Tauri Linux desktop stack and Tauri parser/codegen paths: GTK3 bindings, `glib`, `rand@0.7.3`, `proc-macro-error`, and `unic-*` crates | Native desktop release path; GTK/WebKitGTK warnings are Linux-specific, parser/codegen warnings remain lockfile-visible for all native scans | Keep `cargo-audit` as the executable gate, fix safe direct drift, and keep remaining warnings visible with advisory-level rationale; no transitive overrides, `.cargo/audit.toml`, `deny.toml`, `cargo-deny`, or suppression config in this stage | 2026-05-02 native pass moved direct `rand@0.8.5` to `0.8.6`; final local `cargo audit --json` reports 0 vulnerabilities, 17 unmaintained warnings, and 2 unsound warnings | Close after GTK/glib and parser warnings are removed by supported Tauri/Wry/GTK/parser updates with native packaging proof, or after a separate dependency-policy spec explicitly accepts suppression tooling | 2026-06-02 |
+| DEP-RISK-004 | accepted visible native risk | RustSec warning set through Tauri Linux desktop stack and Tauri parser/codegen paths: GTK3 bindings, `glib`, `rand@0.7.3`, `anyhow@1.0.102`, `proc-macro-error`, and `unic-*` crates | Native desktop release path; GTK/WebKitGTK warnings are Linux-specific, parser/codegen warnings remain lockfile-visible for all native scans | Keep `cargo-audit` as the executable gate, fix safe direct drift, and keep remaining warnings visible with advisory-level rationale; no transitive overrides, `.cargo/audit.toml`, `deny.toml`, `cargo-deny`, or suppression config in this stage | 2026-08-15 isolated audit reports 0 vulnerabilities, 17 unmaintained warnings, and 3 unsound warnings; the newly observed Anyhow warning is separately patchable but outside the approved three-alert update | Close after GTK/glib and parser warnings are removed by supported Tauri/Wry/GTK/parser updates with native packaging proof, and handle the Anyhow patch in a separately approved bounded lock update | 2026-09-03 |
 | DEP-RISK-005 | mitigated with bounded override | `@convex-dev/auth@0.0.92 -> convex@1.39.1 -> ws@8.18.0` (upstream pin) | Runtime + dev (Convex client and tests) | Keep Convex line upgraded (`convex@1.39.1`, `@convex-dev/auth@0.0.92`, `convex-test@0.0.53`) and enforce `pnpm.overrides.ws=8.20.1` because Convex latest still pins vulnerable `ws@8.18.0` | `pnpm audit --prod --audit-level low` now returns no vulnerabilities; `pnpm why ws` resolves to `8.20.1` through Convex paths; extension builds, lint:manifest, tests, typecheck, and `pnpm tauri:build` pass on this lockfile | Remove override once Convex releases a line that no longer pins vulnerable `ws`, then re-run full dependency validation without override | 2026-06-09 |
 | DEP-RISK-006 | accepted upstream risk | `web-ext -> addons-linter -> image-size@2.0.2` | Dev/build only; Firefox extension lint tooling | Keep both current `image-size` advisories visible; no patched upstream version exists and no transitive override is introduced | The earlier full root `pnpm audit --audit-level=low` reported the two advisories only on this dev-tooling path; production audit remained clean | Upgrade normally when `addons-linter`/`web-ext` provides a patched path, then rerun Firefox build and manifest lint | 2026-09-03 |
 

@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.6"
+artifact_version: "1.0.7"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
-updated: "2026-08-14"
-updated_at: "2026-08-14 23:56:25 UTC"
+updated: "2026-08-15"
+updated_at: "2026-08-15 09:39:13 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -590,6 +590,16 @@ This bounded slice extends the dependency hygiene chantier to the independent As
 - Proof: exact manifest/lockfile versions, root and site audits, clean npm install, Astro production build, YAML/JSON parsing, and `git diff --check`.
 - Stop: do not modify the root or any other package manifest, add an override, or edit source/config outside the approved write-set. Do not claim GitHub alert closure until the bounded changes are pushed and GitHub confirms the hosted state.
 
+## 2026-08-15 Rust Dependabot Alert Slice
+
+This bounded slice treats the three remaining hosted Rust alerts without changing a Cargo manifest, workflow, or source file.
+
+- Alert `#11` (`serde_with <3.21.0`) is resolved locally with `cargo update -p serde_with@3.17.0 --precise 3.21.0`. Cargo's structural diff is confined to the required `serde_with` dependency closure and deduplication: `serde_with_macros`, Darling, BS58/TinyVec, and obsolete Windows helper nodes.
+- Alert `#9` (`glib@0.18.5`) remains constrained by the Tauri Linux GTK/WebKit stack. It is a tolerated candidate pending hosted treatment, not dismissed by this local run; no incompatible transitive override is allowed.
+- Alert `#10` (`rand@0.7.3`) remains in Tauri Utils' Kuchikiki/Selectors/PHF build-time chain. The application's direct runtime `rand::thread_rng()` calls use the distinct patched `rand@0.8.6` node. It is a tolerated candidate pending hosted treatment, not dismissed by this local run.
+- Proof uses an isolated official Rust `1.88.0` toolchain with a verified rustup-init SHA-256, locked/offline Cargo metadata and check, exact reverse dependency trees, `cargo-audit@0.22.1`, frontmatter parsing, the three-file write boundary, and `git diff --check`.
+- Stop: do not update another crate, edit `Cargo.toml`, suppress RustSec, dismiss a GitHub alert, or claim hosted closure before the exact lockfile is pushed and GitHub refreshes its dependency state.
+
 # Open Questions
 
 None blocking for spec readiness. This spec assumes the project remains private/proprietary, keeps Node 20, and prioritizes staged dependency safety over fastest possible latest-version adoption.
@@ -617,6 +627,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates, root production/site full audits, Quality Checks, Vercel Production, and public smoke passed; Android debug failed during Kotlin compilation, so Windows was not dispatched and the Dependabot refresh remained unverified | Repair the Android Kotlin regression, rerun Android, then validate Windows and the hosted alert state |
 | 2026-08-14 23:07:27 | 106-sg-fix | GPT-5.6 | Diagnosed the hosted Android compile regression and implemented an API-compatible typeface fallback for the plugin's API 24 floor | fix attempted locally; focused source assertions and `git diff --check` pass, while authoritative Android proof requires a new hosted workflow run on the repair commit | Ship the bounded repair, then rerun Android on the repair commit before dispatching Windows |
 | 2026-08-14 23:56:25 | 003-sg-bug | GPT-5.6 | Integrated hosted closure proof for the Android regression and downstream release validation on repair commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3` | Android run `31849662558` passed and produced APK artifact `9237188425`; Quality Checks `31849434511` and Vercel deployment `5914826317` passed; Windows recovery run `31851650177` passed after run `31850004094` hit HTTP 502, producing artifact `9237788156` and restoring `windows-latest`; the dependency chantier remains open because GitHub still reports four Dependabot alerts | Reconcile the four hosted Dependabot alerts with the already-secure lockfile versions before closing the dependency chantier |
+| 2026-08-15 09:39:13 | 002-sg-maintain / 010-sg-technical deps | GPT-5.6 | Applied the approved final Rust alert slice with an isolated verified Rust 1.88.0 toolchain and precise Cargo resolution | locally verified: `serde_with@3.21.0`, locked metadata/check, structural closure diff, and cargo-audit exit 0 pass; `glib` and old build-time `rand` remain documented upstream-constrained candidates, and all three GitHub alerts remain untouched/open pending publication | Hand off the exact three-file boundary for ship and hosted alert reconciliation |
 
 # Current Chantier Flow
 
@@ -624,9 +635,9 @@ None blocking for spec readiness. This spec assumes the project remains private/
 |------|--------|-------|
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
-| sf-start | implemented, ship-ready slice | The approved replacement slice migrates the site to Astro `^7.2.0`, resolves the required secure Vite/esbuild/Sharp/devalue/SVGO/js-yaml/PostCSS floors, advances `nanoid` to `3.3.18` after the mandated date boundary, and adds `/site` Dependabot coverage. Frozen install, both site audits, and the 21-page production build pass. |
-| sf-verify | hosted build proof passed, alert reconciliation pending | Quality Checks `31849434511`, Vercel Production deployment `5914826317`, Android run `31849662558`, and Windows recovery run `31851650177` passed on commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3`. GitHub still reports four open Dependabot alerts despite the secure lockfile versions, so the dependency chantier is not fully verified or closed. |
-| sf-end | not launched | Closure remains pending until the four hosted Dependabot alerts are reconciled without weakening the secure dependency state. |
+| sf-start | implemented, Rust slice ship-ready locally | The npm/Astro remediation is already shipped. The remaining Rust slice resolves `serde_with` to `3.21.0` and documents the upstream-constrained `glib` and old build-time `rand` paths without overrides or manifest changes. |
+| sf-verify | local Rust proof passed, hosted alert reconciliation pending | Quality Checks, Vercel, Android, and Windows previously passed on the shipped repair. For the current Rust slice, structural lock analysis, Cargo metadata/check, reverse trees, and cargo-audit pass locally. GitHub still reports alerts `#9`, `#10`, and `#11` open because this run did not publish or mutate hosted alert state. |
+| sf-end | not launched | Closure remains pending until alert `#11` closes against the published safe lock and the approved hosted treatment of `#9` and `#10` is verified. |
 | sf-ship | shipped, hosted builds verified | Android artifact `9237188425` is 43,994,444 bytes. Windows artifact `9237788156` is 6,798,513 bytes; after the initial HTTP 502 publication failure in run `31850004094`, recovery run `31851650177` restored `windows-latest` to the matching commit with a 2,883,975-byte executable. |
 
-Next command: reconcile the four still-open GitHub Dependabot alerts with the already-secure root and site lockfile versions; do not close the dependency chantier until GitHub confirms the hosted alert state.
+Next command: ship only `src-tauri/Cargo.lock` plus the two updated chantier/risk artifacts, then verify alert `#11` closes and apply the approved hosted treatment to `#9` and `#10`; do not close the chantier before GitHub confirms the final state.
