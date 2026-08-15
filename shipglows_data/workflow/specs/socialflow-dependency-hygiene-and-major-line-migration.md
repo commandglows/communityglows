@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.7"
+artifact_version: "1.0.8"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
 updated: "2026-08-15"
-updated_at: "2026-08-15 09:39:13 UTC"
+updated_at: "2026-08-15 10:07:21 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -600,6 +600,15 @@ This bounded slice treats the three remaining hosted Rust alerts without changin
 - Proof uses an isolated official Rust `1.88.0` toolchain with a verified rustup-init SHA-256, locked/offline Cargo metadata and check, exact reverse dependency trees, `cargo-audit@0.22.1`, frontmatter parsing, the three-file write boundary, and `git diff --check`.
 - Stop: do not update another crate, edit `Cargo.toml`, suppress RustSec, dismiss a GitHub alert, or claim hosted closure before the exact lockfile is pushed and GitHub refreshes its dependency state.
 
+## 2026-08-15 Linux Native Packaging Follow-up
+
+Hosted Linux run `31878404710` reached the Tauri frontend build but failed before AppImage/deb packaging because Vite could not load the `@tailwindcss/oxide` native Linux binding. The platform-specific optional package was absent after the frozen pnpm install.
+
+- Fix attempt: add `--force` only to `pnpm install --frozen-lockfile` in the manual Linux workflow and the tagged-release Linux job, matching the existing Android recovery pattern and forcing pnpm to select optional packages for the active runner.
+- Invariant: keep the tagged-release Windows install unchanged; do not change manifests, lockfiles, source code, or another workflow.
+- Proof path: parse both workflow files, assert the two Linux commands include `--force`, assert the Windows command does not, and run whitespace plus exact write-boundary checks locally. Authoritative AppImage/deb proof remains the hosted manual Linux workflow.
+- Risk status: `glib@0.18.5` and build-time `rand@0.7.3` are operator-approved tolerated risks pending hosted dismissal. The separate `anyhow@1.0.102` RustSec warning remains visible and outside this change; no global-clean claim is allowed.
+
 # Open Questions
 
 None blocking for spec readiness. This spec assumes the project remains private/proprietary, keeps Node 20, and prioritizes staged dependency safety over fastest possible latest-version adoption.
@@ -628,6 +637,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 23:07:27 | 106-sg-fix | GPT-5.6 | Diagnosed the hosted Android compile regression and implemented an API-compatible typeface fallback for the plugin's API 24 floor | fix attempted locally; focused source assertions and `git diff --check` pass, while authoritative Android proof requires a new hosted workflow run on the repair commit | Ship the bounded repair, then rerun Android on the repair commit before dispatching Windows |
 | 2026-08-14 23:56:25 | 003-sg-bug | GPT-5.6 | Integrated hosted closure proof for the Android regression and downstream release validation on repair commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3` | Android run `31849662558` passed and produced APK artifact `9237188425`; Quality Checks `31849434511` and Vercel deployment `5914826317` passed; Windows recovery run `31851650177` passed after run `31850004094` hit HTTP 502, producing artifact `9237788156` and restoring `windows-latest`; the dependency chantier remains open because GitHub still reports four Dependabot alerts | Reconcile the four hosted Dependabot alerts with the already-secure lockfile versions before closing the dependency chantier |
 | 2026-08-15 09:39:13 | 002-sg-maintain / 010-sg-technical deps | GPT-5.6 | Applied the approved final Rust alert slice with an isolated verified Rust 1.88.0 toolchain and precise Cargo resolution | locally verified: `serde_with@3.21.0`, locked metadata/check, structural closure diff, and cargo-audit exit 0 pass; `glib` and old build-time `rand` remain documented upstream-constrained candidates, and all three GitHub alerts remain untouched/open pending publication | Hand off the exact three-file boundary for ship and hosted alert reconciliation |
+| 2026-08-15 10:07:21 | 106-sg-fix | GPT-5.6 | Diagnosed Linux packaging run `31878404710` and limited pnpm's forced optional-package reselection to both Linux frontend install steps | fix attempted locally: workflow parsing, platform-command assertions, syntax checks, four-file boundary, and whitespace proof pass; hosted AppImage/deb proof remains pending | Ship the bounded workflow/docs repair, rerun the manual Linux workflow, then dismiss only the two approved tolerated alerts after packaging succeeds |
 
 # Current Chantier Flow
 
@@ -635,9 +645,9 @@ None blocking for spec readiness. This spec assumes the project remains private/
 |------|--------|-------|
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
-| sf-start | implemented, Rust slice ship-ready locally | The npm/Astro remediation is already shipped. The remaining Rust slice resolves `serde_with` to `3.21.0` and documents the upstream-constrained `glib` and old build-time `rand` paths without overrides or manifest changes. |
-| sf-verify | local Rust proof passed, hosted alert reconciliation pending | Quality Checks, Vercel, Android, and Windows previously passed on the shipped repair. For the current Rust slice, structural lock analysis, Cargo metadata/check, reverse trees, and cargo-audit pass locally. GitHub still reports alerts `#9`, `#10`, and `#11` open because this run did not publish or mutate hosted alert state. |
-| sf-end | not launched | Closure remains pending until alert `#11` closes against the published safe lock and the approved hosted treatment of `#9` and `#10` is verified. |
-| sf-ship | shipped, hosted builds verified | Android artifact `9237188425` is 43,994,444 bytes. Windows artifact `9237788156` is 6,798,513 bytes; after the initial HTTP 502 publication failure in run `31850004094`, recovery run `31851650177` restored `windows-latest` to the matching commit with a 2,883,975-byte executable. |
+| sf-start | Linux workflow fix attempted locally | The npm/Astro and Rust remediation slices are shipped. The Linux-only install fix now forces pnpm to reselect the runner's optional native package without changing the Windows job. |
+| sf-verify | partial, hosted Linux packaging pending | Quality Checks, Vercel, Android, and Windows passed on the shipped dependency commit. Linux run `31878404710` failed before packaging on the missing Tailwind Oxide native binding; local workflow/config proof covers the fix attempt, not the AppImage/deb result. |
+| sf-end | not launched | Closure remains pending on a successful hosted Linux AppImage/deb run and verified hosted dismissal of the approved `glib` and old build-time `rand` risks. The residual Anyhow warning stays tracked separately. |
+| sf-ship | partial, Linux repair not shipped | Android and Windows artifacts remain previously verified. The Rust dependency commit is shipped, but Linux native packaging is not yet proven and this bounded workflow/docs repair remains local. |
 
-Next command: ship only `src-tauri/Cargo.lock` plus the two updated chantier/risk artifacts, then verify alert `#11` closes and apply the approved hosted treatment to `#9` and `#10`; do not close the chantier before GitHub confirms the final state.
+Next command: ship only the two Linux workflow edits plus this spec and the dependency risk register, rerun the manual Linux workflow, verify its AppImage/deb artifact, then apply the approved hosted dismissal of alerts `#9` and `#10`; do not close the chantier while Linux packaging or the hosted alert state remains unverified.

@@ -58,7 +58,7 @@ jobs:
         working-directory: src-tauri
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --force
 
       - name: Fetch runtime secrets
         uses: dopplerhq/secrets-fetch-action@v2.0.0
