@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.4"
+artifact_version: "1.0.8"
 project: "socialglowz"
 created: "2026-04-30"
 created_at: "2026-04-30 10:25:48 UTC"
-updated: "2026-08-14"
-updated_at: "2026-08-14 22:07:37 UTC"
+updated: "2026-08-15"
+updated_at: "2026-08-15 10:07:21 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -106,7 +106,7 @@ evidence:
   - "Current Vite 8 and ESLint 10 docs require Node 20.19+; `.nvmrc` currently says `20` and must be treated as a Node-major pin, not proof of the patch-level floor."
   - "Dependabot reported four open npm alerts on 2026-08-14: `js-yaml` in the root and site lockfiles, plus `nanoid` and `postcss` in the site lockfile."
   - "The site uses an independent npm lockfile and was not covered by the existing `/` npm entry in `.github/dependabot.yml`."
-next_step: "/102-sg-start SocialGlowz Dependency Hygiene and Major-Line Migration"
+next_step: "Reconcile the four still-open GitHub Dependabot alerts with the secure root and site lockfile versions."
 ---
 
 # Title
@@ -590,6 +590,25 @@ This bounded slice extends the dependency hygiene chantier to the independent As
 - Proof: exact manifest/lockfile versions, root and site audits, clean npm install, Astro production build, YAML/JSON parsing, and `git diff --check`.
 - Stop: do not modify the root or any other package manifest, add an override, or edit source/config outside the approved write-set. Do not claim GitHub alert closure until the bounded changes are pushed and GitHub confirms the hosted state.
 
+## 2026-08-15 Rust Dependabot Alert Slice
+
+This bounded slice treats the three remaining hosted Rust alerts without changing a Cargo manifest, workflow, or source file.
+
+- Alert `#11` (`serde_with <3.21.0`) is resolved locally with `cargo update -p serde_with@3.17.0 --precise 3.21.0`. Cargo's structural diff is confined to the required `serde_with` dependency closure and deduplication: `serde_with_macros`, Darling, BS58/TinyVec, and obsolete Windows helper nodes.
+- Alert `#9` (`glib@0.18.5`) remains constrained by the Tauri Linux GTK/WebKit stack. It is a tolerated candidate pending hosted treatment, not dismissed by this local run; no incompatible transitive override is allowed.
+- Alert `#10` (`rand@0.7.3`) remains in Tauri Utils' Kuchikiki/Selectors/PHF build-time chain. The application's direct runtime `rand::thread_rng()` calls use the distinct patched `rand@0.8.6` node. It is a tolerated candidate pending hosted treatment, not dismissed by this local run.
+- Proof uses an isolated official Rust `1.88.0` toolchain with a verified rustup-init SHA-256, locked/offline Cargo metadata and check, exact reverse dependency trees, `cargo-audit@0.22.1`, frontmatter parsing, the three-file write boundary, and `git diff --check`.
+- Stop: do not update another crate, edit `Cargo.toml`, suppress RustSec, dismiss a GitHub alert, or claim hosted closure before the exact lockfile is pushed and GitHub refreshes its dependency state.
+
+## 2026-08-15 Linux Native Packaging Follow-up
+
+Hosted Linux run `31878404710` reached the Tauri frontend build but failed before AppImage/deb packaging because Vite could not load the `@tailwindcss/oxide` native Linux binding. The platform-specific optional package was absent after the frozen pnpm install.
+
+- Fix attempt: add `--force` only to `pnpm install --frozen-lockfile` in the manual Linux workflow and the tagged-release Linux job, matching the existing Android recovery pattern and forcing pnpm to select optional packages for the active runner.
+- Invariant: keep the tagged-release Windows install unchanged; do not change manifests, lockfiles, source code, or another workflow.
+- Proof path: parse both workflow files, assert the two Linux commands include `--force`, assert the Windows command does not, and run whitespace plus exact write-boundary checks locally. Authoritative AppImage/deb proof remains the hosted manual Linux workflow.
+- Risk status: `glib@0.18.5` and build-time `rand@0.7.3` are operator-approved tolerated risks pending hosted dismissal. The separate `anyhow@1.0.102` RustSec warning remains visible and outside this change; no global-clean claim is allowed.
+
 # Open Questions
 
 None blocking for spec readiness. This spec assumes the project remains private/proprietary, keeps Node 20, and prioritizes staged dependency safety over fastest possible latest-version adoption.
@@ -614,7 +633,11 @@ None blocking for spec readiness. This spec assumes the project remains private/
 | 2026-08-14 09:26:00 | 002-sg-maintain | GPT-5.6 | Resolved the four active GitHub alerts with targeted compatible lock updates, added `/site` Dependabot coverage, parsed both lock formats and configuration, and ran root/site audits | implemented pending integration verification: the four alert floors are satisfied; audits expose newer unrelated findings, including `nanoid <3.3.18`, that remain outside this bounded slice | Run integration verification; scope a separate dependency pass for the newly reported audit families |
 | 2026-08-14 10:28:33 | 002-sg-maintain | GPT-5.6 | Applied the approved Astro 7 replacement scope using official Astro 7 guidance, npm package metadata, and a date-bounded lock resolution | implemented, no-ship: Astro `^7.2.0` builds 21 static pages with the secure required transitive floors; both site audits now report only the deliberately held `nanoid@3.3.17` advisory | After 2026-08-14 18:41:05 Europe/Paris, resolve Nano ID 3.3.18, rerun audits/build, then verify for ship |
 | 2026-08-14 21:52:20 | 002-sg-maintain | GPT-5.6 | Finalized the approved site dependency remediation after the supply-chain deadline with a targeted lockfile-only Nano ID update | ship-ready locally: `nanoid@3.3.18`, frozen install, production and full site audits at zero vulnerabilities, and the 21-page Astro build pass; hosted alert closure remains unverified until push | Hand off the bounded approved file set for ship and hosted CI/Dependabot verification |
-| 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates and root production/site full audits passed, with Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh verified after the matching push | Verify the matching hosted checks, deployments, artifacts, release asset, and alert state |
+| 2026-08-14 22:07:37 | 005-sg-ship | GPT-5.6 | Shipped the approved all-dirty dependency remediation to `master`, including the durable local environment assignment and deterministic generated declarations | shipped; local secret/diff gates, root production/site full audits, Quality Checks, Vercel Production, and public smoke passed; Android debug failed during Kotlin compilation, so Windows was not dispatched and the Dependabot refresh remained unverified | Repair the Android Kotlin regression, rerun Android, then validate Windows and the hosted alert state |
+| 2026-08-14 23:07:27 | 106-sg-fix | GPT-5.6 | Diagnosed the hosted Android compile regression and implemented an API-compatible typeface fallback for the plugin's API 24 floor | fix attempted locally; focused source assertions and `git diff --check` pass, while authoritative Android proof requires a new hosted workflow run on the repair commit | Ship the bounded repair, then rerun Android on the repair commit before dispatching Windows |
+| 2026-08-14 23:56:25 | 003-sg-bug | GPT-5.6 | Integrated hosted closure proof for the Android regression and downstream release validation on repair commit `a2ddadea38a8113e1cc83d8a25f9d7ba37693ca3` | Android run `31849662558` passed and produced APK artifact `9237188425`; Quality Checks `31849434511` and Vercel deployment `5914826317` passed; Windows recovery run `31851650177` passed after run `31850004094` hit HTTP 502, producing artifact `9237788156` and restoring `windows-latest`; the dependency chantier remains open because GitHub still reports four Dependabot alerts | Reconcile the four hosted Dependabot alerts with the already-secure lockfile versions before closing the dependency chantier |
+| 2026-08-15 09:39:13 | 002-sg-maintain / 010-sg-technical deps | GPT-5.6 | Applied the approved final Rust alert slice with an isolated verified Rust 1.88.0 toolchain and precise Cargo resolution | locally verified: `serde_with@3.21.0`, locked metadata/check, structural closure diff, and cargo-audit exit 0 pass; `glib` and old build-time `rand` remain documented upstream-constrained candidates, and all three GitHub alerts remain untouched/open pending publication | Hand off the exact three-file boundary for ship and hosted alert reconciliation |
+| 2026-08-15 10:07:21 | 106-sg-fix | GPT-5.6 | Diagnosed Linux packaging run `31878404710` and limited pnpm's forced optional-package reselection to both Linux frontend install steps | fix attempted locally: workflow parsing, platform-command assertions, syntax checks, four-file boundary, and whitespace proof pass; hosted AppImage/deb proof remains pending | Ship the bounded workflow/docs repair, rerun the manual Linux workflow, then dismiss only the two approved tolerated alerts after packaging succeeds |
 
 # Current Chantier Flow
 
@@ -622,9 +645,9 @@ None blocking for spec readiness. This spec assumes the project remains private/
 |------|--------|-------|
 | 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
-| sf-start | implemented, ship-ready slice | The approved replacement slice migrates the site to Astro `^7.2.0`, resolves the required secure Vite/esbuild/Sharp/devalue/SVGO/js-yaml/PostCSS floors, advances `nanoid` to `3.3.18` after the mandated date boundary, and adds `/site` Dependabot coverage. Frozen install, both site audits, and the 21-page production build pass. |
-| sf-verify | bounded slice verified locally | The Dependabot/Astro slice has proportional local proof and is ready for bounded ship. The broader staged migration chantier retains its previously documented native/device and compatibility proof gaps outside this slice. |
-| sf-end | not launched | Use after verified task completion if not shipping immediately. |
-| sf-ship | shipped, hosted release proof pending | The approved all-dirty commit is published directly to `master` without force; matching Quality Checks, Vercel Production, Android debug, Windows installers, and Dependabot refresh are the remaining hosted proof gates. |
+| sf-start | Linux workflow fix attempted locally | The npm/Astro and Rust remediation slices are shipped. The Linux-only install fix now forces pnpm to reselect the runner's optional native package without changing the Windows job. |
+| sf-verify | partial, hosted Linux packaging pending | Quality Checks, Vercel, Android, and Windows passed on the shipped dependency commit. Linux run `31878404710` failed before packaging on the missing Tailwind Oxide native binding; local workflow/config proof covers the fix attempt, not the AppImage/deb result. |
+| sf-end | not launched | Closure remains pending on a successful hosted Linux AppImage/deb run and verified hosted dismissal of the approved `glib` and old build-time `rand` risks. The residual Anyhow warning stays tracked separately. |
+| sf-ship | partial, Linux repair not shipped | Android and Windows artifacts remain previously verified. The Rust dependency commit is shipped, but Linux native packaging is not yet proven and this bounded workflow/docs repair remains local. |
 
-Next command: verify the matching hosted CI, production deployment, public smoke, native artifacts, Windows prerelease asset, and final GitHub Dependabot alert state.
+Next command: ship only the two Linux workflow edits plus this spec and the dependency risk register, rerun the manual Linux workflow, verify its AppImage/deb artifact, then apply the approved hosted dismissal of alerts `#9` and `#10`; do not close the chantier while Linux packaging or the hosted alert state remains unverified.
