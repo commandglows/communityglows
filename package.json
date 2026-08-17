@@ -45,7 +45,7 @@
     "convex-test": "^0.0.55",
     "cross-env": "^10.1.0",
     "daisyui": "^5.7.17",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.4.2",
     "eslint": "^9.39.4",
     "eslint-plugin-vue": "^10.10.0",
     "globals": "^15.15.0",
