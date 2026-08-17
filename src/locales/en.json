@@ -5,7 +5,7 @@
     "home": "Home"
   },
   "notifications": {
-    "error": "Error occurred.",
+    "error": "An error occurred.",
     "success": "Success!",
     "warning": "Warning!"
   },
@@ -63,9 +63,9 @@
     "light": "Light",
     "dark": "Dark",
     "auto": "Auto",
-    "auto_helper": "Follows the day/night cycle from your location when allowed, otherwise",
-    "auto_source_sun": "sunrise and sunset.",
-    "auto_source_system": "the system theme."
+    "auto_helper": "Uses",
+    "auto_source_sun": "sunrise and sunset based on your location.",
+    "auto_source_system": "your system theme."
   },
   "backup": {
     "section_title": "Backup",
@@ -187,7 +187,7 @@
   },
   "profile": {
     "default_name": "Profile",
-    "networks_count": "{count} networks",
+    "networks_count": "{count} network | {count} networks",
     "tap_to_manage": "Tap to manage",
     "active_label": "Active",
     "rename_action": "Rename",
@@ -264,7 +264,7 @@
     "photo_video_type": "Photo/Video"
   },
   "comment": {
-    "show_more_replies": "Show {count} more replies",
+    "show_more_replies": "Show {count} more reply | Show {count} more replies",
     "unlike": "Unlike"
   },
   "twitter": {
@@ -313,6 +313,8 @@
     "dismiss": "Not now"
   },
   "onboarding": {
+    "language_title": "Choose your language",
+    "language_desc": "You can change this choice at any time in settings.",
     "welcome_title": "Welcome to CommunityGlows",
     "welcome_desc": "All your social networks in one place. Let's set up your space in a few seconds.",
     "start_button": "Get started",
@@ -328,8 +330,8 @@
     "feature_customize_desc": "Long-press a network on the dashboard to show or hide networks per profile. Each profile only displays what you need.",
     "feature_focus": "Focus mode",
     "feature_focus_desc": "Switch to grayscale to reduce visual distractions.",
-    "feature_friends": "Friends filter",
-    "feature_friends_desc": "See only posts from your close friends, without the algorithmic noise.",
+    "feature_notifications": "Notification feed",
+    "feature_notifications_desc": "Use a centralized notification feed to keep up with important activity across your communities in one place.",
     "feature_privacy": "Private sessions",
     "feature_privacy_desc": "Each profile has its own cookies — no cross-tracking between your accounts.",
     "finish_button": "Let's go!",
@@ -337,6 +339,34 @@
     "next": "Next",
     "skip": "Skip intro",
     "replay_button": "Replay tutorial"
+  },
+  "login": {
+    "tagline": "Your social media command center",
+    "email": "Email address",
+    "password": "Password",
+    "create_account": "Create account",
+    "sign_in": "Sign in",
+    "already_have_account": "Already have an account?",
+    "create_an_account": "Create an account",
+    "get_started": "Get started",
+    "sign_in_with_email": "Sign in with email",
+    "access_sign_in_with_email": "Sign in with an email address",
+    "default_destination": "this space",
+    "access_required": "To open {destination}, sign in or create your CommunityGlows account.",
+    "access_loading": "We are checking your session. Try again in a moment.",
+    "access_unavailable": "Sign-in is currently unavailable. Check your network connection and try again.",
+    "sign_in_failed": "Sign-in failed."
+  },
+  "session_lock": {
+    "title": "Session locked",
+    "description": "Unlock CommunityGlows to resume your session. The PIN remains local to this session and is not synchronized.",
+    "no_pin_description": "No PIN is configured for this locked session. Sign in again to continue.",
+    "pin_code": "PIN",
+    "unlock": "Unlock",
+    "back_to_login": "Back to sign-in",
+    "no_pin_error": "No PIN is configured. Sign in again to restore the session.",
+    "incorrect_pin": "Incorrect PIN.",
+    "unlock_failed": "Unable to unlock the session."
   },
   "account": {
     "section_title": "Account and sync",
@@ -357,7 +387,7 @@
     "auth_hint": "Sign in with an existing account or create one to sync your data across devices.",
     "sync_more": "More info",
     "sync_less": "Less info",
-    "sync_info": "The cloud syncs your CommunityGlows profiles, settings, accounts, friends filters, and custom links across your other devices.",
+    "sync_info": "The cloud syncs your CommunityGlows profiles, settings, accounts, and custom links across your other devices.",
     "cookies_info": "We would also like to sync your logged-in sessions, but browsers and social networks forbid sending those cookies to third-party servers. To move your sessions to a new device, use the encrypted export below.",
     "sign_in_hint": "Sign in with your existing account to restore your synced data.",
     "already_exists_error": "An account already exists for this email. Use “Sign in” instead.",
@@ -369,8 +399,8 @@
     "surface": {
       "popup_title": "Quick Launcher",
       "popup_description": "Open your social networks quickly from the toolbar popup.",
-      "side_panel_title": "Side Panel Control Surface",
-      "side_panel_description": "Keep CommunityGlows open while browsing and launch networks in new tabs.",
+      "side_panel_title": "Side panel controls",
+      "side_panel_description": "Keep CommunityGlows open while browsing and open networks in new tabs.",
       "options_title": "Extension Settings",
       "options_description": "Configure profile, language, and launcher behavior for extension mode.",
       "setup_title": "CommunityGlows Extension Dashboard",
@@ -441,6 +471,48 @@
       "dataReceived": "Data received",
       "dataApplied": "Data applied",
       "restarting": "Restarting the app"
+    }
+  },
+  "tasks": {
+    "eyebrow": "Community organization",
+    "title": "Contextual tasks",
+    "description": "Write down what you want to do and keep a link to where you need to act. CommunityGlows does not read the page.",
+    "new_task": "New task",
+    "notices": {
+      "https_required": "Only HTTPS URLs are accepted.",
+      "create_failed": "Unable to create the task.",
+      "created": "Task created.",
+      "deleted": "Task deleted.",
+      "shared_link_invalid": "The shared link must be a valid HTTPS URL."
+    },
+    "form": {
+      "title": "Title",
+      "title_placeholder": "E.g. Reply to this question",
+      "context_url": "Context URL",
+      "context_url_placeholder": "https://... (optional)",
+      "note": "Personal note",
+      "note_placeholder": "What I want to do or remember…",
+      "people": "Associated people",
+      "links": "Additional links",
+      "links_placeholder": "One HTTPS link per line",
+      "tags": "Tags",
+      "tags_placeholder": "community, follow-up",
+      "due_date": "Due date",
+      "priority": "Priority",
+      "status": "Status",
+      "create": "Create task"
+    },
+    "priority": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High"
+    },
+    "board": {
+      "stage_name": "Stage name: {stage}",
+      "delete": "Delete task",
+      "links_count": "{count} linked link | {count} linked links",
+      "open_context": "Open context",
+      "empty": "No tasks"
     }
   },
   "kanban": {

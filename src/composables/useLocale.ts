@@ -1,21 +1,15 @@
-import { watch } from "vue"
-import { useBrowserLocalStorage } from "./useBrowserStorage"
-import { i18n } from "@/utils/i18n" // Adjust the import path according to your project structure
+import { computed } from "vue"
+import { i18n, setLocale } from "@/utils/i18n"
+
+export type SupportedLocale = "fr" | "en"
+
+function normalizeLocale(locale: string): SupportedLocale {
+  return locale.toLowerCase().startsWith("fr") ? "fr" : "en"
+}
 
 export function useLocale() {
-  const defaultLocale = "en"
-  const localeKey = "user-locale"
-
-  // Use the useBrowserLocalStorage composable to persist the locale
-  const { data: currentLocale } = useBrowserLocalStorage<string>(localeKey, defaultLocale)
-
-  // Initialize the locale from i18n
-  // currentLocale.value = i18n.global.locale.value
-
-  // Watch for changes in the locale and update i18n
-  watch(currentLocale, (newLocale) => {
-    i18n.global.locale.value = newLocale
+  return computed<SupportedLocale>({
+    get: () => normalizeLocale(i18n.global.locale.value),
+    set: (locale) => setLocale(locale),
   })
-
-  return currentLocale
 }

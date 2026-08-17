@@ -382,6 +382,9 @@ declare global {
   export type { BillingAccessStatus } from '../composables/useBillingAccess'
   import('../composables/useBillingAccess')
   // @ts-ignore
+  export type { SupportedLocale } from '../composables/useLocale'
+  import('../composables/useLocale')
+  // @ts-ignore
   export type { Account } from '../stores/accounts'
   import('../stores/accounts')
   // @ts-ignore

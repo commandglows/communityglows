@@ -415,7 +415,6 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
 type RightPanelSection =
   | "feed"
   | "profile"
-  | "friends"
   | "notifications"
   | "saved"
   | "events"
@@ -423,11 +422,17 @@ type RightPanelSectionMap = Record<
   string,
   Partial<Record<RightPanelSection, string>>
 >
+const VALID_RIGHT_PANEL_SECTIONS: RightPanelSection[] = [
+  "feed",
+  "profile",
+  "notifications",
+  "saved",
+  "events",
+]
 
 const rightPanelSectionMap: RightPanelSectionMap = {
   twitter: {
     feed: "/home",
-    friends: "/i/following",
     notifications: "/notifications",
     profile: "/i/account",
     saved: "/i/bookmarks",
@@ -435,7 +440,6 @@ const rightPanelSectionMap: RightPanelSectionMap = {
   },
   facebook: {
     feed: "/",
-    friends: "/friends",
     notifications: "/notifications",
     profile: "/profile",
     saved: "/bookmarks",
@@ -443,14 +447,12 @@ const rightPanelSectionMap: RightPanelSectionMap = {
   },
   instagram: {
     feed: "/",
-    friends: "/accounts/activity",
     notifications: "/notifications",
     profile: "/accounts/edit",
     saved: "/saved",
   },
   linkedin: {
     feed: "/feed",
-    friends: "/mynetwork",
     notifications: "/notifications",
     profile: "/in/",
     saved: "/my-items/saved-posts",
@@ -470,13 +472,11 @@ const rightPanelSectionMap: RightPanelSectionMap = {
   },
   discord: {
     feed: "/channels/@me",
-    friends: "/channels/@me",
     notifications: "/channels/@me",
     profile: "/settings",
   },
   reddit: {
     feed: "/",
-    friends: "/user/me/friends",
     notifications: "/message/inbox",
     profile: "/user/me",
     saved: "/user/me/saved",
@@ -495,14 +495,12 @@ const rightPanelSectionMap: RightPanelSectionMap = {
   },
   quora: {
     feed: "/",
-    friends: "/following",
     notifications: "/notifications",
     profile: "/profile",
     saved: "/search",
   },
   pinterest: {
     feed: "/",
-    friends: "/your-friends",
     notifications: "/notifications",
     profile: "/username",
     saved: "/saved/",
@@ -589,10 +587,12 @@ function resolveRightPanelSectionPath(
 ): string {
   const section = sectionId.toLowerCase() as RightPanelSection
   const byNetwork = rightPanelSectionMap[networkId] ?? {}
+  if (!VALID_RIGHT_PANEL_SECTIONS.includes(section)) {
+    return ""
+  }
   const defaultSectionPaths: Record<string, string> = {
     feed: "",
     profile: "",
-    friends: "/friends",
     notifications: "/notifications",
     saved: "/saved",
     events: "/events",

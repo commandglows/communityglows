@@ -55,20 +55,6 @@
         <SgIcon icon="pi pi-chevron-right quick-action-arrow" />
       </button>
 
-      <!-- Friends filter toggle -->
-      <div class="friends-filter-row friends-filter-row--hidden">
-        <span class="friends-filter-label">
-          <SgIcon icon="pi pi-users" />
-          {{ $t('friends_filter.friends_only') }}
-        </span>
-        <button
-          class="friends-toggle-pill"
-          :class="{ enabled: friendsFilterEnabled }"
-          @click="toggleFriendsFilter"
-        >
-          <span class="toggle-thumb" />
-        </button>
-      </div>
     </div>
 
     <!-- Notifications panel -->
@@ -291,7 +277,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWebviewStore } from '@/stores/webviewState'
 import { useProfilesStore } from '@/stores/profiles'
-import { useFriendsFilterStore } from '@/stores/friendsFilter'
 import { useCustomLinksStore } from '@/stores/customLinks'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 import type { MenuItem } from '../types'
@@ -311,7 +296,6 @@ const router = useRouter()
 const route = useRoute()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
-const filterStore = useFriendsFilterStore()
 const customLinksStore = useCustomLinksStore()
 
 // ─── Sheet state ──────────────────────────────────────────────
@@ -446,9 +430,6 @@ function handleEditClick(item: MenuItem) {
 }
 
 // ─── Friends filter ───────────────────────────────────────────
-const friendsFilterEnabled = computed(() => filterStore.enabled)
-const toggleFriendsFilter = () => filterStore.toggle()
-
 const builtinMenuItems = computed<MenuItem[]>(() =>
   builtInSocialNetworks.map((network, index) => ({
     id: index + 1,
@@ -823,71 +804,6 @@ const navigateToNetwork = (network: MenuItem) => {
   color: var(--sg-color-text-muted);
 }
 
-.friends-filter-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sg-space-3);
-  padding: var(--sg-space-0d85rem) var(--sg-space-4);
-}
-
-.friends-filter-row--hidden {
-  display: none;
-}
-
-.friends-filter-label {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--sg-space-0d6rem);
-  font-size: var(--sg-font-size-0d9rem);
-  font-weight: 500;
-  color: var(--sg-color-text);
-}
-
-.friends-filter-label .sg-icon {
-  font-size: var(--sg-font-size-1rem);
-  width: var(--sg-size-2rem);
-  height: var(--sg-size-2rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--sg-color-surface-muted);
-  border-radius: var(--sg-radius-8px);
-}
-
-.friends-toggle-pill {
-  position: relative;
-  width: var(--sg-size-2d8rem);
-  height: var(--sg-size-1d6rem);
-  border-radius: var(--sg-radius-1rem);
-  border: none;
-  background: var(--sg-color-border);
-  cursor: pointer;
-  transition: var(--sg-motion-backgroundneg-color-0d2s);
-  flex-shrink: 0;
-  padding: 0;
-}
-
-.friends-toggle-pill.enabled {
-  background: var(--sg-color-action);
-}
-
-.toggle-thumb {
-  position: absolute;
-  top: var(--sg-space-3px);
-  left: var(--sg-space-3px);
-  width: var(--sg-size-1d1rem);
-  height: var(--sg-size-1d1rem);
-  border-radius: var(--sg-radius-50pct);
-  background: var(--sg-color-text-on-action);
-  box-shadow: var(--sg-shadow-control);
-  transition: var(--sg-motion-transform-0d2s);
-}
-
-.friends-toggle-pill.enabled .toggle-thumb {
-  transform: translateX(var(--sg-space-0d85rem));
-}
-
 /* ─── Notifications panel ────────────────────────────────────── */
 
 .notif-panel {
@@ -1209,8 +1125,7 @@ const navigateToNetwork = (network: MenuItem) => {
 
 @media (prefers-reduced-motion: reduce) {
   .network-tile,
-  .friends-toggle-pill,
-  .toggle-thumb {
+  .network-toggle-thumb {
     transition: none;
   }
 }

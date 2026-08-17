@@ -1,8 +1,16 @@
-/**
- * Formate une date en français
- * @param date - La date à formater
- * @returns La date formatée en français
- */
+import { i18n } from '@/utils/i18n'
+
+function activeLocale() {
+  return i18n.global.locale.value.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US'
+}
+
+function relative(value: number, singularFr: string, pluralFr: string, singularEn: string) {
+  if (activeLocale() === 'fr-FR') {
+    return `Il y a ${value} ${value > 1 ? pluralFr : singularFr}`
+  }
+  return `${value} ${singularEn}${value > 1 ? 's' : ''} ago`
+}
+
 export function formatDate(date: Date): string {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
@@ -11,32 +19,27 @@ export function formatDate(date: Date): string {
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
 
-  // Si moins d'une minute
   if (seconds < 60) {
-    return 'À l\'instant'
+    return activeLocale() === 'fr-FR' ? 'À l’instant' : 'Just now'
   }
 
-  // Si moins d'une heure
   if (minutes < 60) {
-    return `Il y a ${minutes} min${minutes > 1 ? 's' : ''}`
+    return relative(minutes, 'min', 'min', 'min')
   }
 
-  // Si moins d'un jour
   if (hours < 24) {
-    return `Il y a ${hours} h${hours > 1 ? 's' : ''}`
+    return relative(hours, 'h', 'h', 'h')
   }
 
-  // Si moins d'une semaine
   if (days < 7) {
-    return `Il y a ${days} jour${days > 1 ? 's' : ''}`
+    return relative(days, 'jour', 'jours', 'day')
   }
 
-  // Format complet pour les dates plus anciennes
-  return new Intl.DateTimeFormat('fr-FR', {
+  return new Intl.DateTimeFormat(activeLocale(), {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   }).format(date)
-} 
+}

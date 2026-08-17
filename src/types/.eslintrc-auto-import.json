@@ -43,6 +43,7 @@
     "ShortcutAction": true,
     "Slot": true,
     "Slots": true,
+    "SupportedLocale": true,
     "ThemeMode": true,
     "VNode": true,
     "WEBVIEW_URLS": true,

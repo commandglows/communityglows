@@ -2,6 +2,12 @@
 
 All notable changes to SocialGlowz are documented here.
 
+## [Unreleased]
+
+### Changed
+- **CommunityGlows localization** — onboarding now starts with a mandatory Français/English choice, persists the selected locale, and keeps the FR/EN catalogs structurally aligned across the onboarding, authentication, session-lock, extension, billing, notifications, and task surfaces.
+- **Locale-aware runtime copy** — relative dates, login/session-lock copy, task vocabulary, and French terminology now follow the active locale; the onboarding feature tour presents the centralized notification feed instead of the removed friends filter.
+
 ## [2026-08-03]
 
 ### Changed
@@ -153,7 +159,7 @@ All notable changes to SocialGlowz are documented here.
 - Webview pooling — `hide_webview`/`show_webview` Rust IPC commands; switching networks hides the old webview off-screen instead of destroying it, preserving page state, scroll position, and cookies for instant re-show
 - Webview preloading — top 3 visible networks preloaded off-screen at app startup so even the first click is instant
 - Text zoom slider — `settings.textZoom` API (75-200%, step 25%), slider in Settings (mobile + desktop), persisted to localStorage, synced to Kotlin via `set_text_zoom` IPC; default 100% = no change
-- Onboarding flow — 4-step first-launch guide (welcome, profile setup with emoji picker, network selection with brand-colored chips, feature tour); fullscreen, responsive, i18n (fr + en)
+- Onboarding flow — 5-step first-launch guide with a mandatory language choice (Français/English), welcome, profile setup with emoji picker, network selection with brand-colored chips, and feature tour; fullscreen, responsive, i18n (fr + en)
 - Onboarding network customization tip — explains long-press to show/hide networks per profile in the feature tour step
 - Replay onboarding — "Revoir le tutoriel" button in Settings (desktop dialog + mobile bottom sheet); resets onboarding store to re-show flow
 - `onboarding` Pinia store — persisted `completed` boolean; gates onboarding display in `App.vue`
@@ -222,7 +228,7 @@ All notable changes to SocialGlowz are documented here.
 ## [Unreleased] — 2026-03-14
 
 ### Added
-- Full i18n system — `vue-i18n` v11 with French and English locales (148 keys); language selector in Settings; all 15+ Vue components use `$t()` translation keys instead of hardcoded strings
+- Full i18n system — `vue-i18n` v11 with French and English locales (427 aligned keys); language selector in onboarding and Settings; localized onboarding, authentication, session-lock, extension, billing, notification, and task surfaces
 - Backup UX redesign — step-based dialog flow: password entry → success screen (file path, 3-step import guide, security tip) or error screen (friendly messages, troubleshooting checklist, try-again button); import success shows countdown before auto-reload
 - All user preferences now included in backup export/import: dark mode, grayscale, language (`user-locale`), custom links
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ContextualTaskInput, ContextualTaskPriority, ContextualTaskStatus } from '@/services/contextualTasksService'
 import SgButton from '../ui/SgButton.vue'
 
@@ -8,8 +9,9 @@ const props = withDefaults(defineProps<{
   submitLabel?: string
 }>(), {
   initialUrl: '',
-  submitLabel: 'Créer la tâche',
 })
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   submit: [input: ContextualTaskInput]
@@ -31,6 +33,7 @@ watch(() => props.initialUrl, (value) => {
 }, { immediate: true })
 
 const canSubmit = computed(() => title.value.trim().length > 0)
+const resolvedSubmitLabel = computed(() => props.submitLabel ?? t('tasks.form.create'))
 
 function submit() {
   if (!canSubmit.value) return
@@ -55,39 +58,39 @@ function submit() {
   >
     <div class="task-form-grid">
       <label>
-        <span>Titre</span>
+        <span>{{ $t('tasks.form.title') }}</span>
         <input
           v-model="title"
           type="text"
           maxlength="160"
           required
-          placeholder="Ex. Répondre à cette question"
+          :placeholder="$t('tasks.form.title_placeholder')"
         />
       </label>
       <label>
-        <span>URL du contexte</span>
+        <span>{{ $t('tasks.form.context_url') }}</span>
         <input
           v-model="url"
           type="url"
           inputmode="url"
-          placeholder="https://... (facultatif)"
+          :placeholder="$t('tasks.form.context_url_placeholder')"
         />
       </label>
     </div>
 
     <label>
-      <span>Note personnelle</span>
+      <span>{{ $t('tasks.form.note') }}</span>
       <textarea
         v-model="note"
         maxlength="4000"
         rows="3"
-        placeholder="Ce que je veux faire ou retenir…"
+        :placeholder="$t('tasks.form.note_placeholder')"
       />
     </label>
 
     <div class="task-form-grid">
       <label>
-        <span>Personnes associées</span>
+        <span>{{ $t('tasks.form.people') }}</span>
         <input
           v-model="people"
           type="text"
@@ -95,58 +98,58 @@ function submit() {
         />
       </label>
       <label>
-        <span>Liens complémentaires</span>
+        <span>{{ $t('tasks.form.links') }}</span>
         <textarea
           v-model="links"
           rows="2"
-          placeholder="Un lien HTTPS par ligne"
+          :placeholder="$t('tasks.form.links_placeholder')"
         />
       </label>
     </div>
 
     <div class="task-form-grid task-form-grid--details">
       <label>
-        <span>Tags</span>
+        <span>{{ $t('tasks.form.tags') }}</span>
         <input
           v-model="tags"
           type="text"
-          placeholder="communauté, relance"
+          :placeholder="$t('tasks.form.tags_placeholder')"
         />
       </label>
       <label>
-        <span>Échéance</span>
+        <span>{{ $t('tasks.form.due_date') }}</span>
         <input
           v-model="dueDate"
           type="date"
         />
       </label>
       <label>
-        <span>Priorité</span>
+        <span>{{ $t('tasks.form.priority') }}</span>
         <select v-model="priority">
-          <option value="low">Basse</option>
-          <option value="normal">Normale</option>
-          <option value="high">Haute</option>
+          <option value="low">{{ $t('tasks.priority.low') }}</option>
+          <option value="normal">{{ $t('tasks.priority.normal') }}</option>
+          <option value="high">{{ $t('tasks.priority.high') }}</option>
         </select>
       </label>
       <label>
-        <span>État</span>
+        <span>{{ $t('tasks.form.status') }}</span>
         <select v-model="status">
-          <option value="todo">À faire</option>
-          <option value="waiting">En attente</option>
-          <option value="done">Terminé</option>
+          <option value="todo">{{ $t('kanban.todo') }}</option>
+          <option value="waiting">{{ $t('kanban.waiting') }}</option>
+          <option value="done">{{ $t('kanban.done') }}</option>
         </select>
       </label>
     </div>
 
     <div class="task-form-actions">
       <SgButton
-        label="Annuler"
+        :label="$t('common.cancel')"
         text
         type="button"
         @click="emit('cancel')"
       />
       <SgButton
-        :label="submitLabel"
+        :label="resolvedSubmitLabel"
         type="submit"
         :disabled="!canSubmit"
       />

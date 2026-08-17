@@ -3,7 +3,7 @@
     <div class="login-card">
       <div class="login-header">
         <h1>CommunityGlows</h1>
-        <p>Your social media command center</p>
+        <p>{{ $t('login.tagline') }}</p>
       </div>
 
       <p
@@ -22,15 +22,15 @@
       >
         <SgInput
           v-model="email"
-          placeholder="Email"
-          aria-label="Email"
+          :placeholder="$t('login.email')"
+          :aria-label="$t('login.email')"
           type="email"
           class="w-full"
         />
         <SgPassword
           v-model="password"
-          placeholder="Password"
-          aria-label="Password"
+          :placeholder="$t('login.password')"
+          :aria-label="$t('login.password')"
           class="w-full"
           toggle-mask
         />
@@ -39,13 +39,13 @@
           class="sg-error"
         >{{ error }}</small>
         <SgButton
-          :label="isSignUp ? 'Create account' : 'Sign in'"
+          :label="isSignUp ? $t('login.create_account') : $t('login.sign_in')"
           type="submit"
           class="w-full"
           :loading="loading"
         />
         <SgButton
-          :label="isSignUp ? 'Already have an account?' : 'Create an account'"
+          :label="isSignUp ? $t('login.already_have_account') : $t('login.create_an_account')"
           text
           class="w-full"
           @click="isSignUp = !isSignUp"
@@ -59,12 +59,12 @@
       >
         <SgButton
           v-if="!accessMessage"
-          label="Get started"
+          :label="$t('login.get_started')"
           icon="pi pi-arrow-right"
           @click="handleGetStarted"
         />
         <SgButton
-          :label="accessMessage ? 'Se connecter avec une adresse e-mail' : 'Sign in with email'"
+          :label="accessMessage ? $t('login.access_sign_in_with_email') : $t('login.sign_in_with_email')"
           :text="!accessMessage"
           @click="showEmailForm = true"
         />
@@ -76,6 +76,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { signIn } from '@/lib/convexAuth'
 import { finalizePasswordSignIn } from '@/lib/cloudSync'
 import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
@@ -86,6 +87,7 @@ import SgPassword from '../components/ui/SgPassword.vue'
 
 const onboardingStore = useOnboardingStore()
 const route = useRoute()
+const { t } = useI18n()
 const showEmailForm = ref(false)
 const isSignUp = ref(false)
 const email = ref('')
@@ -95,14 +97,16 @@ const loading = ref(false)
 
 const accessMessage = computed(() => {
   if (route.query.access === 'required') {
-    const destination = typeof route.query.destination === 'string' ? route.query.destination : 'cet espace'
-    return `Pour ouvrir ${destination}, connectez-vous ou créez votre compte CommunityGlows.`
+    const destination = typeof route.query.destination === 'string'
+      ? route.query.destination
+      : t('login.default_destination')
+    return t('login.access_required', { destination })
   }
   if (route.query.access === 'loading') {
-    return 'Nous vérifions votre session. Réessayez dans un instant.'
+    return t('login.access_loading')
   }
   if (route.query.access === 'unavailable') {
-    return 'La connexion n’est pas disponible pour le moment. Vérifiez votre réseau puis réessayez.'
+    return t('login.access_unavailable')
   }
   return null
 })
@@ -130,7 +134,7 @@ async function handleSignIn() {
   } catch (err: unknown) {
     resetPostAuthSyncFeedback()
     error.value =
-      err instanceof Error ? err.message : 'Sign in failed'
+      err instanceof Error ? err.message : t('login.sign_in_failed')
   } finally {
     loading.value = false
   }

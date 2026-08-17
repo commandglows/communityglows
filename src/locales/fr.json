@@ -58,14 +58,14 @@
   },
   "theme": {
     "dark_mode": "Mode sombre",
-    "focus_mode": "Mode focus (niveaux de gris)",
+    "focus_mode": "Mode concentration (niveaux de gris)",
     "mode_label": "Apparence",
     "light": "Clair",
     "dark": "Sombre",
     "auto": "Auto",
-    "auto_helper": "Suit le cycle jour/nuit selon votre position si elle est autorisée, sinon",
-    "auto_source_sun": "coucher et lever du soleil.",
-    "auto_source_system": "le thème système."
+    "auto_helper": "Utilise",
+    "auto_source_sun": "les heures de lever et de coucher du soleil selon votre position.",
+    "auto_source_system": "le thème de votre système."
   },
   "backup": {
     "section_title": "Sauvegarde",
@@ -107,8 +107,8 @@
   "billing": {
     "section_title": "Accès",
     "title": "Accès CommunityGlows",
-    "current_plan": "Plan actuel",
-    "code_label": "Code de redemption",
+    "current_plan": "Offre actuelle",
+    "code_label": "Code d’activation",
     "code_placeholder": "Entrez votre code d’activation",
     "redeem_button": "Activer",
     "redeeming": "Activation...",
@@ -128,11 +128,11 @@
     "plan_trial": "Essai de 30 jours",
     "plan_trial_expired": "Essai terminé",
     "plan_trial_exhausted": "Essais épuisés",
-    "plan_active": "Plan actif",
+    "plan_active": "Offre active",
     "plan_free": "Aucun accès actif",
-    "unconfigured_hint": "L’activation est indisponible dans cette version car le backend Convex n’est pas configuré.",
+    "unconfigured_hint": "L’activation est indisponible dans cette version car le service Convex n’est pas configuré.",
     "signed_out_hint": "Connectez-vous ou créez un compte avant d’activer un code.",
-    "bridge_unavailable_hint": "Le contrôle d’accès est indisponible pour le moment: le bridge de facturation n’est pas joignable.",
+    "bridge_unavailable_hint": "Le contrôle d’accès est indisponible pour le moment : la passerelle de facturation n’est pas joignable.",
     "trial_active_hint": "Votre période actuelle de 30 jours est active. Aucune carte n’est demandée et aucun prélèvement automatique n’est prévu.",
     "trial_expired_hint": "Votre période actuelle de 30 jours est terminée. Relancez-la s’il vous reste une relance, ou achetez l’accès pour continuer.",
     "trial_exhausted_hint": "Les trois périodes de 30 jours ont été utilisées. L’achat est désormais obligatoire pour les actions protégées.",
@@ -171,11 +171,11 @@
     "redeem_success": "L’accès Lifetime Deal est maintenant actif.",
     "redeem_already_active": "Ce code est déjà actif sur votre compte.",
     "errors": {
-      "required": "Entrez un code de redemption.",
+      "required": "Saisissez un code d’activation.",
       "not_found": "Ce code est introuvable. Vérifiez-le puis réessayez.",
       "disabled": "Ce code n’est plus disponible.",
       "used": "Ce code a déjà été utilisé.",
-      "bridge_unavailable": "Impossible de vérifier. Le bridge de facturation est actuellement indisponible.",
+      "bridge_unavailable": "Impossible de vérifier l’activation. La passerelle de facturation est actuellement indisponible.",
       "access_check_failed": "Impossible de vérifier votre accès pour le moment. Réessayez dans quelques instants.",
       "unauthorized": "Connectez-vous avant d’activer un code.",
       "unconfigured": "L’activation est indisponible dans cette version.",
@@ -187,7 +187,7 @@
   },
   "profile": {
     "default_name": "Profil",
-    "networks_count": "{count} réseaux",
+    "networks_count": "{count} réseau | {count} réseaux",
     "tap_to_manage": "Appuyer pour gérer",
     "active_label": "Actif",
     "rename_action": "Renommer",
@@ -217,7 +217,7 @@
     "manage_button": "Gérer les amis",
     "manage_tooltip": "Gérer la liste d'amis",
     "dialog_title": "Amis — {network}",
-    "hint_text": "Entrez les noms ou pseudos tels qu'ils apparaissent sur {network}. Seuls leurs posts seront affichés quand le filtre est actif.",
+    "hint_text": "Entrez les noms ou pseudos tels qu’ils apparaissent sur {network}. Seules leurs publications seront affichées quand le filtre est actif.",
     "empty_state": "Aucun ami ajouté",
     "empty_hint": "Ajoutez des noms pour filtrer le fil",
     "footer_note": "La correspondance est insensible à la casse et partielle."
@@ -249,7 +249,7 @@
     "finish_editing": "Terminer"
   },
   "notif": {
-    "mark_all_read": "Tout lire",
+    "mark_all_read": "Tout marquer comme lu",
     "empty_state": "Aucune nouvelle notification"
   },
   "filters": {
@@ -264,41 +264,41 @@
     "photo_video_type": "Photo/Vidéo"
   },
   "comment": {
-    "show_more_replies": "Voir {count} réponses de plus",
+    "show_more_replies": "Voir encore {count} réponse | Voir encore {count} réponses",
     "unlike": "Je n'aime plus"
   },
   "twitter": {
-    "my_profile": "Mon Profil",
+    "my_profile": "Mon profil",
     "following": "Abonnements",
     "followers": "Abonnés",
     "trends": "Tendances",
     "tweets_count": "tweets",
     "compose_placeholder": "Quoi de neuf ?",
     "connect_title": "Connectez-vous à Twitter",
-    "connect_message": "Pour voir votre feed Twitter et interagir avec vos abonnés, vous devez d'abord vous connecter.",
+    "connect_message": "Pour voir votre fil Twitter et interagir avec vos abonnés, vous devez d’abord vous connecter.",
     "connect_button": "Se connecter avec Twitter"
   },
   "linkedin": {
     "profile_views": "Vues du profil",
     "search_appearances": "Apparitions dans la recherche",
-    "network_section": "Mon Réseau",
+    "network_section": "Mon réseau",
     "connections": "Connexions",
     "followed_pages": "Pages suivies",
-    "start_post": "Commencer un post",
+    "start_post": "Commencer une publication",
     "connect_title": "Connectez-vous à LinkedIn",
-    "connect_message": "Pour voir votre feed professionnel et interagir avec votre réseau, vous devez d'abord vous connecter.",
+    "connect_message": "Pour voir votre fil professionnel et interagir avec votre réseau, vous devez d’abord vous connecter.",
     "connect_button": "Se connecter avec LinkedIn",
-    "create_post_title": "Créer un post",
+    "create_post_title": "Créer une publication",
     "post_placeholder": "De quoi souhaitez-vous parler ?"
   },
   "reddit": {
-    "save_button": "Sauvegarder",
+    "save_button": "Enregistrer",
     "connect_title": "Connectez-vous à Reddit",
-    "connect_message": "Pour voir votre feed Reddit, vous devez d'abord vous connecter à votre compte.",
+    "connect_message": "Pour voir votre fil Reddit, vous devez d’abord vous connecter à votre compte.",
     "connect_button": "Se connecter avec Reddit"
   },
   "facebook": {
-    "create_post": "Créer un post",
+    "create_post": "Créer une publication",
     "comment_placeholder": "Écrivez un commentaire...",
     "contacts": "Contacts",
     "connect_button": "Se connecter avec Facebook"
@@ -313,30 +313,60 @@
     "dismiss": "Pas maintenant"
   },
   "onboarding": {
+    "language_title": "Choisissez votre langue",
+    "language_desc": "Vous pourrez modifier ce choix à tout moment dans les paramètres.",
     "welcome_title": "Bienvenue sur CommunityGlows",
     "welcome_desc": "Tous vos réseaux sociaux en un seul endroit. Configurons votre espace en quelques secondes.",
     "start_button": "Commencer",
     "profile_title": "Créez votre profil",
     "profile_desc": "Choisissez un emoji et un nom pour votre premier profil. Vous pourrez en créer d'autres plus tard.",
-    "profile_name_placeholder": "Ex : Perso, Business, Side project…",
+    "profile_name_placeholder": "Ex. : personnel, professionnel, projet parallèle…",
     "networks_title": "Choisissez vos réseaux",
     "networks_desc": "Sélectionnez les réseaux que vous utilisez. Vous pourrez les modifier à tout moment.",
     "features_title": "Ce que vous pouvez faire",
     "feature_profiles": "Multi-profils",
-    "feature_profiles_desc": "Un profil par usage : perso, pro, side project. Chacun avec ses réseaux et sessions isolées.",
+    "feature_profiles_desc": "Un profil par usage : personnel, professionnel ou projet parallèle. Chacun dispose de ses propres réseaux et sessions isolées.",
     "feature_customize": "Réseaux personnalisables",
-    "feature_customize_desc": "Restez appuyé sur un réseau du dashboard pour afficher ou masquer les réseaux par profil. Chaque profil n'affiche que ce dont vous avez besoin.",
-    "feature_focus": "Mode focus",
+    "feature_customize_desc": "Effectuez un appui long sur un réseau du tableau de bord pour l’afficher ou le masquer dans ce profil. Chaque profil n’affiche que ce dont vous avez besoin.",
+    "feature_focus": "Mode concentration",
     "feature_focus_desc": "Passez en niveaux de gris pour réduire les distractions visuelles.",
-    "feature_friends": "Filtre amis",
-    "feature_friends_desc": "Ne voir que les posts de vos amis proches, sans le bruit algorithmique.",
+    "feature_notifications": "Flux de notifications",
+    "feature_notifications_desc": "Suivez un flux de notifications centralisé pour voir en un seul endroit les interactions importantes de votre activité communautaire.",
     "feature_privacy": "Sessions privées",
-    "feature_privacy_desc": "Chaque profil a ses propres cookies — aucun tracking croisé entre vos comptes.",
+    "feature_privacy_desc": "Chaque profil a ses propres cookies — aucun suivi croisé entre vos comptes.",
     "finish_button": "C'est parti !",
     "back": "Retour",
     "next": "Suivant",
     "skip": "Passer l'introduction",
     "replay_button": "Revoir le tutoriel"
+  },
+  "login": {
+    "tagline": "Votre centre de commande pour les réseaux sociaux",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "create_account": "Créer un compte",
+    "sign_in": "Se connecter",
+    "already_have_account": "Vous avez déjà un compte ?",
+    "create_an_account": "Créer un compte",
+    "get_started": "Commencer",
+    "sign_in_with_email": "Se connecter par e-mail",
+    "access_sign_in_with_email": "Se connecter avec une adresse e-mail",
+    "default_destination": "cet espace",
+    "access_required": "Pour ouvrir {destination}, connectez-vous ou créez votre compte CommunityGlows.",
+    "access_loading": "Nous vérifions votre session. Réessayez dans un instant.",
+    "access_unavailable": "La connexion n’est pas disponible pour le moment. Vérifiez votre réseau puis réessayez.",
+    "sign_in_failed": "La connexion a échoué."
+  },
+  "session_lock": {
+    "title": "Session verrouillée",
+    "description": "Déverrouillez CommunityGlows pour reprendre votre session. Le code PIN reste local à cette session et n’est pas synchronisé.",
+    "no_pin_description": "Aucun code PIN n’est configuré pour cette session verrouillée. Pour continuer, reconnectez-vous.",
+    "pin_code": "Code PIN",
+    "unlock": "Déverrouiller",
+    "back_to_login": "Retour à la connexion",
+    "no_pin_error": "Aucun code PIN configuré. Reconnectez-vous pour rétablir la session.",
+    "incorrect_pin": "Code PIN incorrect.",
+    "unlock_failed": "Déverrouillage impossible."
   },
   "account": {
     "section_title": "Compte et synchronisation",
@@ -357,28 +387,28 @@
     "auth_hint": "Connectez-vous avec un compte existant ou créez-en un pour synchroniser vos données entre vos appareils.",
     "sync_more": "Plus d’infos",
     "sync_less": "Moins d’infos",
-    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes CommunityGlows, filtres amis et liens personnalisés sur vos autres appareils.",
+    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes CommunityGlows et liens personnalisés sur vos autres appareils.",
     "cookies_info": "Nous aimerions synchroniser aussi vos sessions connectées, mais les navigateurs et réseaux sociaux interdisent l’envoi de ces cookies vers des serveurs tiers. Pour transférer vos sessions sur un nouvel appareil, utilisez l’export chiffré ci-dessous.",
     "sign_in_hint": "Connectez-vous avec votre compte existant pour retrouver vos données synchronisées.",
     "already_exists_error": "Un compte existe déjà pour cet e-mail. Utilisez « Se connecter » à la place.",
     "invalid_credentials_error": "E-mail ou mot de passe incorrect.",
     "no_account_hint": "Créez un compte pour synchroniser vos données sur tous vos appareils.",
-    "unavailable_hint": "La synchro de compte n'est pas disponible dans cette version — backend Convex non configuré."
+    "unavailable_hint": "La synchronisation du compte n’est pas disponible dans cette version — le service Convex n’est pas configuré."
   },
   "extension": {
     "surface": {
       "popup_title": "Lanceur rapide",
-      "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis le popup de la barre d’outils.",
-      "side_panel_title": "Surface de contrôle du panneau latéral",
-      "side_panel_description": "Gardez CommunityGlows ouvert pendant la navigation et lancez les réseaux dans de nouveaux onglets.",
-      "options_title": "Paramètres extension",
-      "options_description": "Configurez le profil, la langue et le comportement du lanceur en mode extension.",
-      "setup_title": "Tableau de bord extension CommunityGlows",
+      "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis la fenêtre contextuelle de la barre d’outils.",
+      "side_panel_title": "Commandes du panneau latéral",
+      "side_panel_description": "Gardez CommunityGlows ouvert pendant la navigation et ouvrez les réseaux dans de nouveaux onglets.",
+      "options_title": "Paramètres de l’extension",
+      "options_description": "Configurez le profil, la langue et le comportement du lanceur dans l’extension.",
+      "setup_title": "Tableau de bord de l’extension CommunityGlows",
       "setup_description": "Utilisez cette page pour un lanceur plus large et la gestion des profils.",
       "install_title": "CommunityGlows installé",
-      "install_description": "Terminez la configuration et ouvrez votre tableau de bord extension.",
+      "install_description": "Terminez la configuration et ouvrez le tableau de bord de l’extension.",
       "update_title": "CommunityGlows mis à jour",
-      "update_description": "Vérifiez les capacités du mode extension après cette mise à jour."
+      "update_description": "Découvrez les fonctionnalités de l’extension après cette mise à jour."
     },
     "profile": {
       "label": "Profil actif"
@@ -406,7 +436,7 @@
         "forbidden_protocol": "Ce schéma d’URL est bloqué.",
         "https_required": "Seuls les liens HTTPS sont autorisés.",
         "credentials_not_allowed": "Les liens avec identifiants intégrés sont bloqués.",
-        "tabs_api_unavailable": "L’API onglets du navigateur est indisponible dans ce contexte.",
+        "tabs_api_unavailable": "L’API des onglets du navigateur est indisponible dans ce contexte.",
         "tab_creation_failed": "Impossible d’ouvrir ce lien dans un nouvel onglet.",
         "runtime_url_unavailable": "Impossible de résoudre l’URL du tableau de bord extension.",
         "side_panel_unavailable": "Le panneau latéral est disponible uniquement dans les contextes compatibles Chrome.",
@@ -414,9 +444,9 @@
       }
     },
     "limitations": {
-      "session_isolation": "Le mode extension utilise des onglets navigateur classiques. Il ne peut pas isoler cookies et localStorage par profil CommunityGlows comme les WebViews Tauri natives.",
-      "native_backup": "Les workflows natifs de sauvegarde et restauration ne sont pas disponibles en mode extension.",
-      "native_haptics": "Les vibrations et la barre Android native ne sont pas disponibles en mode extension."
+      "session_isolation": "L’extension utilise des onglets de navigateur classiques. Elle ne peut pas isoler les cookies et le stockage local pour chaque profil CommunityGlows comme les vues web natives de Tauri.",
+      "native_backup": "Les parcours natifs de sauvegarde et de restauration ne sont pas disponibles dans l’extension.",
+      "native_haptics": "Les vibrations et la barre Android native ne sont pas disponibles dans l’extension."
     }
   },
   "auth_sync": {
@@ -441,6 +471,48 @@
       "dataReceived": "Données reçues",
       "dataApplied": "Données appliquées",
       "restarting": "Redémarrage de l’application"
+    }
+  },
+  "tasks": {
+    "eyebrow": "Organisation communautaire",
+    "title": "Tâches contextuelles",
+    "description": "Note ce que tu veux faire et garde le lien vers l’endroit où agir. CommunityGlows ne lit pas la page.",
+    "new_task": "Nouvelle tâche",
+    "notices": {
+      "https_required": "Seules les URL HTTPS sont acceptées.",
+      "create_failed": "Impossible de créer la tâche.",
+      "created": "Tâche créée.",
+      "deleted": "Tâche supprimée.",
+      "shared_link_invalid": "Le lien partagé doit être une URL HTTPS valide."
+    },
+    "form": {
+      "title": "Titre",
+      "title_placeholder": "Ex. Répondre à cette question",
+      "context_url": "URL du contexte",
+      "context_url_placeholder": "https://... (facultatif)",
+      "note": "Note personnelle",
+      "note_placeholder": "Ce que je veux faire ou retenir…",
+      "people": "Personnes associées",
+      "links": "Liens complémentaires",
+      "links_placeholder": "Un lien HTTPS par ligne",
+      "tags": "Tags",
+      "tags_placeholder": "communauté, relance",
+      "due_date": "Échéance",
+      "priority": "Priorité",
+      "status": "État",
+      "create": "Créer la tâche"
+    },
+    "priority": {
+      "low": "Basse",
+      "normal": "Normale",
+      "high": "Haute"
+    },
+    "board": {
+      "stage_name": "Nom de l’étape : {stage}",
+      "delete": "Supprimer la tâche",
+      "links_count": "{count} lien associé | {count} liens associés",
+      "open_context": "Ouvrir le contexte",
+      "empty": "Aucune tâche"
     }
   },
   "kanban": {

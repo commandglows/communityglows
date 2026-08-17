@@ -14,10 +14,10 @@ const emit = defineEmits<{
   'rename-stage': [status: ContextualTaskStatus, label: string]
 }>()
 
-const columns: Array<{ id: ContextualTaskStatus; label: string }> = [
-  { id: 'todo', label: 'À faire' },
-  { id: 'waiting', label: 'En attente' },
-  { id: 'done', label: 'Terminé' },
+const columns: Array<{ id: ContextualTaskStatus; labelKey: string }> = [
+  { id: 'todo', labelKey: 'kanban.todo' },
+  { id: 'waiting', labelKey: 'kanban.waiting' },
+  { id: 'done', labelKey: 'kanban.done' },
 ]
 
 function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
@@ -38,7 +38,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
       <header class="task-column-header">
         <input
           :value="stageLabels[column.id]"
-          :aria-label="`Nom de l’étape ${column.label}`"
+          :aria-label="$t('tasks.board.stage_name', { stage: $t(column.labelKey) })"
           @change="emit('rename-stage', column.id, ($event.target as HTMLInputElement).value)"
         >
         <span class="task-count">{{ tasksByStatus[column.id].length }}</span>
@@ -56,11 +56,11 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
             <span
               class="task-priority"
               :class="`task-priority--${task.priority}`"
-            >{{ task.priority }}</span>
+            >{{ $t(`tasks.priority.${task.priority}`) }}</span>
             <button
               class="task-icon-button"
               type="button"
-              aria-label="Supprimer la tâche"
+              :aria-label="$t('tasks.board.delete')"
               @click="emit('remove', task.id)"
             >
               <SgIcon icon="pi pi-trash" />
@@ -82,10 +82,10 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
             >#{{ tag }}</span>
           </div>
           <p v-if="task.people?.length" class="task-people">{{ task.people.map((person) => person.name).join(', ') }}</p>
-          <p v-if="task.links?.length" class="task-links">{{ task.links.length }} lien(s) associé(s)</p>
+          <p v-if="task.links?.length" class="task-links">{{ $t('tasks.board.links_count', { count: task.links.length }) }}</p>
           <SgButton
             v-if="task.url"
-            label="Ouvrir le contexte"
+            :label="$t('tasks.board.open_context')"
             outlined
             size="small"
             class="task-open-button"
@@ -98,7 +98,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
           v-if="!tasksByStatus[column.id].length"
           class="task-column-empty"
         >
-          Aucune tâche
+          {{ $t('tasks.board.empty') }}
         </p>
       </div>
     </section>

@@ -4,17 +4,15 @@
       <div class="lock-mark">
         <SgIcon icon="pi pi-lock" />
       </div>
-      <h1>Session verrouillée</h1>
+      <h1>{{ $t('session_lock.title') }}</h1>
       <p>
-        Déverrouillez CommunityGlows pour reprendre votre session. Le code PIN reste
-        local à cette session et n'est pas synchronisé.
+        {{ $t('session_lock.description') }}
       </p>
       <p
         v-if="!hasPin"
         class="sg-error"
       >
-        Aucun code PIN n'est configuré pour cette session verrouillée. Pour continuer,
-        reconnectez-vous.
+        {{ $t('session_lock.no_pin_description') }}
       </p>
 
       <form
@@ -23,8 +21,8 @@
       >
         <SgPassword
           v-model="pin"
-          placeholder="Code PIN"
-          aria-label="Code PIN"
+          :placeholder="$t('session_lock.pin_code')"
+          :aria-label="$t('session_lock.pin_code')"
           inputmode="numeric"
           toggle-mask
           class="w-full"
@@ -35,7 +33,7 @@
           class="sg-error"
         >{{ error }}</small>
         <SgButton
-          label="Déverrouiller"
+          :label="$t('session_lock.unlock')"
           type="submit"
           class="w-full"
           :loading="loading"
@@ -44,7 +42,7 @@
       </form>
 
       <SgButton
-        label="Retour à login"
+        :label="$t('session_lock.back_to_login')"
         text
         class="w-full"
         @click="returnToLogin"
@@ -56,6 +54,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import SgButton from '../components/ui/SgButton.vue'
 import SgPassword from '../components/ui/SgPassword.vue'
 import {
@@ -65,6 +64,7 @@ import {
 } from '@/lib/convexAuth'
 
 const router = useRouter()
+const { t } = useI18n()
 const pin = ref('')
 const error = ref('')
 const loading = ref(false)
@@ -75,19 +75,19 @@ async function submitPin() {
   error.value = ''
   try {
     if (!hasSessionPin()) {
-      error.value = 'Aucun code PIN configuré. Reconnectez-vous pour rétablir la session.'
+      error.value = t('session_lock.no_pin_error')
       return
     }
 
     const unlocked = await unlockSessionWithPin(pin.value)
     if (!unlocked) {
-      error.value = 'Code PIN incorrect.'
+      error.value = t('session_lock.incorrect_pin')
       return
     }
 
     await router.replace('/twitter')
   } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Déverrouillage impossible.'
+    error.value = err instanceof Error ? err.message : t('session_lock.unlock_failed')
   } finally {
     loading.value = false
   }

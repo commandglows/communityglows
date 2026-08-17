@@ -135,71 +135,6 @@
               />
             </div>
 
-            <!-- Filtre Amis -->
-            <div class="friends-section friends-section--hidden">
-              <div
-                v-if="!iconsOnly"
-                class="section-header"
-              >
-                <h3>{{ $t("sidebar.friends_section") }}</h3>
-                <Button
-                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                  icon="pi pi-users"
-                  text
-                  size="small"
-                  :aria-label="$t('friends_filter.manage_button')"
-                  @click="showFriendsPanel = true"
-                />
-              </div>
-              <div
-                class="friends-toggle"
-                :class="{ 'friends-toggle--centered': iconsOnly }"
-              >
-                <Button
-                  v-sg-tooltip.right="
-                    iconsOnly
-                      ? filterEnabled
-                        ? $t('friends_filter.filter_active')
-                        : $t('friends_filter.filter_inactive')
-                      : undefined
-                  "
-                  :label="
-                    iconsOnly
-                      ? undefined
-                      : filterEnabled
-                        ? $t('friends_filter.friends_only')
-                        : $t('friends_filter.see_all')
-                  "
-                  :aria-label="
-                    iconsOnly
-                      ? filterEnabled
-                        ? $t('friends_filter.filter_active')
-                        : $t('friends_filter.filter_inactive')
-                      : undefined
-                  "
-                  :icon="filterEnabled ? 'pi pi-filter-fill' : 'pi pi-filter'"
-                  :aria-pressed="filterEnabled"
-                  class="friends-filter-button"
-                  @click="setFilterEnabled"
-                />
-                <Button
-                  v-if="iconsOnly"
-                  v-sg-tooltip.right="$t('friends_filter.manage_tooltip')"
-                  icon="pi pi-users"
-                  text
-                  size="small"
-                  class="friends-manage-btn"
-                  :aria-label="$t('friends_filter.manage_button')"
-                  @click="showFriendsPanel = true"
-                />
-              </div>
-            </div>
-
-            <FriendsPanel
-              v-model="showFriendsPanel"
-              :network-id="webviewStore.activeNetworkId ?? 'twitter'"
-            />
-
             <!-- Custom Links -->
             <div
               v-if="customLinkItems.length || networkEditMode"
@@ -387,7 +322,6 @@ import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
 import { useRouter, useRoute } from "vue-router"
 import { useWebviewStore } from "@/stores/webviewState"
 import { useProfilesStore } from "@/stores/profiles"
-import { useFriendsFilterStore } from "@/stores/friendsFilter"
 import { useCustomLinksStore } from "@/stores/customLinks"
 import { builtInSocialNetworks } from "@/config/socialNetworks"
 import type { MenuItem } from "../types"
@@ -395,7 +329,6 @@ import Button from "./ui/SgButton.vue"
 import SgIcon from "./ui/SgIcon.vue"
 import SgDialog from "./ui/SgDialog.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
-import FriendsPanel from "./FriendsPanel.vue"
 import NetworkBrandIcon from "./NetworkBrandIcon.vue"
 import {
   clampSidebarSize,
@@ -410,10 +343,8 @@ const router = useRouter()
 const route = useRoute()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
-const filterStore = useFriendsFilterStore()
 const customLinksStore = useCustomLinksStore()
 
-const showFriendsPanel = ref(false)
 const showAddLinkDialog = ref(false)
 const newLinkLabel = ref("")
 const newLinkUrl = ref("")
@@ -429,10 +360,6 @@ const customLinkIconOptions = [
   { icon: "pi pi-envelope", labelKey: "links.icons.email" },
   { icon: "pi pi-bookmark", labelKey: "links.icons.bookmark" },
 ] as const
-
-const filterEnabled = computed(() => filterStore.enabled)
-
-const setFilterEnabled = () => filterStore.toggle()
 
 function openAddLinkDialog() {
   newLinkLabel.value = ""
@@ -639,7 +566,6 @@ onUnmounted(() => {
 }
 
 .sidebar.icons-only .network-btn,
-.sidebar.icons-only .friends-toggle .sg-button,
 .sidebar.icons-only .section-footer .sg-button {
   min-height: calc(var(--sg-sidebar-network-row-height) * 1.35);
 }
@@ -869,30 +795,6 @@ onUnmounted(() => {
   color: var(--sg-color-text-muted);
 }
 
-.friends-section {
-  margin-bottom: var(--sg-sidebar-subsection-spacing);
-  border-top: 1px solid var(--sg-color-border);
-  padding-top: var(--sg-sidebar-subsection-spacing);
-}
-
-.friends-section--hidden {
-  display: none;
-}
-
-.friends-toggle {
-  display: flex;
-  flex-direction: column;
-}
-
-.friends-toggle--centered {
-  align-items: center;
-  padding: var(--sg-sidebar-compact-control-spacing) 0;
-}
-
-.friends-manage-btn {
-  margin-top: var(--sg-sidebar-compact-control-spacing);
-}
-
 .custom-links-section {
   border-top: 1px solid var(--sg-color-border);
   padding-top: var(--sg-sidebar-subsection-spacing);
@@ -976,12 +878,6 @@ onUnmounted(() => {
   border-color: var(--sg-color-action);
   background: var(--sg-color-surface-hover);
   color: var(--sg-color-action);
-}
-
-.friends-filter-button {
-  width: var(--sg-sidebar-fill-size);
-  min-height: var(--sg-sidebar-filter-height);
-  border-radius: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

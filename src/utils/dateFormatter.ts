@@ -1,50 +1,52 @@
-/**
- * Formate une date en une chaîne lisible en français
- * @param date La date à formater (string, number ou Date)
- * @returns La date formatée en français
- */
+import { i18n } from '@/utils/i18n'
+
+function activeLocale() {
+  return i18n.global.locale.value.toLowerCase().startsWith('fr') ? 'fr-FR' : 'en-US'
+}
+
+function relative(value: number, singularFr: string, pluralFr: string, singularEn: string) {
+  if (activeLocale() === 'fr-FR') {
+    return `Il y a ${value} ${value > 1 ? pluralFr : singularFr}`
+  }
+  return `${value} ${singularEn}${value > 1 ? 's' : ''} ago`
+}
+
 export function formatDate(date: string | number | Date): string {
   const dateObj = new Date(date)
   const now = new Date()
   const diff = now.getTime() - dateObj.getTime()
-  const seconds = Math.floor(diff / 1000)
-  const minutes = Math.floor(seconds / 60)
+  const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(minutes / 60)
   const days = Math.floor(hours / 24)
 
-  // Si c'est aujourd'hui
   if (days === 0) {
     if (hours === 0) {
       if (minutes === 0) {
-        return 'À l\'instant'
+        return activeLocale() === 'fr-FR' ? 'À l’instant' : 'Just now'
       }
-      return `Il y a ${minutes} minute${minutes > 1 ? 's' : ''}`
+      return relative(minutes, 'minute', 'minutes', 'minute')
     }
-    return `Il y a ${hours} heure${hours > 1 ? 's' : ''}`
+    return relative(hours, 'heure', 'heures', 'hour')
   }
 
-  // Si c'est hier
   if (days === 1) {
-    return 'Hier'
+    return activeLocale() === 'fr-FR' ? 'Hier' : 'Yesterday'
   }
 
-  // Si c'est cette semaine
   if (days < 7) {
-    return `Il y a ${days} jour${days > 1 ? 's' : ''}`
+    return relative(days, 'jour', 'jours', 'day')
   }
 
-  // Si c'est cette année
   if (dateObj.getFullYear() === now.getFullYear()) {
-    return dateObj.toLocaleDateString('fr-FR', {
+    return dateObj.toLocaleDateString(activeLocale(), {
       day: 'numeric',
-      month: 'long'
+      month: 'long',
     })
   }
 
-  // Sinon, afficher la date complète
-  return dateObj.toLocaleDateString('fr-FR', {
+  return dateObj.toLocaleDateString(activeLocale(), {
     day: 'numeric',
     month: 'long',
-    year: 'numeric'
+    year: 'numeric',
   })
 }

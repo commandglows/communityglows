@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import { useRoute } from 'vue-router'
@@ -13,6 +14,7 @@ import SgButton from '../components/ui/SgButton.vue'
 import SectionEyebrow from '../components/ui/SectionEyebrow.vue'
 
 const route = useRoute()
+const { t } = useI18n()
 const tasksStore = useContextualTasksStore()
 const profilesStore = useProfilesStore()
 const webviewStore = useWebviewStore()
@@ -30,10 +32,12 @@ const tasksByStatus = computed<Record<ContextualTaskStatus, ContextualTask[]>>((
 function createTask(input: ContextualTaskInput) {
   const result = tasksStore.create({ ...input, profileId: profilesStore.activeProfileId ?? undefined })
   if (!result) {
-    notice.value = tasksStore.error === 'https_required' ? 'Seules les URL HTTPS sont acceptées.' : 'Impossible de créer la tâche.'
+    notice.value = tasksStore.error === 'https_required'
+      ? t('tasks.notices.https_required')
+      : t('tasks.notices.create_failed')
     return
   }
-  notice.value = 'Tâche créée.'
+  notice.value = t('tasks.notices.created')
   showForm.value = false
 }
 
@@ -43,7 +47,7 @@ function moveTask(taskId: string, status: ContextualTaskStatus) {
 
 function removeTask(taskId: string) {
   tasksStore.remove(taskId)
-  notice.value = 'Tâche supprimée.'
+  notice.value = t('tasks.notices.deleted')
 }
 
 function openTask(task: ContextualTask) {
@@ -62,7 +66,7 @@ function validateInitialUrl() {
     showForm.value = true
     return
   }
-  notice.value = 'Le lien partagé doit être une URL HTTPS valide.'
+  notice.value = t('tasks.notices.shared_link_invalid')
 }
 
 onMounted(() => {
@@ -78,12 +82,12 @@ onMounted(() => {
   >
     <header class="tasks-header">
       <div>
-        <SectionEyebrow>Organisation communautaire</SectionEyebrow>
-        <h1>Tâches contextuelles</h1>
-        <p class="tasks-description">Note ce que tu veux faire et garde le lien vers l’endroit où agir. CommunityGlows ne lit pas la page.</p>
+        <SectionEyebrow>{{ $t('tasks.eyebrow') }}</SectionEyebrow>
+        <h1>{{ $t('tasks.title') }}</h1>
+        <p class="tasks-description">{{ $t('tasks.description') }}</p>
       </div>
       <SgButton
-        label="Nouvelle tâche"
+        :label="$t('tasks.new_task')"
         icon="pi pi-plus"
         type="button"
         @click="showForm = !showForm"

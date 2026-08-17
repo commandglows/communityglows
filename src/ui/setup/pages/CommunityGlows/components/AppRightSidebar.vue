@@ -114,17 +114,6 @@
             @click="emit('open-rightpanel-section', 'profile')"
           />
           <Button
-            icon="pi pi-users"
-            :label="iconsOnly ? undefined : $t('sidebar.friends_button')"
-            :aria-label="iconsOnly ? $t('sidebar.friends_button') : undefined"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
-            @click="emit('open-rightpanel-section', 'friends')"
-          />
-          <Button
             icon="pi pi-bell"
             :label="iconsOnly ? undefined : $t('common.notifications')"
             :aria-label="iconsOnly ? $t('common.notifications') : undefined"

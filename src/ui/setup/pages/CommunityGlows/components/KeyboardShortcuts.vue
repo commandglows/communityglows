@@ -75,7 +75,6 @@ const visibleProfileIds = computed(() => profilesStore.profiles
 const rightPanelSections = [
   { section: 'feed', label: 'Fil d’actualité' },
   { section: 'profile', label: 'Profil' },
-  { section: 'friends', label: 'Amis' },
   { section: 'notifications', label: 'Notifications' },
   { section: 'saved', label: 'Enregistrements' },
   { section: 'events', label: 'Événements' },
