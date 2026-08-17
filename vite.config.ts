@@ -7,7 +7,7 @@ import { PrimeVueResolver } from "unplugin-vue-components/resolvers"
 import Icons from "unplugin-icons/vite"
 import Components from "unplugin-vue-components/vite"
 import { createHtmlPlugin } from "vite-plugin-html"
-import VueRouter from "unplugin-vue-router/vite"
+import VueRouter from "vue-router/vite"
 import { defineConfig } from "vite"
 import tailwindcss from "@tailwindcss/vite"
 // @ts-expect-error commonjs module
