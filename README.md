@@ -59,14 +59,14 @@ src/ui/setup/pages/CommunityGlows/    # App principale Windows/Tauri (Vue 3 + Re
 ├── directives/tooltip.ts          # Infobulles clavier/pointeur CommunityGlows
 ├── stores/                        # Pinia stores
 ├── composables/                   # Hooks Vue
-└── services/                      # Services API (Gmail, etc.)
+└── services/                      # Services applicatifs
 ```
 
 Les valeurs visuelles partagées sont éditées dans `design/tokens/reference.json`. Le générateur produit les carriers CSS Windows/site et les ressources Android jour/nuit ; le site porte la référence visuelle dark-first, tandis que le JSON reste l'autorité technique.
 
 ### Tâches contextuelles
 
-Le gestionnaire de tâches `/tasks` permet de noter une intention humaine avec une URL HTTPS de contexte, une note, des tags, une priorité, une échéance et un état. Dans le popup extension, l’URL de l’onglet actif est capturée uniquement après clic explicite; aucun titre, DOM, message ou contenu de page n’est lu. Les liens partagés Android ouvrent le même formulaire. Les tâches sont locales à chaque installation en V1 et incluses dans le backup local; elles ne sont pas synchronisées entre appareils.
+Le gestionnaire de tâches `/tasks` permet de noter une intention humaine, avec des personnes associées, un lien de contexte facultatif, des liens complémentaires, une note, des tags, une priorité, une échéance et un état. Les trois étapes peuvent être renommées pour adapter le tableau à un workflow CRM sans imposer un pipeline. Dans le popup extension, l’URL de l’onglet actif est capturée uniquement après clic explicite; aucun titre, DOM, message ou contenu de page n’est lu. Les liens partagés Android ouvrent le même formulaire.
 
 ### Configs Vite par plateforme
 
@@ -177,8 +177,6 @@ CommunityGlows affiche des réseaux sociaux dans des WebViews natives. Les préf
 
 ```env
 VITE_CONVEX_URL=              # URL Convex (obligatoire en runtime front)
-VITE_GMAIL_CLIENT_ID=         # Google API (optionnel, Gmail)
-VITE_GMAIL_API_KEY=           # Google API (optionnel, Gmail)
 CONVEX_DEPLOYMENT=            # Déploiement Convex (local/dev), si utilisé
 VITE_CONVEX_SITE_URL=         # Site URL Convex (optionnel)
 COMMUNITYGLOWS_SUITE_BRIDGE_URL= # Endpoint suite bridge (suite entitlement ledger)

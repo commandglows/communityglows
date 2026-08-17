@@ -47,6 +47,7 @@ function removeTask(taskId: string) {
 }
 
 function openTask(task: ContextualTask) {
+  if (!task.url) return
   if (task.networkId && webviewStore.usesWebview(task.networkId)) {
     webviewStore.selectNetwork(task.networkId, task.url)
     return
@@ -110,9 +111,11 @@ onMounted(() => {
 
     <TaskBoard
       :tasks-by-status="tasksByStatus"
+      :stage-labels="tasksStore.stageLabels"
       @move="moveTask"
       @open="openTask"
       @remove="removeTask"
+      @rename-stage="tasksStore.renameStage"
     />
   </main>
 </template>

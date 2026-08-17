@@ -1,13 +1,19 @@
 export type ContextualTaskStatus = 'todo' | 'waiting' | 'done'
 export type ContextualTaskPriority = 'low' | 'normal' | 'high'
 
+export interface ContextualTaskPerson {
+  name: string
+}
+
 export interface ContextualTask {
   id: string
   title: string
   note: string
   tags: string[]
-  url: string
-  host: string
+  people: ContextualTaskPerson[]
+  links: string[]
+  url?: string
+  host?: string
   networkId?: string
   profileId?: string
   status: ContextualTaskStatus
@@ -18,8 +24,8 @@ export interface ContextualTask {
   order: number
 }
 
-export type ContextualTaskInput = Pick<ContextualTask, 'title' | 'url'> & Partial<
-  Pick<ContextualTask, 'note' | 'tags' | 'networkId' | 'profileId' | 'status' | 'priority' | 'dueDate'>
+export type ContextualTaskInput = Pick<ContextualTask, 'title'> & Partial<
+  Pick<ContextualTask, 'note' | 'tags' | 'people' | 'links' | 'url' | 'networkId' | 'profileId' | 'status' | 'priority' | 'dueDate'>
 >
 
 export type UrlSanitizationResult = {
@@ -113,6 +119,26 @@ function normalizeTags(tags: string[] | undefined): string[] {
   return normalized
 }
 
+function normalizePeople(people: ContextualTaskPerson[] | undefined): ContextualTaskPerson[] {
+  const normalized: ContextualTaskPerson[] = []
+  for (const person of people ?? []) {
+    const name = person.name.trim().slice(0, 120)
+    if (!name || normalized.some((existing) => existing.name.toLowerCase() === name.toLowerCase())) continue
+    normalized.push({ name })
+  }
+  return normalized
+}
+
+function normalizeLinks(links: string[] | undefined): string[] {
+  const normalized: string[] = []
+  for (const link of links ?? []) {
+    const sanitized = sanitizeContextualUrl(link)
+    if (!sanitized.ok || normalized.includes(sanitized.url)) continue
+    normalized.push(sanitized.url)
+  }
+  return normalized
+}
+
 function createId() {
   return `task-${typeof crypto?.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`}`
 }
@@ -125,8 +151,8 @@ export function createContextualTask(input: ContextualTaskInput, order = 0): Con
   const title = input.title.trim().slice(0, MAX_TITLE_LENGTH)
   if (!title) throw new Error('title_required')
 
-  const sanitized = sanitizeContextualUrl(input.url)
-  if (!sanitized.ok) throw new Error(sanitized.code)
+  const sanitized = input.url?.trim() ? sanitizeContextualUrl(input.url) : null
+  if (sanitized && !sanitized.ok) throw new Error(sanitized.code)
 
   const timestamp = now()
   return {
@@ -134,9 +160,11 @@ export function createContextualTask(input: ContextualTaskInput, order = 0): Con
     title,
     note: (input.note ?? '').trim().slice(0, MAX_NOTE_LENGTH),
     tags: normalizeTags(input.tags),
-    url: sanitized.url,
-    host: sanitized.host,
-    networkId: input.networkId ?? inferNetworkId(sanitized.host),
+    people: normalizePeople(input.people),
+    links: normalizeLinks(input.links),
+    url: sanitized?.ok ? sanitized.url : undefined,
+    host: sanitized?.ok ? sanitized.host : undefined,
+    networkId: input.networkId ?? (sanitized?.ok ? inferNetworkId(sanitized.host) : undefined),
     profileId: input.profileId,
     status: input.status ?? 'todo',
     priority: input.priority ?? 'normal',
@@ -164,7 +192,9 @@ export class ContextualTasksService {
 
   replaceState(value: unknown) {
     if (!Array.isArray(value)) throw new Error('invalid_tasks_state')
-    this.tasks = value.filter((task): task is ContextualTask => this.isTask(task))
+    this.tasks = value
+      .filter((task): task is ContextualTask => this.isTask(task))
+      .map((task) => ({ ...task, people: task.people ?? [], links: task.links ?? [] }))
     this.saveState()
   }
 
@@ -174,7 +204,9 @@ export class ContextualTasksService {
     if (!raw) return
     const parsed: unknown = JSON.parse(raw)
     if (!Array.isArray(parsed)) throw new Error('invalid_tasks_state')
-    this.tasks = parsed.filter((task): task is ContextualTask => this.isTask(task))
+    this.tasks = parsed
+      .filter((task): task is ContextualTask => this.isTask(task))
+      .map((task) => ({ ...task, people: task.people ?? [], links: task.links ?? [] }))
   }
 
   migrateLegacyKanbanState() {
@@ -234,16 +266,22 @@ export class ContextualTasksService {
     const current = this.tasks.find((task) => task.id === id)
     if (!current) throw new Error('task_not_found')
     if (input.title !== undefined && !input.title.trim()) throw new Error('title_required')
-    const nextUrl = input.url === undefined ? { ok: true as const, url: current.url, host: current.host, removedSensitiveParts: false } : sanitizeContextualUrl(input.url)
-    if (!nextUrl.ok) throw new Error(nextUrl.code)
+    const nextUrl = input.url === undefined
+      ? null
+      : input.url.trim()
+        ? sanitizeContextualUrl(input.url)
+        : null
+    if (nextUrl && !nextUrl.ok) throw new Error(nextUrl.code)
     Object.assign(current, {
       ...input,
       title: input.title === undefined ? current.title : input.title.trim().slice(0, MAX_TITLE_LENGTH),
       note: input.note === undefined ? current.note : input.note.trim().slice(0, MAX_NOTE_LENGTH),
       tags: input.tags === undefined ? current.tags : normalizeTags(input.tags),
-      url: nextUrl.url,
-      host: nextUrl.host,
-      networkId: input.networkId ?? (input.url === undefined ? current.networkId : inferNetworkId(nextUrl.host)),
+      people: input.people === undefined ? current.people : normalizePeople(input.people),
+      links: input.links === undefined ? current.links : normalizeLinks(input.links),
+      url: input.url === undefined ? current.url : nextUrl?.ok ? nextUrl.url : undefined,
+      host: input.url === undefined ? current.host : nextUrl?.ok ? nextUrl.host : undefined,
+      networkId: input.networkId ?? (input.url === undefined ? current.networkId : nextUrl?.ok ? inferNetworkId(nextUrl.host) : undefined),
       updatedAt: now(),
     })
     this.saveState()
@@ -264,10 +302,12 @@ export class ContextualTasksService {
     const task = value as Partial<ContextualTask>
     return typeof task.id === 'string'
       && typeof task.title === 'string'
-      && typeof task.url === 'string'
-      && typeof task.host === 'string'
+      && (task.url === undefined || typeof task.url === 'string')
+      && (task.host === undefined || typeof task.host === 'string')
       && typeof task.note === 'string'
       && Array.isArray(task.tags)
+      && (task.people === undefined || (Array.isArray(task.people) && task.people.every((person) => person && typeof person === 'object' && typeof (person as ContextualTaskPerson).name === 'string')))
+      && (task.links === undefined || (Array.isArray(task.links) && task.links.every((link) => typeof link === 'string')))
       && (task.status === 'todo' || task.status === 'waiting' || task.status === 'done')
       && (task.priority === 'low' || task.priority === 'normal' || task.priority === 'high')
       && typeof task.createdAt === 'string'

@@ -303,9 +303,6 @@
     "contacts": "Contacts",
     "connect_button": "Sign in with Facebook"
   },
-  "gmail": {
-    "add_to_kanban": "Add to Kanban"
-  },
   "google": {
     "connect_button": "Sign in with Google"
   },

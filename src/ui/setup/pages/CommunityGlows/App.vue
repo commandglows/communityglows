@@ -74,7 +74,7 @@
                         webviewOverlayActive > 0
                     "
                   />
-                  <!-- Router-view for Gmail (API), login, and other non-webview pages -->
+                  <!-- Router-view for tasks, login, and other non-webview pages -->
                   <router-view v-else />
                 </div>
                 <DesktopControlBar
@@ -389,7 +389,7 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (shortcut.action === "toggle-right-sidebar")
     rightSidebarVisible.value = !rightSidebarVisible.value
   if (shortcut.action === "open-settings") settingsVisible.value = true
-  if (shortcut.action === "open-crm") router.push("/crm")
+  if (shortcut.action === "open-tasks") router.push("/tasks")
   if (shortcut.action === "open-network" && shortcut.target) {
     webviewStore.selectNetwork(shortcut.target)
   }

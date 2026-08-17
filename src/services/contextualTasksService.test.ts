@@ -35,6 +35,18 @@ describe('contextual task URL contract', () => {
     expect(task.tags).toEqual(['important', 'community'])
     expect(task.status).toBe('todo')
   })
+
+  it('supports standalone tasks with optional people and safe links', () => {
+    const task = createContextualTask({
+      title: 'PrÃ©parer la modÃ©ration',
+      people: [{ name: 'Alex' }, { name: 'Alex' }, { name: 'Morgan' }],
+      links: ['https://example.com/brief#private', 'https://example.com/brief#private'],
+    })
+
+    expect(task.url).toBeUndefined()
+    expect(task.people).toEqual([{ name: 'Alex' }, { name: 'Morgan' }])
+    expect(task.links).toEqual(['https://example.com/brief'])
+  })
 })
 
 describe('ContextualTasksService', () => {
@@ -61,6 +73,13 @@ describe('ContextualTasksService', () => {
     expect(storage.has('contextual-tasks-v1')).toBe(true)
     service.remove(task.id)
     expect(service.getTasks()).toHaveLength(0)
+  })
+
+  it('hydrates legacy tasks with empty people and links', () => {
+    storage.set('contextual-tasks-v1', JSON.stringify([createContextualTask({ title: 'Ancienne tÃ¢che', url: 'https://x.com/post/1' })]))
+    const service = new ContextualTasksService()
+    service.loadState()
+    expect(service.getTasks()[0]).toMatchObject({ people: [], links: [] })
   })
 
   it('migrates only legacy task items that already contain a safe URL', () => {

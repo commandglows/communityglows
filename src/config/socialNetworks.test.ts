@@ -97,13 +97,9 @@ describe('social network isolation policy', () => {
     expect(origins).toEqual(['https://kick.com'])
   })
 
-  it('includes gmail with normalized https origin', () => {
-    const policy = getNetworkIsolationPolicy('gmail')
-    const origins = getNetworkIsolationOrigins('gmail')
-
-    expect(policy.authStorage).toEqual(['cookies', 'localStorage'])
-    expect(policy.storageOrigins).toEqual([])
-    expect(origins).toEqual(['https://mail.google.com'])
+  it('does not expose retired Gmail as a managed social network', () => {
+    expect(builtInSocialNetworks.some((network) => network.id === 'gmail')).toBe(false)
+    expect(getNetworkIsolationOrigins('gmail')).toEqual([])
   })
 
   it('includes Luma with its official HTTPS origin', () => {

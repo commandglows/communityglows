@@ -14,6 +14,11 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
     initialized: false,
     loading: false,
     error: null as string | null,
+    stageLabels: {
+      todo: 'À faire',
+      waiting: 'En attente',
+      done: 'Terminé',
+    } as Record<ContextualTaskStatus, string>,
   }),
 
   getters: {
@@ -32,6 +37,7 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
         this.service.migrateLegacyKanbanState()
         this.service.loadState()
         this.tasks = this.service.getTasks()
+        this.loadStageLabels()
         this.error = null
       } catch {
         this.error = 'invalid_tasks_state'
@@ -96,6 +102,28 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
 
     clearError() {
       this.error = null
+    },
+
+    renameStage(status: ContextualTaskStatus, label: string) {
+      const nextLabel = label.trim().slice(0, 40)
+      if (!nextLabel) return
+      this.stageLabels[status] = nextLabel
+      localStorage.setItem('contextual-task-stage-labels-v1', JSON.stringify(this.stageLabels))
+    },
+
+    loadStageLabels() {
+      try {
+        const raw = localStorage.getItem('contextual-task-stage-labels-v1')
+        if (!raw) return
+        const parsed: unknown = JSON.parse(raw)
+        if (!parsed || typeof parsed !== 'object') return
+        for (const status of ['todo', 'waiting', 'done'] as ContextualTaskStatus[]) {
+          const label = (parsed as Record<string, unknown>)[status]
+          if (typeof label === 'string' && label.trim()) this.stageLabels[status] = label.trim().slice(0, 40)
+        }
+      } catch {
+        // Keep the default labels when local preferences are malformed.
+      }
     },
 
     clearLocal() {

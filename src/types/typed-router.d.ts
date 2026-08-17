@@ -127,8 +127,6 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/AppSidebar'
       | '/setup/CommunityGlows/components/BackupRestore'
       | '/setup/CommunityGlows/components/BillingAccessPanel'
-      | '/setup/CommunityGlows/components/CrmSidebarWidget'
-      | '/setup/CommunityGlows/components/CrmToolbar'
       | '/setup/CommunityGlows/components/DashboardFilters'
       | '/setup/CommunityGlows/components/DesktopControlBar'
       | '/setup/CommunityGlows/components/DesktopQuickNavigation'
@@ -164,7 +162,6 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/kanban/KanbanSidebar'
       | '/setup/CommunityGlows/components/networks/DiscordView'
       | '/setup/CommunityGlows/components/networks/FacebookView'
-      | '/setup/CommunityGlows/components/networks/GmailView'
       | '/setup/CommunityGlows/components/networks/InstagramView'
       | '/setup/CommunityGlows/components/networks/LinkedInView'
       | '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout'
@@ -254,20 +251,6 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/common/SocialNetworkLogo': RouteRecordInfo<
       '/setup/CommunityGlows/components/common/SocialNetworkLogo',
       '/setup/CommunityGlows/components/common/SocialNetworkLogo',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/CommunityGlows/components/CrmSidebarWidget': RouteRecordInfo<
-      '/setup/CommunityGlows/components/CrmSidebarWidget',
-      '/setup/CommunityGlows/components/CrmSidebarWidget',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/CommunityGlows/components/CrmToolbar': RouteRecordInfo<
-      '/setup/CommunityGlows/components/CrmToolbar',
-      '/setup/CommunityGlows/components/CrmToolbar',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -422,13 +405,6 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/networks/FacebookView': RouteRecordInfo<
       '/setup/CommunityGlows/components/networks/FacebookView',
       '/setup/CommunityGlows/components/networks/FacebookView',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/setup/CommunityGlows/components/networks/GmailView': RouteRecordInfo<
-      '/setup/CommunityGlows/components/networks/GmailView',
-      '/setup/CommunityGlows/components/networks/GmailView',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -853,8 +829,6 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/AppSidebar'
         | '/setup/CommunityGlows/components/BackupRestore'
         | '/setup/CommunityGlows/components/BillingAccessPanel'
-        | '/setup/CommunityGlows/components/CrmSidebarWidget'
-        | '/setup/CommunityGlows/components/CrmToolbar'
         | '/setup/CommunityGlows/components/DashboardFilters'
         | '/setup/CommunityGlows/components/DesktopControlBar'
         | '/setup/CommunityGlows/components/DesktopQuickNavigation'
@@ -890,7 +864,6 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/kanban/KanbanSidebar'
         | '/setup/CommunityGlows/components/networks/DiscordView'
         | '/setup/CommunityGlows/components/networks/FacebookView'
-        | '/setup/CommunityGlows/components/networks/GmailView'
         | '/setup/CommunityGlows/components/networks/InstagramView'
         | '/setup/CommunityGlows/components/networks/LinkedInView'
         | '/setup/CommunityGlows/components/networks/NetworkTwoColumnLayout'
@@ -992,22 +965,6 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/common/SocialNetworkLogo.vue': {
       routes:
         | '/setup/CommunityGlows/components/common/SocialNetworkLogo'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/ui/setup/pages/CommunityGlows/components/CrmSidebarWidget.vue': {
-      routes:
-        | '/setup/CommunityGlows/components/CrmSidebarWidget'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/ui/setup/pages/CommunityGlows/components/CrmToolbar.vue': {
-      routes:
-        | '/setup/CommunityGlows/components/CrmToolbar'
       views:
         | never
       pathParamNames:
@@ -1184,14 +1141,6 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/networks/FacebookView.vue': {
       routes:
         | '/setup/CommunityGlows/components/networks/FacebookView'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/ui/setup/pages/CommunityGlows/components/networks/GmailView.vue': {
-      routes:
-        | '/setup/CommunityGlows/components/networks/GmailView'
       views:
         | never
       pathParamNames:

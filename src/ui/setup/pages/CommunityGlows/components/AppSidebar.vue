@@ -526,12 +526,6 @@ const menuItems = ref<MenuItem[]>([
   ...builtinMenuItems,
   {
     id: builtinMenuItems.length + 1,
-    label: "CRM",
-    icon: "pi pi-briefcase",
-    route: "/crm",
-  },
-  {
-    id: builtinMenuItems.length + 2,
     label: "Tâches",
     icon: "pi pi-check-square",
     route: "/tasks",
@@ -577,11 +571,7 @@ const customLinkItems = computed<MenuItem[]>(() => {
 })
 
 const isNetworkActive = (item: MenuItem): boolean =>
-  item.route === "/crm"
-    ? webviewStore.activeNetworkId === "gmail" ||
-      (webviewStore.activeNetworkId === null &&
-        (route.path === "/crm" || route.path === "/gmail"))
-    : item.route === "/tasks"
+  item.route === "/tasks"
       ? route.path === "/tasks" || webviewStore.activeNetworkId === "tasks"
       : webviewStore.activeNetworkId === item.route.slice(1)
 

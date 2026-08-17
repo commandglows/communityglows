@@ -1,8 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
-import { GmailService } from '@/services/gmailService'
-import { gmailConfig } from '@/config/gmail'
-import type { Email } from '@/ui/setup/pages/CommunityGlows/types'
 
 const OAUTH_CALLBACK_TTL_MS = 5 * 60 * 1000
 // Browser protocol string: preserve popup geometry and features independently of rendered design tokens.
@@ -39,26 +35,15 @@ function pruneConsumedOAuthStates(now: number) {
 export const useSocialNetworksStore = defineStore('socialNetworks', {
   state: () => ({
     connections: {} as Record<string, NetworkConnection>,
-    gmail: {
-      service: new GmailService(gmailConfig),
-      emails: [] as Email[],
-      initialized: false,
-      connected: false,
-      unreadCount: 0
-    }
   }),
 
   getters: {
     isConnected: (state) => (networkId: string) => {
-      if (networkId === 'gmail') {
-        return state.gmail.connected
-      }
       return state.connections[networkId]?.connected || false
     },
     getNetworkInfo: (state) => (networkId: string) => {
       return state.connections[networkId]
     },
-    unreadEmailCount: (state) => computed(() => state.gmail.emails.filter(email => !email.isRead).length)
   },
 
   actions: {
@@ -285,6 +270,7 @@ export const useSocialNetworksStore = defineStore('socialNetworks', {
       }
     },
 
+    /* Gmail integration retired: retained only as migration context until the next cleanup pass.
     async initializeGmail() {
       if (this.gmail.initialized) return
 
@@ -335,5 +321,6 @@ export const useSocialNetworksStore = defineStore('socialNetworks', {
         throw error
       }
     }
+    */
   }
 })

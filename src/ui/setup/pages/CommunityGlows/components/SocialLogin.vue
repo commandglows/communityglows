@@ -13,12 +13,6 @@
         class="twitter-button"
         @click="connectWithTwitter"
       />
-      <Button
-        icon="pi pi-google"
-        :label="$t('google.connect_button', 'Sign in with Google')"
-        class="google-button"
-        @click="connectWithGoogle"
-      />
     </div>
   </div>
 </template>
@@ -45,13 +39,6 @@ const connectWithTwitter = async () => {
   }
 }
 
-const connectWithGoogle = async () => {
-  try {
-    await store.connectNetwork('gmail', 'fake-auth-code')
-  } catch (error) {
-    console.error('Erreur de connexion Google:', error)
-  }
-}
 </script>
 
 <style scoped>
@@ -86,11 +73,4 @@ const connectWithGoogle = async () => {
   background: var(--sg-color-twitter-hover);
 }
 
-:deep(.google-button) {
-  background: var(--sg-color-google);
-}
-
-:deep(.google-button:hover) {
-  background: var(--sg-color-google-hover);
-}
 </style> 

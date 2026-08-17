@@ -55,7 +55,7 @@ Core value:
 - Windows and Android are available now.
 - Linux, macOS, and iPhone are planned for later, but development has not started and no release date is committed.
 - Lightweight profile and preference sync is included. Login sessions remain local to each device.
-- CRM/Kanban, inactive-page sleeping, and multiple tabs per network are in development, not shipped entitlements or dated guarantees.
+- Le gestionnaire de tâches Kanban, inactive-page sleeping, and multiple tabs per network are in development, not shipped entitlements or dated guarantees.
 - The price is intended to fund cross-platform compatibility, maintenance, and future platform releases rather than recurring cloud infrastructure.
 
 ## Key differentiation

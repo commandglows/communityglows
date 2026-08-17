@@ -14,7 +14,7 @@ export const PORTABLE_LOCAL_STORAGE_KEYS = [
   'communityglows_keyboard_shortcuts',
   'communityglows_desktop_control_bar_position',
   'communityglows-right-sidebar-kanban-collapsed',
-  'communityglows-right-sidebar-crm-collapsed',
+  'contextual-task-stage-labels-v1',
   'kanban-state',
   'contextual-tasks-v1',
 ] as const

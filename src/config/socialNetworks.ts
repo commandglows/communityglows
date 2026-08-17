@@ -28,7 +28,6 @@ const SOCIAL_NETWORK_THEME_PRESETS: SocialNetworkThemeMap = {
   linkedin: { color: 'var(--sg-color-linkedin)' },
   discord: { color: 'var(--sg-color-discord)' },
   reddit: { color: 'var(--sg-color-reddit)' },
-  gmail: { color: 'var(--sg-color-google)' },
 }
 
 const getNetworkTheme = (networkId: string, fallback: SocialNetworkTheme): SocialNetworkTheme => {
@@ -357,16 +356,6 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     icon: 'pi pi-play',
     color: '#53FC18',
     tileColor: '#53FC18',
-    onboarding: true,
-    defaultSelected: false,
-  },
-  {
-    id: 'gmail',
-    label: 'Gmail',
-    route: '/gmail',
-    url: 'https://mail.google.com',
-    icon: 'pi pi-envelope',
-    ...getNetworkTheme('gmail', { color: '#EA4335', tileColor: '#EA4335' }),
     onboarding: true,
     defaultSelected: false,
   },
@@ -706,9 +695,6 @@ const NETWORK_ISOLATION_OVERRIDES: Readonly<Record<string, NetworkIsolationPolic
     storageOrigins: ['https://cinderreels.com'],
   },
   kick: {
-    authStorage: ['cookies', 'localStorage'],
-  },
-  gmail: {
     authStorage: ['cookies', 'localStorage'],
   },
 }

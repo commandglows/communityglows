@@ -20,6 +20,8 @@ const title = ref('')
 const url = ref(props.initialUrl)
 const note = ref('')
 const tags = ref('')
+const people = ref('')
+const links = ref('')
 const priority = ref<ContextualTaskPriority>('normal')
 const status = ref<ContextualTaskStatus>('todo')
 const dueDate = ref('')
@@ -28,15 +30,17 @@ watch(() => props.initialUrl, (value) => {
   if (value) url.value = value
 }, { immediate: true })
 
-const canSubmit = computed(() => title.value.trim().length > 0 && url.value.trim().length > 0)
+const canSubmit = computed(() => title.value.trim().length > 0)
 
 function submit() {
   if (!canSubmit.value) return
   emit('submit', {
     title: title.value,
-    url: url.value,
+    url: url.value || undefined,
     note: note.value,
     tags: tags.value.split(',').map((tag) => tag.trim()).filter(Boolean),
+    people: people.value.split(',').map((name) => ({ name })).filter((person) => person.name.trim()),
+    links: links.value.split('\n').map((link) => link.trim()).filter(Boolean),
     priority: priority.value,
     status: status.value,
     dueDate: dueDate.value || undefined,
@@ -66,8 +70,7 @@ function submit() {
           v-model="url"
           type="url"
           inputmode="url"
-          required
-          placeholder="https://..."
+          placeholder="https://... (facultatif)"
         />
       </label>
     </div>
@@ -81,6 +84,25 @@ function submit() {
         placeholder="Ce que je veux faire ou retenir…"
       />
     </label>
+
+    <div class="task-form-grid">
+      <label>
+        <span>Personnes associées</span>
+        <input
+          v-model="people"
+          type="text"
+          placeholder="Alex, Morgan"
+        />
+      </label>
+      <label>
+        <span>Liens complémentaires</span>
+        <textarea
+          v-model="links"
+          rows="2"
+          placeholder="Un lien HTTPS par ligne"
+        />
+      </label>
+    </div>
 
     <div class="task-form-grid task-form-grid--details">
       <label>

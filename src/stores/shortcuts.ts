@@ -6,7 +6,7 @@ export type CoreShortcutAction =
   | 'toggle-left-sidebar'
   | 'toggle-right-sidebar'
   | 'open-settings'
-  | 'open-crm'
+  | 'open-tasks'
   | 'open-profile-selector'
 export type NetworkShortcutAction = 'open-network'
 export type ProfileShortcutAction = 'open-profile'
@@ -28,7 +28,7 @@ const defaults: AppShortcut[] = [
   { id: 'toggle-left-sidebar', action: 'toggle-left-sidebar', label: 'Afficher/masquer le panneau gauche', keys: 'Alt+L', enabled: true },
   { id: 'toggle-right-sidebar', action: 'toggle-right-sidebar', label: 'Afficher/masquer le panneau droit', keys: 'Alt+R', enabled: true },
   { id: 'open-settings', action: 'open-settings', label: 'Ouvrir les paramètres', keys: 'Alt+,', enabled: true },
-  { id: 'open-crm', action: 'open-crm', label: 'Ouvrir le CRM', keys: 'Alt+C', enabled: true },
+  { id: 'open-tasks', action: 'open-tasks', label: 'Ouvrir les tÃ¢ches', keys: 'Alt+C', enabled: true },
   { id: 'open-profile-selector', action: 'open-profile-selector', label: 'Ouvrir le sélecteur de profil', keys: 'Alt+P', enabled: true },
 ]
 
@@ -45,7 +45,7 @@ function normalizeShortcutAction(value: unknown): ShortcutAction {
     value === 'toggle-left-sidebar'
     || value === 'toggle-right-sidebar'
     || value === 'open-settings'
-    || value === 'open-crm'
+    || value === 'open-tasks'
     || value === 'open-profile-selector'
     || value === 'open-network'
     || value === 'open-profile'

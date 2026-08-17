@@ -123,7 +123,7 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
 - `src/stores/*`
   - Ã‰tat applicatif global (theme, socialNetworks, settings, onboarding, kanban, contextualTasks, etc.).
 - `src/services/*`
-  - Appels API externes (Gmail, autres intÃ©grations) et service local des tÃ¢ches contextuelles.
+  - Services locaux de tÃ¢ches contextuelles et intÃ©grations externes explicitement ajoutÃ©es.
 
 ## Tauri IPC Surface
 

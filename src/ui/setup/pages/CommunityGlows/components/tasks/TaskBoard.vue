@@ -4,12 +4,14 @@ import SgButton from '../ui/SgButton.vue'
 
 defineProps<{
   tasksByStatus: Record<ContextualTaskStatus, ContextualTask[]>
+  stageLabels: Record<ContextualTaskStatus, string>
 }>()
 
 const emit = defineEmits<{
   move: [taskId: string, status: ContextualTaskStatus]
   open: [task: ContextualTask]
   remove: [taskId: string]
+  'rename-stage': [status: ContextualTaskStatus, label: string]
 }>()
 
 const columns: Array<{ id: ContextualTaskStatus; label: string }> = [
@@ -34,7 +36,11 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
       @drop="handleDrop($event, column.id)"
     >
       <header class="task-column-header">
-        <h3>{{ column.label }}</h3>
+        <input
+          :value="stageLabels[column.id]"
+          :aria-label="`Nom de l’étape ${column.label}`"
+          @change="emit('rename-stage', column.id, ($event.target as HTMLInputElement).value)"
+        >
         <span class="task-count">{{ tasksByStatus[column.id].length }}</span>
       </header>
 
@@ -63,7 +69,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
           <h4>{{ task.title }}</h4>
           <p v-if="task.note">{{ task.note }}</p>
           <div class="task-card-meta">
-            <span>{{ task.host }}</span>
+            <span v-if="task.host">{{ task.host }}</span>
             <span v-if="task.dueDate">{{ task.dueDate }}</span>
           </div>
           <div
@@ -75,7 +81,10 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
               :key="tag"
             >#{{ tag }}</span>
           </div>
+          <p v-if="task.people?.length" class="task-people">{{ task.people.map((person) => person.name).join(', ') }}</p>
+          <p v-if="task.links?.length" class="task-links">{{ task.links.length }} lien(s) associé(s)</p>
           <SgButton
+            v-if="task.url"
             label="Ouvrir le contexte"
             outlined
             size="small"
@@ -129,6 +138,21 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   font-size: var(--sg-crm-heading-size);
 }
 
+.task-column-header input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sg-color-text);
+  font: inherit;
+  font-weight: 600;
+}
+
+.task-column-header input:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+
 .task-count,
 .task-tags span {
   color: var(--sg-color-action);
@@ -175,6 +199,13 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 
 .task-card p,
 .task-card-meta {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-crm-secondary-copy-size);
+}
+
+.task-people,
+.task-links {
+  margin: 0;
   color: var(--sg-color-text-muted);
   font-size: var(--sg-crm-secondary-copy-size);
 }

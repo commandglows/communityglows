@@ -22,7 +22,6 @@ const props = defineProps<{
     | 'threads'
     | 'discord'
     | 'reddit'
-    | 'gmail'
   size?: 'small' | 'medium' | 'large'
 }>()
 
@@ -44,8 +43,6 @@ const getIconClass = computed(() => {
       return 'pi pi-discord'
     case 'reddit':
       return 'pi pi-reddit'
-    case 'gmail':
-      return 'pi pi-envelope'
     default:
       return 'pi pi-question'
   }

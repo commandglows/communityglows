@@ -128,19 +128,6 @@ const routes: RouteRecordRaw[] = [
       title: 'Tâches',
     }
   },
-  {
-    path: '/gmail',
-    alias: '/crm',
-    name: 'Gmail',
-    component: () => import('../components/networks/GmailView.vue'),
-    meta: {
-      auth: true,
-      requiresAuth: true,
-      networkId: 'gmail',
-      title: 'CRM',
-
-    }
-  }
 ]
 
 const router = createRouter({

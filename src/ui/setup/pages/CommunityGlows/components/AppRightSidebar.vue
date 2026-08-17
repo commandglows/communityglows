@@ -206,39 +206,6 @@
             </div>
           </div>
 
-          <div class="crm-host">
-            <div class="sidebar-widget">
-              <button
-                class="sidebar-widget__toggle"
-                type="button"
-                :aria-label="isCrmCollapsed ? 'Ouvrir CRM' : 'Replier CRM'"
-                :aria-expanded="String(!isCrmCollapsed)"
-                @click="isCrmCollapsed = !isCrmCollapsed"
-              >
-                <span class="sidebar-widget__title">CRM</span>
-                <Button
-                  class="sidebar-widget__link-action"
-                  icon="pi pi-external-link"
-                  text
-                  size="small"
-                  aria-label="Ouvrir CRM"
-                  @click.stop="openCrmPage"
-                />
-                <SgIcon
-                  :icon="[
-                    'pi',
-                    isCrmCollapsed ? 'pi-chevron-down' : 'pi-chevron-up',
-                  ]"
-                />
-              </button>
-              <div
-                class="sidebar-widget__body sidebar-widget__body--crm"
-                :class="{ 'sidebar-widget__body--collapsed': isCrmCollapsed }"
-              >
-                <CrmSidebarWidget />
-              </div>
-            </div>
-          </div>
         </div>
 
         <div
@@ -275,7 +242,6 @@ import {
   SIDEBAR_MAX_SIZE,
 } from "./sidebarLayout"
 import KanbanSidebar from "./kanban/KanbanSidebar.vue"
-import CrmSidebarWidget from "./CrmSidebarWidget.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import type { DesktopControlBarPosition } from "@/stores/desktopControlBar"
@@ -303,9 +269,7 @@ const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
 const iconsOnly = ref(false)
 const isKanbanCollapsed = ref(false)
-const isCrmCollapsed = ref(true)
 const KANBAN_COLLAPSE_KEY = "communityglows-right-sidebar-kanban-collapsed"
-const CRM_COLLAPSE_KEY = "communityglows-right-sidebar-crm-collapsed"
 const sidebarPanel = ref<{
   collapse: () => void
   getSize: () => number
@@ -331,17 +295,12 @@ const writeBoolToStorage = (key: string, value: boolean) => {
   }
 }
 
-const openCrmPage = () => {
-  router.push("/gmail")
-}
-
 const openKanbanPage = () => {
   router.push("/tasks")
 }
 
 onMounted(() => {
   isKanbanCollapsed.value = readBoolFromStorage(KANBAN_COLLAPSE_KEY, false)
-  isCrmCollapsed.value = readBoolFromStorage(CRM_COLLAPSE_KEY, true)
   if (!props.modelValue) sidebarPanel.value?.collapse()
 })
 
@@ -349,9 +308,6 @@ watch(isKanbanCollapsed, (isCollapsed) => {
   writeBoolToStorage(KANBAN_COLLAPSE_KEY, isCollapsed)
 })
 
-watch(isCrmCollapsed, (isCollapsed) => {
-  writeBoolToStorage(CRM_COLLAPSE_KEY, isCollapsed)
-})
 
 watch(iconsOnly, async (compact) => {
   await nextTick()
@@ -575,9 +531,6 @@ const handleResize = (sizes: number[]) => {
   width: var(--sg-sidebar-fill-size);
 }
 
-.crm-host {
-  width: var(--sg-sidebar-fill-size);
-}
 
 .sidebar-widget-stack {
   display: flex;
@@ -586,8 +539,7 @@ const handleResize = (sizes: number[]) => {
   min-height: 0;
 }
 
-.kanban-host,
-.crm-host {
+.kanban-host {
   min-height: 0;
   position: relative;
 }
@@ -663,9 +615,6 @@ const handleResize = (sizes: number[]) => {
   max-height: var(--sg-right-sidebar-widget-kanban-max-height);
 }
 
-.sidebar-widget__body--crm {
-  max-height: var(--sg-right-sidebar-widget-crm-max-height);
-}
 
 .sidebar-widget__body--collapsed {
   max-height: 0;
