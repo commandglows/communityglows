@@ -14,7 +14,7 @@ name = "app_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "2.5.4", features = [] }
+tauri-build = { version = "2.6.3", features = [] }
 
 [dependencies]
 serde_json = "1.0"
@@ -35,11 +35,11 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 
 # Desktop: unstable child-webview API + system tray
 [target.'cfg(not(target_os = "android"))'.dependencies]
-tauri = { version = "=2.11.2", features = ["unstable", "tray-icon", "image-png"] }
+tauri = { version = "=2.11.5", features = ["unstable", "tray-icon", "image-png"] }
 
 [target.'cfg(any(target_os = "windows", target_os = "macos", target_os = "linux"))'.dependencies]
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
 
 # Android: minimal build without desktop-only features
 [target.'cfg(target_os = "android")'.dependencies]
-tauri = { version = "=2.11.2", features = ["unstable", "tray-icon", "image-png"] }
+tauri = { version = "=2.11.5", features = ["unstable", "tray-icon", "image-png"] }
