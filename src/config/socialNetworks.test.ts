@@ -41,6 +41,22 @@ describe('social network visibility', () => {
 })
 
 describe('social network isolation policy', () => {
+  it('includes the requested community catalogue entries without duplicates', () => {
+    const requested = [
+      'medium', 'circle', 'stackoverflow', 'github-community', 'huzzler', 'substack',
+      'youtube', 'uneed', 'indiehackers', 'devhunt', 'hackernoon', 'freelance', 'coder',
+      'codeur', 'utest', 'hashnode', 'beehiiv', 'betalist', 'dribbble', 'behance',
+      'malt', 'superprof', 'codepen', 'devto',
+    ]
+    const requestedEntries = requested.map((id) => builtInSocialNetworks.find((network) => network.id === id))
+
+    expect(requestedEntries.every(Boolean)).toBe(true)
+    expect(new Set(builtInSocialNetworks.map((network) => network.id)).size).toBe(
+      builtInSocialNetworks.length,
+    )
+    expect(requestedEntries.every((network) => network?.url.startsWith('https://'))).toBe(true)
+  })
+
   it('uses global defaults for networks without overrides', () => {
     const policy = getNetworkIsolationPolicy('twitter')
 
