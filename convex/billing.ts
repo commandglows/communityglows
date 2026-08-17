@@ -179,7 +179,7 @@ async function callSuiteBridge<T extends Record<string, unknown> = Record<string
       }),
     })
   } catch (error) {
-    throw new Error(`bridge_request_failed: ${error instanceof Error ? error.message : 'network_error'}`)
+    throw Object.assign(new Error(`bridge_request_failed: ${error instanceof Error ? error.message : 'network_error'}`), { cause: error })
   }
 
   let payload: BridgeResponseOk<T> | BridgeResponseFailure
@@ -216,7 +216,7 @@ async function createSuiteCheckout(checkoutIdentityToken: string): Promise<strin
       }),
     })
   } catch (error) {
-    throw new Error(`checkout_request_failed: ${error instanceof Error ? error.message : 'network_error'}`)
+    throw Object.assign(new Error(`checkout_request_failed: ${error instanceof Error ? error.message : 'network_error'}`), { cause: error })
   }
 
   let payload: { checkoutUrl?: unknown; message?: unknown }

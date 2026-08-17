@@ -265,7 +265,7 @@ export function useBackup() {
     const { invoke } = await import('@tauri-apps/api/core')
     const isAndroid = isAndroidTauri()
 
-    let encryptedB64 = ''
+    let encryptedB64: string
 
     if (isAndroid) {
       // Let Android's system document picker read a .sfbak from any accessible location.

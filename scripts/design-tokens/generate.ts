@@ -125,7 +125,7 @@ function extractBlock(source: string, selector: RegExp): string | null {
 function parseCustomProperties(source: string): TokenMap {
   const output: TokenMap = {};
   const variableRegex = /(--[a-zA-Z0-9_-]+)\s*:\s*([^;]+);/g;
-  let match: RegExpExecArray | null = null;
+  let match: RegExpExecArray | null;
   while ((match = variableRegex.exec(source)) !== null) {
     const name = match[1]?.trim();
     const value = match[2]?.trim();

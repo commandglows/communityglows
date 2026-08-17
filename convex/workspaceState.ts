@@ -14,7 +14,7 @@ function assertSerializedArray(value: string, field: string) {
     }
   } catch (error) {
     if (error instanceof Error && error.message.includes(field)) throw error;
-    throw new Error(`${field} must contain valid JSON`);
+    throw Object.assign(new Error(`${field} must contain valid JSON`), { cause: error });
   }
 }
 

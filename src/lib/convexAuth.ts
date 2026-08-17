@@ -299,7 +299,7 @@ export async function signIn(
     }, "password-sign-in")) as AuthResult | null;
   } catch (error) {
     if (error instanceof Error) throw error;
-    throw new Error("La connexion au cloud a échoué. Réessayez.");
+    throw Object.assign(new Error("La connexion au cloud a échoué. Réessayez."), { cause: error });
   }
 
   if (result?.tokens) {
