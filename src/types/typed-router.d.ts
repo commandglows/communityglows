@@ -145,6 +145,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/ProfileAvatarEditor'
       | '/setup/CommunityGlows/components/ProfileManagerDialog'
       | '/setup/CommunityGlows/components/ProfileSwitcher'
+      | '/setup/CommunityGlows/components/SidebarNavButton'
       | '/setup/CommunityGlows/components/SignupNudge'
       | '/setup/CommunityGlows/components/SocialLogin'
       | '/setup/CommunityGlows/components/Unauthorized'
@@ -521,6 +522,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/SidebarNavButton': RouteRecordInfo<
+      '/setup/CommunityGlows/components/SidebarNavButton',
+      '/setup/CommunityGlows/components/SidebarNavButton',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/SignupNudge': RouteRecordInfo<
       '/setup/CommunityGlows/components/SignupNudge',
       '/setup/CommunityGlows/components/SignupNudge',
@@ -847,6 +855,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/ProfileAvatarEditor'
         | '/setup/CommunityGlows/components/ProfileManagerDialog'
         | '/setup/CommunityGlows/components/ProfileSwitcher'
+        | '/setup/CommunityGlows/components/SidebarNavButton'
         | '/setup/CommunityGlows/components/SignupNudge'
         | '/setup/CommunityGlows/components/SocialLogin'
         | '/setup/CommunityGlows/components/Unauthorized'
@@ -1269,6 +1278,14 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/ProfileSwitcher.vue': {
       routes:
         | '/setup/CommunityGlows/components/ProfileSwitcher'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/SidebarNavButton.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/SidebarNavButton'
       views:
         | never
       pathParamNames:

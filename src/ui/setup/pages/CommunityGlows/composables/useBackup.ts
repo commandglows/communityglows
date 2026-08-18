@@ -195,6 +195,7 @@ async function syncRestoredDataToCloud() {
     grayscaleEnabled: theme.grayscaleEnabled,
     textZoom: Number(localStorage.getItem('communityglows_text_zoom') ?? '100'),
     uiScale: Number(localStorage.getItem('communityglows_ui_scale') ?? '100'),
+    iconScale: Number(localStorage.getItem('communityglows_icon_scale') ?? '20'),
     hapticEnabled: localStorage.getItem('communityglows_haptic') !== 'false',
     tapSoundEnabled: localStorage.getItem('communityglows_tap_sound') === 'true',
     tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem('communityglows_tap_sound_variant')),

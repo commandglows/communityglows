@@ -69,6 +69,7 @@ declare module 'vue' {
     SgStatusPill: typeof import('./../components/ui/SgStatusPill.vue')['default']
     SgSwitch: typeof import('./../components/ui/SgSwitch.vue')['default']
     SgTextarea: typeof import('./../components/ui/SgTextarea.vue')['default']
+    SidebarNavButton: typeof import('./../components/SidebarNavButton.vue')['default']
     SignupNudge: typeof import('./../components/SignupNudge.vue')['default']
     SnapchatIcon: typeof import('./../components/icons/SnapchatIcon.vue')['default']
     SnapchatView: typeof import('./../components/networks/SnapchatView.vue')['default']

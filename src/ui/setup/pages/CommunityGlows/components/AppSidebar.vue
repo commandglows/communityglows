@@ -7,7 +7,7 @@
       v-show="modelValue"
       ref="sidebarPanel"
       :default-size="SIDEBAR_EXPANDED_SIZE"
-      :min-size="5"
+      :min-size="3"
       :max-size="SIDEBAR_MAX_SIZE"
       :collapsed-size="0"
       collapsible
@@ -15,8 +15,10 @@
       :class="{ 'icons-only': iconsOnly }"
     >
       <div
+        ref="sidebarElement"
         class="sidebar-content"
         :class="{ 'content-centered': iconsOnly }"
+        :style="sidebarStyle"
       >
         <div class="sidebar-main">
           <div
@@ -58,22 +60,11 @@
                       'network-row--hidden': isNetworkHiddenForProfile(item),
                     }"
                   >
-                    <Button
-                      :icon="undefined"
-                      :label="iconsOnly ? undefined : item.label"
+                    <SidebarNavButton
+                      :label="item.label"
                       :tooltip="iconsOnly ? item.label : undefined"
-                      :tooltip-options="{ position: 'right' }"
-                      text
-                      :class="[
-                        'network-btn',
-                        iconsOnly
-                          ? 'network-btn--centered'
-                          : 'network-btn--leading',
-                        {
-                          'network-btn--active': isNetworkActive(item),
-                          'network-btn--editing': networkEditMode && !iconsOnly,
-                        },
-                      ]"
+                      :compact="iconsOnly"
+                      :active="isNetworkActive(item)"
                       :aria-pressed="
                         networkEditMode
                           ? !isNetworkHiddenForProfile(item)
@@ -91,7 +82,7 @@
                           :fallback-icon="item.icon"
                         />
                       </template>
-                    </Button>
+                    </SidebarNavButton>
                     <span
                       v-if="networkEditMode"
                       class="network-visibility-indicator"
@@ -170,19 +161,12 @@
                     class="network-row"
                     :class="{ active: isNetworkActive(item) }"
                   >
-                    <Button
+                    <SidebarNavButton
                       :icon="item.icon"
-                      :label="iconsOnly ? undefined : item.label"
+                      :label="item.label"
                       :tooltip="iconsOnly ? item.label : undefined"
-                      :tooltip-options="{ position: 'right' }"
-                      text
-                      :class="[
-                        'network-btn',
-                        iconsOnly
-                          ? 'network-btn--centered'
-                          : 'network-btn--leading',
-                        { 'network-btn--active': isNetworkActive(item) },
-                      ]"
+                      :compact="iconsOnly"
+                      :active="isNetworkActive(item)"
                       @click="navigateToNetwork(item)"
                     />
                     <Button
@@ -330,10 +314,10 @@ import SgIcon from "./ui/SgIcon.vue"
 import SgDialog from "./ui/SgDialog.vue"
 import ProfileSwitcher from "./ProfileSwitcher.vue"
 import NetworkBrandIcon from "./NetworkBrandIcon.vue"
+import SidebarNavButton from "./SidebarNavButton.vue"
+import { useSidebarSizing } from "../composables/useSidebarSizing"
 import {
   clampSidebarSize,
-  isCompactSidebarSize,
-  sidebarSizeForMode,
   SIDEBAR_EXPANDED_SIZE,
   SIDEBAR_MAX_SIZE,
 } from "./sidebarLayout"
@@ -395,7 +379,8 @@ const emit = defineEmits<{
   "open-settings": []
 }>()
 
-const iconsOnly = ref(false)
+const sidebarElement = ref<HTMLElement | null>(null)
+const { compact: iconsOnly, style: sidebarStyle } = useSidebarSizing(sidebarElement)
 const sidebarPanel = ref<{
   collapse: () => void
   getSize: () => number
@@ -405,11 +390,6 @@ const lastVisibleSidebarSize = ref(SIDEBAR_EXPANDED_SIZE)
 
 onMounted(() => {
   if (!props.modelValue) sidebarPanel.value?.collapse()
-})
-
-watch(iconsOnly, async (compact) => {
-  await nextTick()
-  sidebarPanel.value?.resize(sidebarSizeForMode(compact))
 })
 
 // Keep the splitter and its default slot mounted while the panel is hidden.
@@ -439,7 +419,6 @@ const handleResize = (sizes: number[]) => {
   if (typeof newSize !== "number") return
 
   if (newSize > 0) lastVisibleSidebarSize.value = clampSidebarSize(newSize)
-  iconsOnly.value = isCompactSidebarSize(newSize)
 }
 
 const builtinMenuItems = builtInSocialNetworks.map((network, index) => ({
@@ -554,34 +533,6 @@ onUnmounted(() => {
   background-color: var(--sg-color-surface-raised);
   height: var(--sg-sidebar-viewport-height);
   margin-top: 0;
-  transition: var(--sg-sidebar-panel-transition);
-  will-change: flex-basis;
-  --left-sidebar-compact-icon-size: var(--sg-sidebar-network-icon-size);
-}
-
-.sidebar.icons-only {
-  min-width: var(--sg-sidebar-compact-width);
-  max-width: var(--sg-sidebar-compact-width);
-  --left-sidebar-compact-icon-size: calc(var(--sg-sidebar-network-icon-size) * 3);
-}
-
-.sidebar.icons-only .network-btn,
-.sidebar.icons-only .section-footer .sg-button {
-  min-height: calc(var(--sg-sidebar-network-row-height) * 1.35);
-}
-
-.sidebar.icons-only .sg-button__content .sg-icon {
-  width: var(--left-sidebar-compact-icon-size);
-  height: var(--left-sidebar-compact-icon-size);
-}
-
-.sidebar.icons-only :deep(.network-brand-icon) {
-  width: var(--left-sidebar-compact-icon-size);
-  height: var(--left-sidebar-compact-icon-size);
-}
-
-.sidebar:not(.icons-only) {
-  min-width: var(--sg-sidebar-expanded-min-width);
 }
 
 .main-panel {
@@ -668,7 +619,7 @@ onUnmounted(() => {
 }
 
 .sidebar-header--spaced {
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .app-title {
@@ -708,12 +659,6 @@ onUnmounted(() => {
   position: relative;
 }
 
-.network-row.active {
-  background-color: var(--sg-color-surface-hover);
-  border-left: var(--sg-sidebar-active-indicator-width) solid
-    var(--sg-color-action);
-}
-
 .network-row--editing {
   cursor: pointer;
 }
@@ -729,33 +674,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-.network-btn {
-  flex: 1;
-  border-radius: 0;
-  height: var(--sg-sidebar-network-row-height);
-}
-
-.network-btn {
-  width: var(--sg-sidebar-fill-size);
-  border-radius: 0;
-  height: var(--sg-sidebar-network-row-height);
-}
-
-.network-btn--leading {
-  justify-content: flex-start;
-  padding: 0 var(--sg-sidebar-network-row-padding-inline);
-}
-
-.network-btn--editing {
-  padding-right: var(--sg-space-2rem);
-}
-
-.network-btn--centered {
-  justify-content: center;
-  padding: 0;
-}
-
-.network-btn:hover,
 .network-row:hover {
   background-color: var(--sg-color-surface-hover);
 }

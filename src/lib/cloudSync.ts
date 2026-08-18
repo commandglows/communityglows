@@ -53,6 +53,7 @@ type CloudSettings = Pick<
   | "grayscaleEnabled"
   | "textZoom"
   | "uiScale"
+  | "iconScale"
   | "hapticEnabled"
   | "tapSoundEnabled"
   | "tapSoundVariant"
@@ -115,6 +116,8 @@ const TEXT_ZOOM_MIN = 50;
 const TEXT_ZOOM_MAX = 200;
 const UI_SCALE_MIN = 75;
 const UI_SCALE_MAX = 150;
+const ICON_SCALE_MIN = 15;
+const ICON_SCALE_MAX = 50;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -181,6 +184,13 @@ function isUiScale(value: unknown): value is number {
     && value <= UI_SCALE_MAX;
 }
 
+function isIconScale(value: unknown): value is number {
+  return typeof value === "number"
+    && Number.isFinite(value)
+    && value >= ICON_SCALE_MIN
+    && value <= ICON_SCALE_MAX;
+}
+
 function asStringArray(
   value: unknown,
   itemGuard: (item: unknown) => item is string,
@@ -215,6 +225,7 @@ export function asCloudSettings(value: unknown): CloudSettings | null {
   if (typeof value.grayscaleEnabled === "boolean") settings.grayscaleEnabled = value.grayscaleEnabled;
   if (isTextZoom(value.textZoom)) settings.textZoom = value.textZoom;
   if (isUiScale(value.uiScale)) settings.uiScale = value.uiScale;
+  if (isIconScale(value.iconScale)) settings.iconScale = value.iconScale;
   if (typeof value.hapticEnabled === "boolean") settings.hapticEnabled = value.hapticEnabled;
   if (typeof value.tapSoundEnabled === "boolean") settings.tapSoundEnabled = value.tapSoundEnabled;
   if (isTapSoundVariant(value.tapSoundVariant)) settings.tapSoundVariant = value.tapSoundVariant;
@@ -567,6 +578,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       grayscaleEnabled: themeStore.grayscaleEnabled,
       textZoom: Number(localStorage.getItem("communityglows_text_zoom") ?? "100"),
       uiScale: Number(localStorage.getItem("communityglows_ui_scale") ?? "100"),
+      iconScale: Number(localStorage.getItem("communityglows_icon_scale") ?? "20"),
       hapticEnabled: localStorage.getItem("communityglows_haptic") !== "false",
       tapSoundEnabled: localStorage.getItem("communityglows_tap_sound") === "true",
       tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("communityglows_tap_sound_variant")),

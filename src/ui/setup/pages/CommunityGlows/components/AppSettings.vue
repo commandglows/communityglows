@@ -123,6 +123,26 @@
 
       <hr class="settings-divider">
 
+      <!-- App icon size -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <SgIcon icon="pi pi-image mr-2" />
+          <span>{{ $t('settings.icon_scale') }}</span>
+        </div>
+        <span class="text-zoom-value">{{ iconScaleLevel }} px</span>
+      </div>
+      <input
+        v-model.number="iconScaleLevel"
+        type="range"
+        class="text-zoom-slider"
+        :min="ICON_SCALE_MIN"
+        :max="ICON_SCALE_MAX"
+        :step="ICON_SCALE_STEP"
+        @change="onIconScaleChange"
+      />
+
+      <hr class="settings-divider">
+
       <!-- Text zoom -->
       <div class="setting-item">
         <div class="setting-label">
@@ -189,6 +209,13 @@ import {
   persistUiScaleLevel,
   readUiScaleLevel,
 } from '../utils/uiScale'
+import {
+  ICON_SCALE_MAX,
+  ICON_SCALE_MIN,
+  ICON_SCALE_STEP,
+  persistIconScaleLevel,
+  readIconScaleLevel,
+} from '../utils/iconScale'
 import { useThemeStore } from '@/stores/theme'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { useOnboardingStore } from '@/stores/onboarding'
@@ -258,6 +285,7 @@ function onTextZoomChange() {
 }
 
 const uiScaleLevel = ref(readUiScaleLevel())
+const iconScaleLevel = ref(readIconScaleLevel())
 
 function onUiScaleChange() {
   uiScaleLevel.value = persistUiScaleLevel(uiScaleLevel.value)
@@ -267,9 +295,18 @@ function onUiScaleChange() {
   }))
 }
 
+function onIconScaleChange() {
+  iconScaleLevel.value = persistIconScaleLevel(iconScaleLevel.value)
+  syncSettingsPatch({ iconScale: iconScaleLevel.value })
+  window.dispatchEvent(new CustomEvent('communityglows-icon-scale-changed', {
+    detail: { level: iconScaleLevel.value },
+  }))
+}
+
 defineExpose({
   show: () => {
     uiScaleLevel.value = readUiScaleLevel()
+    iconScaleLevel.value = readIconScaleLevel()
     visible.value = true
   }
 })

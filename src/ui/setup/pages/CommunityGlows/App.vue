@@ -145,7 +145,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
-import { Notification, Notivue } from "notivue"
+import { Notification, Notivue, push } from "notivue"
 import { useI18n } from "vue-i18n"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
@@ -184,6 +184,10 @@ import {
   persistUiScaleLevel,
   readUiScaleLevel,
 } from "./utils/uiScale"
+import {
+  persistIconScaleLevel,
+  readIconScaleLevel,
+} from "./utils/iconScale"
 import { useSignupNudge } from "@/composables/useSignupNudge"
 import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
 import AppSidebar from "./components/AppSidebar.vue"
@@ -214,7 +218,7 @@ const webviewOverlayActive = ref(0)
 const nudge = useSignupNudge()
 const nudgeVisible = ref(false)
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 
 const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
@@ -256,6 +260,7 @@ const textZoomLevel = ref(
   ),
 )
 const uiScaleLevel = ref(readUiScaleLevel())
+const iconScaleLevel = ref(readIconScaleLevel())
 const webviewReadyVersion = ref(0)
 restorePostAuthReadyFeedback()
 
@@ -372,6 +377,10 @@ const onUiScaleChanged = ((e: CustomEvent) => {
   uiScaleLevel.value = level
   void applyUiScaleLevel(level)
 }) as unknown as (e: Event) => void
+const onIconScaleChanged = ((e: CustomEvent) => {
+  const level = persistIconScaleLevel(Number(e.detail?.level))
+  iconScaleLevel.value = level
+}) as unknown as (e: Event) => void
 const onNativeTapSoundChanged = ((e: CustomEvent) => {
   const enabled = e.detail?.enabled
   if (typeof enabled !== "boolean") return
@@ -384,6 +393,32 @@ const onSharedLink = ((e: CustomEvent<{ url?: string }>) => {
 }) as unknown as (e: Event) => void
 const onWebviewReady = () => {
   webviewReadyVersion.value += 1
+}
+
+function updateUiScale(level: number) {
+  const nextLevel = persistUiScaleLevel(level)
+  uiScaleLevel.value = nextLevel
+  void syncSettingsPatch({ uiScale: nextLevel })
+  window.dispatchEvent(new CustomEvent("communityglows-ui-scale-changed", {
+    detail: { level: nextLevel },
+  }))
+}
+
+function updateNetworkTextZoom(level: number) {
+  const nextLevel = normalizeTextZoomLevel(level)
+  textZoomLevel.value = nextLevel
+  localStorage.setItem("communityglows_text_zoom", String(nextLevel))
+  void syncSettingsPatch({ textZoom: nextLevel })
+  void syncDesktopWebviewPreferences()
+}
+
+function updateIconScale(level: number) {
+  const nextLevel = persistIconScaleLevel(level)
+  iconScaleLevel.value = nextLevel
+  void syncSettingsPatch({ iconScale: nextLevel })
+  window.dispatchEvent(new CustomEvent("communityglows-icon-scale-changed", {
+    detail: { level: nextLevel },
+  }))
 }
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
@@ -401,6 +436,20 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
     rightSidebarVisible.value = !rightSidebarVisible.value
   if (shortcut.action === "open-settings") settingsVisible.value = true
   if (shortcut.action === "open-tasks") router.push("/tasks")
+  if (shortcut.action === "decrease-ui-scale") {
+    updateUiScale(uiScaleLevel.value - 5)
+  }
+  if (shortcut.action === "increase-ui-scale") {
+    updateUiScale(uiScaleLevel.value + 5)
+  }
+  if (shortcut.action === "decrease-network-text-size") {
+    updateNetworkTextZoom(textZoomLevel.value - 5)
+  }
+  if (shortcut.action === "increase-network-text-size") {
+    updateNetworkTextZoom(textZoomLevel.value + 5)
+  }
+  if (shortcut.action === "decrease-icon-size") updateIconScale(iconScaleLevel.value - 5)
+  if (shortcut.action === "increase-icon-size") updateIconScale(iconScaleLevel.value + 5)
   if (shortcut.action === "open-network" && shortcut.target) {
     webviewStore.selectNetwork(shortcut.target)
   }
@@ -613,12 +662,23 @@ function resolveRightPanelSectionPath(
 
 async function openRightPanelSection(sectionId: string) {
   const networkId = webviewStore.activeNetworkId
+  if (!networkId || !WEBVIEW_URLS[networkId]) {
+    sidebarVisible.value = true
+    push.info({ message: t("sidebar.select_network_hint"), duration: 3600 })
+    return
+  }
+
+  profilesStore.ensureDefault()
   const profileId = profilesStore.activeProfileId
-  if (!networkId || !profileId || !WEBVIEW_URLS[networkId]) return
+  if (!profileId) return
 
   const baseUrl = WEBVIEW_URLS[networkId]
   const path = resolveRightPanelSectionPath(networkId, sectionId)
   const url = `${baseUrl.replace(/\/$/, "")}${path ? `/${path.replace(/^\//, "")}` : ""}`
+
+  // Update the visible app state first: native navigation can legitimately be a
+  // no-op when this network webview has not been created yet.
+  webviewStore.selectNetwork(networkId, url)
 
   if (isTauri) {
     const { invoke } = await import("@tauri-apps/api/core")
@@ -626,11 +686,8 @@ async function openRightPanelSection(sectionId: string) {
       await invoke("navigate_webview", { profileId, networkId, url })
       return
     } catch {
-      // Fallback below for desktop where command may be unavailable in older builds.
-      webviewStore.selectNetwork(networkId, url)
+      // The store update above remains the fallback for older desktop builds.
     }
-  } else {
-    webviewStore.selectNetwork(networkId, url)
   }
 }
 
@@ -902,6 +959,7 @@ onMounted(async () => {
 
   uiScaleLevel.value = persistUiScaleLevel(readUiScaleLevel())
   await applyUiScaleLevel(uiScaleLevel.value).catch(() => {})
+  iconScaleLevel.value = persistIconScaleLevel(readIconScaleLevel())
 
   // Preload top networks off-screen so first click is instant (non-blocking)
   preloadWebviews()
@@ -1005,6 +1063,7 @@ onMounted(async () => {
     onNativeTextZoomChanged,
   )
   window.addEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
+  window.addEventListener("communityglows-icon-scale-changed", onIconScaleChanged)
   window.addEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,
@@ -1054,6 +1113,7 @@ onUnmounted(() => {
     onNativeTextZoomChanged,
   )
   window.removeEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
+  window.removeEventListener("communityglows-icon-scale-changed", onIconScaleChanged)
   window.removeEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,

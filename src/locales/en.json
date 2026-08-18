@@ -55,7 +55,8 @@
     "tap_sound_variant_soft": "Soft",
     "tap_sound_variant_pop": "Pop",
     "text_zoom": "Network text size",
-    "ui_scale": "Interface size"
+    "ui_scale": "Interface size",
+    "icon_scale": "Navigation icon size"
   },
   "theme": {
     "dark_mode": "Dark mode",
@@ -208,7 +209,8 @@
     "profile_button": "Profile",
     "friends_button": "Friends",
     "saved_button": "Saved",
-    "events_button": "Events"
+    "events_button": "Events",
+    "select_network_hint": "Choose a network in the left sidebar first."
   },
   "friends_filter": {
     "friends_only": "Friends only",

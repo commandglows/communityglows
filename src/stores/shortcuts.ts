@@ -8,6 +8,12 @@ export type CoreShortcutAction =
   | 'open-settings'
   | 'open-tasks'
   | 'open-profile-selector'
+  | 'decrease-ui-scale'
+  | 'increase-ui-scale'
+  | 'decrease-network-text-size'
+  | 'increase-network-text-size'
+  | 'decrease-icon-size'
+  | 'increase-icon-size'
 export type NetworkShortcutAction = 'open-network'
 export type ProfileShortcutAction = 'open-profile'
 export type RightPanelShortcutAction = 'open-rightpanel-section'
@@ -30,6 +36,12 @@ const defaults: AppShortcut[] = [
   { id: 'open-settings', action: 'open-settings', label: 'Ouvrir les paramètres', keys: 'Alt+,', enabled: true },
   { id: 'open-tasks', action: 'open-tasks', label: 'Ouvrir les tÃ¢ches', keys: 'Alt+C', enabled: true },
   { id: 'open-profile-selector', action: 'open-profile-selector', label: 'Ouvrir le sélecteur de profil', keys: 'Alt+P', enabled: true },
+  { id: 'decrease-ui-scale', action: 'decrease-ui-scale', label: 'Réduire la taille de l’interface', keys: 'Ctrl+-', enabled: true },
+  { id: 'increase-ui-scale', action: 'increase-ui-scale', label: 'Agrandir la taille de l’interface', keys: 'Ctrl+=', enabled: true },
+  { id: 'decrease-network-text-size', action: 'decrease-network-text-size', label: 'Réduire le texte des réseaux', keys: 'Ctrl+Alt+-', enabled: true },
+  { id: 'increase-network-text-size', action: 'increase-network-text-size', label: 'Agrandir le texte des réseaux', keys: 'Ctrl+Alt+=', enabled: true },
+  { id: 'decrease-icon-size', action: 'decrease-icon-size', label: 'Réduire la taille des icônes', keys: 'Ctrl+Shift+-', enabled: true },
+  { id: 'increase-icon-size', action: 'increase-icon-size', label: 'Agrandir la taille des icônes', keys: 'Ctrl+Shift+=', enabled: true },
 ]
 
 const NETWORK_SHORTCUT_PREFIX = 'open-network:'
@@ -47,6 +59,12 @@ function normalizeShortcutAction(value: unknown): ShortcutAction {
     || value === 'open-settings'
     || value === 'open-tasks'
     || value === 'open-profile-selector'
+    || value === 'decrease-ui-scale'
+    || value === 'increase-ui-scale'
+    || value === 'decrease-network-text-size'
+    || value === 'increase-network-text-size'
+    || value === 'decrease-icon-size'
+    || value === 'increase-icon-size'
     || value === 'open-network'
     || value === 'open-profile'
     || value === 'open-rightpanel-section'

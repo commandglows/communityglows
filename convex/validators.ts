@@ -142,6 +142,15 @@ export function assertUiScale(level: number) {
   }
 }
 
+export function assertIconScale(level: number) {
+  if (!Number.isFinite(level)) {
+    throw new Error("iconScale must be a finite number");
+  }
+  if (level < 15 || level > 50) {
+    throw new Error("iconScale must be between 15 and 50");
+  }
+}
+
 export function assertFriendNames(names: string[]) {
   if (names.length > LIMITS.friendNamesMax) {
     throw new Error(`names length must be <= ${LIMITS.friendNamesMax}`);

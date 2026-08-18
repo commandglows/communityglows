@@ -447,6 +447,7 @@
   --sg-sidebar-form-gap: 0.75rem;
   --sg-sidebar-gutter-transition: background-color 0.2s;
   --sg-sidebar-header-height: 3.5rem;
+  --sg-sidebar-icon-size-transition: width 180ms ease, height 180ms ease;
   --sg-sidebar-kanban-column-radius: 6px;
   --sg-sidebar-kanban-content-max-height: 200px;
   --sg-sidebar-kanban-count-padding-block: 0.1rem;
@@ -460,6 +461,7 @@
   --sg-sidebar-kanban-item-transition: all 0.2s ease;
   --sg-sidebar-kanban-padding: 0.5rem;
   --sg-sidebar-kanban-title-size: 0.9rem;
+  --sg-sidebar-label-transition: max-width 180ms ease, opacity 120ms ease, transform 180ms ease;
   --sg-sidebar-list-enter-offset: -20px;
   --sg-sidebar-list-transition: all 0.3s ease;
   --sg-sidebar-network-icon-size: 1rem;

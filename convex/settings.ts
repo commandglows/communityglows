@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireAuthUserId } from "./authHelpers";
-import { assertEntityId, assertLanguage, assertTextZoom, assertUiScale } from "./validators";
+import { assertEntityId, assertIconScale, assertLanguage, assertTextZoom, assertUiScale } from "./validators";
 
 export const get = query({
   args: {},
@@ -22,6 +22,7 @@ export const upsert = mutation({
     grayscaleEnabled: v.optional(v.boolean()),
     textZoom: v.optional(v.number()),
     uiScale: v.optional(v.number()),
+    iconScale: v.optional(v.number()),
     hapticEnabled: v.optional(v.boolean()),
     tapSoundEnabled: v.optional(v.boolean()),
     tapSoundVariant: v.optional(v.union(v.literal("classic"), v.literal("soft"), v.literal("pop"))),
@@ -52,6 +53,7 @@ export const upsert = mutation({
       grayscaleEnabled?: boolean;
       textZoom?: number;
       uiScale?: number;
+      iconScale?: number;
       hapticEnabled?: boolean;
       tapSoundEnabled?: boolean;
       tapSoundVariant?: "classic" | "soft" | "pop";
@@ -88,6 +90,10 @@ export const upsert = mutation({
     if (args.uiScale !== undefined) {
       assertUiScale(args.uiScale);
       patch.uiScale = args.uiScale;
+    }
+    if (args.iconScale !== undefined) {
+      assertIconScale(args.iconScale);
+      patch.iconScale = args.iconScale;
     }
     if (args.hapticEnabled !== undefined) {
       patch.hapticEnabled = args.hapticEnabled;
@@ -133,6 +139,7 @@ export const upsert = mutation({
         grayscaleEnabled: args.grayscaleEnabled,
         textZoom: args.textZoom,
         uiScale: args.uiScale,
+        iconScale: args.iconScale,
         hapticEnabled: args.hapticEnabled,
         tapSoundEnabled: args.tapSoundEnabled,
         tapSoundVariant: args.tapSoundVariant,

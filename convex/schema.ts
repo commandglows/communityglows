@@ -45,6 +45,7 @@ export default defineSchema({
     grayscaleEnabled: v.optional(v.boolean()),
     textZoom: v.optional(v.number()),
     uiScale: v.optional(v.number()),
+    iconScale: v.optional(v.number()),
     hapticEnabled: v.optional(v.boolean()),
     tapSoundEnabled: v.optional(v.boolean()),
     tapSoundVariant: v.optional(v.union(v.literal("classic"), v.literal("soft"), v.literal("pop"))),

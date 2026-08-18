@@ -164,4 +164,4 @@ When a token role, carrier or platform mapping changes, update this artifact bef
 
 ## User-controlled scaling
 
-CommunityGlows keeps two independent accessibility preferences: `uiScale` scales the main application shell and product UI, while `textZoom` applies only to embedded social-network webviews. They use separate persisted and cloud-synced values so changing the app density never alters third-party content.
+CommunityGlows keeps three independent accessibility preferences: `uiScale` scales the main application shell, `textZoom` applies only to embedded social-network webviews, and `iconScale` sets the preferred maximum size for navigation icons. Sidebar navigation resolves `iconScale` through shared 5 px tiers based on each rail's measured pixel width; compact labels animate without contributing layout gap, active indicators do not change geometry, and semantic action icons outside navigation keep their component-owned size. All three preferences persist and sync independently.

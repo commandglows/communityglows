@@ -17,7 +17,7 @@
       v-show="modelValue"
       ref="sidebarPanel"
       :default-size="SIDEBAR_EXPANDED_SIZE"
-      :min-size="5"
+      :min-size="3"
       :max-size="SIDEBAR_MAX_SIZE"
       :collapsed-size="0"
       collapsible
@@ -25,8 +25,10 @@
       :class="{ 'is-mobile': isSidebarMobile, 'icons-only': iconsOnly }"
     >
       <div
+        ref="sidebarElement"
         class="sidebar-content"
         :class="{ 'content-centered': iconsOnly }"
+        :style="sidebarStyle"
       >
         <div
           v-if="controlBarPosition === 'top'"
@@ -91,60 +93,35 @@
 
         <!-- Menu principal -->
         <div class="menu-section">
-          <Button
+          <SidebarNavButton
             icon="pi pi-home"
-            :label="iconsOnly ? undefined : $t('sidebar.feed_button')"
-            :aria-label="iconsOnly ? $t('sidebar.feed_button') : undefined"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
+            :label="$t('sidebar.feed_button')"
+            :compact="iconsOnly"
             @click="emit('open-rightpanel-section', 'feed')"
           />
-          <Button
+          <SidebarNavButton
             icon="pi pi-user"
-            :label="iconsOnly ? undefined : $t('sidebar.profile_button')"
-            :aria-label="iconsOnly ? $t('sidebar.profile_button') : undefined"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
+            :label="$t('sidebar.profile_button')"
+            :compact="iconsOnly"
             @click="emit('open-rightpanel-section', 'profile')"
           />
-          <Button
+          <SidebarNavButton
             icon="pi pi-bell"
-            :label="iconsOnly ? undefined : $t('common.notifications')"
-            :aria-label="iconsOnly ? $t('common.notifications') : undefined"
+            :label="$t('common.notifications')"
             :badge="'3'"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
+            :compact="iconsOnly"
             @click="emit('open-rightpanel-section', 'notifications')"
           />
-          <Button
+          <SidebarNavButton
             icon="pi pi-bookmark"
-            :label="iconsOnly ? undefined : $t('sidebar.saved_button')"
-            :aria-label="iconsOnly ? $t('sidebar.saved_button') : undefined"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
+            :label="$t('sidebar.saved_button')"
+            :compact="iconsOnly"
             @click="emit('open-rightpanel-section', 'saved')"
           />
-          <Button
+          <SidebarNavButton
             icon="pi pi-calendar"
-            :label="iconsOnly ? undefined : $t('sidebar.events_button')"
-            :aria-label="iconsOnly ? $t('sidebar.events_button') : undefined"
-            text
-            :class="[
-              'w-full',
-              iconsOnly ? 'menu-button--centered' : 'menu-button--leading',
-            ]"
+            :label="$t('sidebar.events_button')"
+            :compact="iconsOnly"
             @click="emit('open-rightpanel-section', 'events')"
           />
         </div>
@@ -194,9 +171,7 @@
               </div>
             </div>
           </div>
-
         </div>
-
         <div
           v-if="controlBarPosition === 'bottom'"
           class="sidebar-bottom-toggle sidebar-bottom-toggle--right"
@@ -219,14 +194,14 @@
 import { nextTick, onMounted, ref, watch } from "vue"
 import { SplitterGroup, SplitterPanel, SplitterResizeHandle } from "reka-ui"
 import Button from "./ui/SgButton.vue"
+import SidebarNavButton from "./SidebarNavButton.vue"
 import Avatar from "./ui/SgAvatar.vue"
 import { useRouter } from "vue-router"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { useProfilesStore } from "@/stores/profiles"
+import { useSidebarSizing } from "../composables/useSidebarSizing"
 import {
   clampSidebarSize,
-  isCompactSidebarSize,
-  sidebarSizeForMode,
   SIDEBAR_EXPANDED_SIZE,
   SIDEBAR_MAX_SIZE,
 } from "./sidebarLayout"
@@ -256,7 +231,8 @@ const router = useRouter()
 
 const toggleSidebar = () => emit("update:modelValue", !props.modelValue)
 
-const iconsOnly = ref(false)
+const sidebarElement = ref<HTMLElement | null>(null)
+const { compact: iconsOnly, style: sidebarStyle } = useSidebarSizing(sidebarElement)
 const isKanbanCollapsed = ref(false)
 const KANBAN_COLLAPSE_KEY = "communityglows-right-sidebar-kanban-collapsed"
 const sidebarPanel = ref<{
@@ -298,11 +274,6 @@ watch(isKanbanCollapsed, (isCollapsed) => {
 })
 
 
-watch(iconsOnly, async (compact) => {
-  await nextTick()
-  sidebarPanel.value?.resize(sidebarSizeForMode(compact))
-})
-
 // Preserve the central slot's component identity across panel visibility
 // changes. The previous v-if/v-else wrapper destroyed NetworkWebviewHost and
 // made the native WebView2 instance briefly disappear before reopening.
@@ -328,7 +299,6 @@ const handleResize = (sizes: number[]) => {
   if (typeof newSize !== "number") return
 
   if (newSize > 0) lastVisibleSidebarSize.value = clampSidebarSize(newSize)
-  iconsOnly.value = isCompactSidebarSize(newSize)
 }
 </script>
 
@@ -338,28 +308,6 @@ const handleResize = (sizes: number[]) => {
   border-left: 1px solid var(--sg-color-border);
   height: var(--sg-right-sidebar-viewport-height);
   margin-top: 0;
-  transition: var(--sg-right-sidebar-transition);
-  --right-sidebar-compact-icon-size: var(--sg-size-1rem);
-}
-
-.sidebar.icons-only {
-  min-width: var(--sg-right-sidebar-compact-width);
-  max-width: var(--sg-right-sidebar-compact-width);
-  --right-sidebar-compact-icon-size: calc(var(--sg-size-1rem) * 3);
-}
-
-.sidebar.icons-only .menu-section :deep(.sg-button) {
-  height: calc(var(--sg-right-sidebar-menu-row-height) * 1.33);
-}
-
-.sidebar.icons-only :deep(.sg-button__content .sg-icon),
-.sidebar.icons-only :deep(.sidebar-toggle-button .sg-icon) {
-  width: var(--right-sidebar-compact-icon-size);
-  height: var(--right-sidebar-compact-icon-size);
-}
-
-.sidebar:not(.icons-only) {
-  min-width: var(--sg-right-sidebar-expanded-min-width);
 }
 
 .main-panel {
@@ -492,18 +440,6 @@ const handleResize = (sizes: number[]) => {
 .menu-section :deep(.sg-button) {
   height: var(--sg-right-sidebar-menu-row-height);
   position: relative;
-}
-
-.menu-section :deep(.sg-button.menu-button--leading) {
-  justify-content: flex-start;
-  padding: 0 var(--sg-right-sidebar-menu-padding-inline);
-}
-
-.menu-section :deep(.sg-button.menu-button--centered) {
-  justify-content: center;
-  padding: 0;
-  display: flex;
-  align-items: center;
 }
 
 .menu-section :deep(.sg-button:hover) {

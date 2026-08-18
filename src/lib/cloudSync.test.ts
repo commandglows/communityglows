@@ -33,6 +33,7 @@ describe("cloud sync runtime payload validation", () => {
         language: "fr",
         textZoom: 120,
         uiScale: 115,
+        iconScale: 30,
         tapSoundVariant: "pop",
         activeProfileId: "profile-1",
         friendsFilterEnabled: true,
@@ -46,6 +47,7 @@ describe("cloud sync runtime payload validation", () => {
       language: "fr",
       textZoom: 120,
       uiScale: 115,
+      iconScale: 30,
       tapSoundVariant: "pop",
       activeProfileId: "profile-1",
       friendsFilterEnabled: true,
@@ -54,6 +56,7 @@ describe("cloud sync runtime payload validation", () => {
 
     expect(asCloudSettings({ textZoom: 50 })).toEqual({ textZoom: 50 });
     expect(asCloudSettings({ uiScale: 75 })).toEqual({ uiScale: 75 });
+    expect(asCloudSettings({ iconScale: 15 })).toEqual({ iconScale: 15 });
     expect(asCloudSettings({ theme: "purple", textZoom: 45, uiScale: 155 })).toBeNull();
     expect(asCloudSettings(null)).toBeNull();
   });

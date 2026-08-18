@@ -9,6 +9,7 @@ export interface CloudSettingsPatch {
   grayscaleEnabled?: boolean;
   textZoom?: number;
   uiScale?: number;
+  iconScale?: number;
   hapticEnabled?: boolean;
   tapSoundEnabled?: boolean;
   tapSoundVariant?: "classic" | "soft" | "pop";

@@ -335,6 +335,23 @@
             @change="onUiScaleChange"
           />
 
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-image" />
+              {{ $t('settings.icon_scale') }}
+            </span>
+            <span class="text-zoom-value">{{ iconScaleLevel }} px</span>
+          </div>
+          <input
+            v-model.number="iconScaleLevel"
+            type="range"
+            class="text-zoom-slider"
+            :min="ICON_SCALE_MIN"
+            :max="ICON_SCALE_MAX"
+            :step="ICON_SCALE_STEP"
+            @change="onIconScaleChange"
+          />
+
           <!-- Network text zoom -->
           <div class="settings-toggle-row">
             <span class="settings-toggle-label">
@@ -405,6 +422,13 @@ import {
   persistUiScaleLevel,
   readUiScaleLevel,
 } from '../utils/uiScale'
+import {
+  ICON_SCALE_MAX,
+  ICON_SCALE_MIN,
+  ICON_SCALE_STEP,
+  persistIconScaleLevel,
+  readIconScaleLevel,
+} from '../utils/iconScale'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
@@ -659,12 +683,21 @@ function onTextZoomChange() {
 }
 
 const uiScaleLevel = ref(readUiScaleLevel())
+const iconScaleLevel = ref(readIconScaleLevel())
 
 function onUiScaleChange() {
   uiScaleLevel.value = persistUiScaleLevel(uiScaleLevel.value)
   syncSettingsPatch({ uiScale: uiScaleLevel.value })
   window.dispatchEvent(new CustomEvent('communityglows-ui-scale-changed', {
     detail: { level: uiScaleLevel.value },
+  }))
+}
+
+function onIconScaleChange() {
+  iconScaleLevel.value = persistIconScaleLevel(iconScaleLevel.value)
+  syncSettingsPatch({ iconScale: iconScaleLevel.value })
+  window.dispatchEvent(new CustomEvent('communityglows-icon-scale-changed', {
+    detail: { level: iconScaleLevel.value },
   }))
 }
 
@@ -675,6 +708,7 @@ function replayOnboarding() {
 
 watch(() => props.modelValue, (open) => {
   if (open) uiScaleLevel.value = readUiScaleLevel()
+  if (open) iconScaleLevel.value = readIconScaleLevel()
   if (open) {
     hapticEnabled.value = localStorage.getItem('communityglows_haptic') !== 'false'
     tapSoundEnabled.value = localStorage.getItem('communityglows_tap_sound') === 'true'
