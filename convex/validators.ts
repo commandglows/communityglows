@@ -133,6 +133,15 @@ export function assertTextZoom(level: number) {
   }
 }
 
+export function assertUiScale(level: number) {
+  if (!Number.isFinite(level)) {
+    throw new Error("uiScale must be a finite number");
+  }
+  if (level < 75 || level > 150) {
+    throw new Error("uiScale must be between 75 and 150");
+  }
+}
+
 export function assertFriendNames(names: string[]) {
   if (names.length > LIMITS.friendNamesMax) {
     throw new Error(`names length must be <= ${LIMITS.friendNamesMax}`);

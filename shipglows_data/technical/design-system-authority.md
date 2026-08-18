@@ -161,3 +161,7 @@ For app or site visual changes:
 ## Maintenance Rule
 
 When a token role, carrier or platform mapping changes, update this artifact before accepting a cross-surface parity claim. The Windows/Tauri inventory is already at zero PrimeVue component runtime and zero PrimeFlex usage; both packages remain available for legacy extension surfaces. PrimeIcons remains active in Windows and must not be removed until its consumer inventory reaches zero.
+
+## User-controlled scaling
+
+CommunityGlows keeps two independent accessibility preferences: `uiScale` scales the main application shell and product UI, while `textZoom` applies only to embedded social-network webviews. They use separate persisted and cloud-synced values so changing the app density never alters third-party content.

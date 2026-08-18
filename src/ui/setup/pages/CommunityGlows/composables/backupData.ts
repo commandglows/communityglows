@@ -11,6 +11,7 @@ export const PORTABLE_LOCAL_STORAGE_KEYS = [
   'communityglows_tap_sound',
   'communityglows_tap_sound_variant',
   'communityglows_text_zoom',
+  'communityglows_ui_scale',
   'communityglows_keyboard_shortcuts',
   'communityglows_desktop_control_bar_position',
   'communityglows-right-sidebar-kanban-collapsed',

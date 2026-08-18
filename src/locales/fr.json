@@ -54,7 +54,8 @@
     "tap_sound_variant_classic": "Classique",
     "tap_sound_variant_soft": "Doux",
     "tap_sound_variant_pop": "Pop",
-    "text_zoom": "Taille du texte des réseaux"
+    "text_zoom": "Taille du texte des réseaux",
+    "ui_scale": "Taille de l’interface"
   },
   "theme": {
     "dark_mode": "Mode sombre",

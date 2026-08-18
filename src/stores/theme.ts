@@ -185,6 +185,7 @@ export const useThemeStore = defineStore('theme', {
       theme?: ThemeMode
       grayscaleEnabled?: boolean
       textZoom?: number
+      uiScale?: number
       hapticEnabled?: boolean
       tapSoundEnabled?: boolean
       tapSoundVariant?: 'classic' | 'soft' | 'pop'
@@ -211,6 +212,9 @@ export const useThemeStore = defineStore('theme', {
       }
       if (typeof settings.textZoom === 'number') {
         localStorage.setItem('communityglows_text_zoom', String(settings.textZoom))
+      }
+      if (typeof settings.uiScale === 'number') {
+        localStorage.setItem('communityglows_ui_scale', String(settings.uiScale))
       }
       if (typeof settings.hapticEnabled === 'boolean') {
         localStorage.setItem('communityglows_haptic', String(settings.hapticEnabled))

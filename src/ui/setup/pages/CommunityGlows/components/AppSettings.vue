@@ -103,6 +103,26 @@
 
       <hr class="settings-divider">
 
+      <!-- App UI scale -->
+      <div class="setting-item">
+        <div class="setting-label">
+          <SgIcon icon="pi pi-desktop mr-2" />
+          <span>{{ $t('settings.ui_scale') }}</span>
+        </div>
+        <span class="text-zoom-value">{{ uiScaleLevel }}%</span>
+      </div>
+      <input
+        v-model.number="uiScaleLevel"
+        type="range"
+        class="text-zoom-slider"
+        :min="UI_SCALE_MIN"
+        :max="UI_SCALE_MAX"
+        :step="UI_SCALE_STEP"
+        @change="onUiScaleChange"
+      />
+
+      <hr class="settings-divider">
+
       <!-- Text zoom -->
       <div class="setting-item">
         <div class="setting-label">
@@ -162,6 +182,13 @@ import {
   TEXT_ZOOM_STEP,
   normalizeTextZoomLevel,
 } from '../utils/textZoom'
+import {
+  UI_SCALE_MAX,
+  UI_SCALE_MIN,
+  UI_SCALE_STEP,
+  persistUiScaleLevel,
+  readUiScaleLevel,
+} from '../utils/uiScale'
 import { useThemeStore } from '@/stores/theme'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { useOnboardingStore } from '@/stores/onboarding'
@@ -230,8 +257,21 @@ function onTextZoomChange() {
   }
 }
 
+const uiScaleLevel = ref(readUiScaleLevel())
+
+function onUiScaleChange() {
+  uiScaleLevel.value = persistUiScaleLevel(uiScaleLevel.value)
+  syncSettingsPatch({ uiScale: uiScaleLevel.value })
+  window.dispatchEvent(new CustomEvent('communityglows-ui-scale-changed', {
+    detail: { level: uiScaleLevel.value },
+  }))
+}
+
 defineExpose({
-  show: () => visible.value = true
+  show: () => {
+    uiScaleLevel.value = readUiScaleLevel()
+    visible.value = true
+  }
 })
 </script>
 

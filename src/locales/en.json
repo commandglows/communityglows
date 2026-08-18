@@ -54,7 +54,8 @@
     "tap_sound_variant_classic": "Classic",
     "tap_sound_variant_soft": "Soft",
     "tap_sound_variant_pop": "Pop",
-    "text_zoom": "Network text size"
+    "text_zoom": "Network text size",
+    "ui_scale": "Interface size"
   },
   "theme": {
     "dark_mode": "Dark mode",

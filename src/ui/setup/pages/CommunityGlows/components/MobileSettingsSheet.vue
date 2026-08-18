@@ -320,6 +320,24 @@
           <!-- Text zoom -->
           <div class="settings-toggle-row">
             <span class="settings-toggle-label">
+              <SgIcon icon="pi pi-desktop" />
+              {{ $t('settings.ui_scale') }}
+            </span>
+            <span class="text-zoom-value">{{ uiScaleLevel }}%</span>
+          </div>
+          <input
+            v-model.number="uiScaleLevel"
+            type="range"
+            class="text-zoom-slider"
+            :min="UI_SCALE_MIN"
+            :max="UI_SCALE_MAX"
+            :step="UI_SCALE_STEP"
+            @change="onUiScaleChange"
+          />
+
+          <!-- Network text zoom -->
+          <div class="settings-toggle-row">
+            <span class="settings-toggle-label">
               <SgIcon icon="pi pi-search-plus" />
               {{ $t('settings.text_zoom') }}
             </span>
@@ -380,6 +398,13 @@ import {
   TEXT_ZOOM_STEP,
   normalizeTextZoomLevel,
 } from '../utils/textZoom'
+import {
+  UI_SCALE_MAX,
+  UI_SCALE_MIN,
+  UI_SCALE_STEP,
+  persistUiScaleLevel,
+  readUiScaleLevel,
+} from '../utils/uiScale'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import BackupRestore from './BackupRestore.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
@@ -633,12 +658,23 @@ function onTextZoomChange() {
   }
 }
 
+const uiScaleLevel = ref(readUiScaleLevel())
+
+function onUiScaleChange() {
+  uiScaleLevel.value = persistUiScaleLevel(uiScaleLevel.value)
+  syncSettingsPatch({ uiScale: uiScaleLevel.value })
+  window.dispatchEvent(new CustomEvent('communityglows-ui-scale-changed', {
+    detail: { level: uiScaleLevel.value },
+  }))
+}
+
 function replayOnboarding() {
   emit('update:modelValue', false)
   onboardingStore.reset()
 }
 
 watch(() => props.modelValue, (open) => {
+  if (open) uiScaleLevel.value = readUiScaleLevel()
   if (open) {
     hapticEnabled.value = localStorage.getItem('communityglows_haptic') !== 'false'
     tapSoundEnabled.value = localStorage.getItem('communityglows_tap_sound') === 'true'

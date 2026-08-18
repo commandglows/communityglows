@@ -179,6 +179,11 @@ import {
 } from "./utils/tapSound"
 import { preloadWebviews } from "./composables/useWebviewPreload"
 import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from "./utils/textZoom"
+import {
+  applyUiScaleLevel,
+  persistUiScaleLevel,
+  readUiScaleLevel,
+} from "./utils/uiScale"
 import { useSignupNudge } from "@/composables/useSignupNudge"
 import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
 import AppSidebar from "./components/AppSidebar.vue"
@@ -250,6 +255,7 @@ const textZoomLevel = ref(
     ),
   ),
 )
+const uiScaleLevel = ref(readUiScaleLevel())
 const webviewReadyVersion = ref(0)
 restorePostAuthReadyFeedback()
 
@@ -360,6 +366,11 @@ const onNativeTextZoomChanged = ((e: CustomEvent) => {
   if (!Number.isFinite(level)) return
   textZoomLevel.value = level
   localStorage.setItem("communityglows_text_zoom", String(level))
+}) as unknown as (e: Event) => void
+const onUiScaleChanged = ((e: CustomEvent) => {
+  const level = persistUiScaleLevel(Number(e.detail?.level))
+  uiScaleLevel.value = level
+  void applyUiScaleLevel(level)
 }) as unknown as (e: Event) => void
 const onNativeTapSoundChanged = ((e: CustomEvent) => {
   const enabled = e.detail?.enabled
@@ -889,6 +900,9 @@ onMounted(async () => {
     applyDeepLinkAction(action)
   }
 
+  uiScaleLevel.value = persistUiScaleLevel(readUiScaleLevel())
+  await applyUiScaleLevel(uiScaleLevel.value).catch(() => {})
+
   // Preload top networks off-screen so first click is instant (non-blocking)
   preloadWebviews()
 
@@ -990,6 +1004,7 @@ onMounted(async () => {
     "communityglows-text-zoom-changed",
     onNativeTextZoomChanged,
   )
+  window.addEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
   window.addEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,
@@ -1038,6 +1053,7 @@ onUnmounted(() => {
     "communityglows-text-zoom-changed",
     onNativeTextZoomChanged,
   )
+  window.removeEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
   window.removeEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,

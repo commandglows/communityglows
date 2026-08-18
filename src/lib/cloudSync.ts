@@ -52,6 +52,7 @@ type CloudSettings = Pick<
   | "language"
   | "grayscaleEnabled"
   | "textZoom"
+  | "uiScale"
   | "hapticEnabled"
   | "tapSoundEnabled"
   | "tapSoundVariant"
@@ -112,6 +113,8 @@ const FRIEND_NAME_MAX = 80;
 const FRIEND_NAMES_MAX = 200;
 const TEXT_ZOOM_MIN = 50;
 const TEXT_ZOOM_MAX = 200;
+const UI_SCALE_MIN = 75;
+const UI_SCALE_MAX = 150;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
@@ -171,6 +174,13 @@ function isTextZoom(value: unknown): value is number {
     && value <= TEXT_ZOOM_MAX;
 }
 
+function isUiScale(value: unknown): value is number {
+  return typeof value === "number"
+    && Number.isFinite(value)
+    && value >= UI_SCALE_MIN
+    && value <= UI_SCALE_MAX;
+}
+
 function asStringArray(
   value: unknown,
   itemGuard: (item: unknown) => item is string,
@@ -204,6 +214,7 @@ export function asCloudSettings(value: unknown): CloudSettings | null {
   }
   if (typeof value.grayscaleEnabled === "boolean") settings.grayscaleEnabled = value.grayscaleEnabled;
   if (isTextZoom(value.textZoom)) settings.textZoom = value.textZoom;
+  if (isUiScale(value.uiScale)) settings.uiScale = value.uiScale;
   if (typeof value.hapticEnabled === "boolean") settings.hapticEnabled = value.hapticEnabled;
   if (typeof value.tapSoundEnabled === "boolean") settings.tapSoundEnabled = value.tapSoundEnabled;
   if (isTapSoundVariant(value.tapSoundVariant)) settings.tapSoundVariant = value.tapSoundVariant;
@@ -512,6 +523,7 @@ function clearCloudBackedLocalState() {
   localStorage.removeItem("communityglows_tap_sound");
   localStorage.removeItem("communityglows_tap_sound_variant");
   localStorage.removeItem("communityglows_text_zoom");
+  localStorage.removeItem("communityglows_ui_scale");
   localStorage.removeItem("communityglows_keyboard_shortcuts");
   clearCloudSyncQueue();
 }
@@ -554,6 +566,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       language: localStorage.getItem("user-locale") ?? "fr",
       grayscaleEnabled: themeStore.grayscaleEnabled,
       textZoom: Number(localStorage.getItem("communityglows_text_zoom") ?? "100"),
+      uiScale: Number(localStorage.getItem("communityglows_ui_scale") ?? "100"),
       hapticEnabled: localStorage.getItem("communityglows_haptic") !== "false",
       tapSoundEnabled: localStorage.getItem("communityglows_tap_sound") === "true",
       tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("communityglows_tap_sound_variant")),
