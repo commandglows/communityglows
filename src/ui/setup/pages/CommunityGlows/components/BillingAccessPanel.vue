@@ -113,6 +113,48 @@
       <strong>{{ planLabel }}</strong>
     </div>
 
+    <section
+      v-if="showLicenseSummary"
+      class="billing-license-summary"
+      :aria-labelledby="'billing-license-summary-title'"
+    >
+      <div class="billing-license-heading">
+        <div>
+          <span class="billing-license-eyebrow">{{ $t('billing.license_eyebrow') }}</span>
+          <h4 id="billing-license-summary-title">{{ $t('billing.license_title') }}</h4>
+        </div>
+        <SgIcon icon="pi pi-shield" />
+      </div>
+      <dl class="billing-license-details">
+        <div>
+          <dt>{{ $t('billing.license_plan') }}</dt>
+          <dd>{{ planLabel }}</dd>
+        </div>
+        <div>
+          <dt>{{ licenseDateLabel }}</dt>
+          <dd>
+            <time
+              v-if="licenseDateTime"
+              :datetime="licenseDateTime"
+            >{{ licenseDateValue }}</time>
+            <span v-else>{{ licenseDateValue }}</span>
+          </dd>
+        </div>
+        <div>
+          <dt>{{ $t('billing.license_installations') }}</dt>
+          <dd>{{ recognizedInstallationsLabel }}</dd>
+        </div>
+      </dl>
+      <div
+        v-if="hasProtectedFeatureAccess"
+        class="billing-license-access"
+      >
+        <strong>{{ $t('billing.license_access_title') }}</strong>
+        <p>{{ $t('billing.license_access_communityglows') }}</p>
+      </div>
+      <p class="billing-license-note">{{ $t('billing.license_installations_note') }}</p>
+    </section>
+
     <form
       v-if="showRedeemForm"
       class="billing-redeem-form"
@@ -269,6 +311,9 @@ const showRedeemForm = computed(() =>
   status.value !== 'lifetime_active' &&
   status.value !== 'bridge_unavailable'
 )
+const showLicenseSummary = computed(() =>
+  status.value === 'trial_active' || status.value === 'lifetime_active'
+)
 const inputDisabled = computed(() => !canRedeem.value || isRedeeming.value)
 const submitDisabled = computed(
   () => !redemptionCode.value.trim() || inputDisabled.value,
@@ -302,6 +347,39 @@ const trialEndLabel = computed(() => {
     date: new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(trialEndsAt),
   })
 })
+
+const licenseDateLabel = computed(() =>
+  status.value === 'trial_active'
+    ? t('billing.license_started_on')
+    : t('billing.license_activated_on')
+)
+
+const licenseTimestamp = computed(() => {
+  return status.value === 'trial_active'
+    ? access.value?.trialStartedAt
+    : access.value?.entitlementGrantedAt
+})
+
+const licenseDateValue = computed(() => {
+  const timestamp = licenseTimestamp.value
+  if (typeof timestamp !== 'number') return t('billing.license_date_unavailable')
+  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(timestamp)
+})
+
+const licenseDateTime = computed(() =>
+  typeof licenseTimestamp.value === 'number'
+    ? new Date(licenseTimestamp.value).toISOString()
+    : ''
+)
+
+const hasProtectedFeatureAccess = computed(() =>
+  access.value?.includedAccess?.includes('communityglows_protected_features') === true
+)
+
+const recognizedInstallationsLabel = computed(() => t(
+  'billing.license_installations_count',
+  { count: access.value?.knownInstallationCount ?? 0 },
+))
 
 const trialProgress = computed(() => {
   const startedAt = access.value?.trialStartedAt
@@ -386,6 +464,58 @@ function purchase() {
   background: var(--sg-color-surface-muted);
   color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d82rem);
+}
+
+.billing-license-summary {
+  display: grid;
+  gap: var(--billing-spacing-lg);
+  padding: var(--billing-spacing-lg);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-surface-muted);
+}
+
+.billing-license-heading,
+.billing-license-details > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--billing-spacing-md);
+}
+
+.billing-license-heading h4,
+.billing-license-access p,
+.billing-license-note {
+  margin: 0;
+}
+
+.billing-license-eyebrow,
+.billing-license-details dt {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d75rem);
+}
+
+.billing-license-details {
+  display: grid;
+  gap: var(--billing-spacing-sm);
+  margin: 0;
+}
+
+.billing-license-details dd {
+  margin: 0;
+  color: var(--sg-color-text);
+  font-weight: 700;
+  text-align: end;
+}
+
+.billing-license-access {
+  display: grid;
+  gap: var(--billing-spacing-sm);
+}
+
+.billing-license-note {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d75rem);
 }
 
 .billing-plan-row strong {

@@ -38,11 +38,25 @@ describe('CommunityGlows billing UI contract', () => {
       'gate_trial_exhausted_message',
       'gate_access_required_title',
       'gate_access_required_message',
+      'license_title',
+      'license_purchased_on',
+      'license_activated_on',
+      'license_installations_count',
+      'license_access_communityglows',
     ] as const
 
     for (const key of keys) {
       expect(en.billing[key]).toBeTruthy()
       expect(fr.billing[key]).toBeTruthy()
     }
+  })
+
+  it('renders the account-scoped licence summary without claiming a device cap', () => {
+    const template = templateOf('BillingAccessPanel.vue')
+    expect(template).toContain('showLicenseSummary')
+    expect(template).toContain('recognizedInstallationsLabel')
+    expect(template).toContain('licenseDateValue')
+    expect(fr.billing.license_installations_note).toContain('Aucune limite')
+    expect(en.billing.license_installations_note).toContain('No device limit')
   })
 })

@@ -32,6 +32,10 @@ type EntitlementSnapshot = {
   trialAttempt?: number | null
   trialRestartsRemaining?: number
   trialRestartEligible?: boolean
+  entitlementGrantedAt?: number | null
+  entitlementUpdatedAt?: number | null
+  knownInstallationCount?: number
+  includedAccess?: string[]
 }
 
 type BridgeResponseOk<T extends Record<string, unknown> = Record<string, unknown>> = {
@@ -87,6 +91,15 @@ function getSuiteBridgeSecret() {
     throw new Error('suite_bridge_not_configured')
   }
   return secret
+}
+
+function getSuiteRequestHeaders(additional: Record<string, string> = {}): Record<string, string> {
+  const bypassSecret = process.env.COMMUNITYGLOWS_SUITE_BYPASS_SECRET?.trim()
+  return {
+    'Content-Type': 'application/json',
+    ...(bypassSecret ? { 'x-vercel-protection-bypass': bypassSecret } : {}),
+    ...additional,
+  }
 }
 
 function getSuiteCommerceCheckoutUrl(): string {
@@ -168,10 +181,9 @@ async function callSuiteBridge<T extends Record<string, unknown> = Record<string
   try {
     response = await fetch(suiteBridgeUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      headers: getSuiteRequestHeaders({
         'x-communityglows-suite-secret': suiteBridgeSecret,
-      },
+      }),
       body: JSON.stringify({
         ...args,
         email: args.email,
@@ -204,7 +216,7 @@ async function createSuiteCheckout(checkoutIdentityToken: string): Promise<strin
   try {
     response = await fetch(getSuiteCommerceCheckoutUrl(), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getSuiteRequestHeaders(),
       body: JSON.stringify({
         offerId: COMMUNITYGLOWS_OFFER_ID,
         provider: 'stripe',
@@ -258,6 +270,23 @@ function normalizeProductAccess(snapshot: EntitlementSnapshot) {
     trialAttempt,
     trialRestartsRemaining,
     trialRestartEligible,
+    entitlementGrantedAt:
+      typeof snapshot.entitlementGrantedAt === 'number'
+        ? snapshot.entitlementGrantedAt
+        : null,
+    entitlementUpdatedAt:
+      typeof snapshot.entitlementUpdatedAt === 'number'
+        ? snapshot.entitlementUpdatedAt
+        : null,
+    knownInstallationCount:
+      typeof snapshot.knownInstallationCount === 'number'
+        ? Math.max(0, Math.floor(snapshot.knownInstallationCount))
+        : 0,
+    includedAccess: Array.isArray(snapshot.includedAccess)
+      ? snapshot.includedAccess.filter(
+          (entry) => entry === 'communityglows_protected_features'
+        )
+      : [],
   }
 
   if (normalizedAccessState === 'trial_active') {

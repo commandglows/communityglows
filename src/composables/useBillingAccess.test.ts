@@ -24,6 +24,12 @@ describe('billing access grace', () => {
     trialAttempt: null,
     trialRestartsRemaining: 0,
     trialRestartEligible: false,
+    entitlementGrantedAt: 500,
+    entitlementUpdatedAt: 750,
+    knownInstallationCount: 1,
+    includedAccess: ['communityglows_protected_features'] as Array<
+      'communityglows_protected_features'
+    >,
   } as const
 
   it('keeps a recently verified entitlement during a bounded outage', () => {
@@ -65,6 +71,10 @@ describe('trial restart eligibility', () => {
     trialAttempt: 2,
     trialRestartsRemaining: 1,
     trialRestartEligible: true,
+    entitlementGrantedAt: null,
+    entitlementUpdatedAt: null,
+    knownInstallationCount: 1,
+    includedAccess: [] as Array<'communityglows_protected_features'>,
     legacyFallback: false,
     reasonCode: 'trial_expired',
   } as const

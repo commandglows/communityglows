@@ -100,6 +100,10 @@ describe("billing bridge adapter", () => {
         planId: "lifetime_deal",
         source: "manual",
         reasonCode: "active_entitlement",
+        entitlementGrantedAt: 1_787_054_549_063,
+        entitlementUpdatedAt: 1_787_054_549_063,
+        knownInstallationCount: 2,
+        includedAccess: ["communityglows_protected_features", "unknown_feature"],
       },
     });
 
@@ -113,6 +117,9 @@ describe("billing bridge adapter", () => {
       reasonCode: "active_entitlement",
       legacyFallback: false,
       accessState: "lifetime_active",
+      entitlementGrantedAt: 1_787_054_549_063,
+      knownInstallationCount: 2,
+      includedAccess: ["communityglows_protected_features"],
     });
   });
 
