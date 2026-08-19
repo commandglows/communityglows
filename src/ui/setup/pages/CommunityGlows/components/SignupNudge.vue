@@ -23,6 +23,11 @@
               <input
                 v-model="email"
                 type="email"
+                name="email"
+                autocomplete="username"
+                inputmode="email"
+                autocapitalize="none"
+                spellcheck="false"
                 class="nudge-input"
                 :placeholder="$t('account.email_placeholder')"
                 required
@@ -30,6 +35,9 @@
               <input
                 v-model="password"
                 type="password"
+                name="password"
+                autocomplete="new-password"
+                spellcheck="false"
                 class="nudge-input"
                 :placeholder="$t('account.password_placeholder')"
                 minlength="8"
@@ -107,6 +115,11 @@
         <input
           v-model="email"
           type="email"
+          name="email"
+          autocomplete="username"
+          inputmode="email"
+          autocapitalize="none"
+          spellcheck="false"
           class="nudge-input"
           :placeholder="$t('account.email_placeholder')"
           required
@@ -114,6 +127,9 @@
         <input
           v-model="password"
           type="password"
+          name="password"
+          autocomplete="new-password"
+          spellcheck="false"
           class="nudge-input"
           :placeholder="$t('account.password_placeholder')"
           minlength="8"

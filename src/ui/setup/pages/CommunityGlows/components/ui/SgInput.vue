@@ -1,12 +1,18 @@
 <template>
   <input
+    v-bind="attrs"
     v-model="model"
     class="sg-input"
   />
 </template>
 
 <script setup lang="ts">
+import { useAttrs } from 'vue'
+
+defineOptions({ inheritAttrs: false })
+
 const model = defineModel<string>({ default: '' })
+const attrs = useAttrs()
 </script>
 
 <style scoped>

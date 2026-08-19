@@ -1,10 +1,10 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.1.0"
 project: "communityglows"
 created: "2026-07-15"
-updated: "2026-07-15"
+updated: "2026-08-19"
 status: reviewed
 source_skill: 300-sg-docs
 scope: public-webview-platform-boundary
@@ -25,8 +25,8 @@ supersedes: []
 evidence:
   - "2026-07-15 public WebView script-removal implementation"
   - "shipglows_data/workflow/audits/2026-07-15-google-play-android-compliance.md"
-next_review: "2026-08-15"
-next_step: "Run physical-device and CI verification with the actual Android WebView user agent."
+next_review: "2026-09-19"
+next_step: "Run physical-device Android Autofill and packaged-Windows password-manager compatibility proofs."
 ---
 
 # Public WebView Platform Boundary
@@ -62,6 +62,19 @@ The current public build retains only user-selected visual preferences:
 
 These preferences are not a claim of platform authorization. Some are still implemented with page-level JavaScript and can conflict with a platform's terms or technical behavior. Every supported network must be tested with the actual WebView user agent. Remove or replace a preference for a network if it prevents normal operation or the platform objects.
 
+## Platform-Mediated Credential Filling
+
+CommunityGlows may expose ordinary HTML form semantics and let an operating-system
+Autofill service or desktop password manager send input to the visible, focused
+WebView. Android WebViews retain their real page origin and native virtual Autofill
+structure. Desktop WebViews must not retain focus after they are hidden or pooled.
+
+This is interoperability, not vault integration. CommunityGlows does not enumerate
+providers, read vault contents, inject credentials or form-detection scripts,
+auto-submit forms, enable a second WebView2 password store, or synchronize passwords.
+Provider matching, unlock, selection, and release remain controlled by the user and
+the provider.
+
 ## Explicitly Removed Mechanisms
 
 The public build must not reintroduce:
@@ -72,11 +85,13 @@ The public build must not reintroduce:
 - `navigator.webdriver` and related browser-property patches;
 - desktop user-agent or viewport forcing;
 - arbitrary desktop `inject_script` IPC;
+- provider-specific credential injection, vault APIs, or embedded password-manager extensions;
 - friends-only filtering or any mutation of third-party feed content.
 
 ## Validation
 
 - Static regression scan: `rg -n -i 'STEALTH_SCRIPT|navigator\\.webdriver|COOKIE_(IFRAME|ACCEPT)_SCRIPT|DISMISS_APP_BANNERS_SCRIPT|DESKTOP_VIEWPORT_SCRIPT|inject_script|buildFriendsFilterScript|replace\\("; wv"' src-tauri src`
+- Credential-boundary scan: `rg -n -i 'AutofillManager|requestAutofill|IsPasswordAutosaveEnabled|bitwarden|1password|vault' src-tauri src` and review every match; guarded `importantForAutofill` participation is allowed.
 - Device proof: on each supported network, open a fresh profile, make a consent choice manually when prompted, navigate normally, and record any network refusal or broken interaction.
 - Release proof: confirm the Android package and CI build contain no removed mechanisms before a Play submission.
 

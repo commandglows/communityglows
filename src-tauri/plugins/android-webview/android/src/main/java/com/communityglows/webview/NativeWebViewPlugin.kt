@@ -536,6 +536,17 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
     private fun tokenCssColor(resourceId: Int): String =
         String.format("#%06X", tokenColor(resourceId) and 0xFFFFFF)
 
+    /**
+     * Lets the platform Autofill service inspect this WebView's native virtual form
+     * structure on Android 8+. WebView keeps ownership of the page origin and form
+     * semantics; CommunityGlows neither reads nor fills credential values here.
+     */
+    private fun enableAutofillParticipation(webView: WebView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            webView.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+        }
+    }
+
     // Main Tauri WebView (the one running Vue) — used to dispatch CustomEvents to Vue
     // via evaluateJavascript(). This is the reliable Kotlin→Vue communication channel.
     // (Plugin trigger() + addPluginListener was unreliable in testing.)
@@ -1852,6 +1863,7 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
     /** Capture the main Tauri WebView on plugin load — this is the Vue app webview. */
     override fun load(webView: WebView) {
         mainWebView = webView
+        enableAutofillParticipation(webView)
         Log.i(TAG, "load() called — mainWebView captured: ${webView.hashCode()}")
         captureSharedUrl(activity.intent)
         ensureMultiProfileModeInitialized()
@@ -4169,6 +4181,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
 
     private fun createWebView(profileName: String): WebView {
         val webView = WebView(activity)
+        enableAutofillParticipation(webView)
         if (isPoolingEnabled()) {
             try {
                 WebViewCompat.setProfile(webView, profileName)
@@ -4373,6 +4386,7 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             // "impossible d'établir une connexion avec le service Recaptcha".
             override fun onCreateWindow(view: WebView, isDialog: Boolean, isUserGesture: Boolean, resultMsg: android.os.Message): Boolean {
                 val childWebView = WebView(activity)
+                enableAutofillParticipation(childWebView)
                 if (isPoolingEnabled()) {
                     try {
                         val parentProfile = WebViewCompat.getProfile(view)

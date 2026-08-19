@@ -421,6 +421,16 @@ fn webview_label(profile_id: &str, network_id: &str) -> String {
     format!("social-{}-{}", profile_id, network_id)
 }
 
+/// A child webview can only receive focus when it has a rendered surface.
+///
+/// Preloaded and pooled webviews use zero-sized bounds off-screen. Keeping
+/// focus on such a webview would send desktop password-manager input to a
+/// hidden document instead of the form the user can see.
+#[cfg(not(target_os = "android"))]
+fn has_visible_desktop_webview_bounds(width: f64, height: f64) -> bool {
+    width > 0.0 && height > 0.0
+}
+
 #[cfg(not(target_os = "android"))]
 #[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -701,6 +711,10 @@ async fn open_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        if has_visible_desktop_webview_bounds(width, height) {
+            wv.set_focus()
+                .map_err(|e| format!("focus visible desktop webview: {e}"))?;
+        }
         mark_desktop_webview(&app, &label, false)?;
         return Ok(());
     }
@@ -724,6 +738,9 @@ async fn open_webview(
         .add_child(
             WebviewBuilder::new(&label, WebviewUrl::External(parsed))
                 .data_directory(data_dir)
+                // Do not let an off-screen preload become the active input
+                // target. Visible children are focused explicitly below.
+                .focused(false)
                 // Paint the native surface before the remote document renders.
                 .background_color(if dark_mode {
                     tauri::window::Color(9, 9, 11, 255)
@@ -736,6 +753,12 @@ async fn open_webview(
         .map_err(|e| e.to_string())?;
 
     restore_portable_android_cookies(&app, &webview, &profile_id, &network_id)?;
+
+    if has_visible_desktop_webview_bounds(width, height) {
+        webview
+            .set_focus()
+            .map_err(|e| format!("focus visible desktop webview: {e}"))?;
+    }
 
     mark_desktop_webview(&app, &label, false)?;
 
@@ -890,6 +913,13 @@ fn hide_webview(app: AppHandle, profile_id: String, network_id: String) -> Resul
             size: tauri::Size::Logical(tauri::LogicalSize::new(0.0, 0.0)),
         })
         .map_err(|e| e.to_string())?;
+        // Bounds changes do not change focus. Move it back to the host before
+        // the child is pooled so desktop input cannot target a hidden form.
+        if let Some(host_webview) = app.get_webview("main") {
+            host_webview
+                .set_focus()
+                .map_err(|e| format!("focus host webview after hiding child: {e}"))?;
+        }
         mark_desktop_webview(&app, &label, true)?;
     }
     Ok(())
@@ -915,6 +945,10 @@ fn show_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        if has_visible_desktop_webview_bounds(width, height) {
+            wv.set_focus()
+                .map_err(|e| format!("focus visible desktop webview: {e}"))?;
+        }
         mark_desktop_webview(&app, &label, false)?;
         Ok(true)
     } else {
@@ -1430,4 +1464,18 @@ pub fn run() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+#[cfg(all(test, not(target_os = "android")))]
+mod tests {
+    use super::has_visible_desktop_webview_bounds;
+
+    #[test]
+    fn only_positive_sized_child_webviews_are_focus_eligible() {
+        assert!(has_visible_desktop_webview_bounds(1.0, 1.0));
+        assert!(has_visible_desktop_webview_bounds(1280.0, 800.0));
+        assert!(!has_visible_desktop_webview_bounds(0.0, 800.0));
+        assert!(!has_visible_desktop_webview_bounds(1280.0, 0.0));
+        assert!(!has_visible_desktop_webview_bounds(-1.0, 800.0));
+    }
 }

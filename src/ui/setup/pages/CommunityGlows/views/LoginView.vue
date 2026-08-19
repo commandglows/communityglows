@@ -25,12 +25,20 @@
           :placeholder="$t('login.email')"
           :aria-label="$t('login.email')"
           type="email"
+          name="email"
+          autocomplete="username"
+          inputmode="email"
+          autocapitalize="none"
+          spellcheck="false"
           class="w-full"
         />
         <SgPassword
           v-model="password"
           :placeholder="$t('login.password')"
           :aria-label="$t('login.password')"
+          name="password"
+          :autocomplete="passwordAutocomplete"
+          spellcheck="false"
           class="w-full"
           toggle-mask
         />
@@ -94,6 +102,9 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const passwordAutocomplete = computed(() =>
+  isSignUp.value ? 'new-password' : 'current-password',
+)
 
 const accessMessage = computed(() => {
   if (route.query.access === 'required') {

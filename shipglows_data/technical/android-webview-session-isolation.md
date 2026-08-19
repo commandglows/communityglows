@@ -1,10 +1,10 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.2.1"
+artifact_version: "1.3.0"
 project: "communityglows"
 created: "2026-05-23"
-updated: "2026-08-04"
+updated: "2026-08-19"
 status: reviewed
 source_skill: 300-sg-docs
 scope: android-webview-session-isolation
@@ -91,6 +91,7 @@ Les autres réseaux bénéficient du même mécanisme via leur URL principale. U
 - Le pool de WebViews chaudes reste borné; les hôtes evincés sont détruits avant suppression du profil WebKit.
 - Les origins additionnelles doivent rester déclaratives dans `src/config/socialNetworks.ts`.
 - Le fallback single-WebView ne doit pas promettre la couverture d'IndexedDB, CacheStorage, service workers, cache HTTP global WebView ou credential store système.
+- Android Autofill peut exposer aux WebViews visibles les suggestions du gestionnaire configuré par l'utilisateur, mais ce coffre externe ne fait pas partie de la frontière `${profileId}-${networkId}` et n'est jamais lu, copié ou effacé par CommunityGlows.
 - Les modes dégradés doivent être observables sans exposer de données sensibles.
 
 ## Degraded Modes
@@ -113,6 +114,12 @@ Le fallback par snapshots ne couvre pas:
 - cache HTTP global de la WebView Android,
 - credential store système.
 
+Sur Android 8 et versions ultérieures, les WebViews CommunityGlows participent au
+framework Autofill avec leur structure virtuelle et leur origine réelles. Cette
+participation ne modifie ni les profils WebKit ni les snapshots de session : un
+gestionnaire peut proposer plusieurs comptes du même domaine dans plusieurs profils
+CommunityGlows, et le choix reste entièrement sous le contrôle de l'utilisateur.
+
 `sessionStorage` n'est pas une garantie durable d'isolation. S'il apparaît dans un export, il doit être traité comme runtime-only ou best-effort.
 
 ## Validation
@@ -122,7 +129,7 @@ Le fallback par snapshots ne couvre pas:
 - Vérifier le passage des origins:
   `rg -n "storageOrigins|storageOriginsByNetwork" src/ui/setup/pages/CommunityGlows src-tauri/src/lib.rs`
 - Vérifier les hooks natifs:
-  `rg -n "MULTI_PROFILE|ProfileStore|setProfile|DOCUMENT_START_SCRIPT|WEB_MESSAGE_LISTENER|localStorage|restoreCookiesForSession|loadUrl|degraded" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
+  `rg -n "MULTI_PROFILE|ProfileStore|setProfile|importantForAutofill|DOCUMENT_START_SCRIPT|WEB_MESSAGE_LISTENER|localStorage|restoreCookiesForSession|loadUrl|degraded" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
 - Vérifier le pooling Android:
   `rg -n "SessionWebViewHost|MAX_WARM|showWebView|hideWebView|destroyHost|shown" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt src-tauri/src/lib.rs src-tauri/plugins/android-webview/src/mobile.rs`
 - Tester Android depuis l'APK CI GitHub Actions / Blacksmith, artifact `communityglows-android-debug`.
