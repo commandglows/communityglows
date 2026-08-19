@@ -1,6 +1,6 @@
 ---
-title: "How Can Existing Password Managers Work Inside CommunityGlows WebViews?"
-description: "Android Autofill, WebView2, extensions, vault APIs, and real browser profiles: realistic ways to connect dozens of networks without storing passwords in CommunityGlows."
+title: "How Can You Use Your Password Manager in CommunityGlows?"
+description: "Google Password Manager, 1Password, Bitwarden, and others: realistic ways to sign in to your networks without giving your passwords to CommunityGlows."
 date: "2026-08-19"
 author: "CommunityGlows Team"
 tags: ["password-managers", "webview", "android", "windows"]
@@ -9,6 +9,8 @@ tags: ["password-managers", "webview", "android", "windows"]
 [Lire cet article en français](/blog/integrer-gestionnaires-mots-de-passe-webviews-communityglows)
 
 CommunityGlows manages multiple profiles and keeps separate sessions across dozens of networks. That quickly raises an important question: can every user rely on their usual password manager—Google Password Manager, 1Password, Bitwarden, Dashlane, Proton Pass, or another provider—directly inside the app?
+
+Networks appear in web screens embedded inside CommunityGlows. Developers call these screens **WebViews**: they look like browser tabs, but they run inside the application. That distinction explains why a password manager that works perfectly in Chrome or Edge may behave differently in CommunityGlows.
 
 The short answer is **yes on Android, partially on Windows, but not through a universal vault-reading API**.
 
@@ -53,9 +55,9 @@ Android also recommends Credential Manager for credentials that belong to the ap
 
 Autofill therefore remains the official, provider-independent solution for CommunityGlows. Exact compatibility still needs validation on physical devices: a provider or network may reject an embedded form, use a particular iframe, or require an additional setting.
 
-## Windows: WebView2 Is Not Microsoft Edge
+## Windows: The Embedded Screen Is Not Microsoft Edge
 
-On Windows, CommunityGlows uses WebView2. Its rendering engine comes from Microsoft Edge, but a WebView2 application does not automatically reuse the user's Edge profile.
+On Windows, CommunityGlows uses a Microsoft technology called WebView2 for its embedded web screens. Its rendering engine comes from Microsoft Edge, but the application does not automatically reuse the user's Edge profile.
 
 WebView2 stores cookies, settings, form data, and any saved passwords in an app-specific User Data Folder. It has an official `IsPasswordAutosaveEnabled` option, disabled by default, but enabling it would essentially create a separate WebView2 password store. It would not expose credentials already synchronized through Google Password Manager, 1Password, or Bitwarden. [WebView2 profile data](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/user-data-folder)
 
@@ -91,7 +93,7 @@ Native Messaging allows our extension to communicate with the CommunityGlows des
 
 Technically, a CommunityGlows content script could read a field after the manager fills it. That would be the wrong architecture: the extension would become a credential collector. Chrome Web Store rules explicitly classify passwords, authentication cookies, and form data as sensitive user data. [Chrome Web Store user data policy](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq)
 
-## Can Extensions Be Loaded Into WebView2?
+## Can Extensions Be Loaded Into the Embedded Screen?
 
 WebView2 now provides `AddBrowserExtensionAsync`, which installs an unpacked Chromium extension from a local folder. [WebView2 extension API](https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2profile.addbrowserextensionasync)
 
@@ -130,11 +132,11 @@ The strategy can therefore be summarized as follows:
 | Platform | Immediate solution | Advanced path |
 | --- | --- | --- |
 | Android | Provider-independent system Autofill | Request privileged status from providers |
-| Windows WebView2 | Auto-Type, drag-and-drop, and strict focus | Experimental hosting of Chromium extensions |
+| Windows inside CommunityGlows | Auto-Type, drag-and-drop, and strict focus | Experimental hosting of Chromium extensions |
 | Windows browser | Existing password manager and extensions | Browser profiles orchestrated by CommunityGlows |
 
 There is no magic API capable of reading every vault—and such an API would be a security problem. A sound integration lets the password manager fill the page directly.
 
-Android already provides that abstraction through Autofill. On Windows, CommunityGlows must choose between retaining the WebView2 experience with partial compatibility, experimenting with extension hosting, or using real browser profiles for the broadest compatibility.
+Android already provides that abstraction through Autofill. On Windows, CommunityGlows must choose between retaining the embedded experience with partial compatibility, experimenting with extension hosting, or using real browser profiles for the broadest compatibility.
 
 The healthiest direction remains constant: **CommunityGlows manages profiles and sessions; the password manager chosen by the user keeps the passwords.**

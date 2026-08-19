@@ -1,6 +1,6 @@
 ---
-title: "Comment intégrer les gestionnaires de mots de passe existants dans les WebViews de CommunityGlows ?"
-description: "Android Autofill, WebView2, extensions, API de coffres et vrais profils navigateur : les options réalistes pour connecter des dizaines de réseaux sans stocker les mots de passe dans CommunityGlows."
+title: "Comment utiliser son gestionnaire de mots de passe dans CommunityGlows ?"
+description: "Google Password Manager, 1Password, Bitwarden et les autres : les solutions réalistes pour se connecter à ses réseaux sans confier ses mots de passe à CommunityGlows."
 date: "2026-08-19"
 author: "CommunityGlows Team"
 tags: ["password-managers", "webview", "android", "windows"]
@@ -9,6 +9,8 @@ tags: ["password-managers", "webview", "android", "windows"]
 [Read this article in English](/blog/integrating-password-managers-communityglows-webviews)
 
 CommunityGlows gère plusieurs profils et conserve des sessions séparées sur des dizaines de réseaux. Une question arrive donc très vite : peut-on laisser chaque utilisateur employer son gestionnaire de mots de passe habituel — Google Password Manager, 1Password, Bitwarden, Dashlane, Proton Pass ou un autre — directement dans l'application ?
+
+Les réseaux sont affichés dans des écrans web intégrés à CommunityGlows. Les développeurs appellent ces écrans des **WebViews** : ils ressemblent à des onglets de navigateur, mais ils fonctionnent à l'intérieur de l'application. Cette différence explique pourquoi un gestionnaire qui fonctionne parfaitement dans Chrome ou Edge ne fonctionne pas forcément de la même manière dans CommunityGlows.
 
 La réponse courte est **oui sur Android, partiellement sous Windows, mais pas au moyen d'une API universelle de lecture des coffres**.
 
@@ -53,9 +55,9 @@ Android recommande par ailleurs Credential Manager pour les identifiants apparte
 
 Pour CommunityGlows, Autofill reste donc la solution officielle et indépendante du fournisseur. La compatibilité exacte doit toutefois être validée sur des appareils réels : un gestionnaire ou un réseau peut refuser un formulaire embarqué, utiliser une iframe particulière ou nécessiter un réglage supplémentaire.
 
-## Windows : WebView2 n'est pas Microsoft Edge
+## Windows : l'écran intégré n'est pas Microsoft Edge
 
-Sous Windows, CommunityGlows s'appuie sur WebView2. Le moteur de rendu provient de Microsoft Edge, mais une application WebView2 ne réutilise pas automatiquement le profil Edge de l'utilisateur.
+Sous Windows, les écrans web intégrés de CommunityGlows utilisent une technologie Microsoft appelée WebView2. Le moteur d'affichage provient de Microsoft Edge, mais l'application ne réutilise pas automatiquement le profil Edge de l'utilisateur.
 
 WebView2 stocke ses cookies, paramètres, données de formulaire et éventuels mots de passe dans un User Data Folder propre à l'application. Il possède une option officielle `IsPasswordAutosaveEnabled`, désactivée par défaut, mais l'activer créerait essentiellement un coffre WebView2 séparé. Cela ne donnerait pas accès aux identifiants déjà synchronisés dans Google Password Manager, 1Password ou Bitwarden. [Données de profil WebView2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/user-data-folder)
 
@@ -91,7 +93,7 @@ Native Messaging permet à notre extension de communiquer avec l'application Com
 
 Techniquement, un content script CommunityGlows pourrait lire la valeur d'un champ après son remplissage. Ce serait pourtant la mauvaise architecture : l'extension deviendrait un collecteur de mots de passe. Les règles du Chrome Web Store classent explicitement les mots de passe, cookies d'authentification et données de formulaires parmi les données utilisateur sensibles. [Politique relative aux données utilisateur](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq)
 
-## Peut-on charger les extensions dans WebView2 ?
+## Peut-on charger les extensions dans l'écran intégré ?
 
 WebView2 propose désormais `AddBrowserExtensionAsync`, qui installe une extension Chromium décompressée depuis un dossier local. [API d'extensions WebView2](https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2profile.addbrowserextensionasync)
 
@@ -130,11 +132,11 @@ Le compromis est important : les réseaux seraient affichés dans des fenêtres 
 | Plateforme | Solution immédiate | Piste avancée |
 | --- | --- | --- |
 | Android | Autofill système, indépendant du fournisseur | Demande de statut privilégié auprès des fournisseurs |
-| Windows WebView2 | Auto-Type, glisser-déposer et focus strict | Hébergement expérimental d'extensions Chromium |
+| Windows dans CommunityGlows | Auto-Type, glisser-déposer et focus strict | Hébergement expérimental d'extensions Chromium |
 | Windows navigateur | Gestionnaire et extensions habituels | Profils navigateur orchestrés par CommunityGlows |
 
 Il n'existe pas d'API magique capable de lire tous les coffres, et ce serait une mauvaise idée d'en souhaiter une. La bonne intégration laisse le gestionnaire remplir directement la page.
 
-Pour Android, cette abstraction existe déjà avec Autofill. Pour Windows, CommunityGlows doit choisir entre préserver l'expérience WebView2 avec une compatibilité partielle, expérimenter l'hébergement d'extensions, ou utiliser de vrais profils navigateur pour obtenir la compatibilité la plus large.
+Pour Android, cette abstraction existe déjà avec Autofill. Pour Windows, CommunityGlows doit choisir entre préserver l'expérience intégrée avec une compatibilité partielle, expérimenter l'hébergement d'extensions, ou utiliser de vrais profils navigateur pour obtenir la compatibilité la plus large.
 
 La direction la plus saine reste constante : **CommunityGlows gère les profils et les sessions ; le gestionnaire choisi par l'utilisateur garde les mots de passe.**
