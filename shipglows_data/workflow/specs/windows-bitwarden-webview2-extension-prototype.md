@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.2.1"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 13:20:00 UTC"
 updated: "2026-08-19"
-updated_at: "2026-08-19 22:16:00 UTC"
+updated_at: "2026-08-19 22:27:03 UTC"
 status: partial
 source_skill: shipglows
 scope: windows-bitwarden-webview2-extension-prototype
@@ -36,14 +36,15 @@ evidence:
   - "CommunityGlows currently creates one WebView2 data directory per profile and network."
   - "WebView2 loads unpacked extensions from a local folder and does not provide an integrated extension store."
   - "The official browser-v2026.7.0 dist-chrome archive is 22 MB compressed, about 80 MB uncompressed across 261 entries, and exposes a root Manifest V3 with version 2026.7.0 and homepage_url https://bitwarden.com; it fits the implemented bounds and identity checks."
-next_step: "Complete the hosted Windows Rust test, then run the packaged application with an official Bitwarden Chromium archive and record compatibility results."
+  - "GitHub Actions run 32308452620 passed the Windows backend compilation and Rust tests on windows-latest, alongside the complete frontend quality job."
+next_step: "Run the packaged application on Windows with an official Bitwarden Chromium archive and record compatibility results."
 ---
 
 # Windows Bitwarden WebView2 Extension Prototype
 
 ## Status
 
-The environment-gated loader and manifest guard are implemented. The approved next slice replaces developer-only setup with a guided Windows Settings flow. A Windows build and physical Bitwarden compatibility proof remain required.
+The environment-gated loader, manifest guard, and guided Windows Settings flow are implemented. The Windows backend now compiles and passes its Rust tests on a hosted Windows runner. A packaged application run and physical Bitwarden compatibility proof remain required.
 
 ## Decision
 
@@ -140,12 +141,13 @@ Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwar
 |----------|-------|-------|--------|--------|-----------|
 | 2026-08-19 | sg-development | GPT-5 | Prepared the approved guided Windows installation slice and its proof contract. | ready | Implement native import/persistence and Settings UI. |
 | 2026-08-19 | sg-development | GPT-5 | Implemented the local ZIP import, managed installation lifecycle, Settings UX, translations, tests, documentation, and Windows Rust CI lane. | partial | Hosted Windows compile/test and physical Bitwarden proof. |
+| 2026-08-19 | sg-development | GPT-5 | Verified the complete quality workflow, including hosted Windows backend compilation and Rust tests. | partial | Physical packaged-Windows Bitwarden proof. |
 
 ## Current Chantier Flow
 
 - 100-sg-spec: ready — this spec owns the guided Settings slice.
 - 101-sg-ready: passed — outcome, security invariants, UI states, documentation impact, and proof path are explicit.
 - 102-sg-start: complete — implementation and directly mapped documentation are present.
-- 103-sg-verify: partial — 166 frontend tests, token check, core typecheck, Tauri frontend build, focused lint, design drift scan, and diff check pass; hosted Windows Rust proof is pending.
+- 103-sg-verify: partial — 166 frontend tests, RustSec audit, token check, core and Convex typechecks, lint, Tauri frontend build, design drift scan, diff check, and hosted Windows backend compilation/tests pass; packaged-Windows Bitwarden behavior is unverified.
 - 104-sg-end: partial — physical Bitwarden compatibility evidence remains outside this local Linux environment.
-- 005-sg-ship: approved for bounded commit and push.
+- 005-sg-ship: complete — implementation commits `5771698c` and `0d165d9f` were pushed to `master`; this proof update is the final bounded documentation delivery.
