@@ -1,0 +1,105 @@
+---
+artifact: spec
+metadata_schema_version: "1.0"
+artifact_version: "1.0.0"
+project: "communityglows"
+created: "2026-08-19"
+created_at: "2026-08-19 13:20:00 UTC"
+updated: "2026-08-19"
+updated_at: "2026-08-19 13:20:00 UTC"
+status: partial
+source_skill: shipglows
+scope: windows-bitwarden-webview2-extension-prototype
+owner: "Diane"
+confidence: medium
+risk_level: high
+security_impact: yes
+docs_impact: yes
+user_story: "En tant qu'utilisateur Windows de CommunityGlows qui utilise Bitwarden, je veux que l'extension officielle remplisse directement les pages réseau intégrées afin de ne pas copier mes mots de passe et de ne pas les confier à CommunityGlows."
+linked_systems:
+  - "src-tauri/src/lib.rs"
+  - "README.md"
+  - "shipglows_data/technical/public-webview-platform-boundary.md"
+  - "shipglows_data/workflow/specs/windows-password-manager-interoperability.md"
+depends_on:
+  - artifact: "shipglows_data/workflow/specs/windows-password-manager-interoperability.md"
+    artifact_version: "1.2.0"
+    required_status: partial
+supersedes: []
+evidence:
+  - "Tauri 2.11.5 exposes WebviewBuilder.browser_extensions_enabled and extensions_path on Windows."
+  - "CommunityGlows currently creates one WebView2 data directory per profile and network."
+  - "WebView2 loads unpacked extensions from a local folder and does not provide an integrated extension store."
+next_step: "Build on Windows with an official unpacked Bitwarden extension, then record login, inline Autofill, split-login, restart, and per-session persistence results."
+---
+
+# Windows Bitwarden WebView2 Extension Prototype
+
+## Status
+
+The environment-gated loader and manifest guard are implemented. A Windows build and a physical Bitwarden compatibility proof remain required.
+
+## Decision
+
+CommunityGlows may load a locally supplied unpacked Bitwarden Chromium extension into Windows social WebViews only when the operator explicitly defines `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` before WebView2 creation.
+
+The prototype does not download or redistribute Bitwarden, does not use the Bitwarden CLI or Vault Management API, does not register a Native Messaging host, and does not inspect filled field values. Bitwarden remains responsible for vault login, unlock, origin matching, account choice, fill, and save behavior.
+
+## Security Invariants
+
+- The configured path must resolve to an existing directory containing a valid Manifest V2 or V3 `manifest.json` that identifies Bitwarden.
+- An invalid explicit configuration fails closed instead of silently loading another extension.
+- With no environment variable, Windows WebViews retain their existing behavior.
+- All WebViews targeting the same data directory use the same extension-enabled configuration.
+- CommunityGlows never logs the extension path, username, password, selected item, vault state, or filled value.
+- The extension is never loaded on Android, macOS, or Linux by this prototype.
+- No public compatibility claim is allowed before packaged-Windows proof.
+
+## Known Limitation
+
+The current Windows isolation boundary uses one WebView2 data directory per `${profileId}-${networkId}`. Extension storage follows that boundary, so Bitwarden may require separate login, unlock, or initialization for each profile/network pair. This prototype must measure that cost before any proposal to share a data directory at profile level; it does not weaken the existing isolation contract.
+
+## Implemented Tasks
+
+- [x] Add an explicit Windows-only configuration gate.
+- [x] Validate the local unpacked extension directory and manifest.
+- [x] Enable browser extensions and apply the path before normal social WebView creation.
+- [x] Apply the same WebView2 environment options to temporary cookie-export WebViews that reuse the data directory.
+- [x] Preserve unchanged behavior on other platforms and when the gate is absent.
+- [x] Add focused manifest-validation unit coverage.
+- [x] Document local operator setup and the per-session limitation.
+- [ ] Compile the packaged Windows application with a representative official Bitwarden package.
+- [ ] Prove initial vault login/unlock UI is accessible.
+- [ ] Prove inline Autofill on one-page and split-login flows.
+- [ ] Prove behavior after application restart and WebView pooling.
+- [ ] Record whether each profile/network directory requires separate Bitwarden initialization.
+
+## Verification Matrix
+
+| Scenario | Required evidence |
+| --- | --- |
+| Gate absent | Existing Windows behavior, no extension process or UI |
+| Invalid directory | Explicit WebView creation error, no fallback extension |
+| Valid Bitwarden folder | Extension service worker starts and remains enabled |
+| One-page login | Matching Bitwarden suggestion fills username/password |
+| Split login | Same vault item can fill both steps |
+| Hidden WebView | No prompt or credential input targets the hidden page |
+| Restart | Extension and vault-state behavior recorded without credential values |
+| Second network | Whether setup is repeated is recorded explicitly |
+
+## Operator Test Setup
+
+Use an official Bitwarden Chromium extension extracted to a local folder whose root contains `manifest.json`. Do not commit that folder to this repository.
+
+```powershell
+$env:COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH = 'C:\path\to\bitwarden-unpacked'
+pnpm tauri dev
+```
+
+Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwarden extension, and CommunityGlows build versions, but never record usernames, passwords, OTPs, cookies, or vault item labels.
+
+## Sources
+
+- Tauri `WebviewBuilder`: <https://docs.rs/tauri/2.11.5/tauri/webview/struct.WebviewBuilder.html>
+- WebView2 `AddBrowserExtensionAsync`: <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2profile.addbrowserextensionasync>
+- Bitwarden clients repository: <https://github.com/bitwarden/clients>

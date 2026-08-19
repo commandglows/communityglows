@@ -13,6 +13,75 @@ mod backup;
 #[cfg(not(target_os = "android"))]
 const MAX_WARM_DESKTOP_WEBVIEWS: usize = 3;
 
+#[cfg(target_os = "windows")]
+const BITWARDEN_EXTENSION_PATH_ENV: &str = "COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH";
+
+#[cfg(not(target_os = "android"))]
+fn validate_bitwarden_extension_manifest(raw: &str) -> Result<(), String> {
+    let manifest: serde_json::Value =
+        serde_json::from_str(raw).map_err(|_| "Bitwarden manifest.json is not valid JSON")?;
+    let object = manifest
+        .as_object()
+        .ok_or("Bitwarden manifest.json must contain an object")?;
+    let manifest_version = object
+        .get("manifest_version")
+        .and_then(serde_json::Value::as_u64)
+        .ok_or("Bitwarden manifest.json has no manifest_version")?;
+    if !matches!(manifest_version, 2 | 3) {
+        return Err("Bitwarden extension must use manifest version 2 or 3".to_string());
+    }
+    if object
+        .get("name")
+        .and_then(serde_json::Value::as_str)
+        .is_none()
+    {
+        return Err("Bitwarden manifest.json has no extension name".to_string());
+    }
+    if !raw.to_ascii_lowercase().contains("bitwarden") {
+        return Err("The selected extension manifest does not identify Bitwarden".to_string());
+    }
+    Ok(())
+}
+
+#[cfg(target_os = "windows")]
+fn configured_bitwarden_extension_path() -> Result<Option<std::path::PathBuf>, String> {
+    let Some(raw_path) = std::env::var_os(BITWARDEN_EXTENSION_PATH_ENV) else {
+        return Ok(None);
+    };
+    if raw_path.is_empty() {
+        return Err(format!("{BITWARDEN_EXTENSION_PATH_ENV} is empty"));
+    }
+    let path = std::path::PathBuf::from(raw_path)
+        .canonicalize()
+        .map_err(|_| "The configured Bitwarden extension directory does not exist")?;
+    if !path.is_dir() {
+        return Err("The configured Bitwarden extension path is not a directory".to_string());
+    }
+    let manifest = std::fs::read_to_string(path.join("manifest.json"))
+        .map_err(|_| "The configured Bitwarden extension directory has no manifest.json")?;
+    validate_bitwarden_extension_manifest(&manifest)?;
+    Ok(Some(path))
+}
+
+#[cfg(target_os = "windows")]
+fn configure_bitwarden_extension<R: tauri::Runtime>(
+    builder: WebviewBuilder<R>,
+) -> Result<WebviewBuilder<R>, String> {
+    match configured_bitwarden_extension_path()? {
+        Some(path) => Ok(builder
+            .browser_extensions_enabled(true)
+            .extensions_path(path)),
+        None => Ok(builder),
+    }
+}
+
+#[cfg(all(not(target_os = "android"), not(target_os = "windows")))]
+fn configure_bitwarden_extension<R: tauri::Runtime>(
+    builder: WebviewBuilder<R>,
+) -> Result<WebviewBuilder<R>, String> {
+    Ok(builder)
+}
+
 #[cfg(not(target_os = "android"))]
 #[derive(Default)]
 struct DesktopWebviewPoolState {
@@ -650,11 +719,14 @@ async fn export_desktop_cookies(
                 "backup-cookie-{}",
                 chrono::Utc::now().timestamp_nanos_opt().unwrap_or_default()
             );
+            let webview_builder = configure_bitwarden_extension(
+                WebviewBuilder::new(&temporary_label, WebviewUrl::External(url.clone()))
+                    .data_directory(data_dir)
+                    .background_color(tauri::window::Color(9, 9, 11, 0)),
+            )?;
             let webview = window
                 .add_child(
-                    WebviewBuilder::new(&temporary_label, WebviewUrl::External(url.clone()))
-                        .data_directory(data_dir)
-                        .background_color(tauri::window::Color(9, 9, 11, 0)),
+                    webview_builder,
                     tauri::LogicalPosition::new(-10_000.0, -10_000.0),
                     tauri::LogicalSize::new(1.0, 1.0),
                 )
@@ -734,19 +806,22 @@ async fn open_webview(
         .get_window("main")
         .ok_or_else(|| "main window not found".to_string())?;
 
+    let webview_builder = configure_bitwarden_extension(
+        WebviewBuilder::new(&label, WebviewUrl::External(parsed))
+            .data_directory(data_dir)
+            // Do not let an off-screen preload become the active input
+            // target. Visible children are focused explicitly below.
+            .focused(false)
+            // Paint the native surface before the remote document renders.
+            .background_color(if dark_mode {
+                tauri::window::Color(9, 9, 11, 255)
+            } else {
+                tauri::window::Color(248, 249, 250, 255)
+            }),
+    )?;
     let webview = window
         .add_child(
-            WebviewBuilder::new(&label, WebviewUrl::External(parsed))
-                .data_directory(data_dir)
-                // Do not let an off-screen preload become the active input
-                // target. Visible children are focused explicitly below.
-                .focused(false)
-                // Paint the native surface before the remote document renders.
-                .background_color(if dark_mode {
-                    tauri::window::Color(9, 9, 11, 255)
-                } else {
-                    tauri::window::Color(248, 249, 250, 255)
-                }),
+            webview_builder,
             tauri::LogicalPosition::new(x, y),
             tauri::LogicalSize::new(width, height),
         )
@@ -1468,7 +1543,7 @@ pub fn run() {
 
 #[cfg(all(test, not(target_os = "android")))]
 mod tests {
-    use super::has_visible_desktop_webview_bounds;
+    use super::{has_visible_desktop_webview_bounds, validate_bitwarden_extension_manifest};
 
     #[test]
     fn only_positive_sized_child_webviews_are_focus_eligible() {
@@ -1477,5 +1552,24 @@ mod tests {
         assert!(!has_visible_desktop_webview_bounds(0.0, 800.0));
         assert!(!has_visible_desktop_webview_bounds(1280.0, 0.0));
         assert!(!has_visible_desktop_webview_bounds(-1.0, 800.0));
+    }
+
+    #[test]
+    fn accepts_an_identified_bitwarden_chromium_manifest() {
+        let manifest = r#"{
+          "manifest_version": 3,
+          "name": "__MSG_appName__",
+          "homepage_url": "https://bitwarden.com"
+        }"#;
+        assert!(validate_bitwarden_extension_manifest(manifest).is_ok());
+    }
+
+    #[test]
+    fn rejects_an_unidentified_or_malformed_extension_manifest() {
+        assert!(validate_bitwarden_extension_manifest("not-json").is_err());
+        assert!(validate_bitwarden_extension_manifest(
+            r#"{"manifest_version":3,"name":"Unrelated extension"}"#,
+        )
+        .is_err());
     }
 }

@@ -1,7 +1,7 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "communityglows"
 created: "2026-07-15"
 updated: "2026-08-19"
@@ -75,6 +75,12 @@ auto-submit forms, enable a second WebView2 password store, or synchronize passw
 Provider matching, unlock, selection, and release remain controlled by the user and
 the provider.
 
+The Windows-only Bitwarden experiment is a narrow exception for a user-supplied,
+unpacked official extension. WebView2 runs the extension's own content scripts;
+CommunityGlows neither reads filled fields nor adds a credential bridge. The experiment
+is disabled unless `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` is explicitly configured,
+and it does not authorize redistribution or a general-purpose extension store.
+
 ## Explicitly Removed Mechanisms
 
 The public build must not reintroduce:
@@ -85,13 +91,13 @@ The public build must not reintroduce:
 - `navigator.webdriver` and related browser-property patches;
 - desktop user-agent or viewport forcing;
 - arbitrary desktop `inject_script` IPC;
-- provider-specific credential injection, vault APIs, or embedded password-manager extensions;
+- provider-specific credential injection, vault APIs, or arbitrary/unreviewed embedded extensions;
 - friends-only filtering or any mutation of third-party feed content.
 
 ## Validation
 
 - Static regression scan: `rg -n -i 'STEALTH_SCRIPT|navigator\\.webdriver|COOKIE_(IFRAME|ACCEPT)_SCRIPT|DISMISS_APP_BANNERS_SCRIPT|DESKTOP_VIEWPORT_SCRIPT|inject_script|buildFriendsFilterScript|replace\\("; wv"' src-tauri src`
-- Credential-boundary scan: `rg -n -i 'AutofillManager|requestAutofill|IsPasswordAutosaveEnabled|bitwarden|1password|vault' src-tauri src` and review every match; guarded `importantForAutofill` participation is allowed.
+- Credential-boundary scan: `rg -n -i 'AutofillManager|requestAutofill|IsPasswordAutosaveEnabled|bitwarden|1password|vault' src-tauri src` and review every match; guarded `importantForAutofill` participation and the explicit Windows Bitwarden path are allowed.
 - Device proof: on each supported network, open a fresh profile, make a consent choice manually when prompted, navigate normally, and record any network refusal or broken interaction.
 - Release proof: confirm the Android package and CI build contain no removed mechanisms before a Play submission.
 

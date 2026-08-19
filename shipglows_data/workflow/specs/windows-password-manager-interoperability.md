@@ -1,7 +1,7 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.2.0"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
@@ -64,7 +64,7 @@ The immediate Windows compatibility contract is:
 - all providers: preserve manual entry and external-browser fallback;
 - CommunityGlows: provide standards-based form semantics and stable focus behavior only.
 
-CommunityGlows will not enable WebView2 password autosave in this scope because WebView2 profile synchronization is disabled and the result would be a separate local password store. It will not call vault APIs or embed provider browser extensions in this immediate implementation.
+CommunityGlows will not enable WebView2 password autosave in this scope because WebView2 profile synchronization is disabled and the result would be a separate local password store. It will not call vault APIs. A separately approved, environment-gated Bitwarden extension experiment is specified by `windows-bitwarden-webview2-extension-prototype.md` and does not change the claims of this immediate-interoperability baseline.
 
 ## Success Behavior
 
@@ -101,7 +101,7 @@ CommunityGlows will not enable WebView2 password autosave in this scope because 
 - No assumption that WebView2 uses or synchronizes the user's Microsoft Edge profile.
 - No Bitwarden CLI, Vault Management API, local HTTP server, or Secrets Manager SDK.
 - No 1Password CLI, Connect API, service account, or secret-reference integration.
-- No embedded/sideloaded Bitwarden or 1Password browser extension.
+- No generally available or redistributed embedded password-manager extension; the separately specified local Bitwarden experiment is the only approved exception.
 - No Native Messaging host registration for CommunityGlows.
 - No browser-extension redistribution, vendor partnership, or unsupported-browser registration.
 - No passkeys or Windows WebAuthn provider integration.
@@ -169,7 +169,7 @@ CommunityGlows will not enable WebView2 password autosave in this scope because 
 - At least two representative social login surfaces receive a documented Bitwarden drag-and-drop result.
 - A hidden WebView never receives credentials intended for the visible WebView in the validation scenarios.
 - Manual entry and browser fallback remain functional for unsupported combinations.
-- CommunityGlows registers no vault API credential, CLI session, Native Messaging host, global shortcut, or embedded provider extension.
+- CommunityGlows registers no vault API credential, CLI session, Native Messaging host, or global shortcut; the optional local Bitwarden experiment never exposes credentials to CommunityGlows.
 - WebView2 password autosave remains disabled/unmodified by CommunityGlows.
 - No credential content is present in logs, telemetry, storage, cloud sync, or backup artifacts.
 - Documentation describes compatibility as tested interoperability, not direct vault integration.

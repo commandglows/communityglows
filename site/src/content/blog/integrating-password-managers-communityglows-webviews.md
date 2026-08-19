@@ -110,6 +110,34 @@ This is an interesting prototype path, but it is not yet a universal, distributi
 
 A WebView2 prototype should therefore test the generic mechanism with several representative extensions instead of shaping the architecture around a single provider.
 
+## Can CommunityGlows Include an Extension Store and Support Every Extension?
+
+Two stores that are often confused need to be distinguished first:
+
+- the **Google Play Store** distributes Android applications, including the 1Password, Bitwarden, and Proton Pass apps;
+- the **Chrome Web Store** and **Edge Add-ons** catalog distribute desktop browser extensions.
+
+On Android, CommunityGlows cannot embed the Play Store or load Chrome extensions inside a WebView. The user installs a password manager from the Play Store, and Android Autofill acts as the interface between that manager and forms displayed in CommunityGlows.
+
+On Windows, WebView2 does not provide an integrated Chrome Web Store. It allows the host application to load an already-unpacked Chromium extension from a local folder, but it does not automatically provide the catalog, installation button, updates, or full compatibility of a real browser.
+
+CommunityGlows could build its own “Compatible Extensions” screen: download or select a package, verify its identity and version, install it in the correct profile, and manage updates. This would be a controlled CommunityGlows catalog, not an official integration of the Chrome Web Store.
+
+Allowing every extension without review would be dangerous. An extension with broad permissions could observe pages, forms, and sessions belonging to multiple social accounts. CommunityGlows would then become responsible for package verification, security updates, licensing, permissions, and incidents caused by a compromised extension.
+
+A reasonable compromise would therefore be a **CommunityGlows Extension Hub** limited to explicitly tested password managers:
+
+- voluntary installation with clear consent;
+- an official package or one selected locally by the user;
+- verified identity, version, fingerprint, and permissions;
+- a `compatible`, `experimental`, or `untested` status;
+- immediate disable and removal controls;
+- no CommunityGlows access to filled credentials.
+
+The first Windows prototype uses Bitwarden as the technical candidate. The extension is supplied locally in unpacked form, and the mode remains disabled by default. The test still needs to prove that vault login, the inline field menu, multi-step forms, and persistence work in the packaged application. It is not yet a public compatibility promise.
+
+To provide every Store, every extension, and Google Password Manager on Windows, CommunityGlows would need to use a real Chrome or Edge browser instead of WebView2.
+
 ## The Most Universal Windows Option: A Real Browser
 
 The only way to obtain the complete existing password-manager ecosystem immediately is to use a real browser with real profiles.
@@ -124,6 +152,34 @@ CommunityGlows could remain the dashboard and orchestrator:
 - our extension used only to connect commands, windows, and profiles to CommunityGlows.
 
 The tradeoff is significant: networks would appear in browser windows rather than inside the current embedded WebViews. Copying the resulting session back into WebView2 would be fragile and risky. A modern login may depend on `HttpOnly` cookies, `localStorage`, IndexedDB, service workers, and device-bound protections. It is safer to retain a session in the engine that created it.
+
+## Why CommunityGlows Is Not Building Another Password Vault
+
+There is one more technically possible route: CommunityGlows could store usernames and passwords in an end-to-end encrypted vault. On a new computer, the user would enter a recovery key, unlock the vault, choose an account in a CommunityGlows popup, and fill the visible login form.
+
+That would solve part of the Windows portability problem, but it would also turn CommunityGlows into a password manager. It would not be a matter of simply encrypting a few passwords. Doing it responsibly would require:
+
+- end-to-end encryption and recovery keys;
+- automatic locking, biometrics, and secure Windows key storage;
+- device enrollment and revocation;
+- synchronization and conflict handling;
+- strict domain matching and phishing protection;
+- secure filling inside WebViews;
+- support for passkeys, two-factor authentication, CAPTCHA, and password changes;
+- regular independent security audits;
+- an incident response process for vulnerabilities or lost keys.
+
+This would likely require several months of development, followed by a permanent security responsibility. CommunityGlows would effectively be rebuilding a less mature password manager instead of improving its core social workspace, while provider-specific login flows would still prevent a universal one-click connection.
+
+The benefit does not justify duplicating a mature password manager inside a social workspace. CommunityGlows therefore follows a narrower model:
+
+- passwords remain with the user's chosen password manager;
+- live network sessions remain local to the device;
+- profiles and preferences can sync separately;
+- an encrypted backup export can explicitly move compatible local sessions;
+- a new device may still require the user to sign in again.
+
+Enabling WebView2's own password autosave can be evaluated as a local Windows convenience, but it would create a CommunityGlows-specific store on that computer. It would not provide the cross-device vault users already get from their password manager.
 
 ## The Realistic Options
 

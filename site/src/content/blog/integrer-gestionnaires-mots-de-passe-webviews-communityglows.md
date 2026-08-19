@@ -110,6 +110,34 @@ C'est une piste de prototype intéressante, mais pas encore une solution univers
 
 Un prototype WebView2 doit donc tester le mécanisme générique avec plusieurs extensions représentatives, sans concevoir l'architecture autour d'un seul fournisseur.
 
+## Peut-on intégrer un Store et proposer toutes les extensions ?
+
+Il faut d'abord distinguer deux magasins souvent confondus :
+
+- le **Google Play Store** distribue des applications Android, notamment les applications 1Password, Bitwarden ou Proton Pass ;
+- le **Chrome Web Store** et le catalogue **Edge Add-ons** distribuent des extensions de navigateur sur ordinateur.
+
+Sur Android, CommunityGlows ne peut pas embarquer le Play Store ni charger des extensions Chrome dans une WebView. L'utilisateur installe son gestionnaire depuis le Play Store, puis Android Autofill sert d'interface entre ce gestionnaire et les formulaires affichés dans CommunityGlows.
+
+Sous Windows, WebView2 ne fournit pas un Chrome Web Store intégré. Il permet à l'application hôte de charger une extension Chromium déjà décompressée depuis un dossier local, mais il ne fournit pas automatiquement le catalogue, le bouton d'installation, les mises à jour ou la compatibilité complète d'un vrai navigateur.
+
+CommunityGlows pourrait construire son propre écran « Extensions compatibles » : télécharger ou sélectionner un package, vérifier son identité et sa version, l'installer dans le bon profil puis gérer ses mises à jour. Ce serait toutefois notre propre catalogue contrôlé, pas une intégration officielle du Chrome Web Store.
+
+Autoriser toutes les extensions sans contrôle serait dangereux. Une extension disposant de permissions étendues pourrait observer les pages, formulaires et sessions de plusieurs comptes sociaux. CommunityGlows devrait alors assumer la vérification des packages, les mises à jour de sécurité, les licences, les permissions et les incidents liés à une extension compromise.
+
+Le compromis raisonnable serait donc un **CommunityGlows Extension Hub** limité aux gestionnaires de mots de passe explicitement testés :
+
+- installation volontaire et consentement clair ;
+- package officiel ou sélectionné localement par l'utilisateur ;
+- identité, version, empreinte et permissions vérifiées ;
+- statut `compatible`, `expérimental` ou `non testé` ;
+- désactivation et suppression immédiates ;
+- aucun accès de CommunityGlows aux identifiants remplis.
+
+Le premier prototype Windows utilise Bitwarden comme candidat technique. L'extension est fournie localement sous forme décompressée et le mode reste désactivé par défaut. Ce test doit encore prouver que la connexion au coffre, le menu près des champs, les formulaires en plusieurs étapes et la persistance fonctionnent réellement dans la version packagée. Il ne constitue donc pas encore une promesse de compatibilité publique.
+
+Pour proposer réellement tous les Stores, toutes les extensions et Google Password Manager sous Windows, il faudrait utiliser un véritable navigateur Chrome ou Edge plutôt que WebView2.
+
 ## L'option la plus universelle sous Windows : un vrai navigateur
 
 La seule manière d'obtenir immédiatement l'écosystème complet des gestionnaires existants est d'utiliser un véritable navigateur avec de vrais profils.
@@ -124,6 +152,34 @@ CommunityGlows pourrait rester le tableau de bord et l'orchestrateur :
 - notre extension chargée uniquement de relier les commandes, fenêtres et profils à CommunityGlows.
 
 Le compromis est important : les réseaux seraient affichés dans des fenêtres navigateur plutôt que dans les WebViews intégrées actuelles. Copier ensuite la session vers WebView2 serait fragile et risqué. Une connexion moderne peut dépendre de cookies `HttpOnly`, de `localStorage`, d'IndexedDB, de service workers et de protections liées au périphérique. Il est plus sûr de conserver la session dans le moteur qui l'a créée.
+
+## Pourquoi CommunityGlows ne construit pas un nouveau coffre de mots de passe
+
+Une autre voie est techniquement possible : CommunityGlows pourrait conserver les identifiants et mots de passe dans un coffre chiffré de bout en bout. Sur un nouvel ordinateur, l'utilisateur saisirait une clé de récupération, déverrouillerait le coffre, choisirait un compte dans un popup CommunityGlows, puis remplirait le formulaire de connexion visible.
+
+Cette solution répondrait à une partie du problème de portabilité sous Windows, mais elle transformerait aussi CommunityGlows en gestionnaire de mots de passe. Il ne s'agirait pas simplement de chiffrer quelques mots de passe. La réaliser sérieusement imposerait de gérer :
+
+- le chiffrement de bout en bout et les clés de récupération ;
+- le verrouillage automatique, la biométrie et le stockage sécurisé des clés sous Windows ;
+- l'ajout et la révocation des appareils ;
+- la synchronisation et les conflits ;
+- la correspondance stricte des domaines et la protection contre le phishing ;
+- le remplissage sécurisé dans les WebViews ;
+- les passkeys, le double facteur, les CAPTCHA et les changements de mots de passe ;
+- des audits de sécurité indépendants réguliers ;
+- une procédure d'intervention en cas de vulnérabilité ou de perte de clé.
+
+Ce chantier demanderait probablement plusieurs mois de développement, puis une responsabilité de sécurité permanente. CommunityGlows finirait par reconstruire un gestionnaire de mots de passe moins mature au lieu d'améliorer son cœur de métier, l'espace de travail social, tandis que les parcours propres à chaque fournisseur empêcheraient malgré tout une connexion universelle en un clic.
+
+Le bénéfice ne justifie pas de recréer un gestionnaire mature à l'intérieur d'un espace de travail social. CommunityGlows retient donc un modèle plus limité :
+
+- les mots de passe restent chez le gestionnaire choisi par l'utilisateur ;
+- les sessions actives des réseaux restent locales à l'appareil ;
+- les profils et préférences peuvent être synchronisés séparément ;
+- un export de sauvegarde chiffré permet de déplacer explicitement les sessions locales compatibles ;
+- une reconnexion peut rester nécessaire sur un nouvel appareil.
+
+L'activation du gestionnaire de mots de passe propre à WebView2 peut être évaluée comme commodité locale sous Windows, mais elle créerait un stockage spécifique à CommunityGlows sur cet ordinateur. Elle ne fournirait pas le coffre multi-appareils que l'utilisateur possède déjà dans son gestionnaire habituel.
 
 ## Les options réalistes
 
