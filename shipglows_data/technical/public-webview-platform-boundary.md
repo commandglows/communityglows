@@ -1,7 +1,7 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.2.0"
+artifact_version: "1.3.0"
 project: "communityglows"
 created: "2026-07-15"
 updated: "2026-08-19"
@@ -75,11 +75,13 @@ auto-submit forms, enable a second WebView2 password store, or synchronize passw
 Provider matching, unlock, selection, and release remain controlled by the user and
 the provider.
 
-The Windows-only Bitwarden experiment is a narrow exception for a user-supplied,
-unpacked official extension. WebView2 runs the extension's own content scripts;
-CommunityGlows neither reads filled fields nor adds a credential bridge. The experiment
-is disabled unless `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` is explicitly configured,
-and it does not authorize redistribution or a general-purpose extension store.
+The Windows-only Bitwarden experiment is a narrow exception for a user-selected
+official Chromium archive. The Windows Settings flow validates the ZIP, extracts it
+under CommunityGlows application data, and enables it only after an explicit restart;
+the environment path remains a developer override. WebView2 runs the extension's own
+content scripts, while CommunityGlows neither uploads the archive, reads filled fields,
+nor adds a credential bridge. This does not authorize redistribution or a
+general-purpose extension store.
 
 ## Explicitly Removed Mechanisms
 

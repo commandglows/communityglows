@@ -172,6 +172,8 @@
           <p class="settings-section-label">{{ $t('billing.section_title') }}</p>
           <BillingAccessPanel />
 
+          <BitwardenExtensionSettings />
+
           <p class="settings-section-label">Support</p>
           <div class="settings-account-card">
             <p class="settings-account-hint">
@@ -431,6 +433,7 @@ import {
 } from '../utils/iconScale'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import BackupRestore from './BackupRestore.vue'
+import BitwardenExtensionSettings from './BitwardenExtensionSettings.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
 import KeyboardShortcuts from './KeyboardShortcuts.vue'
 import SgSheet from './ui/SgSheet.vue'

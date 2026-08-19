@@ -15,6 +15,42 @@ const MAX_WARM_DESKTOP_WEBVIEWS: usize = 3;
 
 #[cfg(target_os = "windows")]
 const BITWARDEN_EXTENSION_PATH_ENV: &str = "COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH";
+#[cfg(target_os = "windows")]
+const BITWARDEN_RELEASES_URL: &str = "https://github.com/bitwarden/clients/releases";
+#[cfg(target_os = "windows")]
+const BITWARDEN_INSTALLATION_CONFIG: &str = "bitwarden-installation.json";
+#[cfg(target_os = "windows")]
+const MAX_BITWARDEN_ARCHIVE_BYTES: u64 = 64 * 1024 * 1024;
+#[cfg(target_os = "windows")]
+const MAX_BITWARDEN_EXTRACTED_BYTES: u64 = 256 * 1024 * 1024;
+#[cfg(target_os = "windows")]
+const MAX_BITWARDEN_ARCHIVE_ENTRIES: usize = 8_000;
+
+#[cfg(target_os = "windows")]
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct ManagedBitwardenInstallation {
+    schema_version: u8,
+    relative_directory: String,
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct BitwardenExtensionStatus {
+    supported: bool,
+    installed: bool,
+    source: String,
+    version: Option<String>,
+    restart_required: bool,
+}
+
+#[cfg(target_os = "windows")]
+#[derive(Default)]
+struct BitwardenExtensionRuntimeState(Mutex<bool>);
+
+#[cfg(not(target_os = "windows"))]
+#[derive(Default)]
+struct BitwardenExtensionRuntimeState;
 
 #[cfg(not(target_os = "android"))]
 fn validate_bitwarden_extension_manifest(raw: &str) -> Result<(), String> {
@@ -30,21 +66,42 @@ fn validate_bitwarden_extension_manifest(raw: &str) -> Result<(), String> {
     if !matches!(manifest_version, 2 | 3) {
         return Err("Bitwarden extension must use manifest version 2 or 3".to_string());
     }
-    if object
+    let name = object
         .get("name")
         .and_then(serde_json::Value::as_str)
+        .ok_or("Bitwarden manifest.json has no extension name")?;
+    if object
+        .get("version")
+        .and_then(serde_json::Value::as_str)
+        .filter(|version| !version.trim().is_empty())
         .is_none()
     {
-        return Err("Bitwarden manifest.json has no extension name".to_string());
+        return Err("Bitwarden manifest.json has no extension version".to_string());
     }
-    if !raw.to_ascii_lowercase().contains("bitwarden") {
+    let identified_by_name = name.to_ascii_lowercase().contains("bitwarden");
+    let identified_by_homepage = object
+        .get("homepage_url")
+        .and_then(serde_json::Value::as_str)
+        .and_then(|homepage| homepage.parse::<url::Url>().ok())
+        .and_then(|homepage| homepage.host_str().map(str::to_owned))
+        .is_some_and(|host| host == "bitwarden.com" || host.ends_with(".bitwarden.com"));
+    if !identified_by_name && !identified_by_homepage {
         return Err("The selected extension manifest does not identify Bitwarden".to_string());
     }
     Ok(())
 }
 
+#[cfg(not(target_os = "android"))]
+fn bitwarden_extension_version(raw: &str) -> Option<String> {
+    serde_json::from_str::<serde_json::Value>(raw)
+        .ok()?
+        .get("version")?
+        .as_str()
+        .map(str::to_owned)
+}
+
 #[cfg(target_os = "windows")]
-fn configured_bitwarden_extension_path() -> Result<Option<std::path::PathBuf>, String> {
+fn environment_bitwarden_extension_path() -> Result<Option<std::path::PathBuf>, String> {
     let Some(raw_path) = std::env::var_os(BITWARDEN_EXTENSION_PATH_ENV) else {
         return Ok(None);
     };
@@ -64,10 +121,103 @@ fn configured_bitwarden_extension_path() -> Result<Option<std::path::PathBuf>, S
 }
 
 #[cfg(target_os = "windows")]
+fn bitwarden_extensions_root<R: tauri::Runtime>(
+    app: &AppHandle<R>,
+) -> Result<std::path::PathBuf, String> {
+    Ok(app
+        .path()
+        .app_data_dir()
+        .map_err(|e| e.to_string())?
+        .join("extensions"))
+}
+
+#[cfg(target_os = "windows")]
+fn managed_bitwarden_extension_path<R: tauri::Runtime>(
+    app: &AppHandle<R>,
+) -> Result<Option<std::path::PathBuf>, String> {
+    let root = bitwarden_extensions_root(app)?;
+    let config_path = root.join(BITWARDEN_INSTALLATION_CONFIG);
+    let raw = match std::fs::read_to_string(&config_path) {
+        Ok(raw) => raw,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(_) => return Err("The local Bitwarden installation settings cannot be read".to_string()),
+    };
+    let config: ManagedBitwardenInstallation = serde_json::from_str(&raw)
+        .map_err(|_| "The local Bitwarden installation settings are invalid")?;
+    if config.schema_version != 1
+        || config.relative_directory.is_empty()
+        || std::path::Path::new(&config.relative_directory).is_absolute()
+    {
+        return Err("The local Bitwarden installation reference is invalid".to_string());
+    }
+
+    let canonical_root = root
+        .canonicalize()
+        .map_err(|_| "The local Bitwarden extension directory is missing")?;
+    let path = root
+        .join(config.relative_directory)
+        .canonicalize()
+        .map_err(|_| "The installed Bitwarden extension directory is missing")?;
+    if !path.starts_with(&canonical_root) || !path.is_dir() {
+        return Err("The local Bitwarden installation escaped its allowed directory".to_string());
+    }
+    let manifest = std::fs::read_to_string(path.join("manifest.json"))
+        .map_err(|_| "The installed Bitwarden extension has no manifest.json")?;
+    validate_bitwarden_extension_manifest(&manifest)?;
+    Ok(Some(path))
+}
+
+#[cfg(target_os = "windows")]
+fn configured_bitwarden_extension_path<R: tauri::Runtime>(
+    app: &AppHandle<R>,
+) -> Result<Option<std::path::PathBuf>, String> {
+    match environment_bitwarden_extension_path()? {
+        Some(path) => Ok(Some(path)),
+        None => managed_bitwarden_extension_path(app),
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn prune_inactive_managed_bitwarden_packages<R: tauri::Runtime>(
+    app: &AppHandle<R>,
+) -> Result<(), String> {
+    let root = bitwarden_extensions_root(app)?;
+    if !root.exists() {
+        return Ok(());
+    }
+    let active = managed_bitwarden_extension_path(app)?;
+    let canonical_root = root
+        .canonicalize()
+        .map_err(|_| "The local extension directory cannot be resolved")?;
+    for entry in std::fs::read_dir(&root)
+        .map_err(|_| "The local extension directory cannot be inspected")?
+    {
+        let entry = entry.map_err(|_| "A local extension entry cannot be inspected")?;
+        let file_name = entry.file_name();
+        if !file_name.to_string_lossy().starts_with("bitwarden-") {
+            continue;
+        }
+        let path = entry
+            .path()
+            .canonicalize()
+            .map_err(|_| "A local Bitwarden package cannot be resolved")?;
+        if !path.starts_with(&canonical_root) || active.as_ref().is_some_and(|item| item == &path) {
+            continue;
+        }
+        if path.is_dir() {
+            std::fs::remove_dir_all(path)
+                .map_err(|_| "An inactive Bitwarden package cannot be removed")?;
+        }
+    }
+    Ok(())
+}
+
+#[cfg(target_os = "windows")]
 fn configure_bitwarden_extension<R: tauri::Runtime>(
     builder: WebviewBuilder<R>,
+    app: &AppHandle<R>,
 ) -> Result<WebviewBuilder<R>, String> {
-    match configured_bitwarden_extension_path()? {
+    match configured_bitwarden_extension_path(app)? {
         Some(path) => Ok(builder
             .browser_extensions_enabled(true)
             .extensions_path(path)),
@@ -78,6 +228,7 @@ fn configure_bitwarden_extension<R: tauri::Runtime>(
 #[cfg(all(not(target_os = "android"), not(target_os = "windows")))]
 fn configure_bitwarden_extension<R: tauri::Runtime>(
     builder: WebviewBuilder<R>,
+    _app: &AppHandle<R>,
 ) -> Result<WebviewBuilder<R>, String> {
     Ok(builder)
 }
@@ -684,6 +835,234 @@ fn toggle_window(app: &AppHandle) {
 
 // ─── IPC commands ────────────────────────────────────────────────────────────
 
+#[cfg(target_os = "windows")]
+fn extract_bitwarden_archive(
+    archive_path: &std::path::Path,
+    destination: &std::path::Path,
+) -> Result<String, String> {
+    if !archive_path
+        .extension()
+        .and_then(|extension| extension.to_str())
+        .is_some_and(|extension| extension.eq_ignore_ascii_case("zip"))
+    {
+        return Err("Select the official Bitwarden Chromium ZIP archive".to_string());
+    }
+    let archive_size = std::fs::metadata(archive_path)
+        .map_err(|_| "The selected Bitwarden archive cannot be read")?
+        .len();
+    if archive_size == 0 || archive_size > MAX_BITWARDEN_ARCHIVE_BYTES {
+        return Err("The selected Bitwarden archive has an invalid size".to_string());
+    }
+
+    let file = std::fs::File::open(archive_path)
+        .map_err(|_| "The selected Bitwarden archive cannot be opened")?;
+    let mut archive = zip::ZipArchive::new(file)
+        .map_err(|_| "The selected file is not a valid ZIP archive")?;
+    if archive.is_empty() || archive.len() > MAX_BITWARDEN_ARCHIVE_ENTRIES {
+        return Err("The selected Bitwarden archive contains too many files".to_string());
+    }
+
+    std::fs::create_dir_all(destination)
+        .map_err(|_| "The local Bitwarden installation directory cannot be created")?;
+    let mut total_extracted = 0_u64;
+    for index in 0..archive.len() {
+        let mut entry = archive
+            .by_index(index)
+            .map_err(|_| "The Bitwarden archive contains an unreadable entry")?;
+        let enclosed = entry
+            .enclosed_name()
+            .ok_or_else(|| "The Bitwarden archive contains an unsafe path".to_string())?
+            .to_owned();
+        if entry
+            .unix_mode()
+            .is_some_and(|mode| mode & 0o170000 == 0o120000)
+        {
+            return Err("The Bitwarden archive contains a symbolic link".to_string());
+        }
+        total_extracted = total_extracted
+            .checked_add(entry.size())
+            .ok_or_else(|| "The Bitwarden archive is too large".to_string())?;
+        if total_extracted > MAX_BITWARDEN_EXTRACTED_BYTES {
+            return Err("The Bitwarden archive expands beyond the allowed size".to_string());
+        }
+
+        let target = destination.join(enclosed);
+        if entry.is_dir() {
+            std::fs::create_dir_all(&target)
+                .map_err(|_| "A Bitwarden extension directory cannot be created")?;
+            continue;
+        }
+        let parent = target
+            .parent()
+            .ok_or_else(|| "The Bitwarden archive contains an invalid path".to_string())?;
+        std::fs::create_dir_all(parent)
+            .map_err(|_| "A Bitwarden extension directory cannot be created")?;
+        let mut output = std::fs::File::create(&target)
+            .map_err(|_| "A Bitwarden extension file cannot be created")?;
+        std::io::copy(&mut entry, &mut output)
+            .map_err(|_| "A Bitwarden extension file cannot be extracted")?;
+    }
+
+    let manifest_path = destination.join("manifest.json");
+    let manifest = std::fs::read_to_string(manifest_path)
+        .map_err(|_| "The archive root has no Bitwarden manifest.json")?;
+    validate_bitwarden_extension_manifest(&manifest)?;
+    Ok(bitwarden_extension_version(&manifest).unwrap_or_else(|| "unknown".to_string()))
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+fn get_bitwarden_extension_status(
+    app: AppHandle,
+) -> Result<BitwardenExtensionStatus, String> {
+    let restart_required = *app
+        .state::<BitwardenExtensionRuntimeState>()
+        .0
+        .lock()
+        .map_err(|_| "Bitwarden extension state lock poisoned")?;
+    let (path, source) = match environment_bitwarden_extension_path()? {
+        Some(path) => (Some(path), "environment"),
+        None => (managed_bitwarden_extension_path(&app)?, "managed"),
+    };
+    let version = match &path {
+        Some(path) => {
+            let manifest = std::fs::read_to_string(path.join("manifest.json"))
+                .map_err(|_| "The installed Bitwarden manifest cannot be read")?;
+            bitwarden_extension_version(&manifest)
+        }
+        None => None,
+    };
+    Ok(BitwardenExtensionStatus {
+        supported: true,
+        installed: path.is_some(),
+        source: if path.is_some() { source } else { "none" }.to_string(),
+        version,
+        restart_required,
+    })
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "windows"))]
+fn get_bitwarden_extension_status(
+    _app: AppHandle,
+) -> Result<BitwardenExtensionStatus, String> {
+    Ok(BitwardenExtensionStatus {
+        supported: false,
+        installed: false,
+        source: "none".to_string(),
+        version: None,
+        restart_required: false,
+    })
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+fn import_bitwarden_extension(
+    app: AppHandle,
+    archive_path: String,
+) -> Result<BitwardenExtensionStatus, String> {
+    if environment_bitwarden_extension_path()?.is_some() {
+        return Err("Bitwarden is controlled by a developer environment setting".to_string());
+    }
+
+    let root = bitwarden_extensions_root(&app)?;
+    std::fs::create_dir_all(&root)
+        .map_err(|_| "The CommunityGlows extension directory cannot be created")?;
+    let package_name = format!(
+        "bitwarden-{}",
+        chrono::Utc::now().timestamp_nanos_opt().unwrap_or_default()
+    );
+    let destination = root.join(&package_name);
+    let extraction = extract_bitwarden_archive(std::path::Path::new(&archive_path), &destination);
+    if let Err(error) = extraction {
+        let _ = std::fs::remove_dir_all(&destination);
+        return Err(error);
+    }
+
+    let config = ManagedBitwardenInstallation {
+        schema_version: 1,
+        relative_directory: package_name,
+    };
+    let serialized = serde_json::to_vec_pretty(&config)
+        .map_err(|_| "The local Bitwarden installation settings cannot be encoded")?;
+    if std::fs::write(root.join(BITWARDEN_INSTALLATION_CONFIG), serialized).is_err() {
+        let _ = std::fs::remove_dir_all(&destination);
+        return Err("The local Bitwarden installation settings cannot be saved".to_string());
+    }
+    *app
+        .state::<BitwardenExtensionRuntimeState>()
+        .0
+        .lock()
+        .map_err(|_| "Bitwarden extension state lock poisoned")? = true;
+    get_bitwarden_extension_status(app)
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "windows"))]
+fn import_bitwarden_extension(
+    _app: AppHandle,
+    _archive_path: String,
+) -> Result<BitwardenExtensionStatus, String> {
+    Err("Bitwarden extension import is available on Windows only".to_string())
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+fn disable_bitwarden_extension(app: AppHandle) -> Result<BitwardenExtensionStatus, String> {
+    if environment_bitwarden_extension_path()?.is_some() {
+        return Err("Bitwarden is controlled by a developer environment setting".to_string());
+    }
+    let config_path = bitwarden_extensions_root(&app)?.join(BITWARDEN_INSTALLATION_CONFIG);
+    match std::fs::remove_file(config_path) {
+        Ok(()) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+        Err(_) => return Err("The local Bitwarden installation cannot be disabled".to_string()),
+    }
+    *app
+        .state::<BitwardenExtensionRuntimeState>()
+        .0
+        .lock()
+        .map_err(|_| "Bitwarden extension state lock poisoned")? = true;
+    get_bitwarden_extension_status(app)
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "windows"))]
+fn disable_bitwarden_extension(
+    _app: AppHandle,
+) -> Result<BitwardenExtensionStatus, String> {
+    Err("Bitwarden extension settings are available on Windows only".to_string())
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+fn open_bitwarden_download_page() -> Result<(), String> {
+    std::process::Command::new("explorer.exe")
+        .arg(BITWARDEN_RELEASES_URL)
+        .spawn()
+        .map(|_| ())
+        .map_err(|_| "The official Bitwarden download page could not be opened".to_string())
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "windows"))]
+fn open_bitwarden_download_page() -> Result<(), String> {
+    Err("The Bitwarden download flow is available on Windows only".to_string())
+}
+
+#[tauri::command]
+#[cfg(target_os = "windows")]
+fn restart_communityglows(app: AppHandle) -> Result<(), String> {
+    app.request_restart();
+    Ok(())
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "windows"))]
+fn restart_communityglows(_app: AppHandle) -> Result<(), String> {
+    Err("Application restart from Settings is available on Windows only".to_string())
+}
+
 // ── Desktop: native child webviews via add_child ─────────────────────────────
 
 #[tauri::command]
@@ -723,6 +1102,7 @@ async fn export_desktop_cookies(
                 WebviewBuilder::new(&temporary_label, WebviewUrl::External(url.clone()))
                     .data_directory(data_dir)
                     .background_color(tauri::window::Color(9, 9, 11, 0)),
+                &app,
             )?;
             let webview = window
                 .add_child(
@@ -818,6 +1198,7 @@ async fn open_webview(
             } else {
                 tauri::window::Color(248, 249, 250, 255)
             }),
+        &app,
     )?;
     let webview = window
         .add_child(
@@ -1497,6 +1878,7 @@ pub fn run() {
     builder
         .manage(AndroidOAuthReplayState::default())
         .manage(DesktopWebviewPoolState::default())
+        .manage(BitwardenExtensionRuntimeState::default())
         .plugin(tauri_plugin_android_webview::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_dialog::init())
@@ -1512,6 +1894,10 @@ pub fn run() {
             #[cfg(not(target_os = "android"))]
             if let Err(err) = build_tray(app.handle()) {
                 eprintln!("tray initialization failed: {err}");
+            }
+            #[cfg(target_os = "windows")]
+            if let Err(err) = prune_inactive_managed_bitwarden_packages(app.handle()) {
+                eprintln!("Bitwarden package cleanup failed: {err}");
             }
             Ok(())
         })
@@ -1534,6 +1920,11 @@ pub fn run() {
             delete_network_session,
             create_backup,
             restore_backup,
+            get_bitwarden_extension_status,
+            import_bitwarden_extension,
+            disable_bitwarden_extension,
+            open_bitwarden_download_page,
+            restart_communityglows,
             #[cfg(not(target_os = "android"))]
             export_desktop_cookies,
         ])
@@ -1543,7 +1934,10 @@ pub fn run() {
 
 #[cfg(all(test, not(target_os = "android")))]
 mod tests {
-    use super::{has_visible_desktop_webview_bounds, validate_bitwarden_extension_manifest};
+    use super::{
+        bitwarden_extension_version, has_visible_desktop_webview_bounds,
+        validate_bitwarden_extension_manifest,
+    };
 
     #[test]
     fn only_positive_sized_child_webviews_are_focus_eligible() {
@@ -1559,17 +1953,98 @@ mod tests {
         let manifest = r#"{
           "manifest_version": 3,
           "name": "__MSG_appName__",
+          "version": "2026.8.0",
           "homepage_url": "https://bitwarden.com"
         }"#;
         assert!(validate_bitwarden_extension_manifest(manifest).is_ok());
+        assert_eq!(
+            bitwarden_extension_version(manifest),
+            Some("2026.8.0".to_string())
+        );
+    }
+
+    #[test]
+    fn reads_the_bitwarden_extension_version_without_exposing_other_manifest_data() {
+        let manifest = r#"{
+          "manifest_version": 3,
+          "name": "Bitwarden Password Manager",
+          "version": "2026.8.0"
+        }"#;
+        assert_eq!(
+            bitwarden_extension_version(manifest),
+            Some("2026.8.0".to_string())
+        );
     }
 
     #[test]
     fn rejects_an_unidentified_or_malformed_extension_manifest() {
         assert!(validate_bitwarden_extension_manifest("not-json").is_err());
         assert!(validate_bitwarden_extension_manifest(
-            r#"{"manifest_version":3,"name":"Unrelated extension"}"#,
+            r#"{"manifest_version":3,"name":"Unrelated extension","version":"1.0.0","description":"Compatible with Bitwarden"}"#,
         )
         .is_err());
+    }
+
+    #[cfg(target_os = "windows")]
+    fn temporary_archive_paths(label: &str) -> (std::path::PathBuf, std::path::PathBuf) {
+        let nonce = chrono::Utc::now().timestamp_nanos_opt().unwrap_or_default();
+        let root = std::env::temp_dir().join(format!("communityglows-{label}-{nonce}"));
+        (root.with_extension("zip"), root)
+    }
+
+    #[cfg(target_os = "windows")]
+    fn write_test_archive(path: &std::path::Path, entry_name: &str, contents: &[u8]) {
+        use std::io::Write;
+
+        let file = std::fs::File::create(path).expect("create test archive");
+        let mut archive = zip::ZipWriter::new(file);
+        let options = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Deflated);
+        archive
+            .start_file(entry_name, options)
+            .expect("start test archive entry");
+        archive
+            .write_all(contents)
+            .expect("write test archive entry");
+        archive.finish().expect("finish test archive");
+    }
+
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn extracts_a_bounded_official_style_bitwarden_archive() {
+        let (archive_path, destination) = temporary_archive_paths("bitwarden-valid");
+        write_test_archive(
+            &archive_path,
+            "manifest.json",
+            br#"{"manifest_version":3,"name":"Bitwarden Password Manager","version":"2026.8.0"}"#,
+        );
+
+        let version = super::extract_bitwarden_archive(&archive_path, &destination)
+            .expect("extract valid Bitwarden archive");
+        assert_eq!(version, "2026.8.0");
+        assert!(destination.join("manifest.json").is_file());
+
+        std::fs::remove_file(archive_path).expect("remove test archive");
+        std::fs::remove_dir_all(destination).expect("remove extracted test archive");
+    }
+
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn rejects_archive_path_traversal_before_writing_outside_the_destination() {
+        let (archive_path, destination) = temporary_archive_paths("bitwarden-traversal");
+        write_test_archive(
+            &archive_path,
+            "../manifest.json",
+            br#"{"manifest_version":3,"name":"Bitwarden Password Manager"}"#,
+        );
+
+        let error = super::extract_bitwarden_archive(&archive_path, &destination)
+            .expect_err("reject traversal archive");
+        assert!(error.contains("unsafe path"));
+
+        std::fs::remove_file(archive_path).expect("remove test archive");
+        if destination.exists() {
+            std::fs::remove_dir_all(destination).expect("remove extraction directory");
+        }
     }
 }

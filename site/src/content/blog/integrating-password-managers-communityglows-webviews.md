@@ -134,7 +134,7 @@ A reasonable compromise would therefore be a **CommunityGlows Extension Hub** li
 - immediate disable and removal controls;
 - no CommunityGlows access to filled credentials.
 
-The first Windows prototype uses Bitwarden as the technical candidate. The extension is supplied locally in unpacked form, and the mode remains disabled by default. The test still needs to prove that vault login, the inline field menu, multi-step forms, and persistence work in the packaged application. It is not yet a public compatibility promise.
+The first Windows prototype uses Bitwarden as the technical candidate. A guided Settings flow opens Bitwarden's official releases page and lets the user select the Chromium `dist-chrome-*.zip` archive. CommunityGlows validates it, extracts it only into local application data, and requests a restart; nothing is uploaded, and the application reads neither the vault nor filled fields. The test still needs to prove that vault login, the inline field menu, multi-step forms, and persistence work in the packaged application. It is not yet a public compatibility promise.
 
 To provide every Store, every extension, and Google Password Manager on Windows, CommunityGlows would need to use a real Chrome or Edge browser instead of WebView2.
 

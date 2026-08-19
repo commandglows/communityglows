@@ -18,6 +18,7 @@ declare module 'vue' {
     AppSidebar: typeof import('./../components/AppSidebar.vue')['default']
     BackupRestore: typeof import('./../components/BackupRestore.vue')['default']
     BillingAccessPanel: typeof import('./../components/BillingAccessPanel.vue')['default']
+    BitwardenExtensionSettings: typeof import('./../components/BitwardenExtensionSettings.vue')['default']
     CreatePost: typeof import('./../components/feed/CreatePost.vue')['default']
     DashboardFilters: typeof import('./../components/DashboardFilters.vue')['default']
     DesktopControlBar: typeof import('./../components/DesktopControlBar.vue')['default']

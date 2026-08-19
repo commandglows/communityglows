@@ -219,21 +219,26 @@ pnpm run design:tokens:check    # Carriers générés à jour
 
 ### Prototype Bitwarden sous Windows
 
-Le prototype WebView2 charge uniquement une extension Bitwarden Chromium déjà
-décompressée et fournie localement par l'opérateur. CommunityGlows ne télécharge,
-ne redistribue et ne lit aucun élément du coffre. Avant de lancer l'application
-Windows, définir le chemin du dossier qui contient directement `manifest.json` :
+Dans l'application Windows, ouvrir **Paramètres > Gestionnaire de mots de passe**.
+Le parcours guidé ouvre la page officielle des versions Bitwarden, puis importe
+l'archive Chromium `dist-chrome-*.zip`, la valide et l'installe uniquement dans
+les données locales de CommunityGlows. Un redémarrage est nécessaire avant que
+les pages réseau utilisent la nouvelle configuration.
+
+CommunityGlows ne téléverse pas l'archive, ne redistribue pas Bitwarden et ne lit
+aucun élément du coffre ni aucune valeur remplie. Le chemin d'environnement reste
+disponible uniquement comme override de développement pour un dossier déjà
+décompressé dont la racine contient `manifest.json` :
 
 ```powershell
 $env:COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH = 'C:\chemin\vers\bitwarden-unpacked'
 pnpm tauri dev
 ```
 
-Sans cette variable, le comportement Windows reste inchangé. Un chemin invalide ou
-un manifeste qui n'identifie pas Bitwarden bloque la création de la WebView concernée
-avec une erreur explicite. Ce mode est expérimental : chaque couple profil/réseau
-utilise actuellement son propre dossier WebView2 et peut donc nécessiter une connexion
-ou un déverrouillage Bitwarden distinct.
+Sans installation gérée ni variable, le comportement Windows reste inchangé. Une
+archive, un chemin ou un manifeste invalide est refusé explicitement. Ce mode reste
+expérimental : chaque couple profil/réseau utilise actuellement son propre dossier
+WebView2 et peut donc nécessiter une connexion ou un déverrouillage Bitwarden distinct.
 
 ## Déploiement
 

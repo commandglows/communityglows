@@ -1,12 +1,12 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.0.0"
+artifact_version: "1.2.0"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 13:20:00 UTC"
 updated: "2026-08-19"
-updated_at: "2026-08-19 13:20:00 UTC"
+updated_at: "2026-08-19 22:16:00 UTC"
 status: partial
 source_skill: shipglows
 scope: windows-bitwarden-webview2-extension-prototype
@@ -18,6 +18,11 @@ docs_impact: yes
 user_story: "En tant qu'utilisateur Windows de CommunityGlows qui utilise Bitwarden, je veux que l'extension officielle remplisse directement les pages réseau intégrées afin de ne pas copier mes mots de passe et de ne pas les confier à CommunityGlows."
 linked_systems:
   - "src-tauri/src/lib.rs"
+  - "src/ui/setup/pages/CommunityGlows/components/BitwardenExtensionSettings.vue"
+  - "src/ui/setup/pages/CommunityGlows/components/MobileSettingsSheet.vue"
+  - "src/locales/fr.json"
+  - "src/locales/en.json"
+  - ".github/workflows/quality-checks.yml"
   - "README.md"
   - "shipglows_data/technical/public-webview-platform-boundary.md"
   - "shipglows_data/workflow/specs/windows-password-manager-interoperability.md"
@@ -30,26 +35,30 @@ evidence:
   - "Tauri 2.11.5 exposes WebviewBuilder.browser_extensions_enabled and extensions_path on Windows."
   - "CommunityGlows currently creates one WebView2 data directory per profile and network."
   - "WebView2 loads unpacked extensions from a local folder and does not provide an integrated extension store."
-next_step: "Build on Windows with an official unpacked Bitwarden extension, then record login, inline Autofill, split-login, restart, and per-session persistence results."
+  - "The official browser-v2026.7.0 dist-chrome archive is 22 MB compressed, about 80 MB uncompressed across 261 entries, and exposes a root Manifest V3 with version 2026.7.0 and homepage_url https://bitwarden.com; it fits the implemented bounds and identity checks."
+next_step: "Complete the hosted Windows Rust test, then run the packaged application with an official Bitwarden Chromium archive and record compatibility results."
 ---
 
 # Windows Bitwarden WebView2 Extension Prototype
 
 ## Status
 
-The environment-gated loader and manifest guard are implemented. A Windows build and a physical Bitwarden compatibility proof remain required.
+The environment-gated loader and manifest guard are implemented. The approved next slice replaces developer-only setup with a guided Windows Settings flow. A Windows build and physical Bitwarden compatibility proof remain required.
 
 ## Decision
 
-CommunityGlows may load a locally supplied unpacked Bitwarden Chromium extension into Windows social WebViews only when the operator explicitly defines `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` before WebView2 creation.
+CommunityGlows may load a locally installed official Bitwarden Chromium extension into Windows social WebViews. The primary path is a guided Settings flow that imports a user-selected official `dist-chrome-*.zip`, validates it, extracts it under application data, records only a local relative installation reference, and requests an application restart. `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` remains a developer override.
 
 The prototype does not download or redistribute Bitwarden, does not use the Bitwarden CLI or Vault Management API, does not register a Native Messaging host, and does not inspect filled field values. Bitwarden remains responsible for vault login, unlock, origin matching, account choice, fill, and save behavior.
 
 ## Security Invariants
 
 - The configured path must resolve to an existing directory containing a valid Manifest V2 or V3 `manifest.json` that identifies Bitwarden.
+- Imported archives must be local ZIP files, stay below bounded compressed/uncompressed limits, use safe enclosed paths, contain no symbolic links, and expose one root Bitwarden manifest.
+- Managed installations live only beneath the CommunityGlows application-data extension root. A persisted reference may never escape that root after canonicalization.
+- Import, status, disable, and restart commands never return or log credential, vault, cookie, or extension-path values.
 - An invalid explicit configuration fails closed instead of silently loading another extension.
-- With no environment variable, Windows WebViews retain their existing behavior.
+- With no managed installation and no environment variable, Windows WebViews retain their existing behavior.
 - All WebViews targeting the same data directory use the same extension-enabled configuration.
 - CommunityGlows never logs the extension path, username, password, selected item, vault state, or filled value.
 - The extension is never loaded on Android, macOS, or Linux by this prototype.
@@ -58,6 +67,16 @@ The prototype does not download or redistribute Bitwarden, does not use the Bitw
 ## Known Limitation
 
 The current Windows isolation boundary uses one WebView2 data directory per `${profileId}-${networkId}`. Extension storage follows that boundary, so Bitwarden may require separate login, unlock, or initialization for each profile/network pair. This prototype must measure that cost before any proposal to share a data directory at profile level; it does not weaken the existing isolation contract.
+
+WebView2 extension configuration is fixed when an environment is created. Installing, replacing, or disabling Bitwarden therefore changes the next application run only; Settings must show that state and provide an explicit restart action.
+
+## End-User Contract
+
+- **Target:** a Windows user who already uses Bitwarden but does not know PowerShell, WebView2, or unpacked-extension setup.
+- **First success:** Settings reports Bitwarden ready after the user opens the official releases page, selects the downloaded Chromium ZIP, and restarts CommunityGlows.
+- **Trust boundary:** the selected archive never uploads to CommunityGlows or cloud sync; CommunityGlows validates and stores it locally but never reads the vault or filled values.
+- **Observable states:** checking, not installed, importing, ready, restart required, externally configured, unsupported platform, and recoverable error.
+- **Recovery:** retry with the official Chromium ZIP, replace an installation, disable the managed installation, or restart later without losing network sessions.
 
 ## Implemented Tasks
 
@@ -68,6 +87,13 @@ The current Windows isolation boundary uses one WebView2 data directory per `${p
 - [x] Preserve unchanged behavior on other platforms and when the gate is absent.
 - [x] Add focused manifest-validation unit coverage.
 - [x] Document local operator setup and the per-session limitation.
+- [x] Add Windows-only Settings discovery and the official download handoff.
+- [x] Import and safely extract an official Chromium ZIP into versioned local application data.
+- [x] Persist a managed installation reference and preserve the environment variable as a developer override.
+- [x] Expose status, replace, disable, and restart actions without exposing local paths or credential data.
+- [x] Add French and English UI copy and focused automated contract coverage.
+- [x] Update operator documentation from developer-only setup to the guided flow.
+- [x] Add a non-publishing Windows Rust test job to the quality workflow.
 - [ ] Compile the packaged Windows application with a representative official Bitwarden package.
 - [ ] Prove initial vault login/unlock UI is accessible.
 - [ ] Prove inline Autofill on one-page and split-login flows.
@@ -86,6 +112,10 @@ The current Windows isolation boundary uses one WebView2 data directory per `${p
 | Hidden WebView | No prompt or credential input targets the hidden page |
 | Restart | Extension and vault-state behavior recorded without credential values |
 | Second network | Whether setup is repeated is recorded explicitly |
+| ZIP traversal/symlink/bomb | Import fails closed and leaves the active installation unchanged |
+| Import or replace | Ready state is persisted; current WebViews remain unchanged until restart |
+| Disable | Managed reference is removed; current WebViews remain unchanged until restart |
+| Non-Windows settings | Bitwarden installation card and commands remain unavailable |
 
 ## Operator Test Setup
 
@@ -103,3 +133,19 @@ Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwar
 - Tauri `WebviewBuilder`: <https://docs.rs/tauri/2.11.5/tauri/webview/struct.WebviewBuilder.html>
 - WebView2 `AddBrowserExtensionAsync`: <https://learn.microsoft.com/en-us/dotnet/api/microsoft.web.webview2.core.corewebview2profile.addbrowserextensionasync>
 - Bitwarden clients repository: <https://github.com/bitwarden/clients>
+
+## Skill Run History
+
+| Date UTC | Skill | Model | Action | Result | Next step |
+|----------|-------|-------|--------|--------|-----------|
+| 2026-08-19 | sg-development | GPT-5 | Prepared the approved guided Windows installation slice and its proof contract. | ready | Implement native import/persistence and Settings UI. |
+| 2026-08-19 | sg-development | GPT-5 | Implemented the local ZIP import, managed installation lifecycle, Settings UX, translations, tests, documentation, and Windows Rust CI lane. | partial | Hosted Windows compile/test and physical Bitwarden proof. |
+
+## Current Chantier Flow
+
+- 100-sg-spec: ready — this spec owns the guided Settings slice.
+- 101-sg-ready: passed — outcome, security invariants, UI states, documentation impact, and proof path are explicit.
+- 102-sg-start: complete — implementation and directly mapped documentation are present.
+- 103-sg-verify: partial — 166 frontend tests, token check, core typecheck, Tauri frontend build, focused lint, design drift scan, and diff check pass; hosted Windows Rust proof is pending.
+- 104-sg-end: partial — physical Bitwarden compatibility evidence remains outside this local Linux environment.
+- 005-sg-ship: approved for bounded commit and push.
