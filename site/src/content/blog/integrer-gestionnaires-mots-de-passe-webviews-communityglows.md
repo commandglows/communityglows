@@ -6,6 +6,8 @@ author: "CommunityGlows Team"
 tags: ["password-managers", "webview", "android", "windows"]
 ---
 
+[Read this article in English](/blog/integrating-password-managers-communityglows-webviews)
+
 CommunityGlows gère plusieurs profils et conserve des sessions séparées sur des dizaines de réseaux. Une question arrive donc très vite : peut-on laisser chaque utilisateur employer son gestionnaire de mots de passe habituel — Google Password Manager, 1Password, Bitwarden, Dashlane, Proton Pass ou un autre — directement dans l'application ?
 
 La réponse courte est **oui sur Android, partiellement sous Windows, mais pas au moyen d'une API universelle de lecture des coffres**.
