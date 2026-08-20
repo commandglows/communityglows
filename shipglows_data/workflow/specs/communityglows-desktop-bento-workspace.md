@@ -48,6 +48,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Dockview comme moteur de disposition, enveloppé par des composants CommunityGlows.
 - Persistance locale versionnée avec validation défensive et restauration sûre.
 - Layout courant autosauvegardé et layouts nommés gérés depuis une barre d'outils compacte.
+- Modèles Colonnes, Lignes, Focus et Grille applicables aux panneaux déjà ouverts sans recréer leurs WebViews.
 
 ## Invariants
 
@@ -93,6 +94,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 | 2026-08-20 | sg-development | GPT-5 | Started the approved hardening pass for resize pressure, native visibility, drag recovery and restored-layout trust boundaries.                                                                                                                                                                                           | in progress | Implement and run focused regression proof.                           |
 | 2026-08-20 | sg-development | GPT-5 | Hardened resize scheduling, drag recovery, native visibility/preload, pool diagnostics and frontend/Rust trust boundaries. Ran 174 tests, 11 focused tests, core typecheck, targeted lint, token drift check and Tauri frontend build; full Vue typecheck retains 129 unrelated baseline errors and Cargo is unavailable. | partial     | Compile and exercise the native Windows/Tauri runtime before closing. |
 | 2026-08-20 | sg-development | GPT-5 | Added explicit layout budgets, semantic grid/panel reference validation, bounded storage reads/writes and honest UI warnings for unavailable, invalid or oversized persistence. Ran 13 focused tests, core typecheck, targeted lint and diff checks without build output; no changed-file Vue type errors remain. | partial | Route native proof outside this code-only workspace. |
+| 2026-08-20 | sg-development | GPT-5 | Added deterministic Columns, Rows, Focus and Grid presets that preserve all open panels and reuse their always-rendered WebViews. All 12 focused layout tests, core typecheck, targeted lint, design-token drift and diff checks passed without a build or generated artifact. | partial | Exercise preset switching with native Windows WebViews outside this code-only workspace. |
 
 ## Current Chantier Flow
 

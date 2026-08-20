@@ -27,6 +27,16 @@ export type NetworkWorkspacePanelParams = {
   url: string
 }
 
+export const DESKTOP_WORKSPACE_PRESETS = [
+  'columns',
+  'rows',
+  'focus',
+  'grid',
+] as const
+
+export type DesktopWorkspacePreset =
+  (typeof DESKTOP_WORKSPACE_PRESETS)[number]
+
 export type SavedDesktopWorkspace = {
   id: string
   name: string
@@ -46,8 +56,194 @@ type WorkspaceStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 export type WorkspacePersistenceResult =
   { ok: true } | { ok: false; reason: 'invalid' | 'too-large' | 'unavailable' }
 
+type WorkspaceGridNode = SerializedDockview['grid']['root']
+type WorkspaceGroup = Extract<WorkspaceGridNode['data'], { id: string }>
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
+
+function workspacePanelOrder(layout: SerializedDockview): string[] {
+  const ordered: string[] = []
+  const knownPanels = new Set(Object.keys(layout.panels))
+  const seen = new Set<string>()
+  const pending = [layout.grid.root]
+
+  while (pending.length) {
+    const node = pending.shift()
+    if (!node) continue
+    if (node.type === 'branch' && Array.isArray(node.data)) {
+      pending.unshift(...node.data)
+      continue
+    }
+    if (node.type !== 'leaf' || !isRecord(node.data)) continue
+    const views = Array.isArray(node.data.views) ? node.data.views : []
+    for (const panelId of views) {
+      if (
+        typeof panelId === 'string' &&
+        knownPanels.has(panelId) &&
+        !seen.has(panelId)
+      ) {
+        seen.add(panelId)
+        ordered.push(panelId)
+      }
+    }
+  }
+
+  for (const panelId of knownPanels) {
+    if (!seen.has(panelId)) ordered.push(panelId)
+  }
+  return ordered
+}
+
+function activeWorkspacePanel(layout: SerializedDockview): string | undefined {
+  if (!layout.activeGroup) return undefined
+  const pending = [layout.grid.root]
+  while (pending.length) {
+    const node = pending.pop()
+    if (!node) continue
+    if (node.type === 'branch' && Array.isArray(node.data)) {
+      pending.push(...node.data)
+      continue
+    }
+    if (
+      node.type === 'leaf' &&
+      isRecord(node.data) &&
+      node.data.id === layout.activeGroup &&
+      typeof node.data.activeView === 'string'
+    ) {
+      return node.data.activeView
+    }
+  }
+  return undefined
+}
+
+function presetGroup(
+  preset: DesktopWorkspacePreset,
+  panelId: string,
+  index: number,
+): WorkspaceGroup {
+  return {
+    id: `preset-${preset}-${index + 1}`,
+    views: [panelId],
+    activeView: panelId,
+  }
+}
+
+function presetLeaf(
+  preset: DesktopWorkspacePreset,
+  panelId: string,
+  index: number,
+  size: number,
+): WorkspaceGridNode {
+  return {
+    type: 'leaf',
+    data: presetGroup(preset, panelId, index),
+    size,
+  }
+}
+
+/**
+ * Reflows every existing panel into a deterministic, fully visible preset.
+ * Panel state remains untouched so Dockview can reuse always-rendered WebViews.
+ */
+export function createDesktopWorkspacePresetLayout(
+  layout: SerializedDockview,
+  preset: DesktopWorkspacePreset,
+): SerializedDockview | null {
+  const panelIds = workspacePanelOrder(layout)
+  if (panelIds.length === 0) return null
+
+  const width = Math.max(1, layout.grid.width)
+  const height = Math.max(1, layout.grid.height)
+  const activePanel = activeWorkspacePanel(layout)
+  if (preset === 'focus' && activePanel) {
+    const activeIndex = panelIds.indexOf(activePanel)
+    if (activeIndex > 0) {
+      panelIds.splice(activeIndex, 1)
+      panelIds.unshift(activePanel)
+    }
+  }
+
+  let orientation: 'HORIZONTAL' | 'VERTICAL'
+  let rootData: WorkspaceGridNode[]
+
+  if (preset === 'columns' || preset === 'rows') {
+    orientation = preset === 'columns' ? 'HORIZONTAL' : 'VERTICAL'
+    const availableSize = orientation === 'HORIZONTAL' ? width : height
+    const panelSize = availableSize / panelIds.length
+    rootData = panelIds.map((panelId, index) =>
+      presetLeaf(preset, panelId, index, panelSize),
+    )
+  } else if (preset === 'focus' && panelIds.length > 1) {
+    orientation = 'HORIZONTAL'
+    const focusWidth = (width * 2) / 3
+    const sideWidth = width - focusWidth
+    const sidePanelHeight = height / (panelIds.length - 1)
+    rootData = [
+      presetLeaf(preset, panelIds[0], 0, focusWidth),
+      {
+        type: 'branch',
+        size: sideWidth,
+        data: panelIds
+          .slice(1)
+          .map((panelId, index) =>
+            presetLeaf(preset, panelId, index + 1, sidePanelHeight),
+          ),
+      },
+    ]
+  } else if (preset === 'grid') {
+    orientation = 'HORIZONTAL'
+    const columnCount = Math.ceil(Math.sqrt(panelIds.length))
+    const columnWidth = width / columnCount
+    rootData = Array.from({ length: columnCount }, (_, columnIndex) => {
+      const columnPanelIds = panelIds.filter(
+        (_, panelIndex) => panelIndex % columnCount === columnIndex,
+      )
+      if (columnPanelIds.length === 1) {
+        const panelIndex = panelIds.indexOf(columnPanelIds[0])
+        return presetLeaf(
+          preset,
+          columnPanelIds[0],
+          panelIndex,
+          columnWidth,
+        )
+      }
+      return {
+        type: 'branch',
+        size: columnWidth,
+        data: columnPanelIds.map((panelId) => {
+          const panelIndex = panelIds.indexOf(panelId)
+          return presetLeaf(
+            preset,
+            panelId,
+            panelIndex,
+            height / columnPanelIds.length,
+          )
+        }),
+      }
+    })
+  } else {
+    orientation = 'HORIZONTAL'
+    rootData = [presetLeaf(preset, panelIds[0], 0, width)]
+  }
+
+  const activePanelId = activePanel ?? panelIds[0]
+  const activeIndex = panelIds.indexOf(activePanelId)
+  return {
+    grid: {
+      root: {
+        type: 'branch',
+        data: rootData,
+        size: orientation === 'HORIZONTAL' ? height : width,
+      },
+      width,
+      height,
+      orientation,
+    },
+    panels: layout.panels,
+    activeGroup: `preset-${preset}-${Math.max(0, activeIndex) + 1}`,
+  }
+}
 
 function isBoundedJsonStructure(value: unknown): boolean {
   const pending: Array<{ value: unknown; depth: number }> = [

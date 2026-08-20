@@ -13,6 +13,14 @@
       </div>
 
       <SgSelect
+        v-model="selectedPreset"
+        :options="presetOptions"
+        placeholder="Disposition"
+        aria-label="Appliquer une disposition"
+        :disabled="!dockviewApi"
+        @update:model-value="applyPreset"
+      />
+      <SgSelect
         v-model="selectedLayoutId"
         class="desktop-workspace__layout-select"
         :options="layoutOptions"
@@ -104,6 +112,7 @@ import { builtInSocialNetworks } from '@/config/socialNetworks'
 import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
 import {
   clearDesktopWorkspaceAutosave,
+  createDesktopWorkspacePresetLayout,
   deleteDesktopWorkspaceLayout,
   isNetworkWorkspacePanelParams,
   isSafeDesktopWorkspaceLayout,
@@ -113,6 +122,7 @@ import {
   persistDesktopWorkspaceAutosave,
   persistDesktopWorkspaceState,
   saveDesktopWorkspaceLayout,
+  type DesktopWorkspacePreset,
   type NetworkWorkspacePanelParams,
   type WorkspacePersistenceResult,
 } from '@/lib/desktopWorkspaceLayouts'
@@ -166,6 +176,7 @@ const workspaceState = ref(
   loadDesktopWorkspaceState(localStorage, workspaceNetworkCatalog.value),
 )
 const layoutName = ref('')
+const selectedPreset = ref('')
 const dockDragActive = ref(false)
 const disposables: Array<{ dispose: () => void }> = []
 let autosaveTimer: number | undefined
@@ -200,6 +211,12 @@ const layoutOptions = computed(() =>
     icon: 'pi pi-th-large',
   })),
 )
+const presetOptions = [
+  { value: 'columns', label: 'Colonnes', icon: 'pi pi-arrows-h' },
+  { value: 'rows', label: 'Lignes', icon: 'pi pi-arrows-v' },
+  { value: 'focus', label: 'Focus', icon: 'pi pi-window-maximize' },
+  { value: 'grid', label: 'Grille', icon: 'pi pi-th-large' },
+]
 const selectedLayoutId = computed({
   get: () => workspaceState.value.selectedLayoutId ?? '',
   set: (id: string) => {
@@ -364,6 +381,50 @@ function restoreLayout(layout: SerializedDockview): boolean {
     restoringLayout = false
     emit('contentChange', api.panels.length > 0)
   }
+}
+
+function applyPreset(value: string) {
+  const api = dockviewApi.value
+  selectedPreset.value = ''
+  if (!api || api.panels.length === 0) {
+    push.warning({
+      message: 'Ajoutez au moins un réseau avant de choisir une disposition.',
+    })
+    return
+  }
+
+  const preset = value as DesktopWorkspacePreset
+  const previousLayout = api.toJSON()
+  const layout = createDesktopWorkspacePresetLayout(previousLayout, preset)
+  if (!layout) return
+
+  restoringLayout = true
+  let applied = false
+  try {
+    api.fromJSON(layout, { reuseExistingPanels: true })
+    applied = true
+    syncActiveNetworkFromDockview()
+  } catch (error) {
+    console.warn(
+      '[CommunityGlows] Failed to apply a desktop workspace preset.',
+      error,
+    )
+    push.warning({
+      message: 'Cette disposition n’a pas pu être appliquée.',
+    })
+    try {
+      api.fromJSON(previousLayout)
+    } catch (restoreError) {
+      console.error(
+        '[CommunityGlows] Failed to restore the previous desktop workspace.',
+        restoreError,
+      )
+    }
+  } finally {
+    restoringLayout = false
+    emit('contentChange', api.panels.length > 0)
+  }
+  if (applied) scheduleAutosave()
 }
 
 function onDockviewReady(event: DockviewReadyEvent) {

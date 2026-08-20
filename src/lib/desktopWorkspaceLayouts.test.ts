@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { SerializedDockview } from 'dockview-vue'
 import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
 import {
+  createDesktopWorkspacePresetLayout,
   deleteDesktopWorkspaceLayout,
   emptyDesktopWorkspaceState,
   isSafeDesktopWorkspaceLayout,
@@ -106,6 +107,74 @@ function memoryStorage(): Storage {
 }
 
 describe('desktop workspace layouts', () => {
+  it('creates linear presets without losing panel state', () => {
+    const { layout, catalog } = customLayoutWithPanelCount(3)
+    const columns = createDesktopWorkspacePresetLayout(layout, 'columns')
+    const rows = createDesktopWorkspacePresetLayout(layout, 'rows')
+
+    expect(columns?.grid.orientation).toBe('HORIZONTAL')
+    expect(rows?.grid.orientation).toBe('VERTICAL')
+    expect(columns?.grid.root).toMatchObject({ type: 'branch' })
+    expect(rows?.grid.root).toMatchObject({ type: 'branch' })
+    expect(columns?.panels).toBe(layout.panels)
+    expect(rows?.panels).toBe(layout.panels)
+    expect((columns?.grid.root.data as unknown[]).length).toBe(3)
+    expect((rows?.grid.root.data as unknown[]).length).toBe(3)
+    expect(isSafeDesktopWorkspaceLayout(columns, catalog)).toBe(true)
+    expect(isSafeDesktopWorkspaceLayout(rows, catalog)).toBe(true)
+  })
+
+  it('uses the active panel as the focus and keeps every other panel visible', () => {
+    const { layout } = customLayoutWithPanelCount(4)
+    const panelIds = Object.keys(layout.panels)
+    const root = layout.grid.root as {
+      data: { id: string; views: string[]; activeView: string }
+    }
+    root.data.id = 'current-group'
+    root.data.activeView = panelIds[2]
+    layout.activeGroup = 'current-group'
+
+    const focused = createDesktopWorkspacePresetLayout(layout, 'focus')
+    const focusedRoot = focused?.grid.root.data as Array<{
+      type: string
+      data: unknown
+    }>
+    const primary = focusedRoot[0].data as { views: string[] }
+    const side = focusedRoot[1].data as Array<unknown>
+
+    expect(primary.views).toEqual([panelIds[2]])
+    expect(side).toHaveLength(3)
+    expect(focused?.activeGroup).toBe('preset-focus-1')
+  })
+
+  it('builds a balanced grid for non-square panel counts', () => {
+    const { layout, catalog } = customLayoutWithPanelCount(5)
+    const grid = createDesktopWorkspacePresetLayout(layout, 'grid')
+    const columns = grid?.grid.root.data as Array<{
+      type: string
+      data: unknown
+    }>
+
+    expect(columns).toHaveLength(3)
+    expect(columns.map((column) => column.type)).toEqual([
+      'branch',
+      'branch',
+      'leaf',
+    ])
+    expect(grid?.panels).toBe(layout.panels)
+    expect(isSafeDesktopWorkspaceLayout(grid, catalog)).toBe(true)
+  })
+
+  it('uses a valid single-cell branch for every preset', () => {
+    const layout = layoutFor()
+    for (const preset of ['columns', 'rows', 'focus', 'grid'] as const) {
+      const result = createDesktopWorkspacePresetLayout(layout, preset)
+      expect(result?.grid.root.type).toBe('branch')
+      expect(result?.grid.root.data).toHaveLength(1)
+      expect(result?.activeGroup).toBe(`preset-${preset}-1`)
+    }
+  })
+
   it('accepts catalog networks and rejects unsafe panel URLs', () => {
     expect(isSafeDesktopWorkspaceLayout(layoutFor(), knownNetworks)).toBe(true)
     expect(
