@@ -11,6 +11,7 @@ export const MAX_DESKTOP_WORKSPACE_LAYOUT_DEPTH = 64
 export const MAX_DESKTOP_WORKSPACE_LAYOUT_NODES = 4_096
 export const MAX_DESKTOP_WORKSPACE_AUTOSAVE_CHARS = 500_000
 export const MAX_DESKTOP_WORKSPACE_STATE_CHARS = 2_000_000
+export const MAX_DESKTOP_WORKSPACE_SYNC_CHARS = 500_000
 
 export type WorkspaceNetworkTarget = {
   canonicalUrl: string

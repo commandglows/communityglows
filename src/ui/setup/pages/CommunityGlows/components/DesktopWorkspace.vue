@@ -24,8 +24,8 @@
         v-model="selectedLayoutId"
         class="desktop-workspace__layout-select"
         :options="layoutOptions"
-        placeholder="Layouts enregistrés"
-        aria-label="Charger un layout"
+        placeholder="Scènes enregistrées"
+        aria-label="Charger une scène"
         :disabled="layoutOptions.length === 0"
         @update:model-value="loadNamedLayout"
       />
@@ -33,8 +33,8 @@
         v-model="layoutName"
         class="desktop-workspace__name"
         maxlength="64"
-        placeholder="Nom du layout"
-        aria-label="Nom du layout"
+        placeholder="Nom de la scène"
+        aria-label="Nom de la scène"
         @keydown.enter="saveNamedLayout"
       />
 
@@ -49,16 +49,16 @@
           icon="pi pi-plus"
           text
           size="small"
-          aria-label="Nouveau layout"
-          tooltip="Nouveau layout"
+          aria-label="Nouvelle scène"
+          tooltip="Nouvelle scène"
           @click="startNewLayout"
         />
         <SgButton
           icon="pi pi-refresh"
           text
           size="small"
-          aria-label="Réinitialiser le layout"
-          tooltip="Réinitialiser le layout"
+          aria-label="Réinitialiser le bento"
+          tooltip="Réinitialiser le bento"
           @click="resetCurrentLayout"
         />
         <SgButton
@@ -66,8 +66,8 @@
           text
           severity="danger"
           size="small"
-          aria-label="Supprimer le layout enregistré"
-          tooltip="Supprimer le layout enregistré"
+          aria-label="Supprimer la scène enregistrée"
+          tooltip="Supprimer la scène enregistrée"
           :disabled="!workspaceState.selectedLayoutId"
           @click="deleteNamedLayout"
         />
@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, provide, ref, shallowRef, watch } from 'vue'
+import { storeToRefs } from 'pinia'
 import { push } from 'notivue'
 import {
   DockviewVue,
@@ -117,16 +118,15 @@ import {
   isNetworkWorkspacePanelParams,
   isSafeDesktopWorkspaceLayout,
   loadDesktopWorkspaceAutosave,
-  loadDesktopWorkspaceState,
   MAX_DESKTOP_WORKSPACE_PANELS,
   persistDesktopWorkspaceAutosave,
-  persistDesktopWorkspaceState,
   saveDesktopWorkspaceLayout,
   type DesktopWorkspacePreset,
   type NetworkWorkspacePanelParams,
   type WorkspacePersistenceResult,
 } from '@/lib/desktopWorkspaceLayouts'
 import { useCustomLinksStore } from '@/stores/customLinks'
+import { useDesktopWorkspacesStore } from '@/stores/desktopWorkspaces'
 import { useProfilesStore } from '@/stores/profiles'
 import { useThemeStore } from '@/stores/theme'
 import { useWebviewStore } from '@/stores/webviewState'
@@ -153,6 +153,7 @@ const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const customLinksStore = useCustomLinksStore()
+const desktopWorkspacesStore = useDesktopWorkspacesStore()
 const networkById = new Map(
   builtInSocialNetworks.map((network) => [network.id, network]),
 )
@@ -172,9 +173,8 @@ const workspaceNetworkCatalog = computed(() => {
   return catalog
 })
 const dockviewApi = shallowRef<DockviewApi | null>(null)
-const workspaceState = ref(
-  loadDesktopWorkspaceState(localStorage, workspaceNetworkCatalog.value),
-)
+desktopWorkspacesStore.initialize(workspaceNetworkCatalog.value)
+const { workspaceState } = storeToRefs(desktopWorkspacesStore)
 const layoutName = ref('')
 const selectedPreset = ref('')
 const dockDragActive = ref(false)
@@ -197,8 +197,14 @@ function workspacePersistenceMessage(
     return 'Le stockage local est indisponible. Cette modification ne pourra pas être conservée.'
   }
   return result.reason === 'too-large'
-    ? 'Ce layout dépasse la taille locale autorisée. Réduisez le nombre ou la complexité des panneaux avant de l’enregistrer.'
-    : 'Ce layout contient trop de panneaux ou une structure incohérente et ne peut pas être enregistré.'
+    ? 'Cette scène dépasse la taille autorisée. Réduisez le nombre ou la complexité des panneaux avant de l’enregistrer.'
+    : 'Cette scène contient trop de panneaux ou une structure incohérente et ne peut pas être enregistrée.'
+}
+
+function workspaceSyncMessage(result: WorkspacePersistenceResult): string {
+  return !result.ok && result.reason === 'too-large'
+    ? 'Cette scène dépasse la limite de synchronisation et reste disponible uniquement sur cet appareil.'
+    : 'La synchronisation est temporairement indisponible. Cette scène reste enregistrée sur cet appareil.'
 }
 
 const dockviewTheme = computed(() =>
@@ -462,20 +468,19 @@ function loadNamedLayout(id: string) {
   if (!saved || !restoreLayout(saved.layout)) return
   workspaceState.value = { ...workspaceState.value, selectedLayoutId: saved.id }
   layoutName.value = saved.name
-  const stateResult = persistDesktopWorkspaceState(
-    localStorage,
-    workspaceState.value,
-  )
+  const stateResult = desktopWorkspacesStore.persist(workspaceState.value)
   const autosaveResult = persistDesktopWorkspaceAutosave(
     localStorage,
     saved.layout,
     workspaceNetworkCatalog.value,
   )
-  if (!stateResult.ok || !autosaveResult.ok) {
+  if (!stateResult.local.ok || !stateResult.cloud.ok || !autosaveResult.ok) {
     push.warning({
-      message: workspacePersistenceMessage(
-        !stateResult.ok ? stateResult : autosaveResult,
-      ),
+      message: !stateResult.local.ok
+        ? workspacePersistenceMessage(stateResult.local)
+        : !stateResult.cloud.ok
+          ? workspaceSyncMessage(stateResult.cloud)
+          : workspacePersistenceMessage(autosaveResult),
     })
   }
   syncActiveNetworkFromDockview()
@@ -485,11 +490,11 @@ function saveNamedLayout() {
   const api = dockviewApi.value
   if (!api || api.panels.length === 0) {
     push.warning({
-      message: 'Ajoutez au moins un réseau avant d’enregistrer ce layout.',
+      message: 'Ajoutez au moins un réseau avant d’enregistrer cette scène.',
     })
     return
   }
-  const fallbackName = `Layout ${workspaceState.value.layouts.length + 1}`
+  const fallbackName = `Scène ${workspaceState.value.layouts.length + 1}`
   const currentLayout = api.toJSON()
   if (
     !isSafeDesktopWorkspaceLayout(currentLayout, workspaceNetworkCatalog.value)
@@ -504,12 +509,11 @@ function saveNamedLayout() {
     name: layoutName.value || fallbackName,
     layout: currentLayout,
   })
-  const stateResult = persistDesktopWorkspaceState(localStorage, nextState)
-  if (!stateResult.ok) {
-    push.warning({ message: workspacePersistenceMessage(stateResult) })
+  const stateResult = desktopWorkspacesStore.persist(nextState)
+  if (!stateResult.local.ok) {
+    push.warning({ message: workspacePersistenceMessage(stateResult.local) })
     return
   }
-  workspaceState.value = nextState
   layoutName.value =
     workspaceState.value.layouts.find(
       (layout) => layout.id === workspaceState.value.selectedLayoutId,
@@ -519,31 +523,34 @@ function saveNamedLayout() {
     currentLayout,
     workspaceNetworkCatalog.value,
   )
-  if (!autosaveResult.ok) {
+  if (!stateResult.cloud.ok || !autosaveResult.ok) {
     push.warning({
-      message: `Layout nommé enregistré. ${workspacePersistenceMessage(autosaveResult)}`,
+      message: `Scène enregistrée localement. ${
+        !stateResult.cloud.ok
+          ? workspaceSyncMessage(stateResult.cloud)
+          : workspacePersistenceMessage(autosaveResult)
+      }`,
     })
   } else {
-    push.success({ message: 'Layout enregistré.' })
+    push.success({ message: 'Scène enregistrée.' })
   }
 }
 
 function startNewLayout() {
   const api = dockviewApi.value
   if (!api) return
-  workspaceState.value = { ...workspaceState.value, selectedLayoutId: null }
+  const nextState = { ...workspaceState.value, selectedLayoutId: null }
   layoutName.value = ''
   api.clear()
   const clearResult = clearDesktopWorkspaceAutosave(localStorage)
-  const stateResult = persistDesktopWorkspaceState(
-    localStorage,
-    workspaceState.value,
-  )
-  if (!clearResult.ok || !stateResult.ok) {
+  const stateResult = desktopWorkspacesStore.persist(nextState)
+  if (!clearResult.ok || !stateResult.local.ok || !stateResult.cloud.ok) {
     push.warning({
-      message: workspacePersistenceMessage(
-        !clearResult.ok ? clearResult : stateResult,
-      ),
+      message: !clearResult.ok
+        ? workspacePersistenceMessage(clearResult)
+        : !stateResult.local.ok
+          ? workspacePersistenceMessage(stateResult.local)
+          : workspaceSyncMessage(stateResult.cloud),
     })
   }
   emit('contentChange', false)
@@ -566,16 +573,21 @@ function deleteNamedLayout() {
   const id = workspaceState.value.selectedLayoutId
   if (!id) return
   const nextState = deleteDesktopWorkspaceLayout(workspaceState.value, id)
-  const result = persistDesktopWorkspaceState(localStorage, nextState)
-  if (!result.ok) {
-    push.warning({ message: workspacePersistenceMessage(result) })
+  const result = desktopWorkspacesStore.persist(nextState)
+  if (!result.local.ok) {
+    push.warning({ message: workspacePersistenceMessage(result.local) })
     return
   }
-  workspaceState.value = nextState
   layoutName.value = ''
-  push.success({
-    message: 'Layout enregistré supprimé. Le bento courant reste ouvert.',
-  })
+  if (!result.cloud.ok) {
+    push.warning({
+      message: `Scène supprimée localement. ${workspaceSyncMessage(result.cloud)}`,
+    })
+  } else {
+    push.success({
+      message: 'Scène supprimée. Le bento courant reste ouvert.',
+    })
+  }
 }
 
 watch(
@@ -594,6 +606,12 @@ watch(workspaceNetworkCatalog, (catalog) => {
       panel.api.close()
     }
   }
+})
+
+watch(workspaceState, (state) => {
+  layoutName.value =
+    state.layouts.find((layout) => layout.id === state.selectedLayoutId)?.name ??
+    ''
 })
 
 onUnmounted(() => {

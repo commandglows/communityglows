@@ -79,7 +79,7 @@ type SocialAccountSetActiveOperation = QueueBase & {
 };
 
 type WorkspaceStateOperation = QueueBase & {
-  type: "workspaceContextualTasks" | "workspaceKanban";
+  type: "workspaceContextualTasks" | "workspaceKanban" | "workspaceDesktopWorkspaces";
   stateJson: string;
 };
 
@@ -239,6 +239,12 @@ async function executeOperation(operation: CloudSyncOperation) {
     case "workspaceKanban":
       await client.mutation(api.workspaceState.setKanbanState, {
         kanbanStateJson: operation.stateJson,
+        updatedAt: operation.updatedAt,
+      });
+      return;
+    case "workspaceDesktopWorkspaces":
+      await client.mutation(api.workspaceState.setDesktopWorkspaces, {
+        desktopWorkspacesJson: operation.stateJson,
         updatedAt: operation.updatedAt,
       });
       return;
@@ -456,6 +462,16 @@ export function enqueueKanbanSnapshot(stateJson: string) {
   enqueueOperation({
     type: "workspaceKanban",
     key: "workspace:kanban",
+    stateJson,
+    updatedAt: now(),
+    attempts: 0,
+  });
+}
+
+export function enqueueDesktopWorkspacesSnapshot(stateJson: string) {
+  enqueueOperation({
+    type: "workspaceDesktopWorkspaces",
+    key: "workspace:desktopWorkspaces",
     stateJson,
     updatedAt: now(),
     attempts: 0,

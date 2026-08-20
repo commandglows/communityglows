@@ -18,6 +18,28 @@ function assertSerializedArray(value: string, field: string) {
   }
 }
 
+function assertDesktopWorkspaces(value: string) {
+  if (value.length > MAX_STATE_BYTES) {
+    throw new Error("desktopWorkspacesJson is too large");
+  }
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (
+      !parsed
+      || typeof parsed !== "object"
+      || Array.isArray(parsed)
+      || (parsed as { version?: unknown }).version !== 1
+      || !Array.isArray((parsed as { layouts?: unknown }).layouts)
+      || (parsed as { layouts: unknown[] }).layouts.length > 12
+    ) {
+      throw new Error("desktopWorkspacesJson must contain a workspace state");
+    }
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("desktopWorkspacesJson")) throw error;
+    throw Object.assign(new Error("desktopWorkspacesJson must contain valid JSON"), { cause: error });
+  }
+}
+
 export const get = query({
   args: {},
   handler: async (ctx) => {
@@ -72,6 +94,30 @@ export const setKanbanState = mutation({
     await ctx.db.insert("workspaceState", {
       userId,
       kanbanStateJson: args.kanbanStateJson,
+      updatedAt: args.updatedAt,
+    });
+  },
+});
+
+export const setDesktopWorkspaces = mutation({
+  args: { desktopWorkspacesJson: v.string(), updatedAt: v.number() },
+  handler: async (ctx, args) => {
+    const userId = await requireAuthUserId(ctx);
+    assertDesktopWorkspaces(args.desktopWorkspacesJson);
+    const existing = await ctx.db
+      .query("workspaceState")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .unique();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        desktopWorkspacesJson: args.desktopWorkspacesJson,
+        updatedAt: args.updatedAt,
+      });
+      return;
+    }
+    await ctx.db.insert("workspaceState", {
+      userId,
+      desktopWorkspacesJson: args.desktopWorkspacesJson,
       updatedAt: args.updatedAt,
     });
   },

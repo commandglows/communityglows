@@ -39,7 +39,7 @@ next_step: "Route Rust compilation and the Windows/Tauri visual checklist throug
 
 ## Outcome
 
-Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. L'utilisateur peut enregistrer, charger, renommer, supprimer et réinitialiser des layouts locaux.
+Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. L'utilisateur peut enregistrer, charger, renommer et supprimer des Scènes synchronisées, tandis que le bento courant reste un brouillon autosauvegardé localement.
 
 ## Scope
 
@@ -47,8 +47,9 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Une WebView native isolée par couple profil/réseau et par panneau réseau.
 - Dockview comme moteur de disposition, enveloppé par des composants CommunityGlows.
 - Persistance locale versionnée avec validation défensive et restauration sûre.
-- Layout courant autosauvegardé et layouts nommés gérés depuis une barre d'outils compacte.
+- Layout courant autosauvegardé localement et Scènes nommées gérées depuis une barre d'outils compacte.
 - Modèles Colonnes, Lignes, Focus et Grille applicables aux panneaux déjà ouverts sans recréer leurs WebViews.
+- Scènes synchronisées par le canal d'état workspace existant, avec file hors ligne et limite de 500 000 caractères ; cookies et brouillon courant exclus.
 
 ## Invariants
 
@@ -69,13 +70,14 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Le drag d'un onglet vers un bord crée un split et les séparateurs redimensionnent les zones.
 - Fermer un panneau masque sa WebView et la conserve dans le pool existant.
 - Le layout courant survit au rechargement local.
-- Un layout nommé peut être créé, chargé, renommé et supprimé.
+- Une Scène peut être créée, chargée, renommée, supprimée puis retrouvée sur un autre appareil connecté.
 - Un layout invalide ou contenant un réseau inconnu est rejeté sans crash.
 - Un lien personnalisé supprimé ou appartenant à un autre profil ne peut pas être restauré; un domaine trompeur, des credentials intégrés ou un identifiant de chemin invalide sont rejetés.
 - Masquer ou réafficher une WebView pooled utilise la visibilité native et expose un diagnostic du pool sans modifier l'isolation de session existante.
 - Un autosave incohérent, excessif ou impossible à écrire est refusé sans exception; une action explicite d'enregistrement ou de suppression reçoit un avertissement honnête si elle ne peut pas être conservée.
 - Les raccourcis de docking au clavier restent activés et annoncés par le moteur maintenu.
 - Les contrôles locaux restent code-only et sans sortie persistante; la compilation, le bundle et la preuve Windows sont déportés vers la CI ou un hôte dédié.
+- Les commandes rapides, raccourcis personnalisés et duplications de panneau constituent la tranche suivante et ne font pas partie de cette livraison.
 
 ## Proof Plan
 
@@ -95,6 +97,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 | 2026-08-20 | sg-development | GPT-5 | Hardened resize scheduling, drag recovery, native visibility/preload, pool diagnostics and frontend/Rust trust boundaries. Ran 174 tests, 11 focused tests, core typecheck, targeted lint, token drift check and Tauri frontend build; full Vue typecheck retains 129 unrelated baseline errors and Cargo is unavailable. | partial     | Compile and exercise the native Windows/Tauri runtime before closing. |
 | 2026-08-20 | sg-development | GPT-5 | Added explicit layout budgets, semantic grid/panel reference validation, bounded storage reads/writes and honest UI warnings for unavailable, invalid or oversized persistence. Ran 13 focused tests, core typecheck, targeted lint and diff checks without build output; no changed-file Vue type errors remain. | partial | Route native proof outside this code-only workspace. |
 | 2026-08-20 | sg-development | GPT-5 | Added deterministic Columns, Rows, Focus and Grid presets that preserve all open panels and reuse their always-rendered WebViews. All 12 focused layout tests, core typecheck, targeted lint, design-token drift and diff checks passed without a build or generated artifact. | partial | Exercise preset switching with native Windows WebViews outside this code-only workspace. |
+| 2026-08-20 | sg-development | GPT-5 | Renamed saved bentos to Scenes and connected their bounded state to the existing offline-first workspace sync and encrypted backup path; live autosave and sessions remain local. All 28 focused sync/layout/backup tests, core typecheck, targeted lint, token drift and diff checks passed without a build or generated artifact. | partial | Verify the deployed Convex mutation and native scene switching outside this code-only workspace. |
 
 ## Current Chantier Flow
 

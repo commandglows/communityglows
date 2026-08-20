@@ -2,7 +2,7 @@
 
 Dashboard unifié pour gérer tous vos réseaux sociaux depuis une seule interface. Disponible en extension Chrome/Firefox, application desktop et application mobile.
 
-Sur desktop, le workspace Bento peut afficher plusieurs réseaux en même temps. Les panneaux se déplacent par glisser-déposer, se divisent horizontalement ou verticalement, se redimensionnent et peuvent être enregistrés sous plusieurs layouts locaux. Les dispositions Colonnes, Lignes, Focus et Grille réorganisent instantanément les cartes ouvertes sans recréer leurs WebViews.
+Sur desktop, le workspace Bento peut afficher plusieurs réseaux en même temps. Les panneaux se déplacent par glisser-déposer, se divisent horizontalement ou verticalement et se redimensionnent. Les dispositions Colonnes, Lignes, Focus et Grille réorganisent instantanément les cartes ouvertes sans recréer leurs WebViews. Un bento nommé devient une Scène synchronisée entre les appareils connectés ; le brouillon autosauvegardé et les sessions restent locaux.
 
 ## Product Registry
 

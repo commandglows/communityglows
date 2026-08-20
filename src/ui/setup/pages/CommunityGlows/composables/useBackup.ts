@@ -4,6 +4,7 @@ import { useFriendsFilterStore } from '@/stores/friendsFilter'
 import { useThemeStore } from '@/stores/theme'
 import { useCustomLinksStore } from '@/stores/customLinks'
 import { useOnboardingStore } from '@/stores/onboarding'
+import { useDesktopWorkspacesStore } from '@/stores/desktopWorkspaces'
 import { isAuthenticated } from '@/lib/convexAuth'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
 import { setLocale } from '@/utils/i18n'
@@ -188,6 +189,7 @@ async function syncRestoredDataToCloud() {
   const theme = useThemeStore()
   const customLinks = useCustomLinksStore()
   const onboarding = useOnboardingStore()
+  const desktopWorkspaces = useDesktopWorkspacesStore()
 
   await syncSettingsPatch({
     theme: theme.themeMode as ThemeMode,
@@ -203,6 +205,21 @@ async function syncRestoredDataToCloud() {
     onboardingCompleted: onboarding.completed,
     friendsFilterEnabled: friends.enabled,
   })
+
+  const workspaceCatalog = new Map(
+    builtInSocialNetworks.map(network => [
+      network.id,
+      { canonicalUrl: network.url, allowSubdomains: true },
+    ]),
+  )
+  for (const link of customLinks.getLinks(profiles.activeProfileId)) {
+    workspaceCatalog.set(link.id, {
+      canonicalUrl: link.url,
+      allowSubdomains: false,
+    })
+  }
+  desktopWorkspaces.reloadFromLocal(workspaceCatalog)
+  desktopWorkspaces.syncToCloud()
 
   await Promise.all([
     profiles.seedCloud(),

@@ -98,6 +98,7 @@ export default defineSchema({
     userId: v.id("users"),
     contextualTasksJson: v.optional(v.string()),
     kanbanStateJson: v.optional(v.string()),
+    desktopWorkspacesJson: v.optional(v.string()),
     updatedAt: v.number(),
   }).index("by_userId", ["userId"]),
 

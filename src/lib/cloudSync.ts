@@ -16,6 +16,8 @@ import { useOnboardingStore } from "@/stores/onboarding";
 import { useShortcutsStore } from "@/stores/shortcuts";
 import { useContextualTasksStore } from "@/stores/contextualTasks";
 import { useKanbanStore } from "@/stores/kanban";
+import { useDesktopWorkspacesStore } from "@/stores/desktopWorkspaces";
+import { builtInSocialNetworks } from "@/config/socialNetworks";
 import { setLocale } from "@/utils/i18n";
 import type { AppShortcut } from "@/stores/shortcuts";
 import {
@@ -43,7 +45,11 @@ type CloudSnapshot = CloudSnapshotShape & {
   friendsFilters: CloudFriendFilter[];
   socialAccounts: CloudSocialAccount[];
   activeAccounts: CloudActiveAccount[];
-  workspaceState: { contextualTasksJson?: string; kanbanStateJson?: string } | null;
+  workspaceState: {
+    contextualTasksJson?: string;
+    kanbanStateJson?: string;
+    desktopWorkspacesJson?: string;
+  } | null;
 };
 
 type CloudSettings = Pick<
@@ -469,6 +475,9 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
           kanbanStateJson: typeof workspaceState.kanbanStateJson === "string"
             ? workspaceState.kanbanStateJson
             : undefined,
+          desktopWorkspacesJson: typeof workspaceState.desktopWorkspacesJson === "string"
+            ? workspaceState.desktopWorkspacesJson
+            : undefined,
         }
       : null,
   };
@@ -517,6 +526,7 @@ function clearCloudBackedLocalState() {
   const friendsStore = useFriendsFilterStore();
   const themeStore = useThemeStore();
   const onboardingStore = useOnboardingStore();
+  const desktopWorkspacesStore = useDesktopWorkspacesStore();
 
   profilesStore.clearLocal();
   accountsStore.clearLocal();
@@ -526,6 +536,7 @@ function clearCloudBackedLocalState() {
   kanbanStore.clearLocal();
   themeStore.resetLocalPreferences();
   onboardingStore.completed = false;
+  desktopWorkspacesStore.clearLocal();
 
   localStorage.removeItem("user-locale");
   localStorage.removeItem("theme");
@@ -546,6 +557,7 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   const accountsStore = useAccountsStore();
   const tasksStore = useContextualTasksStore();
   const kanbanStore = useKanbanStore();
+  const desktopWorkspacesStore = useDesktopWorkspacesStore();
 
   const settings = asCloudSettings(snapshot.settings);
   applyCloudSettings(settings);
@@ -558,6 +570,26 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   accountsStore.replaceFromCloud(snapshot.socialAccounts, snapshot.activeAccounts);
   tasksStore.replaceFromCloud(snapshot.workspaceState?.contextualTasksJson);
   kanbanStore.replaceFromCloud(snapshot.workspaceState?.kanbanStateJson);
+
+  const workspaceCatalog = new Map(
+    builtInSocialNetworks.map((network) => [
+      network.id,
+      { canonicalUrl: network.url, allowSubdomains: true },
+    ]),
+  );
+  for (const link of customLinksStore.getLinks(profilesStore.activeProfileId)) {
+    workspaceCatalog.set(link.id, {
+      canonicalUrl: link.url,
+      allowSubdomains: false,
+    });
+  }
+  const desktopWorkspacesJson = snapshot.workspaceState?.desktopWorkspacesJson;
+  if (desktopWorkspacesJson) {
+    desktopWorkspacesStore.replaceFromCloud(desktopWorkspacesJson, workspaceCatalog);
+  } else {
+    desktopWorkspacesStore.initialize(workspaceCatalog);
+    desktopWorkspacesStore.syncToCloud();
+  }
 }
 
 async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
@@ -570,6 +602,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
   const shortcutsStore = useShortcutsStore();
   const tasksStore = useContextualTasksStore();
   const kanbanStore = useKanbanStore();
+  const desktopWorkspacesStore = useDesktopWorkspacesStore();
 
   if (!snapshot.settings) {
     await syncSettingsPatch({
@@ -608,6 +641,20 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
   if (!snapshot.workspaceState) {
     tasksStore.initialize();
     kanbanStore.initialize();
+    const workspaceCatalog = new Map(
+      builtInSocialNetworks.map((network) => [
+        network.id,
+        { canonicalUrl: network.url, allowSubdomains: true },
+      ]),
+    );
+    for (const link of customLinksStore.getLinks(profilesStore.activeProfileId)) {
+      workspaceCatalog.set(link.id, {
+        canonicalUrl: link.url,
+        allowSubdomains: false,
+      });
+    }
+    desktopWorkspacesStore.initialize(workspaceCatalog);
+    desktopWorkspacesStore.syncToCloud();
     await Promise.all([tasksStore.syncToCloud(), kanbanStore.syncToCloud()]);
   }
 }

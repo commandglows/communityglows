@@ -18,6 +18,7 @@ export const PORTABLE_LOCAL_STORAGE_KEYS = [
   'contextual-task-stage-labels-v1',
   'kanban-state',
   'contextual-tasks-v1',
+  'communityglows.desktop-workspaces.v1',
 ] as const
 
 export type PortableLocalStorageKey = typeof PORTABLE_LOCAL_STORAGE_KEYS[number]

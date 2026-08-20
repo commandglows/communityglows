@@ -29,11 +29,15 @@ vi.mock("../../convex/_generated/api", () => ({
       remove: "socialAccounts:remove",
       setActive: "socialAccounts:setActive",
     },
+    workspaceState: {
+      setDesktopWorkspaces: "workspaceState:setDesktopWorkspaces",
+    },
   },
 }));
 
 import {
   clearCloudSyncQueue,
+  enqueueDesktopWorkspacesSnapshot,
   enqueueProfileRemove,
   enqueueSettingsPatch,
   flushCloudSyncQueue,
@@ -154,5 +158,27 @@ describe("cloud sync queue", () => {
     expect(queue).toHaveLength(1);
     expect(queue[0].type).toBe("profileRemove");
     expect(queue[0].attempts).toBe(1);
+  });
+
+  it("keeps only the latest desktop scene snapshot and flushes it", async () => {
+    enqueueDesktopWorkspacesSnapshot('{"version":1,"layouts":[]}');
+    enqueueDesktopWorkspacesSnapshot(
+      '{"version":1,"selectedLayoutId":null,"layouts":[]}',
+    );
+
+    expect(readQueueFromStorage()).toHaveLength(1);
+    await flushCloudSyncQueue();
+    isAuthenticated.value = true;
+    mutationMock.mockResolvedValue(undefined);
+    await flushCloudSyncQueue();
+
+    expect(mutationMock).toHaveBeenCalledWith(
+      "workspaceState:setDesktopWorkspaces",
+      expect.objectContaining({
+        desktopWorkspacesJson:
+          '{"version":1,"selectedLayoutId":null,"layouts":[]}',
+      }),
+    );
+    expect(hasPendingCloudSync()).toBe(false);
   });
 });
