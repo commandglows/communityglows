@@ -68,7 +68,7 @@
           size="small"
           aria-label="Supprimer la scène enregistrée"
           tooltip="Supprimer la scène enregistrée"
-          :disabled="!workspaceState.selectedLayoutId"
+          :disabled="!selectedLayoutId"
           @click="deleteNamedLayout"
         />
       </div>
@@ -121,6 +121,7 @@ import {
   MAX_DESKTOP_WORKSPACE_PANELS,
   persistDesktopWorkspaceAutosave,
   saveDesktopWorkspaceLayout,
+  selectDesktopWorkspaceLayout,
   type DesktopWorkspacePreset,
   type NetworkWorkspacePanelParams,
   type WorkspacePersistenceResult,
@@ -157,23 +158,31 @@ const desktopWorkspacesStore = useDesktopWorkspacesStore()
 const networkById = new Map(
   builtInSocialNetworks.map((network) => [network.id, network]),
 )
-const workspaceNetworkCatalog = computed(() => {
+function networkCatalogForProfile(profileId: string) {
   const catalog = new Map(
     builtInSocialNetworks.map((network) => [
       network.id,
       { canonicalUrl: network.url, allowSubdomains: true },
     ]),
   )
-  for (const link of customLinksStore.getLinks(profilesStore.activeProfileId)) {
+  for (const link of customLinksStore.getLinks(profileId)) {
     catalog.set(link.id, {
       canonicalUrl: link.url,
       allowSubdomains: false,
     })
   }
   return catalog
-})
+}
+const workspaceNetworkCatalog = computed(() =>
+  networkCatalogForProfile(profilesStore.activeProfileId),
+)
 const dockviewApi = shallowRef<DockviewApi | null>(null)
-desktopWorkspacesStore.initialize(workspaceNetworkCatalog.value)
+desktopWorkspacesStore.initialize(
+  workspaceNetworkCatalog.value,
+  profilesStore.activeProfile?.localOnly
+    ? ''
+    : profilesStore.activeProfileId,
+)
 const { workspaceState } = storeToRefs(desktopWorkspacesStore)
 const layoutName = ref('')
 const selectedPreset = ref('')
@@ -182,6 +191,7 @@ const disposables: Array<{ dispose: () => void }> = []
 let autosaveTimer: number | undefined
 let dockDragWatchdog: number | undefined
 let restoringLayout = false
+let profileSwitching = false
 let autosaveWarningShown = false
 const DOCK_DRAG_WATCHDOG_MS = 15_000
 
@@ -210,12 +220,16 @@ function workspaceSyncMessage(result: WorkspacePersistenceResult): string {
 const dockviewTheme = computed(() =>
   themeStore.isDarkMode ? themeDark : themeLight,
 )
+const profileLayouts = computed(() =>
+  workspaceState.value.layouts
+    .filter((layout) => layout.profileId === profilesStore.activeProfileId),
+)
 const layoutOptions = computed(() =>
-  workspaceState.value.layouts.map((layout) => ({
-    value: layout.id,
-    label: layout.name,
-    icon: 'pi pi-th-large',
-  })),
+  profileLayouts.value.map((layout) => ({
+      value: layout.id,
+      label: layout.name,
+      icon: 'pi pi-th-large',
+    })),
 )
 const presetOptions = [
   { value: 'columns', label: 'Colonnes', icon: 'pi pi-arrows-h' },
@@ -224,12 +238,14 @@ const presetOptions = [
   { value: 'grid', label: 'Grille', icon: 'pi pi-th-large' },
 ]
 const selectedLayoutId = computed({
-  get: () => workspaceState.value.selectedLayoutId ?? '',
+  get: () =>
+    workspaceState.value.selectedLayoutIds[profilesStore.activeProfileId] ?? '',
   set: (id: string) => {
-    workspaceState.value = {
-      ...workspaceState.value,
-      selectedLayoutId: id || null,
-    }
+    workspaceState.value = selectDesktopWorkspaceLayout(
+      workspaceState.value,
+      profilesStore.activeProfileId,
+      id || null,
+    )
   },
 })
 
@@ -238,15 +254,16 @@ function panelId(networkId: string): string {
 }
 
 function scheduleAutosave() {
-  if (restoringLayout) return
+  if (restoringLayout || profileSwitching) return
   window.clearTimeout(autosaveTimer)
   autosaveTimer = window.setTimeout(() => {
     const api = dockviewApi.value
     if (!api) return
+    const profileId = profilesStore.activeProfileId
     const hasContent = api.panels.length > 0
     emit('contentChange', hasContent)
     if (!hasContent) {
-      const result = clearDesktopWorkspaceAutosave(localStorage)
+      const result = clearDesktopWorkspaceAutosave(localStorage, profileId)
       if (!result.ok && !autosaveWarningShown) {
         autosaveWarningShown = true
         push.warning({ message: workspacePersistenceMessage(result) })
@@ -257,6 +274,7 @@ function scheduleAutosave() {
       localStorage,
       api.toJSON(),
       workspaceNetworkCatalog.value,
+      profileId,
     )
     if (!result.ok && !autosaveWarningShown) {
       autosaveWarningShown = true
@@ -329,7 +347,7 @@ function syncActiveNetworkFromDockview() {
 
 function ensureNetworkPanel(networkId: string, url: string) {
   const api = dockviewApi.value
-  if (!api) return
+  if (!api || profileSwitching) return
   const params = { networkId, url }
   if (!isNetworkWorkspacePanelParams(params, workspaceNetworkCatalog.value)) {
     console.warn(
@@ -449,11 +467,15 @@ function onDockviewReady(event: DockviewReadyEvent) {
   const autosave = loadDesktopWorkspaceAutosave(
     localStorage,
     workspaceNetworkCatalog.value,
+    profilesStore.activeProfileId,
   )
   if (autosave) restoreLayout(autosave)
 
   const selected = workspaceState.value.layouts.find(
-    (layout) => layout.id === workspaceState.value.selectedLayoutId,
+    (layout) =>
+      layout.profileId === profilesStore.activeProfileId &&
+      layout.id ===
+        workspaceState.value.selectedLayoutIds[profilesStore.activeProfileId],
   )
   layoutName.value = selected?.name ?? ''
 
@@ -464,15 +486,23 @@ function onDockviewReady(event: DockviewReadyEvent) {
 }
 
 function loadNamedLayout(id: string) {
-  const saved = workspaceState.value.layouts.find((layout) => layout.id === id)
+  const profileId = profilesStore.activeProfileId
+  const saved = workspaceState.value.layouts.find(
+    (layout) => layout.id === id && layout.profileId === profileId,
+  )
   if (!saved || !restoreLayout(saved.layout)) return
-  workspaceState.value = { ...workspaceState.value, selectedLayoutId: saved.id }
+  workspaceState.value = selectDesktopWorkspaceLayout(
+    workspaceState.value,
+    profileId,
+    saved.id,
+  )
   layoutName.value = saved.name
   const stateResult = desktopWorkspacesStore.persist(workspaceState.value)
   const autosaveResult = persistDesktopWorkspaceAutosave(
     localStorage,
     saved.layout,
     workspaceNetworkCatalog.value,
+    profileId,
   )
   if (!stateResult.local.ok || !stateResult.cloud.ok || !autosaveResult.ok) {
     push.warning({
@@ -494,7 +524,8 @@ function saveNamedLayout() {
     })
     return
   }
-  const fallbackName = `Scène ${workspaceState.value.layouts.length + 1}`
+  const fallbackName = `Scène ${profileLayouts.value.length + 1}`
+  const profileId = profilesStore.activeProfileId
   const currentLayout = api.toJSON()
   if (
     !isSafeDesktopWorkspaceLayout(currentLayout, workspaceNetworkCatalog.value)
@@ -505,7 +536,8 @@ function saveNamedLayout() {
     return
   }
   const nextState = saveDesktopWorkspaceLayout(workspaceState.value, {
-    id: workspaceState.value.selectedLayoutId ?? undefined,
+    id: workspaceState.value.selectedLayoutIds[profileId] ?? undefined,
+    profileId,
     name: layoutName.value || fallbackName,
     layout: currentLayout,
   })
@@ -516,12 +548,15 @@ function saveNamedLayout() {
   }
   layoutName.value =
     workspaceState.value.layouts.find(
-      (layout) => layout.id === workspaceState.value.selectedLayoutId,
+      (layout) =>
+        layout.profileId === profileId &&
+        layout.id === workspaceState.value.selectedLayoutIds[profileId],
     )?.name ?? fallbackName
   const autosaveResult = persistDesktopWorkspaceAutosave(
     localStorage,
     currentLayout,
     workspaceNetworkCatalog.value,
+    profileId,
   )
   if (!stateResult.cloud.ok || !autosaveResult.ok) {
     push.warning({
@@ -539,10 +574,15 @@ function saveNamedLayout() {
 function startNewLayout() {
   const api = dockviewApi.value
   if (!api) return
-  const nextState = { ...workspaceState.value, selectedLayoutId: null }
+  const profileId = profilesStore.activeProfileId
+  const nextState = selectDesktopWorkspaceLayout(
+    workspaceState.value,
+    profileId,
+    null,
+  )
   layoutName.value = ''
   api.clear()
-  const clearResult = clearDesktopWorkspaceAutosave(localStorage)
+  const clearResult = clearDesktopWorkspaceAutosave(localStorage, profileId)
   const stateResult = desktopWorkspacesStore.persist(nextState)
   if (!clearResult.ok || !stateResult.local.ok || !stateResult.cloud.ok) {
     push.warning({
@@ -562,7 +602,10 @@ function resetCurrentLayout() {
   const url = webviewStore.activeUrl
   if (!api) return
   api.clear()
-  const result = clearDesktopWorkspaceAutosave(localStorage)
+  const result = clearDesktopWorkspaceAutosave(
+    localStorage,
+    profilesStore.activeProfileId,
+  )
   if (!result.ok) {
     push.warning({ message: workspacePersistenceMessage(result) })
   }
@@ -570,9 +613,14 @@ function resetCurrentLayout() {
 }
 
 function deleteNamedLayout() {
-  const id = workspaceState.value.selectedLayoutId
+  const profileId = profilesStore.activeProfileId
+  const id = workspaceState.value.selectedLayoutIds[profileId]
   if (!id) return
-  const nextState = deleteDesktopWorkspaceLayout(workspaceState.value, id)
+  const nextState = deleteDesktopWorkspaceLayout(
+    workspaceState.value,
+    profileId,
+    id,
+  )
   const result = desktopWorkspacesStore.persist(nextState)
   if (!result.local.ok) {
     push.warning({ message: workspacePersistenceMessage(result.local) })
@@ -597,9 +645,81 @@ watch(
   },
 )
 
+watch(
+  [
+    () => profilesStore.activeProfileId,
+    () => profilesStore.activeProfile?.localOnly ?? true,
+  ],
+  ([profileId, localOnly], [previousProfileId, previousLocalOnly]) => {
+    if (
+      profileId === previousProfileId &&
+      previousLocalOnly &&
+      !localOnly &&
+      workspaceState.value.layouts.length === 0
+    ) {
+      desktopWorkspacesStore.reloadFromLocal(
+        networkCatalogForProfile(profileId),
+        profileId,
+      )
+      return
+    }
+    if (!profileId || profileId === previousProfileId) return
+
+    const api = dockviewApi.value
+    if (!api) return
+    profileSwitching = true
+    restoringLayout = true
+    window.clearTimeout(autosaveTimer)
+
+    try {
+      const previousProfileStillExists = profilesStore.profiles.some(
+        (profile) => profile.id === previousProfileId,
+      )
+      if (previousProfileId && previousProfileStillExists) {
+        if (api.panels.length > 0) {
+          persistDesktopWorkspaceAutosave(
+            localStorage,
+            api.toJSON(),
+            networkCatalogForProfile(previousProfileId),
+            previousProfileId,
+          )
+        } else {
+          clearDesktopWorkspaceAutosave(localStorage, previousProfileId)
+        }
+      }
+
+      api.clear()
+      const catalog = networkCatalogForProfile(profileId)
+      const autosave = loadDesktopWorkspaceAutosave(
+        localStorage,
+        catalog,
+        profileId,
+      )
+      if (autosave) api.fromJSON(autosave)
+    } catch (error) {
+      console.warn(
+        '[CommunityGlows] Failed to switch the desktop workspace profile.',
+        error,
+      )
+      api.clear()
+    } finally {
+      restoringLayout = false
+      profileSwitching = false
+      emit('contentChange', api.panels.length > 0)
+    }
+
+    if (api.panels.length === 0) {
+      const networkId = webviewStore.activeNetworkId
+      const url = webviewStore.activeUrl
+      if (networkId && url) ensureNetworkPanel(networkId, url)
+    }
+    syncActiveNetworkFromDockview()
+  },
+)
+
 watch(workspaceNetworkCatalog, (catalog) => {
   const api = dockviewApi.value
-  if (!api) return
+  if (!api || profileSwitching) return
   for (const panel of [...api.panels]) {
     const params = panel.api.getParameters<Record<string, unknown>>()
     if (!isNetworkWorkspacePanelParams(params, catalog)) {
@@ -608,10 +728,13 @@ watch(workspaceNetworkCatalog, (catalog) => {
   }
 })
 
-watch(workspaceState, (state) => {
+watch([workspaceState, () => profilesStore.activeProfileId], ([state, profileId]) => {
   layoutName.value =
-    state.layouts.find((layout) => layout.id === state.selectedLayoutId)?.name ??
-    ''
+    state.layouts.find(
+      (layout) =>
+        layout.profileId === profileId &&
+        layout.id === state.selectedLayoutIds[profileId],
+    )?.name ?? ''
 })
 
 onUnmounted(() => {
@@ -623,6 +746,7 @@ onUnmounted(() => {
       localStorage,
       api.toJSON(),
       workspaceNetworkCatalog.value,
+      profilesStore.activeProfileId,
     )
   disposables.splice(0).forEach((disposable) => disposable.dispose())
 })

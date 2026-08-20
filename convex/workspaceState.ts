@@ -28,9 +28,12 @@ function assertDesktopWorkspaces(value: string) {
       !parsed
       || typeof parsed !== "object"
       || Array.isArray(parsed)
-      || (parsed as { version?: unknown }).version !== 1
+      || (
+        (parsed as { version?: unknown }).version !== 1
+        && (parsed as { version?: unknown }).version !== 2
+      )
       || !Array.isArray((parsed as { layouts?: unknown }).layouts)
-      || (parsed as { layouts: unknown[] }).layouts.length > 12
+      || (parsed as { layouts: unknown[] }).layouts.length > 120
     ) {
       throw new Error("desktopWorkspacesJson must contain a workspace state");
     }

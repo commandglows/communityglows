@@ -22,6 +22,10 @@ import { useDesktopWorkspacesStore } from './desktopWorkspaces'
 class MemoryStorage {
   private values = new Map<string, string>()
 
+  get length() {
+    return this.values.size
+  }
+
   getItem(key: string) {
     return this.values.get(key) ?? null
   }
@@ -32,6 +36,10 @@ class MemoryStorage {
 
   removeItem(key: string) {
     this.values.delete(key)
+  }
+
+  key(index: number) {
+    return [...this.values.keys()][index] ?? null
   }
 }
 
@@ -79,8 +87,29 @@ describe('desktop workspace sync store', () => {
     const store = useDesktopWorkspacesStore()
     const serialized = JSON.stringify(emptyDesktopWorkspaceState())
 
-    expect(store.replaceFromCloud(serialized, new Map())).toBe(true)
+    expect(store.replaceFromCloud(serialized, new Map(), 'profile-1')).toBe(
+      true,
+    )
     expect(store.initialized).toBe(true)
     expect(localStorage.getItem(DESKTOP_WORKSPACE_STATE_KEY)).toBe(serialized)
+  })
+
+  it('migrates a legacy cloud snapshot to the active profile once', () => {
+    const store = useDesktopWorkspacesStore()
+    const legacy = JSON.stringify({
+      version: 1,
+      selectedLayoutId: null,
+      layouts: [],
+    })
+
+    expect(store.replaceFromCloud(legacy, new Map(), 'profile-1')).toBe(true)
+    expect(store.workspaceState).toEqual({
+      version: 2,
+      selectedLayoutIds: { 'profile-1': null },
+      layouts: [],
+    })
+    expect(mocked.enqueue).toHaveBeenCalledWith(
+      JSON.stringify(store.workspaceState),
+    )
   })
 })

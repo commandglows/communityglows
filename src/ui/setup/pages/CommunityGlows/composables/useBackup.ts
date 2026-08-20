@@ -47,7 +47,7 @@ async function collectStoreData(): Promise<string> {
     }
   }
 
-  if (isTauri() && !isAndroidTauri()) {
+  if (isTauri && !isAndroidTauri()) {
     try {
       const { invoke } = await import('@tauri-apps/api/core')
       const targets = profiles.profiles.flatMap(profile => builtInSocialNetworks.map(network => ({
@@ -218,7 +218,10 @@ async function syncRestoredDataToCloud() {
       allowSubdomains: false,
     })
   }
-  desktopWorkspaces.reloadFromLocal(workspaceCatalog)
+  desktopWorkspaces.reloadFromLocal(
+    workspaceCatalog,
+    profiles.activeProfileId,
+  )
   desktopWorkspaces.syncToCloud()
 
   await Promise.all([

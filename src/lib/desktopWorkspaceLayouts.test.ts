@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { SerializedDockview } from 'dockview-vue'
 import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
 import {
+  DESKTOP_WORKSPACE_AUTOSAVE_KEY,
+  LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY,
   createDesktopWorkspacePresetLayout,
   deleteDesktopWorkspaceLayout,
   emptyDesktopWorkspaceState,
@@ -15,8 +17,13 @@ import {
   parseDesktopWorkspaceState,
   persistDesktopWorkspaceAutosave,
   persistDesktopWorkspaceState,
+  removeDesktopWorkspaceProfile,
   saveDesktopWorkspaceLayout,
+  selectDesktopWorkspaceLayout,
 } from './desktopWorkspaceLayouts'
+
+const PROFILE_ID = 'profile-1'
+const OTHER_PROFILE_ID = 'profile-2'
 
 const knownNetworks = new Map([
   [
@@ -248,6 +255,7 @@ describe('desktop workspace layouts', () => {
     const parsed = parseDesktopWorkspaceState(
       JSON.stringify({ version: 1, selectedLayoutId: null, layouts: [saved] }),
       new Map(),
+      PROFILE_ID,
     )
 
     expect(parsed.layouts).toHaveLength(1)
@@ -284,6 +292,7 @@ describe('desktop workspace layouts', () => {
         memoryStorage(),
         overLimit.layout,
         overLimit.catalog,
+        PROFILE_ID,
       ),
     ).toEqual({ ok: false, reason: 'invalid' })
 
@@ -337,6 +346,7 @@ describe('desktop workspace layouts', () => {
         storage,
         oversizedLayout as unknown as SerializedDockview,
         knownNetworks,
+        PROFILE_ID,
       ),
     ).toEqual({ ok: false, reason: 'too-large' })
 
@@ -354,7 +364,9 @@ describe('desktop workspace layouts', () => {
     expect(loadDesktopWorkspaceState(unavailable, knownNetworks)).toEqual(
       emptyDesktopWorkspaceState(),
     )
-    expect(loadDesktopWorkspaceAutosave(unavailable, knownNetworks)).toBeNull()
+    expect(
+      loadDesktopWorkspaceAutosave(unavailable, knownNetworks, PROFILE_ID),
+    ).toBeNull()
     expect(
       persistDesktopWorkspaceState(unavailable, emptyDesktopWorkspaceState()),
     ).toEqual({ ok: false, reason: 'unavailable' })
@@ -362,6 +374,7 @@ describe('desktop workspace layouts', () => {
 
   it('saves, renames and deletes a named layout without changing its identity', () => {
     const first = saveDesktopWorkspaceLayout(emptyDesktopWorkspaceState(), {
+      profileId: PROFILE_ID,
       name: 'Veille du matin',
       layout: layoutFor(),
       now: '2026-08-20T08:00:00.000Z',
@@ -369,6 +382,7 @@ describe('desktop workspace layouts', () => {
     })
     const renamed = saveDesktopWorkspaceLayout(first, {
       id: 'layout-1',
+      profileId: PROFILE_ID,
       name: 'Veille quotidienne',
       layout: layoutFor('linkedin', 'https://linkedin.com'),
       now: '2026-08-20T09:00:00.000Z',
@@ -377,13 +391,18 @@ describe('desktop workspace layouts', () => {
     expect(renamed.layouts).toHaveLength(1)
     expect(renamed.layouts[0]).toMatchObject({
       id: 'layout-1',
+      profileId: PROFILE_ID,
       name: 'Veille quotidienne',
       createdAt: '2026-08-20T08:00:00.000Z',
       updatedAt: '2026-08-20T09:00:00.000Z',
     })
-    expect(deleteDesktopWorkspaceLayout(renamed, 'layout-1')).toEqual(
-      emptyDesktopWorkspaceState(),
-    )
+    expect(
+      deleteDesktopWorkspaceLayout(renamed, PROFILE_ID, 'layout-1'),
+    ).toEqual({
+      version: 2,
+      selectedLayoutIds: { [PROFILE_ID]: null },
+      layouts: [],
+    })
   })
 
   it('drops invalid layouts while preserving valid entries and selection', () => {
@@ -404,9 +423,96 @@ describe('desktop workspace layouts', () => {
         ],
       }),
       knownNetworks,
+      PROFILE_ID,
     )
 
     expect(parsed.layouts.map((layout) => layout.id)).toEqual(['valid'])
-    expect(parsed.selectedLayoutId).toBe('valid')
+    expect(parsed.selectedLayoutIds[PROFILE_ID]).toBe('valid')
+  })
+
+  it('isolates scenes and selection by profile', () => {
+    const first = saveDesktopWorkspaceLayout(emptyDesktopWorkspaceState(), {
+      profileId: PROFILE_ID,
+      name: 'Travail',
+      layout: layoutFor(),
+      createId: () => 'scene-work',
+    })
+    const second = saveDesktopWorkspaceLayout(first, {
+      profileId: OTHER_PROFILE_ID,
+      name: 'Personnel',
+      layout: layoutFor('linkedin', 'https://linkedin.com'),
+      createId: () => 'scene-personal',
+    })
+
+    expect(second.layouts.map((layout) => layout.profileId)).toEqual([
+      OTHER_PROFILE_ID,
+      PROFILE_ID,
+    ])
+    expect(second.selectedLayoutIds).toEqual({
+      [PROFILE_ID]: 'scene-work',
+      [OTHER_PROFILE_ID]: 'scene-personal',
+    })
+    expect(
+      selectDesktopWorkspaceLayout(second, PROFILE_ID, 'scene-personal')
+        .selectedLayoutIds[PROFILE_ID],
+    ).toBeNull()
+
+    const removed = removeDesktopWorkspaceProfile(second, PROFILE_ID)
+    expect(removed.layouts.map((layout) => layout.id)).toEqual([
+      'scene-personal',
+    ])
+    expect(removed.selectedLayoutIds).toEqual({
+      [OTHER_PROFILE_ID]: 'scene-personal',
+    })
+  })
+
+  it('isolates autosaved drafts and migrates the legacy draft once', () => {
+    const storage = memoryStorage()
+    const workLayout = layoutFor()
+    const personalLayout = layoutFor('linkedin', 'https://linkedin.com')
+
+    expect(
+      persistDesktopWorkspaceAutosave(
+        storage,
+        workLayout,
+        knownNetworks,
+        PROFILE_ID,
+      ),
+    ).toEqual({ ok: true })
+    expect(
+      persistDesktopWorkspaceAutosave(
+        storage,
+        personalLayout,
+        knownNetworks,
+        OTHER_PROFILE_ID,
+      ),
+    ).toEqual({ ok: true })
+    expect(
+      loadDesktopWorkspaceAutosave(storage, knownNetworks, PROFILE_ID),
+    ).toEqual(workLayout)
+    expect(
+      loadDesktopWorkspaceAutosave(storage, knownNetworks, OTHER_PROFILE_ID),
+    ).toEqual(personalLayout)
+
+    const legacyStorage = memoryStorage()
+    legacyStorage.setItem(
+      LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY,
+      JSON.stringify({ version: 1, layout: workLayout }),
+    )
+    expect(
+      loadDesktopWorkspaceAutosave(legacyStorage, knownNetworks, PROFILE_ID),
+    ).toEqual(workLayout)
+    persistDesktopWorkspaceAutosave(
+      legacyStorage,
+      workLayout,
+      knownNetworks,
+      PROFILE_ID,
+    )
+    expect(
+      legacyStorage.getItem(LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY),
+    ).toBeNull()
+    expect(
+      legacyStorage.getItem(`${DESKTOP_WORKSPACE_AUTOSAVE_KEY}:${PROFILE_ID}`),
+    ).not.toBeNull()
   })
 })

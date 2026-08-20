@@ -1,11 +1,16 @@
-import type { SerializedDockview } from 'dockview-vue'
+import { Orientation, type SerializedDockview } from 'dockview-vue'
 
 export const DESKTOP_WORKSPACE_STATE_KEY =
+  'communityglows.desktop-workspaces.v2'
+export const LEGACY_DESKTOP_WORKSPACE_STATE_KEY =
   'communityglows.desktop-workspaces.v1'
 export const DESKTOP_WORKSPACE_AUTOSAVE_KEY =
+  'communityglows.desktop-workspace.autosave.v2'
+export const LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY =
   'communityglows.desktop-workspace.autosave.v1'
-export const DESKTOP_WORKSPACE_VERSION = 1 as const
+export const DESKTOP_WORKSPACE_VERSION = 2 as const
 export const MAX_SAVED_WORKSPACE_LAYOUTS = 12
+export const MAX_TOTAL_SAVED_WORKSPACE_LAYOUTS = 120
 export const MAX_DESKTOP_WORKSPACE_PANELS = 24
 export const MAX_DESKTOP_WORKSPACE_LAYOUT_DEPTH = 64
 export const MAX_DESKTOP_WORKSPACE_LAYOUT_NODES = 4_096
@@ -40,6 +45,7 @@ export type DesktopWorkspacePreset =
 
 export type SavedDesktopWorkspace = {
   id: string
+  profileId: string
   name: string
   createdAt: string
   updatedAt: string
@@ -48,7 +54,7 @@ export type SavedDesktopWorkspace = {
 
 export type DesktopWorkspaceState = {
   version: typeof DESKTOP_WORKSPACE_VERSION
-  selectedLayoutId: string | null
+  selectedLayoutIds: Record<string, string | null>
   layouts: SavedDesktopWorkspace[]
 }
 
@@ -62,6 +68,23 @@ type WorkspaceGroup = Extract<WorkspaceGridNode['data'], { id: string }>
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const workspaceProfileIdPattern = /^[a-zA-Z0-9:_-]+$/
+
+function isWorkspaceProfileId(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    value.length <= 128 &&
+    workspaceProfileIdPattern.test(value)
+  )
+}
+
+function desktopWorkspaceAutosaveKey(profileId: string): string | null {
+  return isWorkspaceProfileId(profileId)
+    ? `${DESKTOP_WORKSPACE_AUTOSAVE_KEY}:${profileId}`
+    : null
+}
 
 function workspacePanelOrder(layout: SerializedDockview): string[] {
   const ordered: string[] = []
@@ -165,18 +188,20 @@ export function createDesktopWorkspacePresetLayout(
     }
   }
 
-  let orientation: 'HORIZONTAL' | 'VERTICAL'
+  let orientation: SerializedDockview['grid']['orientation']
   let rootData: WorkspaceGridNode[]
 
   if (preset === 'columns' || preset === 'rows') {
-    orientation = preset === 'columns' ? 'HORIZONTAL' : 'VERTICAL'
+    orientation = preset === 'columns'
+      ? Orientation.HORIZONTAL
+      : Orientation.VERTICAL
     const availableSize = orientation === 'HORIZONTAL' ? width : height
     const panelSize = availableSize / panelIds.length
     rootData = panelIds.map((panelId, index) =>
       presetLeaf(preset, panelId, index, panelSize),
     )
   } else if (preset === 'focus' && panelIds.length > 1) {
-    orientation = 'HORIZONTAL'
+    orientation = Orientation.HORIZONTAL
     const focusWidth = (width * 2) / 3
     const sideWidth = width - focusWidth
     const sidePanelHeight = height / (panelIds.length - 1)
@@ -193,7 +218,7 @@ export function createDesktopWorkspacePresetLayout(
       },
     ]
   } else if (preset === 'grid') {
-    orientation = 'HORIZONTAL'
+    orientation = Orientation.HORIZONTAL
     const columnCount = Math.ceil(Math.sqrt(panelIds.length))
     const columnWidth = width / columnCount
     rootData = Array.from({ length: columnCount }, (_, columnIndex) => {
@@ -224,7 +249,7 @@ export function createDesktopWorkspacePresetLayout(
       }
     })
   } else {
-    orientation = 'HORIZONTAL'
+    orientation = Orientation.HORIZONTAL
     rootData = [presetLeaf(preset, panelIds[0], 0, width)]
   }
 
@@ -508,7 +533,7 @@ export function isSafeDesktopWorkspaceLayout(
 export function emptyDesktopWorkspaceState(): DesktopWorkspaceState {
   return {
     version: DESKTOP_WORKSPACE_VERSION,
-    selectedLayoutId: null,
+    selectedLayoutIds: {},
     layouts: [],
   }
 }
@@ -516,9 +541,11 @@ export function emptyDesktopWorkspaceState(): DesktopWorkspaceState {
 function parseSavedLayout(
   value: unknown,
   catalog: WorkspaceNetworkCatalog,
+  legacyProfileId?: string,
 ): SavedDesktopWorkspace | null {
   if (!isRecord(value)) return null
   if (
+    !isWorkspaceProfileId(value.profileId ?? legacyProfileId) ||
     typeof value.id !== 'string' ||
     !value.id ||
     value.id.length > 128 ||
@@ -538,6 +565,7 @@ function parseSavedLayout(
 
   return {
     id: value.id,
+    profileId: (value.profileId ?? legacyProfileId) as string,
     name: value.name.trim(),
     createdAt: value.createdAt,
     updatedAt: value.updatedAt,
@@ -548,37 +576,77 @@ function parseSavedLayout(
 export function parseDesktopWorkspaceState(
   raw: string | null,
   catalog: WorkspaceNetworkCatalog,
+  legacyProfileId = '',
 ): DesktopWorkspaceState {
   if (!raw || raw.length > MAX_DESKTOP_WORKSPACE_STATE_CHARS)
     return emptyDesktopWorkspaceState()
 
   try {
     const value: unknown = JSON.parse(raw)
-    if (
-      !isRecord(value) ||
-      value.version !== DESKTOP_WORKSPACE_VERSION ||
-      !Array.isArray(value.layouts)
-    ) {
+    if (!isRecord(value) || !Array.isArray(value.layouts)) {
+      return emptyDesktopWorkspaceState()
+    }
+
+    const isLegacy = value.version === 1
+    if (value.version !== DESKTOP_WORKSPACE_VERSION && !isLegacy) {
+      return emptyDesktopWorkspaceState()
+    }
+    if (isLegacy && !isWorkspaceProfileId(legacyProfileId)) {
       return emptyDesktopWorkspaceState()
     }
 
     const seen = new Set<string>()
+    const profileCounts = new Map<string, number>()
     const layouts = value.layouts
-      .map((layout) => parseSavedLayout(layout, catalog))
+      .map((layout) =>
+        parseSavedLayout(
+          layout,
+          catalog,
+          isLegacy ? legacyProfileId : undefined,
+        ),
+      )
       .filter((layout): layout is SavedDesktopWorkspace => {
-        if (!layout || seen.has(layout.id)) return false
+        if (
+          !layout ||
+          seen.has(layout.id) ||
+          seen.size >= MAX_TOTAL_SAVED_WORKSPACE_LAYOUTS
+        )
+          return false
+        const profileCount = profileCounts.get(layout.profileId) ?? 0
+        if (profileCount >= MAX_SAVED_WORKSPACE_LAYOUTS) return false
         seen.add(layout.id)
+        profileCounts.set(layout.profileId, profileCount + 1)
         return true
       })
-      .slice(0, MAX_SAVED_WORKSPACE_LAYOUTS)
 
-    const selectedLayoutId =
-      typeof value.selectedLayoutId === 'string' &&
-      layouts.some((layout) => layout.id === value.selectedLayoutId)
-        ? value.selectedLayoutId
-        : null
+    const selectedLayoutIds: Record<string, string | null> = {}
+    if (isLegacy) {
+      selectedLayoutIds[legacyProfileId] =
+        typeof value.selectedLayoutId === 'string' &&
+        layouts.some(
+          (layout) =>
+            layout.profileId === legacyProfileId &&
+            layout.id === value.selectedLayoutId,
+        )
+          ? value.selectedLayoutId
+          : null
+    } else if (isRecord(value.selectedLayoutIds)) {
+      for (const [profileId, layoutId] of Object.entries(
+        value.selectedLayoutIds,
+      )) {
+        if (!isWorkspaceProfileId(profileId)) continue
+        selectedLayoutIds[profileId] =
+          typeof layoutId === 'string' &&
+          layouts.some(
+            (layout) =>
+              layout.profileId === profileId && layout.id === layoutId,
+          )
+            ? layoutId
+            : null
+      }
+    }
 
-    return { version: DESKTOP_WORKSPACE_VERSION, selectedLayoutId, layouts }
+    return { version: DESKTOP_WORKSPACE_VERSION, selectedLayoutIds, layouts }
   } catch {
     return emptyDesktopWorkspaceState()
   }
@@ -587,11 +655,14 @@ export function parseDesktopWorkspaceState(
 export function loadDesktopWorkspaceState(
   storage: WorkspaceStorage,
   catalog: WorkspaceNetworkCatalog,
+  legacyProfileId = '',
 ): DesktopWorkspaceState {
   try {
     return parseDesktopWorkspaceState(
-      storage.getItem(DESKTOP_WORKSPACE_STATE_KEY),
+      storage.getItem(DESKTOP_WORKSPACE_STATE_KEY) ??
+        storage.getItem(LEGACY_DESKTOP_WORKSPACE_STATE_KEY),
       catalog,
+      legacyProfileId,
     )
   } catch {
     return emptyDesktopWorkspaceState()
@@ -602,23 +673,39 @@ export function persistDesktopWorkspaceState(
   storage: WorkspaceStorage,
   state: DesktopWorkspaceState,
 ): WorkspacePersistenceResult {
-  return persistBoundedValue(
+  const result = persistBoundedValue(
     storage,
     DESKTOP_WORKSPACE_STATE_KEY,
     state,
     MAX_DESKTOP_WORKSPACE_STATE_CHARS,
   )
+  if (result.ok) {
+    try {
+      storage.removeItem(LEGACY_DESKTOP_WORKSPACE_STATE_KEY)
+    } catch {
+      // The current state is already durable; legacy cleanup is best effort.
+    }
+  }
+  return result
 }
 
 export function loadDesktopWorkspaceAutosave(
   storage: WorkspaceStorage,
   catalog: WorkspaceNetworkCatalog,
+  profileId: string,
 ): SerializedDockview | null {
   try {
-    const raw = storage.getItem(DESKTOP_WORKSPACE_AUTOSAVE_KEY)
+    const key = desktopWorkspaceAutosaveKey(profileId)
+    if (!key) return null
+    const raw =
+      storage.getItem(key) ??
+      storage.getItem(LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY)
     if (!raw || raw.length > MAX_DESKTOP_WORKSPACE_AUTOSAVE_CHARS) return null
     const value: unknown = JSON.parse(raw)
-    if (!isRecord(value) || value.version !== DESKTOP_WORKSPACE_VERSION)
+    if (
+      !isRecord(value) ||
+      (value.version !== DESKTOP_WORKSPACE_VERSION && value.version !== 1)
+    )
       return null
     return isSafeDesktopWorkspaceLayout(value.layout, catalog)
       ? value.layout
@@ -632,26 +719,41 @@ export function persistDesktopWorkspaceAutosave(
   storage: WorkspaceStorage,
   layout: SerializedDockview,
   catalog: WorkspaceNetworkCatalog,
+  profileId: string,
 ): WorkspacePersistenceResult {
+  const key = desktopWorkspaceAutosaveKey(profileId)
+  if (!key) return { ok: false, reason: 'invalid' }
   if (!isSafeDesktopWorkspaceLayout(layout, catalog)) {
     return { ok: false, reason: 'invalid' }
   }
-  return persistBoundedValue(
+  const result = persistBoundedValue(
     storage,
-    DESKTOP_WORKSPACE_AUTOSAVE_KEY,
+    key,
     {
       version: DESKTOP_WORKSPACE_VERSION,
       layout,
     },
     MAX_DESKTOP_WORKSPACE_AUTOSAVE_CHARS,
   )
+  if (result.ok) {
+    try {
+      storage.removeItem(LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY)
+    } catch {
+      // The profile autosave is already durable; legacy cleanup is best effort.
+    }
+  }
+  return result
 }
 
 export function clearDesktopWorkspaceAutosave(
   storage: WorkspaceStorage,
+  profileId: string,
 ): WorkspacePersistenceResult {
   try {
-    storage.removeItem(DESKTOP_WORKSPACE_AUTOSAVE_KEY)
+    const key = desktopWorkspaceAutosaveKey(profileId)
+    if (!key) return { ok: false, reason: 'invalid' }
+    storage.removeItem(key)
+    storage.removeItem(LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY)
     return { ok: true }
   } catch {
     return { ok: false, reason: 'unavailable' }
@@ -662,6 +764,7 @@ export function saveDesktopWorkspaceLayout(
   state: DesktopWorkspaceState,
   input: {
     id?: string
+    profileId: string
     name: string
     layout: SerializedDockview
     now?: string
@@ -669,15 +772,19 @@ export function saveDesktopWorkspaceLayout(
   },
 ): DesktopWorkspaceState {
   const name = input.name.trim().slice(0, 64)
-  if (!name) return state
+  if (!name || !isWorkspaceProfileId(input.profileId)) return state
 
   const now = input.now ?? new Date().toISOString()
   const existing = input.id
-    ? state.layouts.find((layout) => layout.id === input.id)
+    ? state.layouts.find(
+        (layout) =>
+          layout.id === input.id && layout.profileId === input.profileId,
+      )
     : undefined
   const id = existing?.id ?? input.createId?.() ?? crypto.randomUUID()
   const nextLayout: SavedDesktopWorkspace = {
     id,
+    profileId: input.profileId,
     name,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
@@ -685,19 +792,69 @@ export function saveDesktopWorkspaceLayout(
   }
   const layouts = existing
     ? state.layouts.map((layout) => (layout.id === id ? nextLayout : layout))
-    : [nextLayout, ...state.layouts].slice(0, MAX_SAVED_WORKSPACE_LAYOUTS)
+    : [
+        nextLayout,
+        ...state.layouts.filter(
+          (layout) => layout.profileId !== input.profileId,
+        ),
+        ...state.layouts
+          .filter((layout) => layout.profileId === input.profileId)
+          .slice(0, MAX_SAVED_WORKSPACE_LAYOUTS - 1),
+      ]
 
-  return { version: DESKTOP_WORKSPACE_VERSION, selectedLayoutId: id, layouts }
+  return {
+    version: DESKTOP_WORKSPACE_VERSION,
+    selectedLayoutIds: { ...state.selectedLayoutIds, [input.profileId]: id },
+    layouts,
+  }
 }
 
 export function deleteDesktopWorkspaceLayout(
   state: DesktopWorkspaceState,
+  profileId: string,
   id: string,
 ): DesktopWorkspaceState {
   return {
     version: DESKTOP_WORKSPACE_VERSION,
-    selectedLayoutId:
-      state.selectedLayoutId === id ? null : state.selectedLayoutId,
-    layouts: state.layouts.filter((layout) => layout.id !== id),
+    selectedLayoutIds: {
+      ...state.selectedLayoutIds,
+      [profileId]: state.selectedLayoutIds[profileId] === id ? null : state.selectedLayoutIds[profileId] ?? null,
+    },
+    layouts: state.layouts.filter(
+      (layout) => layout.id !== id || layout.profileId !== profileId,
+    ),
+  }
+}
+
+export function selectDesktopWorkspaceLayout(
+  state: DesktopWorkspaceState,
+  profileId: string,
+  id: string | null,
+): DesktopWorkspaceState {
+  if (!isWorkspaceProfileId(profileId)) return state
+  const selected =
+    id &&
+    state.layouts.some(
+      (layout) => layout.profileId === profileId && layout.id === id,
+    )
+      ? id
+      : null
+  return {
+    ...state,
+    selectedLayoutIds: { ...state.selectedLayoutIds, [profileId]: selected },
+  }
+}
+
+export function removeDesktopWorkspaceProfile(
+  state: DesktopWorkspaceState,
+  profileId: string,
+): DesktopWorkspaceState {
+  if (!isWorkspaceProfileId(profileId)) return state
+  const selectedLayoutIds = { ...state.selectedLayoutIds }
+  delete selectedLayoutIds[profileId]
+  return {
+    version: DESKTOP_WORKSPACE_VERSION,
+    selectedLayoutIds,
+    layouts: state.layouts.filter((layout) => layout.profileId !== profileId),
   }
 }

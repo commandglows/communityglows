@@ -585,9 +585,17 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   }
   const desktopWorkspacesJson = snapshot.workspaceState?.desktopWorkspacesJson;
   if (desktopWorkspacesJson) {
-    desktopWorkspacesStore.replaceFromCloud(desktopWorkspacesJson, workspaceCatalog);
+    desktopWorkspacesStore.replaceFromCloud(
+      desktopWorkspacesJson,
+      workspaceCatalog,
+      profilesStore.activeProfileId,
+      new Set(profilesStore.profiles.map((profile) => profile.id)),
+    );
   } else {
-    desktopWorkspacesStore.initialize(workspaceCatalog);
+    desktopWorkspacesStore.initialize(
+      workspaceCatalog,
+      profilesStore.activeProfileId,
+    );
     desktopWorkspacesStore.syncToCloud();
   }
 }
@@ -653,7 +661,10 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
         allowSubdomains: false,
       });
     }
-    desktopWorkspacesStore.initialize(workspaceCatalog);
+    desktopWorkspacesStore.initialize(
+      workspaceCatalog,
+      profilesStore.activeProfileId,
+    );
     desktopWorkspacesStore.syncToCloud();
     await Promise.all([tasksStore.syncToCloud(), kanbanStore.syncToCloud()]);
   }

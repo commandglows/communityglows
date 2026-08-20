@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { resolveHiddenNetworkIds } from "@/config/socialNetworks"
 import { syncSettingsPatch } from "@/lib/cloudSettings"
+import { useDesktopWorkspacesStore } from "@/stores/desktopWorkspaces"
 import {
   enqueueProfileRemove,
   enqueueProfileUpsert,
@@ -144,6 +145,7 @@ export const useProfilesStore = defineStore("profiles", {
     remove(profileId: string) {
       const idx = this.profiles.findIndex((p) => p.id === profileId)
       if (idx === -1) return
+      useDesktopWorkspacesStore().removeProfile(profileId)
       this.profiles.splice(idx, 1)
       if (this.activeProfileId === profileId) {
         this.activeProfileId = this.profiles[0]?.id ?? ""

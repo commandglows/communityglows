@@ -161,9 +161,11 @@ describe("cloud sync queue", () => {
   });
 
   it("keeps only the latest desktop scene snapshot and flushes it", async () => {
-    enqueueDesktopWorkspacesSnapshot('{"version":1,"layouts":[]}');
     enqueueDesktopWorkspacesSnapshot(
-      '{"version":1,"selectedLayoutId":null,"layouts":[]}',
+      '{"version":2,"selectedLayoutIds":{},"layouts":[]}',
+    );
+    enqueueDesktopWorkspacesSnapshot(
+      '{"version":2,"selectedLayoutIds":{"profile-1":null},"layouts":[]}',
     );
 
     expect(readQueueFromStorage()).toHaveLength(1);
@@ -176,7 +178,7 @@ describe("cloud sync queue", () => {
       "workspaceState:setDesktopWorkspaces",
       expect.objectContaining({
         desktopWorkspacesJson:
-          '{"version":1,"selectedLayoutId":null,"layouts":[]}',
+          '{"version":2,"selectedLayoutIds":{"profile-1":null},"layouts":[]}',
       }),
     );
     expect(hasPendingCloudSync()).toBe(false);

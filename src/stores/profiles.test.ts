@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { createPinia, setActivePinia } from "pinia"
 
-const { syncProfile, syncActive } = vi.hoisted(() => ({
+const { syncProfile, syncActive, removeDesktopProfile } = vi.hoisted(() => ({
   syncProfile: vi.fn(),
   syncActive: vi.fn(),
+  removeDesktopProfile: vi.fn(),
 }))
 
 vi.mock("@/lib/cloudSyncQueue", () => ({
@@ -14,6 +15,10 @@ vi.mock("@/lib/cloudSyncQueue", () => ({
 
 vi.mock("@/lib/cloudSettings", () => ({
   syncSettingsPatch: syncActive,
+}))
+
+vi.mock("@/stores/desktopWorkspaces", () => ({
+  useDesktopWorkspacesStore: () => ({ removeProfile: removeDesktopProfile }),
 }))
 
 import { useProfilesStore } from "./profiles"
@@ -112,6 +117,18 @@ describe("profiles store atomic drafts", () => {
     expect(store.profiles).toHaveLength(0)
     expect(syncProfile).not.toHaveBeenCalled()
     expect(syncActive).not.toHaveBeenCalled()
+  })
+
+  it("removes the profile scenes before deleting the profile", () => {
+    const store = useProfilesStore()
+    const first = store.create({ name: "Travail" })
+    store.create({ name: "Personnel" })
+    vi.clearAllMocks()
+
+    store.remove(first.id)
+
+    expect(removeDesktopProfile).toHaveBeenCalledWith(first.id)
+    expect(store.profiles.some((profile) => profile.id === first.id)).toBe(false)
   })
 
   it("materializes the initial placeholder without creating a duplicate", () => {

@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import {
   DESKTOP_WORKSPACE_STATE_KEY,
+  LEGACY_DESKTOP_WORKSPACE_STATE_KEY,
+  DESKTOP_WORKSPACE_AUTOSAVE_KEY,
+  LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY,
+  clearDesktopWorkspaceAutosave,
   emptyDesktopWorkspaceState,
   loadDesktopWorkspaceState,
   MAX_DESKTOP_WORKSPACE_SYNC_CHARS,
   parseDesktopWorkspaceState,
   persistDesktopWorkspaceState,
+  removeDesktopWorkspaceProfile,
   type DesktopWorkspaceState,
   type WorkspaceNetworkCatalog,
   type WorkspacePersistenceResult,
@@ -42,14 +47,22 @@ export const useDesktopWorkspacesStore = defineStore('desktopWorkspaces', {
   }),
 
   actions: {
-    initialize(catalog: WorkspaceNetworkCatalog) {
+    initialize(catalog: WorkspaceNetworkCatalog, legacyProfileId = '') {
       if (this.initialized) return
-      this.workspaceState = loadDesktopWorkspaceState(localStorage, catalog)
+      this.workspaceState = loadDesktopWorkspaceState(
+        localStorage,
+        catalog,
+        legacyProfileId,
+      )
       this.initialized = true
     },
 
-    reloadFromLocal(catalog: WorkspaceNetworkCatalog) {
-      this.workspaceState = loadDesktopWorkspaceState(localStorage, catalog)
+    reloadFromLocal(catalog: WorkspaceNetworkCatalog, legacyProfileId = '') {
+      this.workspaceState = loadDesktopWorkspaceState(
+        localStorage,
+        catalog,
+        legacyProfileId,
+      )
       this.initialized = true
     },
 
@@ -74,14 +87,71 @@ export const useDesktopWorkspacesStore = defineStore('desktopWorkspaces', {
       }
     },
 
-    replaceFromCloud(serialized: string, catalog: WorkspaceNetworkCatalog) {
+    replaceFromCloud(
+      serialized: string,
+      catalog: WorkspaceNetworkCatalog,
+      legacyProfileId: string,
+      availableProfileIds?: ReadonlySet<string>,
+    ) {
       if (serialized.length > MAX_DESKTOP_WORKSPACE_SYNC_CHARS) return false
-      const state = parseDesktopWorkspaceState(serialized, catalog)
+      let version: unknown
+      try {
+        version = (JSON.parse(serialized) as { version?: unknown }).version
+      } catch {
+        return false
+      }
+      const parsed = parseDesktopWorkspaceState(
+        serialized,
+        catalog,
+        legacyProfileId,
+      )
+      let state =
+        version === 1 && this.initialized
+          ? {
+              ...parsed,
+              selectedLayoutIds: {
+                ...this.workspaceState.selectedLayoutIds,
+                ...parsed.selectedLayoutIds,
+              },
+              layouts: [
+                ...parsed.layouts,
+                ...this.workspaceState.layouts.filter(
+                  (layout) => layout.profileId !== legacyProfileId,
+                ),
+              ],
+            }
+          : parsed
+      let pruned = false
+      if (availableProfileIds) {
+        const removedProfileIds = new Set(
+          [
+            ...state.layouts.map((layout) => layout.profileId),
+            ...Object.keys(state.selectedLayoutIds),
+          ].filter((profileId) => !availableProfileIds.has(profileId)),
+        )
+        if (removedProfileIds.size > 0) {
+          pruned = true
+          for (const profileId of removedProfileIds) {
+            state = removeDesktopWorkspaceProfile(state, profileId)
+            clearDesktopWorkspaceAutosave(localStorage, profileId)
+          }
+        }
+      }
       const result = persistDesktopWorkspaceState(localStorage, state)
       if (!result.ok) return false
       this.workspaceState = state
       this.initialized = true
+      if (version === 1 || pruned) this.syncToCloud()
       return true
+    },
+
+    removeProfile(profileId: string) {
+      const state = removeDesktopWorkspaceProfile(
+        this.workspaceState,
+        profileId,
+      )
+      clearDesktopWorkspaceAutosave(localStorage, profileId)
+      return this.persist(state)
     },
 
     syncToCloud() {
@@ -97,9 +167,18 @@ export const useDesktopWorkspacesStore = defineStore('desktopWorkspaces', {
     },
 
     clearLocal() {
+      const autosavePrefix = `${DESKTOP_WORKSPACE_AUTOSAVE_KEY}:`
+      const autosaveKeys: string[] = []
+      for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index)
+        if (key?.startsWith(autosavePrefix)) autosaveKeys.push(key)
+      }
+      autosaveKeys.forEach((key) => localStorage.removeItem(key))
       this.workspaceState = emptyDesktopWorkspaceState()
       this.initialized = true
       localStorage.removeItem(DESKTOP_WORKSPACE_STATE_KEY)
+      localStorage.removeItem(LEGACY_DESKTOP_WORKSPACE_STATE_KEY)
+      localStorage.removeItem(LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY)
     },
   },
 })

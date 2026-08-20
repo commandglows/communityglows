@@ -15,6 +15,7 @@ describe('portable backup data', () => {
     expect(snapshot.communityglows_keyboard_shortcuts).toBe('[]')
     expect(snapshot['contextual-tasks-v1']).toBeNull()
     expect(snapshot['communityglows.desktop-workspaces.v1']).toBeNull()
+    expect(snapshot['communityglows.desktop-workspaces.v2']).toBeNull()
   })
 
   it('restores exact values and clears keys explicitly absent from the source device', () => {

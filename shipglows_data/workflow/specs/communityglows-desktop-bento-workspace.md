@@ -39,7 +39,7 @@ next_step: "Route Rust compilation and the Windows/Tauri visual checklist throug
 
 ## Outcome
 
-Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. L'utilisateur peut enregistrer, charger, renommer et supprimer des Scènes synchronisées, tandis que le bento courant reste un brouillon autosauvegardé localement.
+Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. Chaque profil possède ses propres Scènes synchronisées et son propre brouillon autosauvegardé localement.
 
 ## Scope
 
@@ -49,7 +49,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Persistance locale versionnée avec validation défensive et restauration sûre.
 - Layout courant autosauvegardé localement et Scènes nommées gérées depuis une barre d'outils compacte.
 - Modèles Colonnes, Lignes, Focus et Grille applicables aux panneaux déjà ouverts sans recréer leurs WebViews.
-- Scènes synchronisées par le canal d'état workspace existant, avec file hors ligne et limite de 500 000 caractères ; cookies et brouillon courant exclus.
+- Scènes synchronisées et cloisonnées par profil via le canal d'état workspace existant, avec file hors ligne et limite globale de 500 000 caractères ; cookies et brouillons courants exclus.
 
 ## Invariants
 
@@ -71,6 +71,8 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Fermer un panneau masque sa WebView et la conserve dans le pool existant.
 - Le layout courant survit au rechargement local.
 - Une Scène peut être créée, chargée, renommée, supprimée puis retrouvée sur un autre appareil connecté.
+- Changer de profil sauvegarde le brouillon sortant et restaure uniquement le brouillon et les Scènes du profil entrant.
+- Les anciennes Scènes globales et l'ancien autosave sont migrés une fois vers le profil actif final ; supprimer un profil purge ses Scènes et son brouillon.
 - Un layout invalide ou contenant un réseau inconnu est rejeté sans crash.
 - Un lien personnalisé supprimé ou appartenant à un autre profil ne peut pas être restauré; un domaine trompeur, des credentials intégrés ou un identifiant de chemin invalide sont rejetés.
 - Masquer ou réafficher une WebView pooled utilise la visibilité native et expose un diagnostic du pool sans modifier l'isolation de session existante.
@@ -98,6 +100,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 | 2026-08-20 | sg-development | GPT-5 | Added explicit layout budgets, semantic grid/panel reference validation, bounded storage reads/writes and honest UI warnings for unavailable, invalid or oversized persistence. Ran 13 focused tests, core typecheck, targeted lint and diff checks without build output; no changed-file Vue type errors remain. | partial | Route native proof outside this code-only workspace. |
 | 2026-08-20 | sg-development | GPT-5 | Added deterministic Columns, Rows, Focus and Grid presets that preserve all open panels and reuse their always-rendered WebViews. All 12 focused layout tests, core typecheck, targeted lint, design-token drift and diff checks passed without a build or generated artifact. | partial | Exercise preset switching with native Windows WebViews outside this code-only workspace. |
 | 2026-08-20 | sg-development | GPT-5 | Renamed saved bentos to Scenes and connected their bounded state to the existing offline-first workspace sync and encrypted backup path; live autosave and sessions remain local. All 28 focused sync/layout/backup tests, core typecheck, targeted lint, token drift and diff checks passed without a build or generated artifact. | partial | Verify the deployed Convex mutation and native scene switching outside this code-only workspace. |
+| 2026-08-20 | sg-development | GPT-5 | Scoped Scenes, selection and local drafts by profile; added v1 migration, profile-switch isolation, deletion cleanup and bounded v2 cloud acceptance. All 38 focused tests, core typecheck, targeted lint, token drift and diff checks passed without a build or generated artifact; the full Vue check has no errors in changed implementation files. | partial | Verify the deployed Convex mutation and native profile switching outside this code-only workspace. |
 
 ## Current Chantier Flow
 
