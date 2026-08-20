@@ -38,6 +38,9 @@ importers:
       convex:
         specifier: ^1.44.0
         version: 1.44.0
+      dockview-vue:
+        specifier: ^8.2.0
+        version: 8.2.0(vue@3.5.41)
       notivue:
         specifier: ^2.4.5
         version: 2.4.5
@@ -3932,6 +3935,25 @@ packages:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
     requiresBuild: true
+
+  /dockview-core@8.2.0:
+    resolution: {integrity: sha512-+L+xdvmO1b4in8rVkFtQM13IkPDKqDLoHJvq5HtAIsMxsPptSVveKeViYBqquaoHF+t0xb9f6692gTeKnjCKGw==}
+    dev: false
+
+  /dockview-vue@8.2.0(vue@3.5.41):
+    resolution: {integrity: sha512-Mr5lFrDJ4cD6IoDz7fPo7TE/lQ8h7ed2gP6Cb0Ii460nw1ES94iEx/HBIYO1HlM0vdU052/d5aCzlky4jauF1Q==}
+    peerDependencies:
+      vue: ^3.4.0
+    dependencies:
+      dockview: 8.2.0
+      vue: 3.5.41(typescript@6.0.3)
+    dev: false
+
+  /dockview@8.2.0:
+    resolution: {integrity: sha512-Jj+fnFWSrdEhF+1DmpGNYjEvyqf7J0FHkDqsD98wL4WOYB2CSKavDCL49B3LHIGYvWNN7Q1O1j4p7Pts38CM5A==}
+    dependencies:
+      dockview-core: 8.2.0
+    dev: false
 
   /dom-serializer@1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}

@@ -84,6 +84,10 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
 - `src/ui/setup/pages/CommunityGlows/main.ts`
 - `src/ui/setup/pages/CommunityGlows/App.vue`
   - GÃ¨re onboarding, thÃ¨mes, synchronisation cloud, nudge, Ã©vÃ©nements Tauri.
+- `src/ui/setup/pages/CommunityGlows/components/DesktopWorkspace.vue`
+  - Orchestre le bento Dockview desktop, les splits, le drag, le resize, le panneau actif et les layouts nommÃ©s.
+- `src/ui/setup/pages/CommunityGlows/components/NetworkWorkspacePanel.vue`
+  - Relie la visibilitÃ© d'un panneau Dockview Ã  la suspension/reprise de sa WebView native isolÃ©e.
 - `src/ui/setup/pages/CommunityGlows/router/index.ts`
   - Routes rÃ©seau + auth guard.
 - `src/ui/setup/pages/CommunityGlows/components/*`
@@ -114,6 +118,8 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
   - Wrapper Vue d'auth alignÃ© sur l'adaptateur officiel: signIn/signOut temps rÃ©el, refresh HTTP avec retry, token storage et confirmation de session avant hydratation.
 - `src/lib/communityGlowsDeepLinks.ts`
   - Parse les deeplinks applicatifs CommunityGlows, les ouvertures de rÃ©seau/profil et les liens partagÃ©s destinÃ©s Ã  crÃ©er une tÃ¢che.
+- `src/lib/desktopWorkspaceLayouts.ts`
+  - Valide et persiste l'autosave versionnÃ© et les layouts desktop nommÃ©s; rejette les panneaux inconnus et les URLs non HTTPS.
 - `src/lib/cloudSync*.ts`
   - Sync settings, queue de sync, feedback post-auth, diagnostics et dÃ©lais terminaux par lecture cloud; Ã©chec explicite si la session n'expose aucun utilisateur cloud.
 - `src/utils/disableCopyProtection.ts`
@@ -182,6 +188,7 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
 - `src-tauri/src/lib.rs` et plugin Android: changements de commandes natives.
 - `src/stores/webviewState.ts`: impact direct sur comportement rÃ©seau multi-webview.
 - `src/ui/setup/pages/CommunityGlows/components/NetworkWebviewHost.vue` et `composables/useNetworkWebview.ts`: orchestration webview principale.
+- `src/ui/setup/pages/CommunityGlows/components/DesktopWorkspace.vue`, `NetworkWorkspacePanel.vue` et `src/lib/desktopWorkspaceLayouts.ts`: docking multi-WebView et persistance locale du bento desktop.
 - `src/ui/setup/pages/CommunityGlows/components/ui/`, `directives/tooltip.ts` et `assets/main.css`: contrats clavier/focus, composants visibles et autoritÃ© de tokens Windows.
 - `site/src/components/ui/*`: shared marketing UI atoms now owned by the site surface for CTA/branding consistency.
 - `src/ui/setup/pages/CommunityGlows/main.ts`, `App.vue` et `src/utils/notifications.ts`: enregistrement de la directive et carrier global de notifications.

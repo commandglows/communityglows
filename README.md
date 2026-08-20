@@ -2,6 +2,8 @@
 
 Dashboard unifié pour gérer tous vos réseaux sociaux depuis une seule interface. Disponible en extension Chrome/Firefox, application desktop et application mobile.
 
+Sur desktop, le workspace Bento peut afficher plusieurs réseaux en même temps. Les panneaux se déplacent par glisser-déposer, se divisent horizontalement ou verticalement, se redimensionnent et peuvent être enregistrés sous plusieurs layouts locaux.
+
 ## Product Registry
 
 CommunityGlows is a declared product and should always be documented as such in this repo.
@@ -52,6 +54,7 @@ src/ui/setup/pages/CommunityGlows/    # App principale Windows/Tauri (Vue 3 + Re
 ├── router/                        # Vue Router (createWebHashHistory)
 ├── components/
 │   ├── networks/                  # Vues par réseau social
+│   ├── DesktopWorkspace.vue       # Bento desktop dockable et layouts enregistrés
 │   ├── kanban/                    # Tableau Kanban
 │   ├── feed/                      # Feed unifié
 │   └── ui/                        # Wrappers CommunityGlows accessibles et tokenisés

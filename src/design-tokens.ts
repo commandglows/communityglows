@@ -13,3 +13,8 @@ export const RESPONSIVE_BREAKPOINTS = {
   dialogSettingsWide: 960,
   dialogSettingsNarrow: 641,
 } as const
+
+export const DESKTOP_WORKSPACE_CONSTRAINTS = {
+  panelMinWidth: 240,
+  panelMinHeight: 180,
+} as const

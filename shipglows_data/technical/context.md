@@ -105,6 +105,8 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - `src/utils/notifications.ts` configure Notivue; `App.vue` monte `Notivue`/`Notification`, et les producteurs utilisent `push`.
 - `directives/tooltip.ts` possède les infobulles accessibles au focus et au pointeur, leur `aria-describedby`, leur fermeture par `Escape` et leur nettoyage.
 - La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun composant ni bootstrap PrimeVue. PrimeVue reste consommé par des surfaces extension historiques. PrimeIcons est encore importé par l'entrée Windows pour la compatibilité visuelle; PrimeFlex ne l'est plus. Aucun des deux ne porte l'autorité sémantique Windows.
+- Le workspace desktop multi-réseaux utilise Dockview via un wrapper CommunityGlows. Dockview possède le docking, les onglets, le drag, les splits, le resize, le clavier et la sérialisation; les wrappers et tokens CommunityGlows possèdent le rendu, la validation des panneaux et la persistance locale.
+- Chaque panneau réseau visible possède son `NetworkWebviewHost` et réutilise l'isolation native desktop `${profileId}-${networkId}`. Un onglet masqué ou un drag de docking suspend la WebView correspondante pour garder les overlays et zones de dépôt Vue accessibles.
 
 #### Android deeplinks (mobile/desktop Tauri)
 
@@ -124,10 +126,12 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 2. `AuthGuard` protège les vues réseau.
 3. Vue réseau utilise `webviewStore` et store profils pour ouvrir le bon WebView.
 4. Sur desktop/mobile, le front appelle des commandes natives Tauri via IPC.
+5. Sur desktop, `DesktopWorkspace.vue` ouvre ou active un panneau par réseau; plusieurs groupes Dockview peuvent rester visibles simultanément, tandis que le réseau du panneau actif reste synchronisé vers les sidebars et raccourcis existants.
 
 ### 3) Sync et persistance
 
 - État local : Pinia + localStorage via stores.
+- Layouts desktop : `src/lib/desktopWorkspaceLayouts.ts` valide et persiste un autosave versionné ainsi que douze layouts nommés au maximum. Une donnée inconnue, non HTTPS ou corrompue est ignorée sans bloquer le démarrage. Cette première tranche n'effectue aucune synchronisation cloud de layout.
 - Tâches contextuelles : `src/stores/contextualTasks.ts` et `src/services/contextualTasksService.ts`, stockage local versionné `contextual-tasks-v1`, sans sync Convex en V1.
 - Sync cloud : `src/lib/cloudSyncQueue.ts`, `src/lib/cloudSettings.ts`, `src/lib/cloudSync.ts`.
 - Backend : tables Convex (`users`, `socialAccounts`, `activeAccounts`, `settings`, `profiles`, `customLinks`, `friendsFilters`, `entitlements`, `redemptionCodes`, `billingEvents`, `subscriptions`). Les tables `entitlements`/`redemptionCodes`/`billingEvents` sont des surfaces de compatibilité locale en transition pendant la migration vers le ledger canonique de suite.
@@ -156,6 +160,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - Tauri est retenu pour la couche desktop/mobile pour partager la même base JS tout en gardant contrôle WebView natif.
 - L'application CommunityGlows reste dans `src/ui/setup/pages/CommunityGlows` avec réutilisation contrôlée des modules partagés de `src/`.
 - Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens CommunityGlows pour l'autorité visuelle. Les composants PrimeVue et PrimeFlex sont limités aux anciennes surfaces extension; PrimeIcons reste la seule dépendance visuelle Prime active dans l'entrée Windows.
+- Dockview est la primitive maintenue spécifique au workspace desktop; les groupes flottants sont désactivés pour conserver les WebViews enfants dans la fenêtre Tauri principale.
 - La stratégie auth-connexion privilégie Convex Auth avec fallback offline.
 
 ## Hotspots
@@ -164,6 +169,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - `src/ui/setup/pages/CommunityGlows/components/ui/` et `assets/main.css` : contrats de composants, accessibilité et autorité visuelle Windows.
 - `src/ui/setup/pages/CommunityGlows/directives/tooltip.ts` et `src/utils/notifications.ts` : comportements d'infobulle et de notification.
 - `src/stores/webviewState.ts` : state réseau actif, ouverture/fermeture et profils.
+- `src/ui/setup/pages/CommunityGlows/components/DesktopWorkspace.vue` et `src/lib/desktopWorkspaceLayouts.ts` : docking multi-réseaux, autosave et layouts nommés locaux.
 - `src/lib/cloudSync.ts` : sync de settings et données entre local et Convex.
 - `src-tauri/src/lib.rs` : commandes natives critiques (webview, session, commande Android).
 - `convex/socialAccounts.ts`, `convex/settings.ts`, `convex/profiles.ts` : tables cœur métier.

@@ -13,7 +13,7 @@ import {
   authBootstrapError,
   initializeSessionLock,
   markAuthBootstrapError,
-  setupConvexAuth
+  setupConvexAuth,
 } from '@/lib/convexAuth'
 import {
   parseCommunityGlowsDeepLink,
@@ -24,6 +24,7 @@ import { startCloudSyncQueue } from '@/lib/cloudSyncQueue'
 import '@/assets/base.css'
 import './assets/main.css'
 import './assets/generated/tokens.css'
+import 'dockview-vue/dist/styles/dockview.css'
 
 function renderAuthBootstrapError(message: string) {
   const root = document.getElementById('app')
@@ -37,13 +38,20 @@ function renderAuthBootstrapError(message: string) {
   const retryButton = document.createElement('button')
   const loginButton = document.createElement('button')
 
-  main.style.cssText = 'font-family:var(--sg-font-family);min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-color-background);color:var(--sg-color-text);'
-  panel.style.cssText = 'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-surface-raised);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-lg);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-modal);'
-  title.style.cssText = 'margin: var(--sg-space-0-0-8px);font-size: var(--sg-font-size-20px);'
-  description.style.cssText = 'margin: var(--sg-space-0-0-16px);line-height: var(--sg-line-height-1d45);'
-  actions.style.cssText = 'display:flex;gap: var(--sg-space-12px);flex-wrap:wrap;'
-  retryButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-sm);background:var(--sg-color-action);color:var(--sg-color-text-on-action);cursor:pointer;'
-  loginButton.style.cssText = 'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-sm);background:var(--sg-color-surface-raised);color:var(--sg-color-text);cursor:pointer;'
+  main.style.cssText =
+    'font-family:var(--sg-font-family);min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-color-background);color:var(--sg-color-text);'
+  panel.style.cssText =
+    'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-surface-raised);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-lg);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-modal);'
+  title.style.cssText =
+    'margin: var(--sg-space-0-0-8px);font-size: var(--sg-font-size-20px);'
+  description.style.cssText =
+    'margin: var(--sg-space-0-0-16px);line-height: var(--sg-line-height-1d45);'
+  actions.style.cssText =
+    'display:flex;gap: var(--sg-space-12px);flex-wrap:wrap;'
+  retryButton.style.cssText =
+    'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-sm);background:var(--sg-color-action);color:var(--sg-color-text-on-action);cursor:pointer;'
+  loginButton.style.cssText =
+    'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-sm);background:var(--sg-color-surface-raised);color:var(--sg-color-text);cursor:pointer;'
 
   title.textContent = 'Connexion indisponible'
   description.textContent = message
@@ -76,12 +84,18 @@ type AndroidOAuthPendingRequest = {
 declare global {
   interface Window {
     Sentry?: {
-      captureMessage?: (message: string, context?: Record<string, unknown>) => void
+      captureMessage?: (
+        message: string,
+        context?: Record<string, unknown>,
+      ) => void
     }
   }
 }
 
-const pendingAndroidOAuthRequests = new Map<string, AndroidOAuthPendingRequest>()
+const pendingAndroidOAuthRequests = new Map<
+  string,
+  AndroidOAuthPendingRequest
+>()
 
 function reportAndroidOAuthRejection(reason: string) {
   window.Sentry?.captureMessage?.('android_oauth_callback_rejected', {
@@ -93,8 +107,15 @@ function reportAndroidOAuthRejection(reason: string) {
   })
 }
 
-function registerPendingAndroidOAuthRequest(request: AndroidOAuthPendingRequest) {
-  if (!request.state || !Number.isFinite(request.startedAtMs) || request.startedAtMs <= 0) return
+function registerPendingAndroidOAuthRequest(
+  request: AndroidOAuthPendingRequest,
+) {
+  if (
+    !request.state ||
+    !Number.isFinite(request.startedAtMs) ||
+    request.startedAtMs <= 0
+  )
+    return
   pendingAndroidOAuthRequests.set(request.state, {
     state: request.state,
     nonce: request.nonce ?? null,
@@ -104,17 +125,24 @@ function registerPendingAndroidOAuthRequest(request: AndroidOAuthPendingRequest)
 }
 
 function setupAndroidOAuthPendingRegistration() {
-  window.addEventListener('communityglows:android-oauth-request-started', (event) => {
-    if (!(event instanceof CustomEvent)) return
-    const detail = event.detail as Partial<AndroidOAuthPendingRequest> | null
-    if (!detail || typeof detail.state !== 'string') return
-    registerPendingAndroidOAuthRequest({
-      state: detail.state,
-      nonce: typeof detail.nonce === 'string' ? detail.nonce : null,
-      startedAtMs: typeof detail.startedAtMs === 'number' ? detail.startedAtMs : Date.now(),
-      networkId: typeof detail.networkId === 'string' ? detail.networkId : undefined,
-    })
-  })
+  window.addEventListener(
+    'communityglows:android-oauth-request-started',
+    (event) => {
+      if (!(event instanceof CustomEvent)) return
+      const detail = event.detail as Partial<AndroidOAuthPendingRequest> | null
+      if (!detail || typeof detail.state !== 'string') return
+      registerPendingAndroidOAuthRequest({
+        state: detail.state,
+        nonce: typeof detail.nonce === 'string' ? detail.nonce : null,
+        startedAtMs:
+          typeof detail.startedAtMs === 'number'
+            ? detail.startedAtMs
+            : Date.now(),
+        networkId:
+          typeof detail.networkId === 'string' ? detail.networkId : undefined,
+      })
+    },
+  )
 }
 
 async function validateAndroidOAuthDeepLink(rawUrl: string) {
@@ -126,7 +154,8 @@ async function validateAndroidOAuthDeepLink(rawUrl: string) {
   }
 
   const callbackPath = parsed.pathname
-  const isKnownCallbackPath = callbackPath === '/oauth' || callbackPath === '/auth/callback'
+  const isKnownCallbackPath =
+    callbackPath === '/oauth' || callbackPath === '/auth/callback'
   if (!isKnownCallbackPath) return
 
   const callbackState = parsed.searchParams.get('state')
@@ -138,7 +167,9 @@ async function validateAndroidOAuthDeepLink(rawUrl: string) {
   const pendingRequest = pendingAndroidOAuthRequests.get(callbackState)
   if (!pendingRequest) {
     reportAndroidOAuthRejection('missing-pending-request')
-    console.warn('[Security] Android OAuth callback rejected: no pending request for state.')
+    console.warn(
+      '[Security] Android OAuth callback rejected: no pending request for state.',
+    )
     return
   }
 
@@ -150,23 +181,34 @@ async function validateAndroidOAuthDeepLink(rawUrl: string) {
       startedAtMs: pendingRequest.startedAtMs,
     })
     pendingAndroidOAuthRequests.delete(callbackState)
-    window.dispatchEvent(new CustomEvent('communityglows:android-oauth-callback-validated', { detail: rawUrl }))
+    window.dispatchEvent(
+      new CustomEvent('communityglows:android-oauth-callback-validated', {
+        detail: rawUrl,
+      }),
+    )
   } catch (error) {
-    reportAndroidOAuthRejection(error instanceof Error ? error.message : 'native-validator-rejected')
-    console.warn('[Security] Android OAuth callback rejected by native validator.', error)
+    reportAndroidOAuthRejection(
+      error instanceof Error ? error.message : 'native-validator-rejected',
+    )
+    console.warn(
+      '[Security] Android OAuth callback rejected by native validator.',
+      error,
+    )
   }
 }
 
 async function processAndroidDeepLinks(payload: DeepLinkPayload) {
   if (!Array.isArray(payload) || payload.length === 0) return
-  await Promise.all(payload.map(async (url) => {
-    const appDeepLinkAction = parseCommunityGlowsDeepLink(url)
-    if (appDeepLinkAction) {
-      queueCommunityGlowsDeepLinkAction(appDeepLinkAction)
-      return
-    }
-    await validateAndroidOAuthDeepLink(url)
-  }))
+  await Promise.all(
+    payload.map(async (url) => {
+      const appDeepLinkAction = parseCommunityGlowsDeepLink(url)
+      if (appDeepLinkAction) {
+        queueCommunityGlowsDeepLinkAction(appDeepLinkAction)
+        return
+      }
+      await validateAndroidOAuthDeepLink(url)
+    }),
+  )
 }
 
 async function setupAndroidOAuthDeepLinkValidation() {
@@ -180,16 +222,22 @@ async function setupAndroidOAuthDeepLinkValidation() {
   }
 
   try {
-    const current = await invoke<DeepLinkPayload>('plugin:deep-link|get_current')
+    const current = await invoke<DeepLinkPayload>(
+      'plugin:deep-link|get_current',
+    )
     await processAndroidDeepLinks(current)
   } catch {
     // Deep-link plugin command unavailable on non-mobile or when capability is not enabled.
   }
 
   if (unlisten) {
-    window.addEventListener('beforeunload', () => {
-      unlisten?.()
-    }, { once: true })
+    window.addEventListener(
+      'beforeunload',
+      () => {
+        unlisten?.()
+      },
+      { once: true },
+    )
   }
 }
 
@@ -208,7 +256,7 @@ async function bootstrap() {
     } catch (error) {
       const reason = error instanceof Error ? error.message : 'Erreur inconnue'
       markAuthBootstrapError(
-        `Impossible d'initialiser l'authentification (${reason}). Vérifiez la connexion réseau puis réessayez.`
+        `Impossible d'initialiser l'authentification (${reason}). Vérifiez la connexion réseau puis réessayez.`,
       )
     }
   }

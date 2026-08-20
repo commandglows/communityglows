@@ -33,8 +33,7 @@
               <div class="desktop-main">
                 <DesktopControlBar
                   v-if="
-                    showDesktopControlBar &&
-                      controlBarStore.position === 'top'
+                    showDesktopControlBar && controlBarStore.position === 'top'
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
@@ -64,15 +63,16 @@
                   />
                 </DesktopControlBar>
                 <div class="desktop-main__content">
-                  <!-- Native Tauri webview host: shown when a webview-capable network is active -->
-                  <NetworkWebviewHost
-                    v-if="webviewStore.activeUrl"
+                  <!-- Dockable desktop workspace: each panel owns one isolated native WebView. -->
+                  <DesktopWorkspace
+                    v-if="showDesktopWorkspace"
                     :suspended="
                       settingsVisible ||
                         profileManagerVisible ||
                         profileAvatarVisible ||
                         webviewOverlayActive > 0
                     "
+                    @content-change="workspaceHasContent = $event"
                   />
                   <!-- Router-view for tasks, login, and other non-webview pages -->
                   <router-view v-else />
@@ -151,6 +151,7 @@ import { useMediaQuery } from "@/composables/useMediaQuery"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import { useThemeStore } from "@/stores/theme"
 import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
+import { DESKTOP_WORKSPACE_AUTOSAVE_KEY } from "@/lib/desktopWorkspaceLayouts"
 import { useProfilesStore } from "@/stores/profiles"
 import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
 import { isAuthenticated } from "@/lib/convexAuth"
@@ -184,10 +185,7 @@ import {
   persistUiScaleLevel,
   readUiScaleLevel,
 } from "./utils/uiScale"
-import {
-  persistIconScaleLevel,
-  readIconScaleLevel,
-} from "./utils/iconScale"
+import { persistIconScaleLevel, readIconScaleLevel } from "./utils/iconScale"
 import { useSignupNudge } from "@/composables/useSignupNudge"
 import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
 import AppSidebar from "./components/AppSidebar.vue"
@@ -195,7 +193,7 @@ import AppRightSidebar from "./components/AppRightSidebar.vue"
 import DesktopControlBar from "./components/DesktopControlBar.vue"
 import DesktopQuickNavigation from "./components/DesktopQuickNavigation.vue"
 import ProfileSwitcher from "./components/ProfileSwitcher.vue"
-import NetworkWebviewHost from "./components/NetworkWebviewHost.vue"
+import DesktopWorkspace from "./components/DesktopWorkspace.vue"
 import MobileLayout from "./components/MobileLayout.vue"
 import MobileSettingsSheet from "./components/MobileSettingsSheet.vue"
 import PostAuthSyncOverlay from "./components/PostAuthSyncOverlay.vue"
@@ -213,6 +211,9 @@ const settingsVisible = ref(false)
 const profileManagerVisible = ref(false)
 const profileAvatarVisible = ref(false)
 const webviewOverlayActive = ref(0)
+const workspaceHasContent = ref(
+  localStorage.getItem(DESKTOP_WORKSPACE_AUTOSAVE_KEY) !== null,
+)
 
 // Signup nudge (desktop only — mobile has its own in MobileLayout)
 const nudge = useSignupNudge()
@@ -233,6 +234,9 @@ const showDesktopControlBar = computed(
 )
 const bothSidebarsHidden = computed(
   () => !sidebarVisible.value && !rightSidebarVisible.value,
+)
+const showDesktopWorkspace = computed(
+  () => Boolean(webviewStore.activeUrl) || workspaceHasContent.value,
 )
 
 function openProfileAvatarFromSettings() {
@@ -399,9 +403,11 @@ function updateUiScale(level: number) {
   const nextLevel = persistUiScaleLevel(level)
   uiScaleLevel.value = nextLevel
   void syncSettingsPatch({ uiScale: nextLevel })
-  window.dispatchEvent(new CustomEvent("communityglows-ui-scale-changed", {
-    detail: { level: nextLevel },
-  }))
+  window.dispatchEvent(
+    new CustomEvent("communityglows-ui-scale-changed", {
+      detail: { level: nextLevel },
+    }),
+  )
 }
 
 function updateNetworkTextZoom(level: number) {
@@ -416,9 +422,11 @@ function updateIconScale(level: number) {
   const nextLevel = persistIconScaleLevel(level)
   iconScaleLevel.value = nextLevel
   void syncSettingsPatch({ iconScale: nextLevel })
-  window.dispatchEvent(new CustomEvent("communityglows-icon-scale-changed", {
-    detail: { level: nextLevel },
-  }))
+  window.dispatchEvent(
+    new CustomEvent("communityglows-icon-scale-changed", {
+      detail: { level: nextLevel },
+    }),
+  )
 }
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
@@ -448,8 +456,10 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (shortcut.action === "increase-network-text-size") {
     updateNetworkTextZoom(textZoomLevel.value + 5)
   }
-  if (shortcut.action === "decrease-icon-size") updateIconScale(iconScaleLevel.value - 5)
-  if (shortcut.action === "increase-icon-size") updateIconScale(iconScaleLevel.value + 5)
+  if (shortcut.action === "decrease-icon-size")
+    updateIconScale(iconScaleLevel.value - 5)
+  if (shortcut.action === "increase-icon-size")
+    updateIconScale(iconScaleLevel.value + 5)
   if (shortcut.action === "open-network" && shortcut.target) {
     webviewStore.selectNetwork(shortcut.target)
   }
@@ -473,11 +483,7 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
 }
 
 type RightPanelSection =
-  | "feed"
-  | "profile"
-  | "notifications"
-  | "saved"
-  | "events"
+  "feed" | "profile" | "notifications" | "saved" | "events"
 type RightPanelSectionMap = Record<
   string,
   Partial<Record<RightPanelSection, string>>
@@ -1063,7 +1069,10 @@ onMounted(async () => {
     onNativeTextZoomChanged,
   )
   window.addEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
-  window.addEventListener("communityglows-icon-scale-changed", onIconScaleChanged)
+  window.addEventListener(
+    "communityglows-icon-scale-changed",
+    onIconScaleChanged,
+  )
   window.addEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,
@@ -1112,8 +1121,14 @@ onUnmounted(() => {
     "communityglows-text-zoom-changed",
     onNativeTextZoomChanged,
   )
-  window.removeEventListener("communityglows-ui-scale-changed", onUiScaleChanged)
-  window.removeEventListener("communityglows-icon-scale-changed", onIconScaleChanged)
+  window.removeEventListener(
+    "communityglows-ui-scale-changed",
+    onUiScaleChanged,
+  )
+  window.removeEventListener(
+    "communityglows-icon-scale-changed",
+    onIconScaleChanged,
+  )
   window.removeEventListener(
     "communityglows-tap-sound-changed",
     onNativeTapSoundChanged,
