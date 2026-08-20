@@ -1,7 +1,7 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.7.0"
+artifact_version: "1.8.0"
 project: "communityglows"
 created: "2026-04-26"
 updated: "2026-08-20"
@@ -133,7 +133,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 ### 3) Sync et persistance
 
 - État local : Pinia + localStorage via stores.
-- Layouts desktop : `src/lib/desktopWorkspaceLayouts.ts` valide et persiste un autosave versionné ainsi que douze layouts nommés au maximum. Une restauration exécutable n'accepte que les réseaux intégrés sur leur domaine canonique (ou ses sous-domaines autorisés) et les liens personnalisés UUID présents dans le profil actif avec leur URL exacte; les URL avec identifiants intégrés, non HTTPS, inconnues ou corrompues sont ignorées sans bloquer le démarrage. Un layout nommé contenant un lien personnalisé structurellement valide peut rester stocké pendant l'hydratation du catalogue, mais ne peut pas être exécuté avant sa résolution. Cette première tranche n'effectue aucune synchronisation cloud de layout.
+- Layouts desktop : `src/lib/desktopWorkspaceLayouts.ts` valide et persiste un autosave versionné ainsi que douze layouts nommés au maximum. Une restauration exécutable n'accepte que les réseaux intégrés sur leur domaine canonique (ou ses sous-domaines autorisés) et les liens personnalisés UUID présents dans le profil actif avec leur URL exacte; les URL avec identifiants intégrés, non HTTPS, inconnues ou corrompues sont ignorées sans bloquer le démarrage. Chaque layout est borné à 24 panneaux, 64 niveaux et 4 096 nœuds JSON; l'autosave est limité à 500 000 caractères sérialisés et l'état des layouts nommés à 2 000 000. Les références de groupes/panneaux doivent être complètes et uniques, tandis que les groupes flottants ou popout restent refusés. Un stockage indisponible, saturé ou excessif produit un résultat contrôlé et un avertissement utilisateur au lieu d'une exception UI. Un layout nommé contenant un lien personnalisé structurellement valide peut rester stocké pendant l'hydratation du catalogue, mais ne peut pas être exécuté avant sa résolution. Cette première tranche n'effectue aucune synchronisation cloud de layout.
 - Tâches contextuelles : `src/stores/contextualTasks.ts` et `src/services/contextualTasksService.ts`, stockage local versionné `contextual-tasks-v1`, sans sync Convex en V1.
 - Sync cloud : `src/lib/cloudSyncQueue.ts`, `src/lib/cloudSettings.ts`, `src/lib/cloudSync.ts`.
 - Backend : tables Convex (`users`, `socialAccounts`, `activeAccounts`, `settings`, `profiles`, `customLinks`, `friendsFilters`, `entitlements`, `redemptionCodes`, `billingEvents`, `subscriptions`). Les tables `entitlements`/`redemptionCodes`/`billingEvents` sont des surfaces de compatibilité locale en transition pendant la migration vers le ledger canonique de suite.

@@ -6,7 +6,7 @@ project: "communityglows"
 created: "2026-08-20"
 created_at: "2026-08-20 00:00:00 UTC"
 updated: "2026-08-20"
-updated_at: "2026-08-20 07:51:53 UTC"
+updated_at: "2026-08-20 08:18:04 UTC"
 status: ready
 source_skill: sg-development
 source_model: "GPT-5"
@@ -32,7 +32,7 @@ evidence:
   - "L'utilisateur a demandé explicitement des splits horizontaux et verticaux, du drag, du resize et des layouts enregistrables."
   - "Le desktop Tauri possède déjà un pool de WebViews isolées par profil et réseau."
   - "Dockview 8 fournit les panneaux Vue 3, le drag-and-drop, les splits, le resize et la sérialisation."
-next_step: "Run the Windows/Tauri visual drag, split, resize and restore checklist when a callable desktop runtime is available."
+next_step: "Route Rust compilation and the Windows/Tauri visual checklist through CI or a dedicated Windows host without generating build artifacts in the code-only workspace."
 ---
 
 # CommunityGlows Desktop Bento Workspace
@@ -58,6 +58,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Les overlays CommunityGlows masquent toutes les WebViews visibles avant de se placer au-dessus.
 - Les changements de taille sont dédupliqués et coalescés par frame, sans plus d'une commande native en vol par panneau.
 - Une session de drag se termine aussi sur annulation, `Escape`, perte de focus, document masqué ou watchdog.
+- Les données de layout restent bornées en taille, profondeur, nombre de nœuds et nombre de panneaux avant toute restauration ou persistance.
 - Android conserve son expérience mono-réseau actuelle.
 - Les valeurs visuelles sont consommées depuis les tokens du design system.
 
@@ -71,16 +72,16 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Un layout invalide ou contenant un réseau inconnu est rejeté sans crash.
 - Un lien personnalisé supprimé ou appartenant à un autre profil ne peut pas être restauré; un domaine trompeur, des credentials intégrés ou un identifiant de chemin invalide sont rejetés.
 - Masquer ou réafficher une WebView pooled utilise la visibilité native et expose un diagnostic du pool sans modifier l'isolation de session existante.
+- Un autosave incohérent, excessif ou impossible à écrire est refusé sans exception; une action explicite d'enregistrement ou de suppression reçoit un avertissement honnête si elle ne peut pas être conservée.
 - Les raccourcis de docking au clavier restent activés et annoncés par le moteur maintenu.
-- Tests ciblés, typecheck, build Tauri frontend, tests existants et contrôle de dérive passent.
+- Les contrôles locaux restent code-only et sans sortie persistante; la compilation, le bundle et la preuve Windows sont déportés vers la CI ou un hôte dédié.
 
 ## Proof Plan
 
 - Tests unitaires du parseur, du stockage versionné et des opérations de layouts nommés.
 - Test du calcul des bounds et des transitions WebView existantes.
-- `pnpm test:once`, `pnpm typecheck:full`, `pnpm tauri:build`, `cargo check` quand le système le permet.
-- Contrôle ShipGlows de dérive des tokens sur les fichiers UI modifiés.
-- Inspection du bundle et preuve visuelle locale si le runtime est callable.
+- Tests ciblés Vitest, typecheck cœur, lint ciblé et contrôle statique du diff sans build local.
+- Compilation Rust, bundle Tauri et checklist visuelle sur la CI ou un hôte Windows dédié.
 
 ## Skill Run History
 
@@ -91,6 +92,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 | 2026-08-20 | sg-development | GPT-5 | Ran 170 tests, core typecheck, Tauri frontend build, targeted lint, dependency audit and design drift scan. Browser and Cargo probes were unavailable in this host.                                                                                                                                                       | partial     | Complete Windows visual proof before closing.                         |
 | 2026-08-20 | sg-development | GPT-5 | Started the approved hardening pass for resize pressure, native visibility, drag recovery and restored-layout trust boundaries.                                                                                                                                                                                           | in progress | Implement and run focused regression proof.                           |
 | 2026-08-20 | sg-development | GPT-5 | Hardened resize scheduling, drag recovery, native visibility/preload, pool diagnostics and frontend/Rust trust boundaries. Ran 174 tests, 11 focused tests, core typecheck, targeted lint, token drift check and Tauri frontend build; full Vue typecheck retains 129 unrelated baseline errors and Cargo is unavailable. | partial     | Compile and exercise the native Windows/Tauri runtime before closing. |
+| 2026-08-20 | sg-development | GPT-5 | Added explicit layout budgets, semantic grid/panel reference validation, bounded storage reads/writes and honest UI warnings for unavailable, invalid or oversized persistence. Ran 13 focused tests, core typecheck, targeted lint and diff checks without build output; no changed-file Vue type errors remain. | partial | Route native proof outside this code-only workspace. |
 
 ## Current Chantier Flow
 
