@@ -105,6 +105,8 @@ import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
 import {
   clearDesktopWorkspaceAutosave,
   deleteDesktopWorkspaceLayout,
+  isNetworkWorkspacePanelParams,
+  isSafeDesktopWorkspaceLayout,
   loadDesktopWorkspaceAutosave,
   loadDesktopWorkspaceState,
   persistDesktopWorkspaceAutosave,
@@ -112,6 +114,8 @@ import {
   saveDesktopWorkspaceLayout,
   type NetworkWorkspacePanelParams,
 } from '@/lib/desktopWorkspaceLayouts'
+import { useCustomLinksStore } from '@/stores/customLinks'
+import { useProfilesStore } from '@/stores/profiles'
 import { useThemeStore } from '@/stores/theme'
 import { useWebviewStore } from '@/stores/webviewState'
 import SgButton from './ui/SgButton.vue'
@@ -135,21 +139,37 @@ const emit = defineEmits<{
 
 const themeStore = useThemeStore()
 const webviewStore = useWebviewStore()
-const knownNetworkIds = new Set(
-  builtInSocialNetworks.map((network) => network.id),
-)
+const profilesStore = useProfilesStore()
+const customLinksStore = useCustomLinksStore()
 const networkById = new Map(
   builtInSocialNetworks.map((network) => [network.id, network]),
 )
+const workspaceNetworkCatalog = computed(() => {
+  const catalog = new Map(
+    builtInSocialNetworks.map((network) => [
+      network.id,
+      { canonicalUrl: network.url, allowSubdomains: true },
+    ]),
+  )
+  for (const link of customLinksStore.getLinks(profilesStore.activeProfileId)) {
+    catalog.set(link.id, {
+      canonicalUrl: link.url,
+      allowSubdomains: false,
+    })
+  }
+  return catalog
+})
 const dockviewApi = shallowRef<DockviewApi | null>(null)
 const workspaceState = ref(
-  loadDesktopWorkspaceState(localStorage, knownNetworkIds),
+  loadDesktopWorkspaceState(localStorage, workspaceNetworkCatalog.value),
 )
 const layoutName = ref('')
 const dockDragActive = ref(false)
 const disposables: Array<{ dispose: () => void }> = []
 let autosaveTimer: number | undefined
+let dockDragWatchdog: number | undefined
 let restoringLayout = false
+const DOCK_DRAG_WATCHDOG_MS = 15_000
 
 const workspaceSuspended = computed(
   () => props.suspended || dockDragActive.value,
@@ -198,14 +218,32 @@ function scheduleAutosave() {
 
 function endDockDrag() {
   dockDragActive.value = false
+  window.clearTimeout(dockDragWatchdog)
+  dockDragWatchdog = undefined
   window.removeEventListener('dragend', endDockDrag, true)
   window.removeEventListener('drop', endDockDrag, true)
   window.removeEventListener('pointerup', endDockDrag, true)
   window.removeEventListener('pointercancel', endDockDrag, true)
+  window.removeEventListener('blur', endDockDrag, true)
+  window.removeEventListener('keydown', endDockDragOnEscape, true)
+  document.removeEventListener('visibilitychange', endDockDragWhenHidden, true)
+}
+
+function endDockDragOnEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') endDockDrag()
+}
+
+function endDockDragWhenHidden() {
+  if (document.hidden) endDockDrag()
 }
 
 function beginDockDrag(event: TabDragEvent | GroupDragEvent) {
+  endDockDrag()
   dockDragActive.value = true
+  window.addEventListener('blur', endDockDrag, { capture: true, once: true })
+  window.addEventListener('keydown', endDockDragOnEscape, true)
+  document.addEventListener('visibilitychange', endDockDragWhenHidden, true)
+  dockDragWatchdog = window.setTimeout(endDockDrag, DOCK_DRAG_WATCHDOG_MS)
   if ('dataTransfer' in event.nativeEvent) {
     window.addEventListener('dragend', endDockDrag, {
       capture: true,
@@ -243,6 +281,13 @@ function syncActiveNetworkFromDockview() {
 function ensureNetworkPanel(networkId: string, url: string) {
   const api = dockviewApi.value
   if (!api) return
+  const params = { networkId, url }
+  if (!isNetworkWorkspacePanelParams(params, workspaceNetworkCatalog.value)) {
+    console.warn(
+      '[CommunityGlows] Ignoring an untrusted desktop workspace target.',
+    )
+    return
+  }
   const id = panelId(networkId)
   const existing = api.getPanel(id)
   if (existing) {
@@ -258,7 +303,7 @@ function ensureNetworkPanel(networkId: string, url: string) {
     component: 'network',
     title: network?.label ?? 'Lien personnalisé',
     renderer: 'always',
-    params: { networkId, url },
+    params,
     minimumWidth: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinWidth,
     minimumHeight: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinHeight,
     ...(referencePanel ? { position: { referencePanel, direction } } : {}),
@@ -267,7 +312,11 @@ function ensureNetworkPanel(networkId: string, url: string) {
 
 function restoreLayout(layout: SerializedDockview): boolean {
   const api = dockviewApi.value
-  if (!api) return false
+  if (
+    !api ||
+    !isSafeDesktopWorkspaceLayout(layout, workspaceNetworkCatalog.value)
+  )
+    return false
   restoringLayout = true
   try {
     api.fromJSON(layout)
@@ -298,7 +347,10 @@ function onDockviewReady(event: DockviewReadyEvent) {
     event.api.onDidDrop(endDockDrag),
   )
 
-  const autosave = loadDesktopWorkspaceAutosave(localStorage, knownNetworkIds)
+  const autosave = loadDesktopWorkspaceAutosave(
+    localStorage,
+    workspaceNetworkCatalog.value,
+  )
   if (autosave) restoreLayout(autosave)
 
   const selected = workspaceState.value.layouts.find(
@@ -383,6 +435,17 @@ watch(
     if (networkId && url) ensureNetworkPanel(networkId, url)
   },
 )
+
+watch(workspaceNetworkCatalog, (catalog) => {
+  const api = dockviewApi.value
+  if (!api) return
+  for (const panel of [...api.panels]) {
+    const params = panel.api.getParameters<Record<string, unknown>>()
+    if (!isNetworkWorkspacePanelParams(params, catalog)) {
+      panel.api.close()
+    }
+  }
+})
 
 onUnmounted(() => {
   endDockDrag()

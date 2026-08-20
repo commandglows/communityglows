@@ -249,6 +249,14 @@ struct DesktopWebviewPoolEntry {
     last_used: Instant,
 }
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct DesktopWebviewPoolStats {
+    total: usize,
+    visible: usize,
+    hidden: usize,
+}
+
 #[cfg(not(target_os = "android"))]
 fn mark_desktop_webview(app: &AppHandle, label: &str, hidden: bool) -> Result<(), String> {
     let state = app.state::<DesktopWebviewPoolState>();
@@ -381,13 +389,11 @@ fn android_allowed_oauth_callback_hosts() -> &'static [&'static str] {
     ]
 }
 
-#[cfg(target_os = "android")]
 fn host_matches_allowlist(host: &str, allowed_host: &str) -> bool {
     host == allowed_host || host.ends_with(&format!(".{allowed_host}"))
 }
 
-#[cfg(target_os = "android")]
-fn android_allowed_hosts_for_network(network_id: &str) -> &'static [&'static str] {
+fn allowed_hosts_for_network(network_id: &str) -> &'static [&'static str] {
     match network_id {
         "twitter" => &["x.com", "twitter.com"],
         "facebook" => &["facebook.com"],
@@ -416,14 +422,18 @@ fn android_allowed_hosts_for_network(network_id: &str) -> &'static [&'static str
         "hackernews" => &["news.ycombinator.com"],
         "folloverse" => &["folloverse.com"],
         "koru" => &["koru.now"],
+        "kick" => &["kick.com"],
         "medium" => &["medium.com"],
         "luma" => &["luma.com"],
+        "circle" => &["discover.circle.so", "circle.so"],
+        "stackoverflow" => &["stackoverflow.com"],
+        "github-community" => &["github.com"],
+        "huzzler" => &["huzzler.so"],
         _ => &[],
     }
 }
 
-#[cfg(target_os = "android")]
-fn is_disallowed_host_value(host: &str) -> bool {
+fn is_disallowed_webview_host(host: &str) -> bool {
     if host.eq_ignore_ascii_case("localhost") || host.eq_ignore_ascii_case("127.0.0.1") {
         return true;
     }
@@ -464,13 +474,13 @@ fn validate_android_webview_url(url: &str, network_id: &str) -> Result<url::Url,
         .ok_or_else(|| "Android webview URL rejected: host is missing".to_string())?
         .to_ascii_lowercase();
 
-    if is_disallowed_host_value(&host) {
+    if is_disallowed_webview_host(&host) {
         return Err(format!(
             "Android webview URL rejected: host `{host}` is not allowed"
         ));
     }
 
-    let allowed_hosts = android_allowed_hosts_for_network(network_id);
+    let allowed_hosts = allowed_hosts_for_network(network_id);
     if allowed_hosts.is_empty() {
         return Err(format!(
             "Android webview URL rejected: network `{network_id}` is not allowlisted"
@@ -498,7 +508,7 @@ fn validate_android_storage_origins(
         return Ok(Vec::new());
     };
 
-    let allowed_hosts = android_allowed_hosts_for_network(network_id);
+    let allowed_hosts = allowed_hosts_for_network(network_id);
     if allowed_hosts.is_empty() {
         return Err(format!(
             "Android storage origins rejected: network `{network_id}` is not allowlisted"
@@ -524,7 +534,7 @@ fn validate_android_storage_origins(
             .ok_or_else(|| "Android storage origins rejected: host is missing".to_string())?
             .to_ascii_lowercase();
 
-        if is_disallowed_host_value(&host) {
+        if is_disallowed_webview_host(&host) {
             return Err(format!(
                 "Android storage origins rejected: host `{host}` is not allowed"
             ));
@@ -615,7 +625,7 @@ fn validate_android_oauth_callback_url(callback_url: &str) -> Result<url::Url, S
         .ok_or_else(|| "Android OAuth callback rejected: host is missing".to_string())?
         .to_ascii_lowercase();
 
-    if is_disallowed_host_value(&host) {
+    if is_disallowed_webview_host(&host) {
         return Err(format!(
             "Android OAuth callback rejected: host `{host}` is not allowed"
         ));
@@ -635,6 +645,102 @@ fn validate_android_oauth_callback_url(callback_url: &str) -> Result<url::Url, S
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+#[cfg(not(target_os = "android"))]
+fn validate_desktop_session_segment(value: &str, field: &str) -> Result<(), String> {
+    if value.is_empty()
+        || value.len() > 128
+        || !value
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_'))
+    {
+        return Err(format!("Invalid desktop WebView {field}"));
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "android"))]
+fn validate_desktop_webview_identity(profile_id: &str, network_id: &str) -> Result<(), String> {
+    validate_desktop_session_segment(profile_id, "profile ID")?;
+    validate_desktop_session_segment(network_id, "network ID")?;
+    if allowed_hosts_for_network(network_id).is_empty() && !is_custom_network_id(network_id) {
+        return Err("Unknown desktop WebView network ID".to_string());
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "android"))]
+fn is_custom_network_id(network_id: &str) -> bool {
+    let Some(identifier) = network_id.strip_prefix("custom-") else {
+        return false;
+    };
+    let groups = identifier.split('-').collect::<Vec<_>>();
+    if groups.len() != 5
+        || groups
+            .iter()
+            .zip([8, 4, 4, 4, 12])
+            .any(|(group, length)| {
+                group.len() != length || !group.bytes().all(|byte| byte.is_ascii_hexdigit())
+            })
+    {
+        return false;
+    }
+    matches!(groups[2].as_bytes()[0], b'1'..=b'5')
+        && matches!(groups[3].as_bytes()[0].to_ascii_lowercase(), b'8' | b'9' | b'a' | b'b')
+}
+
+#[cfg(not(target_os = "android"))]
+fn parse_desktop_webview_url(raw: &str, network_id: &str) -> Result<url::Url, String> {
+    let parsed = raw
+        .parse::<url::Url>()
+        .map_err(|_| "Invalid desktop WebView URL".to_string())?;
+    if parsed.scheme() != "https"
+        || parsed.host_str().is_none()
+        || !parsed.username().is_empty()
+        || parsed.password().is_some()
+    {
+        return Err("Desktop WebView URLs must use HTTPS".to_string());
+    }
+    let host = parsed
+        .host_str()
+        .expect("validated URL host")
+        .to_ascii_lowercase();
+    if is_disallowed_webview_host(&host) {
+        return Err("Desktop WebView host is not allowed".to_string());
+    }
+
+    let allowed_hosts = allowed_hosts_for_network(network_id);
+    if allowed_hosts.is_empty() {
+        if !is_custom_network_id(network_id) {
+            return Err("Unknown desktop WebView network ID".to_string());
+        }
+    } else if !allowed_hosts
+        .iter()
+        .any(|allowed_host| host_matches_allowlist(&host, allowed_host))
+    {
+        return Err("Desktop WebView host is not allowed for this network".to_string());
+    }
+    Ok(parsed)
+}
+
+#[cfg(not(target_os = "android"))]
+fn validate_desktop_webview_bounds(
+    x: f64,
+    y: f64,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
+    if !x.is_finite()
+        || !y.is_finite()
+        || !width.is_finite()
+        || !height.is_finite()
+        || width <= 0.0
+        || height <= 0.0
+    {
+        return Err("Invalid desktop WebView bounds".to_string());
+    }
+    Ok(())
+}
+
 /// Unique label per (profile, network) pair — ensures isolated webviews.
 #[cfg(not(target_os = "android"))]
 fn webview_label(profile_id: &str, network_id: &str) -> String {
@@ -643,9 +749,8 @@ fn webview_label(profile_id: &str, network_id: &str) -> String {
 
 /// A child webview can only receive focus when it has a rendered surface.
 ///
-/// Preloaded and pooled webviews use zero-sized bounds off-screen. Keeping
-/// focus on such a webview would send desktop password-manager input to a
-/// hidden document instead of the form the user can see.
+/// Keeping focus on a hidden or unrendered webview would send desktop
+/// password-manager input to a document instead of the form the user can see.
 #[cfg(not(target_os = "android"))]
 fn has_visible_desktop_webview_bounds(width: f64, height: f64) -> bool {
     width > 0.0 && height > 0.0
@@ -1073,10 +1178,8 @@ async fn export_desktop_cookies(
 ) -> Result<String, String> {
     let mut snapshot = serde_json::Map::new();
     for target in targets {
-        let url: url::Url = target
-            .url
-            .parse()
-            .map_err(|e: url::ParseError| e.to_string())?;
+        validate_desktop_webview_identity(&target.profile_id, &target.network_id)?;
+        let url = parse_desktop_webview_url(&target.url, &target.network_id)?;
         let label = webview_label(&target.profile_id, &target.network_id);
         let (webview, is_temporary) = if let Some(webview) = app.get_webview(&label) {
             (webview, false)
@@ -1148,13 +1251,17 @@ async fn open_webview(
     network_id: String,
     dark_mode: bool,
     _storage_origins: Option<Vec<String>>,
+    hidden: Option<bool>,
     x: f64,
     y: f64,
     width: f64,
     height: f64,
 ) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
+    validate_desktop_webview_bounds(x, y, width, height)?;
     let label = webview_label(&profile_id, &network_id);
-    let parsed: url::Url = url.parse().map_err(|e: url::ParseError| e.to_string())?;
+    let parsed = parse_desktop_webview_url(&url, &network_id)?;
+    let start_hidden = hidden.unwrap_or(false);
 
     if let Some(wv) = app.get_webview(&label) {
         wv.navigate(parsed).map_err(|e| e.to_string())?;
@@ -1163,11 +1270,16 @@ async fn open_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
-        if has_visible_desktop_webview_bounds(width, height) {
+        if start_hidden {
+            wv.hide().map_err(|e| e.to_string())?;
+        } else {
+            wv.show().map_err(|e| e.to_string())?;
+        }
+        if !start_hidden && has_visible_desktop_webview_bounds(width, height) {
             wv.set_focus()
                 .map_err(|e| format!("focus visible desktop webview: {e}"))?;
         }
-        mark_desktop_webview(&app, &label, false)?;
+        mark_desktop_webview(&app, &label, start_hidden)?;
         return Ok(());
     }
 
@@ -1189,8 +1301,8 @@ async fn open_webview(
     let webview_builder = configure_bitwarden_extension(
         WebviewBuilder::new(&label, WebviewUrl::External(parsed))
             .data_directory(data_dir)
-            // Do not let an off-screen preload become the active input
-            // target. Visible children are focused explicitly below.
+            // Do not let a preload become the active input target. Visible
+            // children are focused explicitly below.
             .focused(false)
             // Paint the native surface before the remote document renders.
             .background_color(if dark_mode {
@@ -1210,13 +1322,15 @@ async fn open_webview(
 
     restore_portable_android_cookies(&app, &webview, &profile_id, &network_id)?;
 
-    if has_visible_desktop_webview_bounds(width, height) {
+    if start_hidden {
+        webview.hide().map_err(|e| e.to_string())?;
+    } else if has_visible_desktop_webview_bounds(width, height) {
         webview
             .set_focus()
             .map_err(|e| format!("focus visible desktop webview: {e}"))?;
     }
 
-    mark_desktop_webview(&app, &label, false)?;
+    mark_desktop_webview(&app, &label, start_hidden)?;
 
     Ok(())
 }
@@ -1295,9 +1409,10 @@ async fn navigate_webview(
     profile_id: String,
     network_id: String,
 ) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
     let label = webview_label(&profile_id, &network_id);
     if let Some(wv) = app.get_webview(&label) {
-        let parsed: url::Url = url.parse().map_err(|e: url::ParseError| e.to_string())?;
+        let parsed = parse_desktop_webview_url(&url, &network_id)?;
         wv.navigate(parsed).map_err(|e| e.to_string())?;
         return Ok(());
     }
@@ -1329,6 +1444,8 @@ fn resize_webview(
     width: f64,
     height: f64,
 ) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
+    validate_desktop_webview_bounds(x, y, width, height)?;
     let label = webview_label(&profile_id, &network_id);
     if let Some(wv) = app.get_webview(&label) {
         wv.set_bounds(tauri::Rect {
@@ -1336,7 +1453,6 @@ fn resize_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
-        mark_desktop_webview(&app, &label, false)?;
     }
     Ok(())
 }
@@ -1344,6 +1460,7 @@ fn resize_webview(
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
 fn close_webview(app: AppHandle, profile_id: String, network_id: String) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
     let label = webview_label(&profile_id, &network_id);
     if let Some(wv) = app.get_webview(&label) {
         wv.close().map_err(|e| e.to_string())?;
@@ -1358,19 +1475,15 @@ fn close_webview(app: AppHandle, profile_id: String, network_id: String) -> Resu
 }
 
 /// Hide a webview without destroying it (webview pooling).
-/// Moves it off-screen so it stays alive with full page state.
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
 fn hide_webview(app: AppHandle, profile_id: String, network_id: String) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
     let label = webview_label(&profile_id, &network_id);
     if let Some(wv) = app.get_webview(&label) {
-        wv.set_bounds(tauri::Rect {
-            position: tauri::Position::Logical(tauri::LogicalPosition::new(-10000.0, -10000.0)),
-            size: tauri::Size::Logical(tauri::LogicalSize::new(0.0, 0.0)),
-        })
-        .map_err(|e| e.to_string())?;
-        // Bounds changes do not change focus. Move it back to the host before
-        // the child is pooled so desktop input cannot target a hidden form.
+        wv.hide().map_err(|e| e.to_string())?;
+        // Hiding a child does not move focus. Return it to the host so desktop
+        // input cannot target a pooled form.
         if let Some(host_webview) = app.get_webview("main") {
             host_webview
                 .set_focus()
@@ -1394,6 +1507,8 @@ fn show_webview(
     width: f64,
     height: f64,
 ) -> Result<bool, String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
+    validate_desktop_webview_bounds(x, y, width, height)?;
     let label = webview_label(&profile_id, &network_id);
     if let Some(wv) = app.get_webview(&label) {
         wv.set_bounds(tauri::Rect {
@@ -1401,6 +1516,7 @@ fn show_webview(
             size: tauri::Size::Logical(tauri::LogicalSize::new(width, height)),
         })
         .map_err(|e| e.to_string())?;
+        wv.show().map_err(|e| e.to_string())?;
         if has_visible_desktop_webview_bounds(width, height) {
             wv.set_focus()
                 .map_err(|e| format!("focus visible desktop webview: {e}"))?;
@@ -1410,6 +1526,22 @@ fn show_webview(
     } else {
         Ok(false)
     }
+}
+
+#[tauri::command]
+#[cfg(not(target_os = "android"))]
+fn get_desktop_webview_pool_stats(app: AppHandle) -> Result<DesktopWebviewPoolStats, String> {
+    let state = app.state::<DesktopWebviewPoolState>();
+    let entries = state
+        .entries
+        .lock()
+        .map_err(|_| "webview pool lock poisoned")?;
+    let hidden = entries.values().filter(|entry| entry.hidden).count();
+    Ok(DesktopWebviewPoolStats {
+        total: entries.len(),
+        visible: entries.len().saturating_sub(hidden),
+        hidden,
+    })
 }
 
 // ── Android: delegate to Kotlin plugin ───────────────────────────────────────
@@ -1423,6 +1555,7 @@ fn open_webview(
     network_id: String,
     _dark_mode: bool,
     storage_origins: Option<Vec<String>>,
+    _hidden: Option<bool>,
     _x: f64,
     _y: f64,
     _width: f64,
@@ -1557,6 +1690,16 @@ fn show_webview(
 
 #[tauri::command]
 #[cfg(target_os = "android")]
+fn get_desktop_webview_pool_stats(_app: AppHandle) -> DesktopWebviewPoolStats {
+    DesktopWebviewPoolStats {
+        total: 0,
+        visible: 0,
+        hidden: 0,
+    }
+}
+
+#[tauri::command]
+#[cfg(target_os = "android")]
 fn set_grayscale(app: AppHandle, enabled: bool) -> Result<(), String> {
     app.android_webview()
         .set_grayscale(enabled)
@@ -1610,6 +1753,7 @@ fn set_webview_preferences(
     let (Some(profile_id), Some(network_id)) = (profile_id, network_id) else {
         return Ok(());
     };
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
     let label = webview_label(&profile_id, &network_id);
     let Some(wv) = app.get_webview(&label) else {
         return Ok(());
@@ -1707,6 +1851,7 @@ fn set_locale(_app: AppHandle, _locale: String) -> Result<(), String> {
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
 fn delete_profile_session(app: AppHandle, profile_id: String) -> Result<(), String> {
+    validate_desktop_session_segment(&profile_id, "profile ID")?;
     let data_dir = app
         .path()
         .app_data_dir()
@@ -1739,6 +1884,7 @@ fn delete_network_session(
     profile_id: String,
     network_id: String,
 ) -> Result<(), String> {
+    validate_desktop_webview_identity(&profile_id, &network_id)?;
     let data_dir = app
         .path()
         .app_data_dir()
@@ -1908,6 +2054,7 @@ pub fn run() {
             validate_android_oauth_callback,
             hide_webview,
             show_webview,
+            get_desktop_webview_pool_stats,
             navigate_webview,
             set_grayscale,
             set_dark_mode,
@@ -1936,8 +2083,42 @@ pub fn run() {
 mod tests {
     use super::{
         bitwarden_extension_version, has_visible_desktop_webview_bounds,
-        validate_bitwarden_extension_manifest,
+        parse_desktop_webview_url, validate_bitwarden_extension_manifest,
+        validate_desktop_session_segment, validate_desktop_webview_bounds,
+        validate_desktop_webview_identity,
     };
+
+    #[test]
+    fn accepts_only_safe_desktop_webview_targets() {
+        assert!(validate_desktop_webview_identity(
+            "123e4567-e89b-42d3-a456-426614174000",
+            "custom-123e4567-e89b-42d3-a456-426614174000",
+        )
+        .is_ok());
+        assert!(parse_desktop_webview_url(
+            "https://example.com/dashboard",
+            "custom-123e4567-e89b-42d3-a456-426614174000",
+        )
+        .is_ok());
+        assert!(validate_desktop_webview_bounds(12.5, 40.0, 800.0, 600.0).is_ok());
+    }
+
+    #[test]
+    fn rejects_desktop_path_traversal_in_session_identifiers() {
+        assert!(validate_desktop_session_segment("../profile", "profile ID").is_err());
+        assert!(validate_desktop_session_segment("custom/foo", "network ID").is_err());
+        assert!(validate_desktop_session_segment("", "network ID").is_err());
+    }
+
+    #[test]
+    fn rejects_non_https_urls_and_invalid_native_bounds() {
+        assert!(parse_desktop_webview_url("http://instagram.com", "instagram").is_err());
+        assert!(parse_desktop_webview_url("file:///tmp/session", "instagram").is_err());
+        assert!(parse_desktop_webview_url("https://user:secret@instagram.com", "instagram").is_err());
+        assert!(parse_desktop_webview_url("https://instagram.example", "instagram").is_err());
+        assert!(validate_desktop_webview_bounds(0.0, 0.0, 0.0, 600.0).is_err());
+        assert!(validate_desktop_webview_bounds(f64::NAN, 0.0, 800.0, 600.0).is_err());
+    }
 
     #[test]
     fn only_positive_sized_child_webviews_are_focus_eligible() {

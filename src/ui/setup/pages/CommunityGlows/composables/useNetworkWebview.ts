@@ -7,7 +7,8 @@ const isTauri = () =>
   typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 
 const isDarkMode = () =>
-  typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  typeof document !== 'undefined' &&
+  document.documentElement.classList.contains('dark')
 
 async function invoke(cmd: string, args?: Record<string, unknown>) {
   if (!isTauri()) return
@@ -16,9 +17,11 @@ async function invoke(cmd: string, args?: Record<string, unknown>) {
 }
 
 function notifyWebviewReady(profileId: string, networkId: string) {
-  window.dispatchEvent(new CustomEvent('communityglows-network-webview-ready', {
-    detail: { profileId, networkId },
-  }))
+  window.dispatchEvent(
+    new CustomEvent('communityglows-network-webview-ready', {
+      detail: { profileId, networkId },
+    }),
+  )
 }
 
 type WebviewHostBounds = {
@@ -35,6 +38,12 @@ export type NetworkWebviewDiagnostic = {
   detail?: string
 }
 
+type DesktopWebviewPoolStats = {
+  total: number
+  visible: number
+  hidden: number
+}
+
 export function createSerialTaskQueue() {
   let pending = Promise.resolve()
 
@@ -45,6 +54,59 @@ export function createSerialTaskQueue() {
       () => undefined,
     )
     return run
+  }
+}
+
+export function createFrameCoalescedTask<T>(
+  task: (value: T) => Promise<void>,
+  requestFrame: (
+    callback: FrameRequestCallback,
+  ) => number = window.requestAnimationFrame.bind(window),
+  cancelFrame: (handle: number) => void = window.cancelAnimationFrame.bind(
+    window,
+  ),
+) {
+  let pendingValue: T
+  let hasPendingValue = false
+  let frameHandle: number | undefined
+  let running = false
+  let disposed = false
+
+  const requestDrain = () => {
+    if (disposed || running || frameHandle !== undefined || !hasPendingValue)
+      return
+    frameHandle = requestFrame(() => {
+      frameHandle = undefined
+      void drain()
+    })
+  }
+
+  const drain = async () => {
+    if (disposed || running || !hasPendingValue) return
+    const value = pendingValue
+    hasPendingValue = false
+    running = true
+    try {
+      await task(value)
+    } finally {
+      running = false
+      requestDrain()
+    }
+  }
+
+  return {
+    schedule(value: T) {
+      if (disposed) return
+      pendingValue = value
+      hasPendingValue = true
+      requestDrain()
+    },
+    dispose() {
+      disposed = true
+      hasPendingValue = false
+      if (frameHandle !== undefined) cancelFrame(frameHandle)
+      frameHandle = undefined
+    },
   }
 }
 
@@ -81,6 +143,7 @@ export function useNetworkWebview(
   // Track what's currently open as "profileId:networkId"
   const activeKey = ref<string | null>(null)
   const isOpen = ref(false)
+  let lastScheduledBounds = ''
 
   const record = (
     stage: string,
@@ -91,9 +154,28 @@ export function useNetworkWebview(
     recordDiagnosticEvent({ area: 'windows-webview', stage, status, detail })
   }
 
-  // Keep bounds in sync on sidebar toggle / window resize
-  watch([x, y, width, height], async ([nx, ny, nw, nh]) => {
-    if (isOpen.value && activeKey.value && nw > 0 && nh > 0) {
+  const recordPoolStats = async () => {
+    try {
+      const stats = (await invoke('get_desktop_webview_pool_stats')) as
+        DesktopWebviewPoolStats | undefined
+      if (!stats) return
+      record(
+        'webview-pool',
+        'success',
+        `total=${stats.total} visible=${stats.visible} hidden=${stats.hidden}`,
+      )
+    } catch (error) {
+      record(
+        'webview-pool',
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
+    }
+  }
+
+  const resizeTask = createFrameCoalescedTask<WebviewHostBounds>(
+    async ({ x: nx, y: ny, width: nw, height: nh }) => {
+      if (!isOpen.value || !activeKey.value) return
       const [profileId, networkId] = activeKey.value.split(':')
       record('resize-webview', 'start', `${Math.round(nw)}x${Math.round(nh)}`)
       try {
@@ -105,11 +187,34 @@ export function useNetworkWebview(
           width: nw,
           height: nh,
         })
-        record('resize-webview', 'success', `${Math.round(nw)}x${Math.round(nh)}`)
+        record(
+          'resize-webview',
+          'success',
+          `${Math.round(nw)}x${Math.round(nh)}`,
+        )
       } catch (error) {
-        record('resize-webview', 'error', error instanceof Error ? error.message : String(error))
+        record(
+          'resize-webview',
+          'error',
+          error instanceof Error ? error.message : String(error),
+        )
       }
+    },
+  )
+
+  // Keep bounds in sync without flooding the native bridge while a sash moves.
+  watch([x, y, width, height], ([nx, ny, nw, nh]) => {
+    if (!isOpen.value || !activeKey.value || nw <= 0 || nh <= 0) return
+    const bounds = {
+      x: Math.round(nx * 100) / 100,
+      y: Math.round(ny * 100) / 100,
+      width: Math.round(nw * 100) / 100,
+      height: Math.round(nh * 100) / 100,
     }
+    const signature = `${bounds.x}:${bounds.y}:${bounds.width}:${bounds.height}`
+    if (signature === lastScheduledBounds) return
+    lastScheduledBounds = signature
+    resizeTask.schedule(bounds)
   })
 
   async function open(url: string, profileId: string, networkId: string) {
@@ -134,9 +239,14 @@ export function useNetworkWebview(
       record('open-webview', 'success', `network=${networkId}`)
       activeKey.value = `${profileId}:${networkId}`
       isOpen.value = true
+      await recordPoolStats()
       notifyWebviewReady(profileId, networkId)
     } catch (error) {
-      record('open-webview', 'error', error instanceof Error ? error.message : String(error))
+      record(
+        'open-webview',
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
       throw error
     }
   }
@@ -151,10 +261,13 @@ export function useNetworkWebview(
     try {
       const bounds = await measureWebviewHost(hostEl)
 
-      // Hide the currently visible webview (stays alive off-screen)
+      // Hide the currently visible webview while preserving its page state.
       if (isOpen.value && activeKey.value) {
         const [oldProfileId, oldNetworkId] = activeKey.value.split(':')
-        await invoke('hide_webview', { profileId: oldProfileId, networkId: oldNetworkId })
+        await invoke('hide_webview', {
+          profileId: oldProfileId,
+          networkId: oldNetworkId,
+        })
       }
 
       // Try to show an existing pooled webview (instant — no page reload)
@@ -179,10 +292,15 @@ export function useNetworkWebview(
 
       activeKey.value = `${profileId}:${networkId}`
       isOpen.value = true
+      await recordPoolStats()
       notifyWebviewReady(profileId, networkId)
       record('switch-webview', 'success', `network=${networkId}`)
     } catch (error) {
-      record('switch-webview', 'error', error instanceof Error ? error.message : String(error))
+      record(
+        'switch-webview',
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
       throw error
     }
   }
@@ -195,9 +313,14 @@ export function useNetworkWebview(
       try {
         await invoke('hide_webview', { profileId, networkId })
         isOpen.value = false
+        await recordPoolStats()
         record('hide-webview', 'success', `network=${networkId}`)
       } catch (error) {
-        record('hide-webview', 'error', error instanceof Error ? error.message : String(error))
+        record(
+          'hide-webview',
+          'error',
+          error instanceof Error ? error.message : String(error),
+        )
         throw error
       }
     }
@@ -224,10 +347,15 @@ export function useNetworkWebview(
         return
       }
       isOpen.value = true
+      await recordPoolStats()
       notifyWebviewReady(profileId, networkId)
       record('show-webview', 'success', `network=${networkId}`)
     } catch (error) {
-      record('show-webview', 'error', error instanceof Error ? error.message : String(error))
+      record(
+        'show-webview',
+        'error',
+        error instanceof Error ? error.message : String(error),
+      )
       throw error
     }
   }
@@ -238,7 +366,10 @@ export function useNetworkWebview(
     activeKey.value = null
   }
 
-  onUnmounted(close)
+  onUnmounted(() => {
+    resizeTask.dispose()
+    void close()
+  })
 
   return { open, switchTo, suspend, resume, close, isOpen, activeKey }
 }

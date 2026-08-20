@@ -9,7 +9,17 @@ import {
   saveDesktopWorkspaceLayout,
 } from './desktopWorkspaceLayouts'
 
-const knownNetworks = new Set(['instagram', 'linkedin'])
+const knownNetworks = new Map([
+  [
+    'instagram',
+    { canonicalUrl: 'https://instagram.com', allowSubdomains: true },
+  ],
+  ['linkedin', { canonicalUrl: 'https://linkedin.com', allowSubdomains: true }],
+  [
+    'custom-123e4567-e89b-42d3-a456-426614174000',
+    { canonicalUrl: 'https://example.com/dashboard', allowSubdomains: false },
+  ],
+])
 
 function layoutFor(
   networkId = 'instagram',
@@ -47,12 +57,80 @@ describe('desktop workspace layouts', () => {
     expect(isSafeDesktopWorkspaceLayout(layoutFor(), knownNetworks)).toBe(true)
     expect(
       isSafeDesktopWorkspaceLayout(
+        layoutFor('instagram', 'https://www.instagram.com/reels/123'),
+        knownNetworks,
+      ),
+    ).toBe(true)
+    expect(
+      isSafeDesktopWorkspaceLayout(
         layoutFor('instagram', 'javascript:alert(1)'),
         knownNetworks,
       ),
     ).toBe(false)
     expect(
       isSafeDesktopWorkspaceLayout(layoutFor('unknown'), knownNetworks),
+    ).toBe(false)
+    expect(
+      isSafeDesktopWorkspaceLayout(
+        layoutFor('instagram', 'https://instagram.example/reels/123'),
+        knownNetworks,
+      ),
+    ).toBe(false)
+    expect(
+      isSafeDesktopWorkspaceLayout(
+        layoutFor('instagram', 'https://user:secret@instagram.com/'),
+        knownNetworks,
+      ),
+    ).toBe(false)
+  })
+
+  it('only restores registered custom links with their authoritative URL', () => {
+    const customId = 'custom-123e4567-e89b-42d3-a456-426614174000'
+    expect(
+      isSafeDesktopWorkspaceLayout(
+        layoutFor(customId, 'https://example.com/dashboard'),
+        knownNetworks,
+      ),
+    ).toBe(true)
+    expect(
+      isSafeDesktopWorkspaceLayout(
+        layoutFor(customId, 'https://example.com/other'),
+        knownNetworks,
+      ),
+    ).toBe(false)
+    expect(
+      isSafeDesktopWorkspaceLayout(
+        layoutFor('custom-../../escape', 'https://example.com/dashboard'),
+        new Map([
+          [
+            'custom-../../escape',
+            {
+              canonicalUrl: 'https://example.com/dashboard',
+              allowSubdomains: false,
+            },
+          ],
+        ]),
+      ),
+    ).toBe(false)
+  })
+
+  it('keeps structurally valid custom layouts until their profile catalog is ready', () => {
+    const customId = 'custom-123e4567-e89b-42d3-a456-426614174000'
+    const saved = {
+      id: 'custom-layout',
+      name: 'Custom',
+      createdAt: '2026-08-20T08:00:00.000Z',
+      updatedAt: '2026-08-20T08:00:00.000Z',
+      layout: layoutFor(customId, 'https://example.com/dashboard'),
+    }
+    const parsed = parseDesktopWorkspaceState(
+      JSON.stringify({ version: 1, selectedLayoutId: null, layouts: [saved] }),
+      new Map(),
+    )
+
+    expect(parsed.layouts).toHaveLength(1)
+    expect(
+      isSafeDesktopWorkspaceLayout(parsed.layouts[0].layout, new Map()),
     ).toBe(false)
   })
 

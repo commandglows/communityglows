@@ -5,14 +5,14 @@ import { getNetworkIsolationOrigins } from '@/config/socialNetworks'
 const isTauri = () =>
   typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 
-/** Max networks to preload off-screen at startup. */
+/** Max networks to preload hidden at startup. */
 const PRELOAD_COUNT = 3
 
 /**
  * Preload the user's top N visible networks as hidden webviews.
- * Each webview is created off-screen (0×0 at -10000,-10000) so it loads
- * in the background without being visible. When the user clicks a network
- * for the first time, show_webview instantly brings it on-screen —
+ * Each webview is created with valid minimal bounds and immediately hidden
+ * through the native visibility API. When the user clicks a network for the
+ * first time, show_webview instantly brings it on-screen —
  * no page load needed.
  *
  * Call once after the app is mounted and the profile store is ready.
@@ -45,10 +45,11 @@ export async function preloadWebviews() {
         networkId,
         darkMode: document.documentElement.classList.contains('dark'),
         storageOrigins: getNetworkIsolationOrigins(networkId),
+        hidden: true,
         x: -10000,
         y: -10000,
-        width: 0,
-        height: 0,
+        width: 1,
+        height: 1,
       }),
     ),
   )

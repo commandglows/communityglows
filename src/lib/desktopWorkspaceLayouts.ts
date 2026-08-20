@@ -7,6 +7,16 @@ export const DESKTOP_WORKSPACE_AUTOSAVE_KEY =
 export const DESKTOP_WORKSPACE_VERSION = 1 as const
 export const MAX_SAVED_WORKSPACE_LAYOUTS = 12
 
+export type WorkspaceNetworkTarget = {
+  canonicalUrl: string
+  allowSubdomains: boolean
+}
+
+export type WorkspaceNetworkCatalog = ReadonlyMap<
+  string,
+  WorkspaceNetworkTarget
+>
+
 export type NetworkWorkspacePanelParams = {
   networkId: string
   url: string
@@ -31,50 +41,103 @@ type WorkspaceStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-const isHttpsUrl = (value: unknown): value is string => {
-  if (typeof value !== 'string') return false
+const parseHttpsUrl = (value: unknown): URL | null => {
+  if (typeof value !== 'string') return null
   try {
-    return new URL(value).protocol === 'https:'
+    const parsed = new URL(value)
+    return parsed.protocol === 'https:' &&
+      parsed.hostname &&
+      !parsed.username &&
+      !parsed.password
+      ? parsed
+      : null
   } catch {
-    return false
+    return null
   }
 }
 
-function isKnownNetworkId(
-  networkId: unknown,
-  knownNetworkIds: ReadonlySet<string>,
-): networkId is string {
-  return (
-    typeof networkId === 'string' &&
-    (knownNetworkIds.has(networkId) || networkId.startsWith('custom-'))
-  )
+const customNetworkIdPattern =
+  /^custom-[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function isTrustedNetworkUrl(
+  networkId: string,
+  value: unknown,
+  catalog: WorkspaceNetworkCatalog,
+  allowUnregisteredCustom = false,
+): value is string {
+  const candidate = parseHttpsUrl(value)
+  const target = catalog.get(networkId)
+  if (!candidate) return false
+
+  if (
+    allowUnregisteredCustom &&
+    customNetworkIdPattern.test(networkId) &&
+    !target
+  ) {
+    return true
+  }
+
+  const canonical = parseHttpsUrl(target?.canonicalUrl)
+  if (!target || !canonical) return false
+
+  if (networkId.startsWith('custom-')) {
+    return (
+      customNetworkIdPattern.test(networkId) &&
+      candidate.href === canonical.href
+    )
+  }
+
+  const canonicalHost = canonical.hostname.replace(/^www\./i, '')
+  const candidateHost = candidate.hostname.replace(/^www\./i, '')
+  return target.allowSubdomains
+    ? candidateHost === canonicalHost ||
+        candidateHost.endsWith(`.${canonicalHost}`)
+    : candidateHost === canonicalHost
 }
 
 export function isNetworkWorkspacePanelParams(
   value: unknown,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
+  allowUnregisteredCustom = false,
 ): value is NetworkWorkspacePanelParams {
   if (!isRecord(value)) return false
   return (
-    isKnownNetworkId(value.networkId, knownNetworkIds) && isHttpsUrl(value.url)
+    typeof value.networkId === 'string' &&
+    isTrustedNetworkUrl(
+      value.networkId,
+      value.url,
+      catalog,
+      allowUnregisteredCustom,
+    )
   )
 }
 
-export function isSafeDesktopWorkspaceLayout(
+function validatesDesktopWorkspaceLayout(
   value: unknown,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
+  allowUnregisteredCustom: boolean,
 ): value is SerializedDockview {
   if (!isRecord(value) || !isRecord(value.grid) || !isRecord(value.panels))
     return false
   if (!isRecord(value.grid.root)) return false
 
-  return Object.values(value.panels).every((panel) => {
+  return Object.entries(value.panels).every(([panelId, panel]) => {
     if (!isRecord(panel)) return false
+    const params = panel.params
     return (
       panel.contentComponent === 'network' &&
-      isNetworkWorkspacePanelParams(panel.params, knownNetworkIds)
+      isNetworkWorkspacePanelParams(params, catalog, allowUnregisteredCustom) &&
+      panel.id === panelId &&
+      panelId === `network:${encodeURIComponent(params.networkId)}`
     )
   })
+}
+
+export function isSafeDesktopWorkspaceLayout(
+  value: unknown,
+  catalog: WorkspaceNetworkCatalog,
+): value is SerializedDockview {
+  return validatesDesktopWorkspaceLayout(value, catalog, false)
 }
 
 export function emptyDesktopWorkspaceState(): DesktopWorkspaceState {
@@ -87,7 +150,7 @@ export function emptyDesktopWorkspaceState(): DesktopWorkspaceState {
 
 function parseSavedLayout(
   value: unknown,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
 ): SavedDesktopWorkspace | null {
   if (!isRecord(value)) return null
   if (
@@ -98,7 +161,7 @@ function parseSavedLayout(
     value.name.trim().length > 64 ||
     typeof value.createdAt !== 'string' ||
     typeof value.updatedAt !== 'string' ||
-    !isSafeDesktopWorkspaceLayout(value.layout, knownNetworkIds)
+    !validatesDesktopWorkspaceLayout(value.layout, catalog, true)
   ) {
     return null
   }
@@ -114,7 +177,7 @@ function parseSavedLayout(
 
 export function parseDesktopWorkspaceState(
   raw: string | null,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
 ): DesktopWorkspaceState {
   if (!raw) return emptyDesktopWorkspaceState()
 
@@ -130,7 +193,7 @@ export function parseDesktopWorkspaceState(
 
     const seen = new Set<string>()
     const layouts = value.layouts
-      .map((layout) => parseSavedLayout(layout, knownNetworkIds))
+      .map((layout) => parseSavedLayout(layout, catalog))
       .filter((layout): layout is SavedDesktopWorkspace => {
         if (!layout || seen.has(layout.id)) return false
         seen.add(layout.id)
@@ -152,11 +215,11 @@ export function parseDesktopWorkspaceState(
 
 export function loadDesktopWorkspaceState(
   storage: WorkspaceStorage,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
 ): DesktopWorkspaceState {
   return parseDesktopWorkspaceState(
     storage.getItem(DESKTOP_WORKSPACE_STATE_KEY),
-    knownNetworkIds,
+    catalog,
   )
 }
 
@@ -169,7 +232,7 @@ export function persistDesktopWorkspaceState(
 
 export function loadDesktopWorkspaceAutosave(
   storage: WorkspaceStorage,
-  knownNetworkIds: ReadonlySet<string>,
+  catalog: WorkspaceNetworkCatalog,
 ): SerializedDockview | null {
   const raw = storage.getItem(DESKTOP_WORKSPACE_AUTOSAVE_KEY)
   if (!raw) return null
@@ -177,7 +240,7 @@ export function loadDesktopWorkspaceAutosave(
     const value: unknown = JSON.parse(raw)
     if (!isRecord(value) || value.version !== DESKTOP_WORKSPACE_VERSION)
       return null
-    return isSafeDesktopWorkspaceLayout(value.layout, knownNetworkIds)
+    return isSafeDesktopWorkspaceLayout(value.layout, catalog)
       ? value.layout
       : null
   } catch {

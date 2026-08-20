@@ -6,7 +6,7 @@ project: "communityglows"
 created: "2026-08-20"
 created_at: "2026-08-20 00:00:00 UTC"
 updated: "2026-08-20"
-updated_at: "2026-08-20 00:47:46 UTC"
+updated_at: "2026-08-20 07:51:53 UTC"
 status: ready
 source_skill: sg-development
 source_model: "GPT-5"
@@ -53,8 +53,11 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 
 - L'isolation de session existante `${profileId}-${networkId}` reste la frontière native.
 - Les URLs de panneaux proviennent du catalogue de réseaux ou d'un lien personnalisé déjà validé.
+- Toute restauration exécutable est revalidée contre le catalogue du profil actif; les commandes natives revalident aussi l'identité, l'URL et les bounds avant d'accéder à une WebView ou à son répertoire de session.
 - Une donnée locale corrompue ne bloque jamais le démarrage : elle est ignorée au profit d'un layout sain.
 - Les overlays CommunityGlows masquent toutes les WebViews visibles avant de se placer au-dessus.
+- Les changements de taille sont dédupliqués et coalescés par frame, sans plus d'une commande native en vol par panneau.
+- Une session de drag se termine aussi sur annulation, `Escape`, perte de focus, document masqué ou watchdog.
 - Android conserve son expérience mono-réseau actuelle.
 - Les valeurs visuelles sont consommées depuis les tokens du design system.
 
@@ -66,6 +69,8 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Le layout courant survit au rechargement local.
 - Un layout nommé peut être créé, chargé, renommé et supprimé.
 - Un layout invalide ou contenant un réseau inconnu est rejeté sans crash.
+- Un lien personnalisé supprimé ou appartenant à un autre profil ne peut pas être restauré; un domaine trompeur, des credentials intégrés ou un identifiant de chemin invalide sont rejetés.
+- Masquer ou réafficher une WebView pooled utilise la visibilité native et expose un diagnostic du pool sans modifier l'isolation de session existante.
 - Les raccourcis de docking au clavier restent activés et annoncés par le moteur maintenu.
 - Tests ciblés, typecheck, build Tauri frontend, tests existants et contrôle de dérive passent.
 
@@ -79,18 +84,20 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 
 ## Skill Run History
 
-| Date UTC   | Skill          | Model | Action                                                                 | Result | Next step                              |
-| ---------- | -------------- | ----- | ---------------------------------------------------------------------- | ------ | -------------------------------------- |
-| 2026-08-20 | sg-development | GPT-5 | User-approved product contract, architecture and proof route recorded. | ready  | Implement the desktop bento workspace. |
-| 2026-08-20 | sg-development | GPT-5 | Implemented Dockview workspace, concurrent native WebView hosts, defensive local persistence, named layouts and documentation. | implemented | Run automated verification. |
-| 2026-08-20 | sg-development | GPT-5 | Ran 170 tests, core typecheck, Tauri frontend build, targeted lint, dependency audit and design drift scan. Browser and Cargo probes were unavailable in this host. | partial | Complete Windows visual proof before closing. |
+| Date UTC   | Skill          | Model | Action                                                                                                                                                                                                                                                                                                                    | Result      | Next step                                                             |
+| ---------- | -------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------- |
+| 2026-08-20 | sg-development | GPT-5 | User-approved product contract, architecture and proof route recorded.                                                                                                                                                                                                                                                    | ready       | Implement the desktop bento workspace.                                |
+| 2026-08-20 | sg-development | GPT-5 | Implemented Dockview workspace, concurrent native WebView hosts, defensive local persistence, named layouts and documentation.                                                                                                                                                                                            | implemented | Run automated verification.                                           |
+| 2026-08-20 | sg-development | GPT-5 | Ran 170 tests, core typecheck, Tauri frontend build, targeted lint, dependency audit and design drift scan. Browser and Cargo probes were unavailable in this host.                                                                                                                                                       | partial     | Complete Windows visual proof before closing.                         |
+| 2026-08-20 | sg-development | GPT-5 | Started the approved hardening pass for resize pressure, native visibility, drag recovery and restored-layout trust boundaries.                                                                                                                                                                                           | in progress | Implement and run focused regression proof.                           |
+| 2026-08-20 | sg-development | GPT-5 | Hardened resize scheduling, drag recovery, native visibility/preload, pool diagnostics and frontend/Rust trust boundaries. Ran 174 tests, 11 focused tests, core typecheck, targeted lint, token drift check and Tauri frontend build; full Vue typecheck retains 129 unrelated baseline errors and Cargo is unavailable. | partial     | Compile and exercise the native Windows/Tauri runtime before closing. |
 
 ## Current Chantier Flow
 
-| Step      | Status      | Notes                                                             |
-| --------- | ----------- | ----------------------------------------------------------------- |
-| specify   | ready       | Scope, invariants, acceptance and proof are explicit.             |
-| ready     | ready       | Existing WebView pool and design-system authority are compatible. |
-| implement | implemented | Dockview integration, multi-WebView lifecycle and persistence are in place. |
+| Step      | Status      | Notes                                                                                                          |
+| --------- | ----------- | -------------------------------------------------------------------------------------------------------------- |
+| specify   | ready       | Scope, invariants, acceptance and proof are explicit.                                                          |
+| ready     | ready       | Existing WebView pool and design-system authority are compatible.                                              |
+| implement | implemented | Approved Dockview and native WebView hardening is implemented and documented.                                  |
 | verify    | partial     | Automated checks pass; Windows/Tauri rendered drag, resize and restore proof remains unavailable in this host. |
-| close     | pending     | Documentation and final status pending.                           |
+| close     | pending     | Documentation and final status pending.                                                                        |

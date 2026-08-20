@@ -1,17 +1,17 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.6.0"
+artifact_version: "1.7.0"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-11"
+updated: "2026-08-20"
 status: reviewed
 source_skill: 300-sg-docs
 scope: context
 owner: "Diane"
 confidence: medium
 risk_level: medium
-security_impact: none
+security_impact: yes
 docs_impact: yes
 evidence:
   - "README.md"
@@ -72,6 +72,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
   - Entrée principale `src-tauri/src/lib.rs` + `src-tauri/tauri.conf.json`
 - Android
   - Cible Tauri mobile avec plugin `src-tauri/plugins/android-webview`
+
 ## Repo Map
 
 - `src/` : logique partagée, stores, composables, services, utilitaires.
@@ -106,7 +107,8 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - `directives/tooltip.ts` possède les infobulles accessibles au focus et au pointeur, leur `aria-describedby`, leur fermeture par `Escape` et leur nettoyage.
 - La source Windows, ses déclarations générées et un bundle Tauri propre ne contiennent aucun composant ni bootstrap PrimeVue. PrimeVue reste consommé par des surfaces extension historiques. PrimeIcons est encore importé par l'entrée Windows pour la compatibilité visuelle; PrimeFlex ne l'est plus. Aucun des deux ne porte l'autorité sémantique Windows.
 - Le workspace desktop multi-réseaux utilise Dockview via un wrapper CommunityGlows. Dockview possède le docking, les onglets, le drag, les splits, le resize, le clavier et la sérialisation; les wrappers et tokens CommunityGlows possèdent le rendu, la validation des panneaux et la persistance locale.
-- Chaque panneau réseau visible possède son `NetworkWebviewHost` et réutilise l'isolation native desktop `${profileId}-${networkId}`. Un onglet masqué ou un drag de docking suspend la WebView correspondante pour garder les overlays et zones de dépôt Vue accessibles.
+- Chaque panneau réseau visible possède son `NetworkWebviewHost` et réutilise l'isolation native desktop `${profileId}-${networkId}`. Un onglet masqué ou un drag de docking suspend la WebView correspondante avec `Webview.hide()`/`show()` pour garder les overlays et zones de dépôt Vue accessibles. Les changements de bounds sont dédupliqués et coalescés par frame avant l'IPC natif; les sessions de drag sont aussi terminées sur annulation, `Escape`, perte de focus, masquage du document ou expiration du watchdog.
+- Le pool desktop publie des diagnostics `total`/`visible`/`hidden`. L'isolation de données par couple profil/réseau est conservée tant que des mesures natives ne justifient pas une migration; aucun partage de répertoire de données ou de session n'est déduit des seuls coûts théoriques du runtime.
 
 #### Android deeplinks (mobile/desktop Tauri)
 
@@ -131,7 +133,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 ### 3) Sync et persistance
 
 - État local : Pinia + localStorage via stores.
-- Layouts desktop : `src/lib/desktopWorkspaceLayouts.ts` valide et persiste un autosave versionné ainsi que douze layouts nommés au maximum. Une donnée inconnue, non HTTPS ou corrompue est ignorée sans bloquer le démarrage. Cette première tranche n'effectue aucune synchronisation cloud de layout.
+- Layouts desktop : `src/lib/desktopWorkspaceLayouts.ts` valide et persiste un autosave versionné ainsi que douze layouts nommés au maximum. Une restauration exécutable n'accepte que les réseaux intégrés sur leur domaine canonique (ou ses sous-domaines autorisés) et les liens personnalisés UUID présents dans le profil actif avec leur URL exacte; les URL avec identifiants intégrés, non HTTPS, inconnues ou corrompues sont ignorées sans bloquer le démarrage. Un layout nommé contenant un lien personnalisé structurellement valide peut rester stocké pendant l'hydratation du catalogue, mais ne peut pas être exécuté avant sa résolution. Cette première tranche n'effectue aucune synchronisation cloud de layout.
 - Tâches contextuelles : `src/stores/contextualTasks.ts` et `src/services/contextualTasksService.ts`, stockage local versionné `contextual-tasks-v1`, sans sync Convex en V1.
 - Sync cloud : `src/lib/cloudSyncQueue.ts`, `src/lib/cloudSettings.ts`, `src/lib/cloudSync.ts`.
 - Backend : tables Convex (`users`, `socialAccounts`, `activeAccounts`, `settings`, `profiles`, `customLinks`, `friendsFilters`, `entitlements`, `redemptionCodes`, `billingEvents`, `subscriptions`). Les tables `entitlements`/`redemptionCodes`/`billingEvents` sont des surfaces de compatibilité locale en transition pendant la migration vers le ledger canonique de suite.
@@ -161,6 +163,7 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - L'application CommunityGlows reste dans `src/ui/setup/pages/CommunityGlows` avec réutilisation contrôlée des modules partagés de `src/`.
 - Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens CommunityGlows pour l'autorité visuelle. Les composants PrimeVue et PrimeFlex sont limités aux anciennes surfaces extension; PrimeIcons reste la seule dépendance visuelle Prime active dans l'entrée Windows.
 - Dockview est la primitive maintenue spécifique au workspace desktop; les groupes flottants sont désactivés pour conserver les WebViews enfants dans la fenêtre Tauri principale.
+- Les commandes WebView desktop revalident à la frontière Rust les identifiants de profil/réseau, les bounds finis et positifs, HTTPS sans credentials et l'allowlist de domaine des réseaux intégrés; les chemins de session ne sont jamais construits à partir de segments arbitraires.
 - La stratégie auth-connexion privilégie Convex Auth avec fallback offline.
 
 ## Hotspots

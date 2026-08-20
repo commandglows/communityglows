@@ -1,15 +1,21 @@
 import { ref } from 'vue'
+import { describe, expect, it } from 'vitest'
 
-import { createSerialTaskQueue, measureWebviewHost } from './useNetworkWebview'
+import {
+  createFrameCoalescedTask,
+  createSerialTaskQueue,
+  measureWebviewHost,
+} from './useNetworkWebview'
 
-const createHost = (width: number, height: number) => ({
-  getBoundingClientRect: () => ({
-    x: 120,
-    y: 64,
-    width,
-    height,
-  }),
-}) as HTMLElement
+const createHost = (width: number, height: number) =>
+  ({
+    getBoundingClientRect: () => ({
+      x: 120,
+      y: 64,
+      width,
+      height,
+    }),
+  }) as HTMLElement
 
 describe('measureWebviewHost', () => {
   it('waits for the host ref to be mounted before reading native bounds', async () => {
@@ -53,5 +59,65 @@ describe('createSerialTaskQueue', () => {
     await second
 
     expect(events).toEqual(['first:start', 'second:start', 'second:done'])
+  })
+})
+
+describe('createFrameCoalescedTask', () => {
+  it('keeps only the latest value scheduled within one frame', async () => {
+    const callbacks: FrameRequestCallback[] = []
+    const values: number[] = []
+    const scheduler = createFrameCoalescedTask<number>(
+      async (value) => {
+        values.push(value)
+      },
+      (callback) => {
+        callbacks.push(callback)
+        return callbacks.length
+      },
+      () => undefined,
+    )
+
+    scheduler.schedule(1)
+    scheduler.schedule(2)
+    scheduler.schedule(3)
+    expect(callbacks).toHaveLength(1)
+
+    callbacks.shift()?.(0)
+    await Promise.resolve()
+
+    expect(values).toEqual([3])
+  })
+
+  it('serializes native work and retains the latest pending frame', async () => {
+    const callbacks: FrameRequestCallback[] = []
+    const releases: Array<() => void> = []
+    const values: number[] = []
+    const scheduler = createFrameCoalescedTask<number>(
+      async (value) => {
+        values.push(value)
+        await new Promise<void>((resolve) => releases.push(resolve))
+      },
+      (callback) => {
+        callbacks.push(callback)
+        return callbacks.length
+      },
+      () => undefined,
+    )
+
+    scheduler.schedule(1)
+    callbacks.shift()?.(0)
+    scheduler.schedule(2)
+    scheduler.schedule(3)
+    expect(callbacks).toHaveLength(0)
+
+    releases.shift()?.()
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(callbacks).toHaveLength(1)
+    callbacks.shift()?.(1)
+    await Promise.resolve()
+
+    expect(values).toEqual([1, 3])
+    releases.shift()?.()
   })
 })
