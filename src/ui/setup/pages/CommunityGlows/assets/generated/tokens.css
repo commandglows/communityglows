@@ -209,6 +209,7 @@
   --sg-font-size-2rem: 2rem;
   --sg-font-size-3rem: 3rem;
   --sg-font-size-lg: 1.125rem;
+  --sg-font-weight-bold: 700;
   --sg-friends-dialog-width: 28rem;
   --sg-friends-empty-icon-opacity: 0.3;
   --sg-friends-empty-icon-size: 2rem;
@@ -649,6 +650,8 @@
   --sg-webview-placeholder-copy-size: 0.85rem;
   --sg-webview-placeholder-icon-size: 3rem;
   --sg-webview-placeholder-padding: 2rem;
+  --sg-workspace-panel-min-height: 180px;
+  --sg-workspace-panel-min-width: 240px;
   --surface-color: #f8f9fa;
   --text-color: #1B2559;
 }
@@ -680,4 +683,3 @@
   --surface-color: #2d2d2d;
   --text-color: #ffffff;
 }
-

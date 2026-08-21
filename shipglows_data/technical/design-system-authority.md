@@ -1,10 +1,10 @@
 ---
 artifact: design_system_authority
 metadata_schema_version: "1.0"
-artifact_version: "1.4.1"
+artifact_version: "1.5.0"
 project: "communityglows"
 created: "2026-06-12"
-updated: "2026-08-13"
+updated: "2026-08-20"
 status: "reviewed"
 source_skill: 001-sg-build
 scope: design-system-authority
@@ -120,6 +120,7 @@ design_system_authority:
 - Windows/Tauri and site load generated token carriers after legacy styles, preserving current resolved values while making canonical changes effective.
 - `pnpm run design:tokens:check` is part of the quality workflow and generated headers are stable across supported Node versions.
 - Android product chrome now consumes generated day/night color resources; remaining `Color.parseColor` values belong to the isolated social-network brand registry.
+- Desktop Bento consumes canonical workspace panel minima and typography weight from `design/tokens/reference.json`; the numeric Dockview API bridge resolves the generated CSS pixel tokens at runtime instead of duplicating visual values in component code.
 
 - Windows/Tauri source inventory: zero PrimeVue runtime imports or bootstrap configuration.
 - Generated Tauri declarations: zero PrimeVue components.

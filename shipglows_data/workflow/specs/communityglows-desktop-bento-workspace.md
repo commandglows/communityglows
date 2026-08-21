@@ -6,7 +6,7 @@ project: "communityglows"
 created: "2026-08-20"
 created_at: "2026-08-20 00:00:00 UTC"
 updated: "2026-08-20"
-updated_at: "2026-08-20 08:18:04 UTC"
+updated_at: "2026-08-20 17:15:00 UTC"
 status: ready
 source_skill: sg-development
 source_model: "GPT-5"
@@ -39,7 +39,7 @@ next_step: "Route Rust compilation and the Windows/Tauri visual checklist throug
 
 ## Outcome
 
-Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. Chaque profil possède ses propres Scènes synchronisées et son propre brouillon autosauvegardé localement.
+Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable. Un réseau sélectionné depuis la navigation ouvre ou active son panneau. Les panneaux peuvent être déplacés, groupés en onglets, divisés horizontalement ou verticalement et redimensionnés. Chaque profil possède ses propres Scènes autosauvegardées et synchronisées, ainsi que son propre brouillon autosauvegardé localement.
 
 ## Scope
 
@@ -47,7 +47,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Une WebView native isolée par couple profil/réseau et par panneau réseau.
 - Dockview comme moteur de disposition, enveloppé par des composants CommunityGlows.
 - Persistance locale versionnée avec validation défensive et restauration sûre.
-- Layout courant autosauvegardé localement et Scènes nommées gérées depuis une barre d'outils compacte.
+- Layout courant autosauvegardé localement; après sa création et son nommage explicites, la Scène active est autosauvegardée après 800 ms d'inactivité puis synchronisée en arrière-plan.
 - Modèles Colonnes, Lignes, Focus et Grille applicables aux panneaux déjà ouverts sans recréer leurs WebViews.
 - Scènes synchronisées et cloisonnées par profil via le canal d'état workspace existant, avec file hors ligne et limite globale de 500 000 caractères ; cookies et brouillons courants exclus.
 
@@ -71,6 +71,7 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 - Fermer un panneau masque sa WebView et la conserve dans le pool existant.
 - Le layout courant survit au rechargement local.
 - Une Scène peut être créée, chargée, renommée, supprimée puis retrouvée sur un autre appareil connecté.
+- Déplacer, redimensionner, ajouter, fermer ou renommer dans une Scène active déclenche son autosave; la dernière modification est forcée avant de charger une autre Scène, de créer un nouveau brouillon, de changer de profil ou de fermer le workspace.
 - Changer de profil sauvegarde le brouillon sortant et restaure uniquement le brouillon et les Scènes du profil entrant.
 - Les anciennes Scènes globales et l'ancien autosave sont migrés une fois vers le profil actif final ; supprimer un profil purge ses Scènes et son brouillon.
 - Un layout invalide ou contenant un réseau inconnu est rejeté sans crash.
@@ -102,6 +103,9 @@ Le desktop affiche plusieurs réseaux simultanément dans un workspace dockable.
 | 2026-08-20 | sg-development | GPT-5 | Renamed saved bentos to Scenes and connected their bounded state to the existing offline-first workspace sync and encrypted backup path; live autosave and sessions remain local. All 28 focused sync/layout/backup tests, core typecheck, targeted lint, token drift and diff checks passed without a build or generated artifact. | partial | Verify the deployed Convex mutation and native scene switching outside this code-only workspace. |
 | 2026-08-20 | sg-development | GPT-5 | Scoped Scenes, selection and local drafts by profile; added v1 migration, profile-switch isolation, deletion cleanup and bounded v2 cloud acceptance. All 38 focused tests, core typecheck, targeted lint, token drift and diff checks passed without a build or generated artifact; the full Vue check has no errors in changed implementation files. | partial | Verify the deployed Convex mutation and native profile switching outside this code-only workspace. |
 | 2026-08-20 | sg-planning | GPT-5 | Recorded the Convex v2 deployment as a P0 CI-only task with an explicit no-local-install constraint and secret boundary. | blocked | Add the GitHub deployment secret, then implement and run the manual CI workflow. |
+| 2026-08-20 | sg-development | GPT-5 | Prepared a master-only manual GitHub Actions workflow for the Convex backend with explicit DEPLOY confirmation, least-privilege permissions, secret preflight and no application build. Static review only; no workflow, build, test, install or deployment was run. | implemented | Add CONVEX_DEPLOY_KEY, dispatch the workflow, then verify a profiled Scene roundtrip. |
+| 2026-08-20 | sg-development | GPT-5 | Added 800 ms autosave for the active named Scene, forced flushes before Scene/profile/workspace transitions, background cloud queueing and a discreet local/sync status. Static review only; no build, install, test or artifact was run. | implemented | Verify rapid edits and Scene/profile switches through CI or a desktop runtime. |
+| 2026-08-20 | sg-design | GPT-5 | Audited the full Bento commit range and current workspace against the canonical design authority; replaced the last raw font weight and duplicated Dockview panel minima with canonical tokens and a runtime CSS-to-numeric bridge. Static drift scan reports zero defects; no build, token generation or rendered proof was run. | partial | Verify generated-token consistency and rendered Bento density through CI or a desktop runtime. |
 
 ## Current Chantier Flow
 

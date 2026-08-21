@@ -1683,12 +1683,14 @@ class NativeWebViewPlugin(private val activity: Activity) : Plugin(activity) {
 
         val existing = sessionHosts[targetSession.sessionKey]
         if (existing != null) {
+            dbg("host reuse=warm poolSize=${sessionHosts.size}")
             showHostInternal(existing)
             onResult(true, true)
             return
         }
 
         if (!loadIfMissing) {
+            dbg("host reuse=miss poolSize=${sessionHosts.size} pooling=${isPoolingEnabled()}")
             onResult(false, false)
             return
         }
@@ -2574,18 +2576,33 @@ ${LINKEDIN_THEME_BRIDGE_HELPERS}
             } else {
                 val host = sessionHosts[session.sessionKey]
                 if (host == null) {
+                    dbg("host reuse=miss poolSize=${sessionHosts.size} pooling=${isPoolingEnabled()}")
                     false
                 } else {
                     val current = activeHost()
                     if (current != null && current.session.sessionKey != host.session.sessionKey) {
                         hideHostInternal(current)
                     }
+                    dbg("host reuse=warm poolSize=${sessionHosts.size}")
                     showHostInternal(host)
                     true
                 }
             }
             val result = JSObject()
             result.put("shown", shown)
+            invoke.resolve(result)
+        }
+    }
+
+    @Command
+    fun getPoolStats(invoke: Invoke) {
+        activity.runOnUiThread {
+            ensureMultiProfileModeInitialized()
+            val result = JSObject()
+            result.put("total", sessionHosts.size)
+            result.put("visible", sessionHosts.values.count { it.isVisible })
+            result.put("hidden", sessionHosts.values.count { !it.isVisible })
+            result.put("poolingEnabled", isPoolingEnabled())
             invoke.resolve(result)
         }
     }

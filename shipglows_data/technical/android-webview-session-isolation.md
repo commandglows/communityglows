@@ -1,10 +1,10 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
+artifact_version: "1.4.0"
 project: "communityglows"
 created: "2026-05-23"
-updated: "2026-08-19"
+updated: "2026-08-20"
 status: reviewed
 source_skill: 300-sg-docs
 scope: android-webview-session-isolation
@@ -104,6 +104,8 @@ Le plugin Android doit signaler un mode dégradé quand une WebView ne supporte 
 
 Le mode dégradé ne doit pas être présenté comme une isolation complète. Les logs et statuts doivent rester exempts de tokens, cookies, valeurs `localStorage`, identifiants de comptes et secrets.
 
+Le diagnostic copiable expose les totaux `total`, `visible`, `hidden` et le booléen `poolingEnabled`. Un retour chaud doit aussi produire un événement natif `reuse=warm`; un hôte absent produit `reuse=miss`. Ces valeurs ne contiennent aucune clé de session et permettent de distinguer une vraie réutilisation d'un fallback WebKit, d'une éviction LRU ou d'un APK obsolète.
+
 ## Non-Coverage
 
 Le fallback par snapshots ne couvre pas:
@@ -131,7 +133,7 @@ CommunityGlows, et le choix reste entièrement sous le contrôle de l'utilisateu
 - Vérifier les hooks natifs:
   `rg -n "MULTI_PROFILE|ProfileStore|setProfile|importantForAutofill|DOCUMENT_START_SCRIPT|WEB_MESSAGE_LISTENER|localStorage|restoreCookiesForSession|loadUrl|degraded" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt`
 - Vérifier le pooling Android:
-  `rg -n "SessionWebViewHost|MAX_WARM|showWebView|hideWebView|destroyHost|shown" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt src-tauri/src/lib.rs src-tauri/plugins/android-webview/src/mobile.rs`
+  `rg -n "SessionWebViewHost|MAX_WARM|showWebView|hideWebView|getPoolStats|poolingEnabled|reuse=warm|reuse=miss|destroyHost|shown" src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt src-tauri/src/lib.rs src-tauri/plugins/android-webview/src/mobile.rs`
 - Tester Android depuis l'APK CI GitHub Actions / Blacksmith, artifact `communityglows-android-debug`.
 
 ## Reader Checklist

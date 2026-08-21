@@ -5,8 +5,8 @@ artifact_version: "1.1.0"
 project: "socialglowz"
 created: "2026-05-23"
 created_at: "2026-05-23 20:10:00 UTC"
-updated: "2026-05-23"
-updated_at: "2026-05-23 20:00:27 UTC"
+updated: "2026-08-20"
+updated_at: "2026-08-20 16:57:43 UTC"
 status: ready
 source_skill: 001-sg-build
 source_model: "GPT-5 Codex"
@@ -224,6 +224,7 @@ None for implementation. If `MULTI_PROFILE` does not compile or is unavailable o
 | 2026-05-24 13:39:23 UTC | sf-test | GPT-5 Codex | Captured Android APK manual Test 1 failure: same-profile network return takes about 4 seconds and visibly reloads every time. | failed | sf-fix BUG-2026-05-24-001 |
 | 2026-05-24 13:42:45 UTC | sf-test | GPT-5 Codex | Captured Android APK manual Tests 2 and 3 pass for profile isolation and return-to-profile session behavior. | partial | collect SFZ logs for Test 1 reload path |
 | 2026-05-24 13:53:11 UTC | sf-test | GPT-5 Codex | Analyzed copied SFZ logs; installed APK logs show old switch path with explicit `loadUrl` and a stale debug string absent from current source. | blocked | ship current code to Blacksmith APK, then retest Test 1 |
+| 2026-08-20 16:57:43 UTC | sg-bug | GPT-5 Codex | Re-audited the current A -> B -> A control flow and added non-sensitive warm-hit/miss, pool-size and capability diagnostics across Kotlin, Rust and Vue. No local build, install, test or artifact was run. | fix-attempted | Generate a fresh CI artifact and retest with `poolingEnabled=true` and warm-hit evidence. |
 
 ## Current Chantier Flow
 
@@ -232,6 +233,6 @@ None for implementation. If `MULTI_PROFILE` does not compile or is unavailable o
 | sf-spec | ready | Spec corrected for AndroidX WebKit multi-profile pooling and process-suffix fallback only if needed. |
 | sf-ready | ready | Ready for sequential implementation; no parallel write batches. |
 | sf-start | implemented | Android multi-profile host pool, show/hide bridge, LRU eviction, profile deletion handling, and docs implemented locally. |
-| sf-verify | blocked | Installed APK logs do not match current source; they show the old switch path (`loadUrl` on every switch) and a stale debug string. Need a new APK from the current code before judging the latest pooling implementation. |
+| sf-verify | blocked | Current static flow reuses warm hosts and now exposes actual Android pool/capability diagnostics, but installed APK evidence is stale. Need a fresh CI artifact before judging the implementation. |
 | sf-end | pending | Not closed. |
 | sf-ship | pending | Ship/push current code to generate a fresh Blacksmith APK, then retest `BUG-2026-05-24-001`. |

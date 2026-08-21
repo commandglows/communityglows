@@ -42,6 +42,7 @@ type DesktopWebviewPoolStats = {
   total: number
   visible: number
   hidden: number
+  poolingEnabled?: boolean
 }
 
 export function createSerialTaskQueue() {
@@ -162,7 +163,7 @@ export function useNetworkWebview(
       record(
         'webview-pool',
         'success',
-        `total=${stats.total} visible=${stats.visible} hidden=${stats.hidden}`,
+        `total=${stats.total} visible=${stats.visible} hidden=${stats.hidden}${stats.poolingEnabled === undefined ? '' : ` enabled=${stats.poolingEnabled}`}`,
       )
     } catch (error) {
       record(

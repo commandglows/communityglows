@@ -21,7 +21,7 @@
         @update:model-value="applyPreset"
       />
       <SgSelect
-        v-model="selectedLayoutId"
+        :model-value="selectedLayoutId"
         class="desktop-workspace__layout-select"
         :options="layoutOptions"
         placeholder="Scènes enregistrées"
@@ -35,13 +35,21 @@
         maxlength="64"
         placeholder="Nom de la scène"
         aria-label="Nom de la scène"
-        @keydown.enter="saveNamedLayout"
+        @keydown.enter="commitSceneName"
       />
+      <span
+        v-if="sceneSaveLabel"
+        class="desktop-workspace__save-status"
+        aria-live="polite"
+      >
+        {{ sceneSaveLabel }}
+      </span>
 
       <div class="desktop-workspace__actions">
         <SgButton
+          v-if="!selectedLayoutId"
           icon="pi pi-save"
-          label="Enregistrer"
+          label="Créer la scène"
           size="small"
           @click="saveNamedLayout"
         />
@@ -110,7 +118,7 @@ import {
   type TabDragEvent,
 } from 'dockview-vue'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
-import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
+import { readDesktopWorkspaceConstraints } from '@/design-tokens'
 import {
   clearDesktopWorkspaceAutosave,
   createDesktopWorkspacePresetLayout,
@@ -177,6 +185,7 @@ const workspaceNetworkCatalog = computed(() =>
   networkCatalogForProfile(profilesStore.activeProfileId),
 )
 const dockviewApi = shallowRef<DockviewApi | null>(null)
+const desktopWorkspaceConstraints = readDesktopWorkspaceConstraints()
 desktopWorkspacesStore.initialize(
   workspaceNetworkCatalog.value,
   profilesStore.activeProfile?.localOnly
@@ -187,13 +196,16 @@ const { workspaceState } = storeToRefs(desktopWorkspacesStore)
 const layoutName = ref('')
 const selectedPreset = ref('')
 const dockDragActive = ref(false)
+const sceneSaveStatus = ref<'idle' | 'saving' | 'saved' | 'local-only'>('idle')
 const disposables: Array<{ dispose: () => void }> = []
 let autosaveTimer: number | undefined
+let sceneAutosaveTimer: number | undefined
 let dockDragWatchdog: number | undefined
 let restoringLayout = false
 let profileSwitching = false
 let autosaveWarningShown = false
 const DOCK_DRAG_WATCHDOG_MS = 15_000
+const SCENE_AUTOSAVE_DELAY_MS = 800
 
 const workspaceSuspended = computed(
   () => props.suspended || dockDragActive.value,
@@ -248,6 +260,14 @@ const selectedLayoutId = computed({
     )
   },
 })
+const sceneSaveLabel = computed(() => {
+  if (!selectedLayoutId.value) return ''
+  if (sceneSaveStatus.value === 'saving') return 'Enregistrement…'
+  if (sceneSaveStatus.value === 'local-only') {
+    return 'Local · sync en attente'
+  }
+  return sceneSaveStatus.value === 'saved' ? 'Enregistré' : ''
+})
 
 function panelId(networkId: string): string {
   return `network:${encodeURIComponent(networkId)}`
@@ -281,6 +301,71 @@ function scheduleAutosave() {
       push.warning({ message: workspacePersistenceMessage(result) })
     }
   }, 200)
+  scheduleNamedSceneAutosave()
+}
+
+function persistActiveNamedScene(
+  profileId: string,
+  catalog = networkCatalogForProfile(profileId),
+): boolean {
+  const api = dockviewApi.value
+  const id = workspaceState.value.selectedLayoutIds[profileId]
+  const saved = workspaceState.value.layouts.find(
+    (layout) => layout.profileId === profileId && layout.id === id,
+  )
+  if (!api || !id || !saved || api.panels.length === 0) return false
+
+  const layout = api.toJSON()
+  if (!isSafeDesktopWorkspaceLayout(layout, catalog)) {
+    sceneSaveStatus.value = 'local-only'
+    return false
+  }
+  const nextState = saveDesktopWorkspaceLayout(workspaceState.value, {
+    id,
+    profileId,
+    name:
+      profileId === profilesStore.activeProfileId
+        ? layoutName.value.trim() || saved.name
+        : saved.name,
+    layout,
+  })
+  const result = desktopWorkspacesStore.persist(nextState)
+  if (!result.local.ok) {
+    sceneSaveStatus.value = 'local-only'
+    if (!autosaveWarningShown) {
+      autosaveWarningShown = true
+      push.warning({ message: workspacePersistenceMessage(result.local) })
+    }
+    return false
+  }
+  sceneSaveStatus.value =
+    result.cloud.ok && navigator.onLine ? 'saved' : 'local-only'
+  return true
+}
+
+function flushNamedSceneAutosave(
+  profileId = profilesStore.activeProfileId,
+  catalog = networkCatalogForProfile(profileId),
+) {
+  window.clearTimeout(sceneAutosaveTimer)
+  sceneAutosaveTimer = undefined
+  if (!profileId || restoringLayout || profileSwitching) return
+  persistActiveNamedScene(profileId, catalog)
+}
+
+function scheduleNamedSceneAutosave() {
+  if (
+    restoringLayout ||
+    profileSwitching ||
+    !workspaceState.value.selectedLayoutIds[profilesStore.activeProfileId]
+  )
+    return
+  sceneSaveStatus.value = 'saving'
+  window.clearTimeout(sceneAutosaveTimer)
+  sceneAutosaveTimer = window.setTimeout(() => {
+    sceneAutosaveTimer = undefined
+    persistActiveNamedScene(profilesStore.activeProfileId)
+  }, SCENE_AUTOSAVE_DELAY_MS)
 }
 
 function endDockDrag() {
@@ -377,8 +462,8 @@ function ensureNetworkPanel(networkId: string, url: string) {
     title: network?.label ?? 'Lien personnalisé',
     renderer: 'always',
     params,
-    minimumWidth: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinWidth,
-    minimumHeight: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinHeight,
+    minimumWidth: desktopWorkspaceConstraints.panelMinWidth,
+    minimumHeight: desktopWorkspaceConstraints.panelMinHeight,
     ...(referencePanel ? { position: { referencePanel, direction } } : {}),
   })
 }
@@ -478,15 +563,18 @@ function onDockviewReady(event: DockviewReadyEvent) {
         workspaceState.value.selectedLayoutIds[profilesStore.activeProfileId],
   )
   layoutName.value = selected?.name ?? ''
+  sceneSaveStatus.value = selected ? 'saved' : 'idle'
 
   if (webviewStore.activeNetworkId && webviewStore.activeUrl) {
     ensureNetworkPanel(webviewStore.activeNetworkId, webviewStore.activeUrl)
   }
   emit('contentChange', event.api.panels.length > 0)
+  if (selected) scheduleNamedSceneAutosave()
 }
 
 function loadNamedLayout(id: string) {
   const profileId = profilesStore.activeProfileId
+  flushNamedSceneAutosave(profileId)
   const saved = workspaceState.value.layouts.find(
     (layout) => layout.id === id && layout.profileId === profileId,
   )
@@ -497,6 +585,7 @@ function loadNamedLayout(id: string) {
     saved.id,
   )
   layoutName.value = saved.name
+  sceneSaveStatus.value = 'saved'
   const stateResult = desktopWorkspacesStore.persist(workspaceState.value)
   const autosaveResult = persistDesktopWorkspaceAutosave(
     localStorage,
@@ -546,6 +635,8 @@ function saveNamedLayout() {
     push.warning({ message: workspacePersistenceMessage(stateResult.local) })
     return
   }
+  window.clearTimeout(sceneAutosaveTimer)
+  sceneAutosaveTimer = undefined
   layoutName.value =
     workspaceState.value.layouts.find(
       (layout) =>
@@ -559,6 +650,7 @@ function saveNamedLayout() {
     profileId,
   )
   if (!stateResult.cloud.ok || !autosaveResult.ok) {
+    sceneSaveStatus.value = 'local-only'
     push.warning({
       message: `Scène enregistrée localement. ${
         !stateResult.cloud.ok
@@ -567,20 +659,31 @@ function saveNamedLayout() {
       }`,
     })
   } else {
+    sceneSaveStatus.value = 'saved'
     push.success({ message: 'Scène enregistrée.' })
   }
+}
+
+function commitSceneName() {
+  if (selectedLayoutId.value) {
+    flushNamedSceneAutosave()
+    return
+  }
+  saveNamedLayout()
 }
 
 function startNewLayout() {
   const api = dockviewApi.value
   if (!api) return
   const profileId = profilesStore.activeProfileId
+  flushNamedSceneAutosave(profileId)
   const nextState = selectDesktopWorkspaceLayout(
     workspaceState.value,
     profileId,
     null,
   )
   layoutName.value = ''
+  sceneSaveStatus.value = 'idle'
   api.clear()
   const clearResult = clearDesktopWorkspaceAutosave(localStorage, profileId)
   const stateResult = desktopWorkspacesStore.persist(nextState)
@@ -616,6 +719,8 @@ function deleteNamedLayout() {
   const profileId = profilesStore.activeProfileId
   const id = workspaceState.value.selectedLayoutIds[profileId]
   if (!id) return
+  window.clearTimeout(sceneAutosaveTimer)
+  sceneAutosaveTimer = undefined
   const nextState = deleteDesktopWorkspaceLayout(
     workspaceState.value,
     profileId,
@@ -627,6 +732,7 @@ function deleteNamedLayout() {
     return
   }
   layoutName.value = ''
+  sceneSaveStatus.value = 'idle'
   if (!result.cloud.ok) {
     push.warning({
       message: `Scène supprimée localement. ${workspaceSyncMessage(result.cloud)}`,
@@ -667,14 +773,22 @@ watch(
 
     const api = dockviewApi.value
     if (!api) return
+    window.clearTimeout(autosaveTimer)
+    window.clearTimeout(sceneAutosaveTimer)
+    sceneAutosaveTimer = undefined
+    const previousProfileStillExists = profilesStore.profiles.some(
+      (profile) => profile.id === previousProfileId,
+    )
+    if (previousProfileId && previousProfileStillExists) {
+      persistActiveNamedScene(
+        previousProfileId,
+        networkCatalogForProfile(previousProfileId),
+      )
+    }
     profileSwitching = true
     restoringLayout = true
-    window.clearTimeout(autosaveTimer)
 
     try {
-      const previousProfileStillExists = profilesStore.profiles.some(
-        (profile) => profile.id === previousProfileId,
-      )
       if (previousProfileId && previousProfileStillExists) {
         if (api.panels.length > 0) {
           persistDesktopWorkspaceAutosave(
@@ -714,6 +828,9 @@ watch(
       if (networkId && url) ensureNetworkPanel(networkId, url)
     }
     syncActiveNetworkFromDockview()
+    sceneSaveStatus.value = workspaceState.value.selectedLayoutIds[profileId]
+      ? 'saved'
+      : 'idle'
   },
 )
 
@@ -737,9 +854,14 @@ watch([workspaceState, () => profilesStore.activeProfileId], ([state, profileId]
     )?.name ?? ''
 })
 
+watch(layoutName, (name, previousName) => {
+  if (name !== previousName) scheduleNamedSceneAutosave()
+})
+
 onUnmounted(() => {
   endDockDrag()
   window.clearTimeout(autosaveTimer)
+  flushNamedSceneAutosave()
   const api = dockviewApi.value
   if (api?.panels.length)
     persistDesktopWorkspaceAutosave(
@@ -778,7 +900,7 @@ onUnmounted(() => {
   align-items: center;
   gap: var(--sg-space-2);
   color: var(--sg-color-text);
-  font-weight: 700;
+  font-weight: var(--sg-font-weight-bold);
 }
 
 .desktop-workspace__layout-select,
@@ -791,6 +913,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: var(--sg-space-1);
+}
+
+.desktop-workspace__save-status {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d8rem);
+  white-space: nowrap;
 }
 
 .desktop-workspace__dock {

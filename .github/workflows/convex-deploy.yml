@@ -1,0 +1,72 @@
+name: CommunityGlows - Manual Convex Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type DEPLOY to deploy the Convex backend from master
+        required: true
+        type: string
+
+concurrency:
+  group: convex-production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy Convex backend
+    if: github.ref == 'refs/heads/master'
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 15
+
+    steps:
+      - name: Verify deployment authorization
+        shell: bash
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: |
+          if [ "$CONFIRMATION" != "DEPLOY" ]; then
+            echo 'Deployment cancelled: confirmation must be exactly DEPLOY.' >&2
+            exit 1
+          fi
+          if [ -z "$CONVEX_DEPLOY_KEY" ]; then
+            echo 'CONVEX_DEPLOY_KEY is not configured in GitHub Actions secrets.' >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.0.0
+          cache: pnpm
+
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile --force
+
+      - name: Deploy Convex backend
+        env:
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: >-
+          pnpm exec convex deploy
+          --message "GitHub Actions ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+
+      - name: Record deployment summary
+        shell: bash
+        run: |
+          {
+            echo '## Convex deployment'
+            echo
+            echo "- Repository: \`${GITHUB_REPOSITORY}\`"
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo '- Application build: not run'
+          } >> "$GITHUB_STEP_SUMMARY"
+

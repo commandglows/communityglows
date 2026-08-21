@@ -14,7 +14,28 @@ export const RESPONSIVE_BREAKPOINTS = {
   dialogSettingsNarrow: 641,
 } as const
 
-export const DESKTOP_WORKSPACE_CONSTRAINTS = {
-  panelMinWidth: 240,
-  panelMinHeight: 180,
+const DESKTOP_WORKSPACE_TOKEN_NAMES = {
+  panelMinWidth: '--sg-workspace-panel-min-width',
+  panelMinHeight: '--sg-workspace-panel-min-height',
 } as const
+
+function readRequiredPixelToken(name: string): number {
+  const value = Number.parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue(name),
+  )
+  if (!Number.isFinite(value) || value <= 0) {
+    throw new Error(`Required pixel design token is unavailable: ${name}`)
+  }
+  return value
+}
+
+export function readDesktopWorkspaceConstraints() {
+  return {
+    panelMinWidth: readRequiredPixelToken(
+      DESKTOP_WORKSPACE_TOKEN_NAMES.panelMinWidth,
+    ),
+    panelMinHeight: readRequiredPixelToken(
+      DESKTOP_WORKSPACE_TOKEN_NAMES.panelMinHeight,
+    ),
+  }
+}

@@ -255,6 +255,8 @@ struct DesktopWebviewPoolStats {
     total: usize,
     visible: usize,
     hidden: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pooling_enabled: Option<bool>,
 }
 
 #[cfg(not(target_os = "android"))]
@@ -1541,6 +1543,7 @@ fn get_desktop_webview_pool_stats(app: AppHandle) -> Result<DesktopWebviewPoolSt
         total: entries.len(),
         visible: entries.len().saturating_sub(hidden),
         hidden,
+        pooling_enabled: None,
     })
 }
 
@@ -1690,12 +1693,17 @@ fn show_webview(
 
 #[tauri::command]
 #[cfg(target_os = "android")]
-fn get_desktop_webview_pool_stats(_app: AppHandle) -> DesktopWebviewPoolStats {
-    DesktopWebviewPoolStats {
-        total: 0,
-        visible: 0,
-        hidden: 0,
-    }
+fn get_desktop_webview_pool_stats(app: AppHandle) -> Result<DesktopWebviewPoolStats, String> {
+    let stats = app
+        .android_webview()
+        .pool_stats()
+        .map_err(|e| e.to_string())?;
+    Ok(DesktopWebviewPoolStats {
+        total: stats.total,
+        visible: stats.visible,
+        hidden: stats.hidden,
+        pooling_enabled: Some(stats.pooling_enabled),
+    })
 }
 
 #[tauri::command]

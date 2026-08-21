@@ -32,6 +32,15 @@ struct ShowResponse {
     shown: bool,
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PoolStatsResponse {
+    pub total: usize,
+    pub visible: usize,
+    pub hidden: usize,
+    pub pooling_enabled: bool,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GrayscaleRequest {
@@ -144,6 +153,12 @@ impl<R: Runtime> AndroidWebview<R> {
                     account_id: account_id.to_string(),
                 },
             )
+            .map_err(|e| Error::PluginInvoke(e.to_string()))
+    }
+
+    pub fn pool_stats(&self) -> Result<PoolStatsResponse> {
+        self.0
+            .run_mobile_plugin("getPoolStats", ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
