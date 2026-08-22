@@ -37,6 +37,67 @@
       <p class="billing-recovery-note">{{ restartAllowanceLabel }}</p>
     </div>
 
+    <aside
+      v-if="trialReminder"
+      class="billing-trial-reminder"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-labelledby="billing-trial-reminder-title"
+    >
+      <div class="billing-trial-reminder-heading">
+        <span class="billing-trial-reminder-icon" aria-hidden="true">
+          <SgIcon icon="pi pi-bolt" />
+        </span>
+        <div>
+          <span class="billing-trial-reminder-eyebrow">{{ $t('billing.trial_reminder_eyebrow') }}</span>
+          <strong id="billing-trial-reminder-title">
+            {{ $t(trialReminderTitleKey, { count: trialReminder.daysRemaining }) }}
+          </strong>
+        </div>
+      </div>
+
+      <p class="billing-trial-reminder-message">{{ $t('billing.trial_reminder_message') }}</p>
+
+      <div class="billing-trial-reminder-value">
+        <span>{{ $t('billing.trial_reminder_value_title') }}</span>
+        <ul>
+          <li>
+            <SgIcon icon="pi pi-th-large" aria-hidden="true" />
+            {{ $t('billing.trial_reminder_value_workspace') }}
+          </li>
+          <li>
+            <SgIcon icon="pi pi-users" aria-hidden="true" />
+            {{ $t('billing.trial_reminder_value_profiles') }}
+          </li>
+          <li>
+            <SgIcon icon="pi pi-compass" aria-hidden="true" />
+            {{ $t('billing.trial_reminder_value_flow') }}
+          </li>
+        </ul>
+      </div>
+
+      <p class="billing-trial-reminder-price">{{ $t('billing.trial_reminder_price') }}</p>
+
+      <div class="billing-trial-reminder-actions">
+        <button
+          class="billing-action primary"
+          type="button"
+          :disabled="!canStartCheckout"
+          @click="purchase"
+        >
+          <SgIcon :icon="isStartingCheckout ? 'pi pi-spin pi-spinner' : 'pi pi-shield'" />
+          {{ isStartingCheckout ? $t('billing.opening_checkout') : $t('billing.trial_reminder_keep_access') }}
+        </button>
+        <button
+          class="billing-action"
+          type="button"
+          @click="snoozeTrialReminder"
+        >
+          {{ $t('billing.trial_reminder_snooze') }}
+        </button>
+      </div>
+    </aside>
+
     <div
       v-if="status === 'trial_expired' || status === 'trial_exhausted'"
       class="billing-recovery"
@@ -213,6 +274,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useBillingAccess } from '@/composables/useBillingAccess'
+import { useTrialReminder } from '@/composables/useTrialReminder'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import SgStatusPill from './ui/SgStatusPill.vue'
@@ -239,6 +301,20 @@ const {
   canAccessProtected,
   trialRestartsRemaining,
 } = useBillingAccess()
+
+const trialReminderEnabled = computed(() => status.value === 'trial_active')
+const trialReminderStartedAt = computed(() => access.value?.trialStartedAt)
+const trialReminderEndsAt = computed(() => access.value?.trialEndsAt)
+const { reminder: trialReminder, snooze: snoozeTrialReminder } = useTrialReminder(
+  trialReminderEnabled,
+  trialReminderStartedAt,
+  trialReminderEndsAt,
+)
+const trialReminderTitleKey = computed(() => {
+  if (trialReminder.value?.milestone === 1) return 'billing.trial_reminder_title_1'
+  if (trialReminder.value?.milestone === 3) return 'billing.trial_reminder_title_3'
+  return 'billing.trial_reminder_title_7'
+})
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -525,12 +601,118 @@ function purchase() {
 }
 
 .billing-trial-summary,
+.billing-trial-reminder,
 .billing-recovery,
 .billing-bridge-state {
   padding: var(--billing-spacing-lg);
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-lg);
   background: var(--sg-color-surface-muted);
+}
+
+.billing-trial-reminder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--billing-spacing-md);
+  border-color: var(--sg-color-warning);
+}
+
+.billing-trial-reminder-heading,
+.billing-trial-reminder-actions,
+.billing-trial-reminder-value li {
+  display: flex;
+  align-items: center;
+}
+
+.billing-trial-reminder-heading {
+  gap: var(--billing-spacing-md);
+}
+
+.billing-trial-reminder-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: var(--sg-size-2d45rem);
+  min-height: var(--sg-size-2d45rem);
+  border: 1px solid var(--sg-color-warning);
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-surface-raised);
+  color: var(--sg-color-warning);
+}
+
+.billing-trial-reminder-eyebrow {
+  display: block;
+  margin-bottom: var(--billing-spacing-sm);
+  color: var(--sg-color-warning);
+  font-size: var(--sg-font-size-0d75rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.billing-trial-reminder strong,
+.billing-trial-reminder p,
+.billing-trial-reminder ul {
+  margin: 0;
+}
+
+.billing-trial-reminder strong {
+  display: block;
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d95rem);
+  line-height: var(--sg-line-height-1d2);
+}
+
+.billing-trial-reminder-message {
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d82rem);
+  line-height: var(--sg-line-height-1d45);
+}
+
+.billing-trial-reminder-value {
+  display: grid;
+  gap: var(--billing-spacing-sm);
+  padding: var(--billing-spacing-md);
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-lg);
+  background: var(--sg-color-surface-raised);
+}
+
+.billing-trial-reminder-value > span,
+.billing-trial-reminder-price {
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d82rem);
+  font-weight: 700;
+}
+
+.billing-trial-reminder-value ul {
+  display: grid;
+  gap: var(--billing-spacing-sm);
+  padding: 0;
+  list-style: none;
+}
+
+.billing-trial-reminder-value li {
+  gap: var(--billing-spacing-sm);
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-line-height-1d4);
+}
+
+.billing-trial-reminder-value li :deep(.sg-icon) {
+  flex: 0 0 auto;
+  color: var(--sg-color-action);
+}
+
+.billing-trial-reminder-price {
+  text-align: center;
+}
+
+.billing-trial-reminder-actions {
+  gap: var(--billing-spacing-sm);
+}
+
+.billing-trial-reminder-actions .billing-action {
+  flex: 1 1 auto;
 }
 
 .billing-trial-summary > div:first-child {
@@ -728,6 +910,11 @@ function purchase() {
 .billing-panel.is-narrow .billing-bridge-state {
   align-items: flex-start;
   grid-template-columns: 1fr;
+  flex-direction: column;
+}
+
+.billing-panel.is-narrow .billing-trial-reminder-actions {
+  align-items: stretch;
   flex-direction: column;
 }
 
