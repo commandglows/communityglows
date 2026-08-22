@@ -687,6 +687,12 @@ export async function hydrateCloudState(options?: {
       });
       throw new Error("La session cloud n’est pas disponible. Reconnectez-vous puis réessayez.");
     }
+    try {
+      await client.action(api.billing.relinkRetainedAccount, {});
+      recordDiagnosticEvent({ area: "cloud-auth", stage: "license-relink", status: "checked" });
+    } catch {
+      recordDiagnosticEvent({ area: "cloud-auth", stage: "license-relink", status: "deferred" });
+    }
     recordDiagnosticEvent({
       area: "cloud-sync",
       stage: "authenticated-user",

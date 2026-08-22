@@ -450,7 +450,20 @@
     "already_exists_error": "An account already exists for this email. Use “Sign in” instead.",
     "invalid_credentials_error": "Incorrect email or password.",
     "no_account_hint": "Create an account to sync your data across all your devices.",
-    "unavailable_hint": "Account sync is unavailable in this build — the Convex backend is not configured."
+    "unavailable_hint": "Account sync is unavailable in this build — the Convex backend is not configured.",
+    "delete_action": "Delete my account",
+    "delete_title": "Delete your CommunityGlows account?",
+    "delete_description": "This permanently deletes your account and CommunityGlows data stored in the cloud.",
+    "delete_warning": "This deletion is permanent and cannot be undone.",
+    "delete_cloud_data": "Your profiles, settings, links, and synced data will be deleted.",
+    "delete_social_accounts_untouched": "Your third-party social accounts and sessions will not be deleted.",
+    "delete_license_retention": "Minimal pseudonymized commercial proof may be retained to restore a valid license and meet legal obligations.",
+    "delete_confirmation_label": "To confirm, enter {email}",
+    "delete_confirm": "Delete permanently",
+    "delete_loading": "Deleting…",
+    "delete_confirmation_error": "The email entered does not match your account.",
+    "delete_error": "Deletion did not complete. Your data remains intact; please try again.",
+    "delete_success": "Your CommunityGlows account has been deleted."
   },
   "extension": {
     "surface": {

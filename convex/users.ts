@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { internalQuery, query } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
 
@@ -45,5 +45,17 @@ export const emailExists = query({
       .unique();
 
     return account !== null;
+  },
+});
+
+export const getDeletionIdentity = internalQuery({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const user = await ctx.db.get(userId);
+    if (!user) return null;
+    return {
+      email: user.email,
+      emailVerificationTime: user.emailVerificationTime,
+    };
   },
 });

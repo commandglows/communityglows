@@ -1,7 +1,7 @@
-import type { MutationCtx, QueryCtx } from "./_generated/server";
+import type { ActionCtx, MutationCtx, QueryCtx } from "./_generated/server";
 import { auth } from "./auth";
 
-type AuthCtx = Pick<QueryCtx, "auth"> | Pick<MutationCtx, "auth">;
+type AuthCtx = Pick<QueryCtx, "auth"> | Pick<MutationCtx, "auth"> | Pick<ActionCtx, "auth">;
 
 export async function requireAuthUserId(ctx: AuthCtx) {
   const userId = await auth.getUserId(ctx);

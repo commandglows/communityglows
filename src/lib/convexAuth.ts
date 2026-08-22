@@ -325,6 +325,12 @@ export async function signOut() {
   clearTokens();
 }
 
+/** Clear this device's CommunityGlows auth state after server-confirmed account deletion. */
+export function clearDeletedAccountAuthState() {
+  clearTokens();
+  detachClientAuth();
+}
+
 // --------------- Helpers ---------------
 
 function persistTokens(tokens: { token: string; refreshToken: string }) {

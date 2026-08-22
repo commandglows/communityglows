@@ -450,7 +450,20 @@
     "already_exists_error": "Un compte existe déjà pour cet e-mail. Utilisez « Se connecter » à la place.",
     "invalid_credentials_error": "E-mail ou mot de passe incorrect.",
     "no_account_hint": "Créez un compte pour synchroniser vos données sur tous vos appareils.",
-    "unavailable_hint": "La synchronisation du compte n’est pas disponible dans cette version — le service Convex n’est pas configuré."
+    "unavailable_hint": "La synchronisation du compte n’est pas disponible dans cette version — le service Convex n’est pas configuré.",
+    "delete_action": "Supprimer mon compte",
+    "delete_title": "Supprimer votre compte CommunityGlows ?",
+    "delete_description": "Cette action supprime définitivement votre compte et vos données CommunityGlows stockées dans le cloud.",
+    "delete_warning": "Cette suppression est définitive et ne peut pas être annulée.",
+    "delete_cloud_data": "Vos profils, réglages, liens et données synchronisées seront supprimés.",
+    "delete_social_accounts_untouched": "Vos comptes et sessions sur les réseaux sociaux ne seront pas supprimés.",
+    "delete_license_retention": "Une preuve commerciale pseudonymisée minimale peut être conservée pour restituer une licence valide et respecter nos obligations.",
+    "delete_confirmation_label": "Pour confirmer, saisissez {email}",
+    "delete_confirm": "Supprimer définitivement",
+    "delete_loading": "Suppression…",
+    "delete_confirmation_error": "L’adresse saisie ne correspond pas à votre compte.",
+    "delete_error": "La suppression n’a pas abouti. Vos données restent intactes ; réessayez.",
+    "delete_success": "Votre compte CommunityGlows a été supprimé."
   },
   "extension": {
     "surface": {

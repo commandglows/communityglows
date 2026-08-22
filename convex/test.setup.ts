@@ -10,6 +10,7 @@ export const modules = {
   "./workspaceState.ts": () => import("./workspaceState"),
   "./users.ts": () => import("./users"),
   "./billing.ts": () => import("./billing"),
+  "./accountDeletion.ts": () => import("./accountDeletion"),
   "./auth.ts": () => import("./auth"),
   "./http.ts": () => import("./http"),
 };

@@ -1,6 +1,7 @@
 import { action, query } from './_generated/server'
 import { v } from 'convex/values'
 import { requireAuthUserId } from './authHelpers'
+import { api } from './_generated/api'
 
 /**
  * Suite entitlement bridge adapter.
@@ -133,6 +134,9 @@ function mapBridgeError(message: string) {
   if (/code_not_found/i.test(message)) return 'not_found'
   if (/code_disabled|already_disabled/i.test(message)) return 'disabled'
   if (/code_already_used|already_redeemed/i.test(message)) return 'used'
+  if (/account_retention_not_found/i.test(message)) return 'account_retention_not_found'
+  if (/account_email_mismatch/i.test(message)) return 'account_email_mismatch'
+  if (/provider_account_deleted/i.test(message)) return 'provider_account_deleted'
   if (/unauthorized|not authenticated|authentication/i.test(message)) {
     return 'unauthorized'
   }
@@ -150,7 +154,7 @@ function isAllowedPlanForCommunityGlows(planId: string) {
   return planId === PLAN_LIFETIME_DEAL || planId === PLAN_FOUNDER_LTD
 }
 
-type SuiteBridgeArgs = {
+export type SuiteBridgeArgs = {
   operation:
     | 'snapshot'
     | 'restart_trial'
@@ -160,6 +164,8 @@ type SuiteBridgeArgs = {
     | 'refund'
     | 'disable_code'
     | 'upsert_code'
+    | 'prepare_account_deletion'
+    | 'relink_account'
   providerAccountId?: string
   code?: string
   plan?: string
@@ -171,7 +177,7 @@ type SuiteBridgeArgs = {
   installationHash?: string
 }
 
-async function callSuiteBridge<T extends Record<string, unknown> = Record<string, unknown>>(
+export async function callSuiteBridge<T extends Record<string, unknown> = Record<string, unknown>>(
   args: SuiteBridgeArgs,
 ): Promise<BridgeResponseOk<T>> {
   const suiteBridgeUrl = getSuiteBridgeUrl(process.env.COMMUNITYGLOWS_SUITE_BRIDGE_URL)
@@ -376,12 +382,14 @@ async function getSuiteAccessForUser(
   userId: string,
   operation: 'snapshot' | 'restart_trial',
   installationHash: string,
+  email?: string,
 ) {
   const response = await callSuiteBridge({
     operation,
     providerAccountId: userId,
     sourceRef: userId,
     installationHash,
+    email,
   })
   if (!response.snapshot) throw new Error('invalid_snapshot')
   return { access: normalizeProductAccess(response.snapshot), checkoutIdentityToken: response.checkoutIdentityToken }
@@ -394,7 +402,8 @@ export const getProductAccess = action({
   },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    return (await getSuiteAccessForUser(userId, 'snapshot', args.installationHash)).access
+    const user = await ctx.runQuery(api.users.getMe, {})
+    return (await getSuiteAccessForUser(userId, 'snapshot', args.installationHash, user?.email)).access
   },
 })
 
@@ -402,7 +411,8 @@ export const restartTrial = action({
   args: { installationHash: v.string() },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const access = (await getSuiteAccessForUser(userId, 'restart_trial', args.installationHash)).access
+    const user = await ctx.runQuery(api.users.getMe, {})
+    const access = (await getSuiteAccessForUser(userId, 'restart_trial', args.installationHash, user?.email)).access
     if (access.accessState !== 'trial_active') {
       throw new Error('trial_restart_not_eligible')
     }
@@ -414,7 +424,8 @@ export const startCheckout = action({
   args: { installationHash: v.string() },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const response = await getSuiteAccessForUser(userId, 'snapshot', args.installationHash)
+    const user = await ctx.runQuery(api.users.getMe, {})
+    const response = await getSuiteAccessForUser(userId, 'snapshot', args.installationHash, user?.email)
     if (!response.checkoutIdentityToken) throw new Error('checkout_handoff_unavailable')
     return {
       provider: 'stripe' as const,
@@ -429,6 +440,7 @@ export const redeemCode = action({
   },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
+    const user = await ctx.runQuery(api.users.getMe, {})
     const code = normalizeCode(args.code)
     if (!code) {
       throw new Error('code_required')
@@ -438,6 +450,7 @@ export const redeemCode = action({
       operation: 'redeem_code',
       providerAccountId: userId,
       code,
+      email: user?.email,
       sourceRef: userId,
     })
 
@@ -455,6 +468,33 @@ export const redeemCode = action({
       expiresAt: null,
       alreadyRedeemed: Boolean(redemption.alreadyRedeemed),
       reasonCode: redemption.reasonCode,
+    }
+  },
+})
+
+export const relinkRetainedAccount = action({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireAuthUserId(ctx)
+    const user = await ctx.runQuery(api.users.getMe, {})
+    if (!user?.email || !user.emailVerificationTime) {
+      return { relinked: false, reason: 'verified_email_required' as const }
+    }
+    try {
+      const response = await callSuiteBridge<{ status?: string }>({
+        operation: 'relink_account',
+        providerAccountId: userId,
+        email: user.email,
+      })
+      return {
+        relinked: response.result?.status === 'relinked' || response.result?.status === 'already_relinked',
+        reason: response.result?.status ?? 'not_relinked',
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message === 'account_retention_not_found') {
+        return { relinked: false, reason: 'no_retained_account' as const }
+      }
+      throw error
     }
   },
 })

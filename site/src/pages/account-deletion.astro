@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Navbar from '../components/Navbar.astro'
+import Footer from '../components/Footer.astro'
+import { contactEmail, siteUrl } from '../config/site'
+
+const privacyEmail = contactEmail('privacy')
+const deletionSubject = 'CommunityGlows account deletion request'
+const deletionBody = `Please delete my CommunityGlows account and cloud data.\n\nAccount email: \nReason (optional): `
+const deletionMailto = `mailto:${privacyEmail}?subject=${encodeURIComponent(deletionSubject)}&body=${encodeURIComponent(deletionBody)}`
+
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: siteUrl('/') },
+    { '@type': 'ListItem', position: 2, name: 'Account deletion', item: siteUrl('/account-deletion') },
+  ],
+}]
+---
+
+<Layout title="Delete your CommunityGlows account" description="How to delete your CommunityGlows account and associated cloud data." path="/account-deletion" jsonLd={jsonLd}>
+  <main id="main-content" class="min-h-screen bg-background text-foreground">
+    <Navbar />
+    <div class="mx-auto max-w-4xl px-4 pb-16 pt-32">
+      <p class="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Privacy</p>
+      <h1 class="mt-3 text-3xl font-bold text-foreground md:text-4xl">Delete your CommunityGlows account</h1>
+      <p class="mt-4 max-w-2xl text-muted-foreground">Deleting your CommunityGlows account removes the account and its associated cloud data. It does not delete accounts or content you hold on third-party social networks.</p>
+
+      <div class="mt-10 space-y-8">
+        <section class="rounded-2xl border border-border p-6">
+          <h2 class="text-xl font-semibold text-foreground">Delete from the app</h2>
+          <ol class="mt-4 list-decimal space-y-2 pl-6 text-muted-foreground">
+            <li>Sign in to your CommunityGlows account.</li>
+            <li>Open Settings, then Account and sync.</li>
+            <li>Select <strong>Delete my account</strong>.</li>
+            <li>Review the consequences, enter your account email, and confirm.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-foreground">If you cannot access the app</h2>
+          <p class="mt-3 text-muted-foreground">Send the request from the email address associated with your account. We may ask for limited additional information to verify that the account belongs to you before deleting it.</p>
+          <a href={deletionMailto} class="mt-5 inline-flex rounded-lg bg-foreground px-5 py-3 font-semibold text-background hover:opacity-90">Request deletion by email</a>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-foreground">What is deleted</h2>
+          <ul class="mt-3 list-disc space-y-2 pl-6 text-muted-foreground">
+            <li>Your CommunityGlows authentication account and active cloud sessions.</li>
+            <li>Your cloud-synced profiles, settings, social-account configuration, custom links, filters, and workspace state.</li>
+            <li>CommunityGlows subscription and entitlement copies linked directly to that account.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-foreground">What may be retained</h2>
+          <p class="mt-3 text-muted-foreground">Minimal pseudonymized commercial proof may be retained separately to restore a valid paid license, prevent repeated trial use, process refunds, and meet applicable legal obligations. It is not retained as an active CommunityGlows profile.</p>
+        </section>
+
+        <section>
+          <h2 class="text-xl font-semibold text-foreground">What is not affected</h2>
+          <p class="mt-3 text-muted-foreground">CommunityGlows cannot delete your Facebook, Instagram, LinkedIn, X, or other third-party accounts or content. Device-local exports and third-party sessions outside CommunityGlows cloud storage must be removed separately.</p>
+        </section>
+      </div>
+
+      <p class="mt-10 text-sm text-muted-foreground">Questions? Contact <a href={`mailto:${privacyEmail}`} class="text-foreground underline underline-offset-4 hover:opacity-80">{privacyEmail}</a>. See also our <a href="/privacy" class="text-foreground underline underline-offset-4 hover:opacity-80">Privacy Policy</a>.</p>
+    </div>
+    <Footer />
+  </main>
+</Layout>
