@@ -211,6 +211,7 @@ None for implementation. The operator explicitly approved coordinated CommunityG
 | 2026-08-22 | sg-development | GPT-5 | Integrated the approved cross-project central entitlement boundary and completed adversarial readiness review. | ready | Implement central retention/relink first, then CommunityGlows deletion. |
 | 2026-08-22 | sg-development | GPT-5 | Implemented central HMAC retention/relink, authenticated local cascade, settings confirmation, client cleanup, bilingual copy, public deletion resource, and focused source tests. | implemented_unverified | Regenerate API types and run focused/hosted/device verification after `#nolocal`. |
 | 2026-08-22 | sg-planning | GPT-5 | Added the unfinished verification and deployment outcome to the P0 execution queue with dependencies and acceptance evidence. | tracked | Configure hosted retention, deploy, and collect executable and device proof. |
+| 2026-08-22 | sg-planning | GPT-5 | Made the remaining documentation gates explicit in the P0 task: legal retention duration, Play Data Safety, and post-proof audit update. | tracked | Complete these gates after hosted and device verification. |
 
 # Current Chantier Flow
 
