@@ -1,13 +1,13 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.1.1"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
-updated: "2026-08-19"
-updated_at: "2026-08-19 12:30:00 UTC"
-status: partial
+updated: "2026-08-24"
+updated_at: "2026-08-24 08:58:24 UTC"
+status: active
 source_skill: shipglows
 scope: android-password-manager-autofill
 owner: "Diane"
@@ -24,8 +24,8 @@ linked_systems:
   - "shipglows_data/technical/public-webview-platform-boundary.md"
 depends_on:
   - artifact: "shipglows_data/workflow/specs/communityglows-password-manager-foundation.md"
-    artifact_version: "1.0.0"
-    required_status: ready
+    artifact_version: "1.1.1"
+    required_status: active
   - artifact: "shipglows_data/technical/android-webview-session-isolation.md"
     artifact_version: "1.2.1"
     required_status: reviewed
@@ -35,7 +35,7 @@ depends_on:
 supersedes: []
 evidence:
   - "The native plugin constructs social WebViews with the Activity context, which is required by Android Autofill."
-  - "The native WebViews do not currently set an explicit importantForAutofill policy."
+  - "The main, managed social, and child WebViews set importantForAutofill=YES behind the Android API 26 guard."
   - "Android WebView maps HTML forms, web domains, placeholders, and W3C autocomplete tokens into its virtual Autofill structure."
   - "CommunityGlows isolates Android WebKit sessions per profile and network, while the system credential store is explicitly outside that isolation contract."
 next_step: "Compile in an Android toolchain and validate Google Password Manager, 1Password, and Bitwarden on physical or representative devices."

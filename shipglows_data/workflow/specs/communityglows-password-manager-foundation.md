@@ -1,13 +1,13 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.1.0"
+artifact_version: "1.1.1"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
-updated: "2026-08-19"
-updated_at: "2026-08-19 12:30:00 UTC"
-status: partial
+updated: "2026-08-24"
+updated_at: "2026-08-24 08:58:24 UTC"
+status: active
 source_skill: shipglows
 scope: authentication-interoperability
 owner: "Diane"
@@ -32,11 +32,11 @@ depends_on:
     required_status: reviewed
 supersedes: []
 evidence:
-  - "LoginView uses standard email and password inputs but does not explicitly set name or autocomplete tokens."
-  - "SignupNudge contains separate sign-up forms for mobile and desktop without explicit autocomplete tokens."
+  - "LoginView exposes stable email/password names with username and mode-dependent current-password/new-password autocomplete tokens."
+  - "Both SignupNudge forms expose stable email/password names with username/new-password autocomplete tokens."
   - "SgPassword forwards non-style attributes to its native input, so semantic attributes can remain caller-owned."
   - "Convex Auth currently exposes Anonymous and Password providers; this spec does not change the backend authentication method."
-next_step: "Run the focused tests with installed dependencies, then complete browser, Android, and packaged-Windows compatibility proofs."
+next_step: "Verify wrapper fill-event propagation and complete browser, Android, and packaged-Windows compatibility proofs."
 ---
 
 # CommunityGlows Password Manager Foundation

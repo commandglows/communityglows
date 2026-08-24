@@ -1,10 +1,10 @@
 ---
 artifact: technical_module_context
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
+artifact_version: "1.3.1"
 project: "communityglows"
 created: "2026-07-15"
-updated: "2026-08-19"
+updated: "2026-08-24"
 status: reviewed
 source_skill: 300-sg-docs
 scope: public-webview-platform-boundary
@@ -25,6 +25,7 @@ supersedes: []
 evidence:
   - "2026-07-15 public WebView script-removal implementation"
   - "shipglows_data/workflow/audits/2026-07-15-google-play-android-compliance.md"
+  - "Windows managed Bitwarden imports require a caller-supplied official GitHub SHA-256 digest and fail closed on mismatch before extraction."
 next_review: "2026-09-19"
 next_step: "Run physical-device Android Autofill and packaged-Windows password-manager compatibility proofs."
 ---
@@ -76,8 +77,9 @@ Provider matching, unlock, selection, and release remain controlled by the user 
 the provider.
 
 The Windows-only Bitwarden experiment is a narrow exception for a user-selected
-official Chromium archive. The Windows Settings flow validates the ZIP, extracts it
-under CommunityGlows application data, and enables it only after an explicit restart;
+official Chromium archive. The Windows Settings flow verifies the ZIP against the
+SHA-256 digest copied from the official GitHub release, applies bounded archive and
+manifest checks, extracts it under CommunityGlows application data, and enables it only after an explicit restart;
 the environment path remains a developer override. WebView2 runs the extension's own
 content scripts, while CommunityGlows neither uploads the archive, reads filled fields,
 nor adds a credential bridge. This does not authorize redistribution or a

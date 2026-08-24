@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.6.0"
+artifact_version: "1.6.1"
 project: "communityglows"
 created: "2026-05-14"
-updated: "2026-08-11"
+updated: "2026-08-24"
 status: active
 source_skill: 300-sg-docs
 scope: code_docs_map
@@ -190,7 +190,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - The public build leaves third-party consent dialogs under user control and uses the actual WebView user agent.
   - It does not include anti-detection, consent/app-banner automation, desktop identity or viewport forcing, arbitrary desktop script injection, or friends-only feed filtering.
   - Dark/light appearance, grayscale, mute, and native text zoom are retained only as user visual preferences and remain subject to per-platform compatibility testing.
-  - Windows Settings can import a user-selected official Bitwarden Chromium ZIP into bounded local application data, persist only its managed installation reference, and apply enable/disable changes after an explicit restart. The archive is not uploaded and CommunityGlows does not read vault or filled-field values.
+  - Windows Settings can import a user-selected Bitwarden Chromium ZIP only after its local SHA-256 matches the digest copied from the official GitHub release. It then applies bounded extraction and manifest checks, persists only its managed installation reference, and applies enable/disable changes after an explicit restart. The archive is not uploaded and CommunityGlows does not read vault or filled-field values.
 - Docs:
   - `shipglows_data/technical/public-webview-platform-boundary.md`
   - `shipglows_data/technical/android-webview-session-isolation.md`

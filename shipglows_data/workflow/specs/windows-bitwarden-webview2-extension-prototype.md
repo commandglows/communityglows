@@ -1,13 +1,13 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.2.1"
+artifact_version: "1.3.0"
 project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 13:20:00 UTC"
-updated: "2026-08-19"
-updated_at: "2026-08-19 22:27:03 UTC"
-status: partial
+updated: "2026-08-24"
+updated_at: "2026-08-24 08:58:24 UTC"
+status: active
 source_skill: shipglows
 scope: windows-bitwarden-webview2-extension-prototype
 owner: "Diane"
@@ -28,8 +28,8 @@ linked_systems:
   - "shipglows_data/workflow/specs/windows-password-manager-interoperability.md"
 depends_on:
   - artifact: "shipglows_data/workflow/specs/windows-password-manager-interoperability.md"
-    artifact_version: "1.2.0"
-    required_status: partial
+    artifact_version: "1.2.1"
+    required_status: active
 supersedes: []
 evidence:
   - "Tauri 2.11.5 exposes WebviewBuilder.browser_extensions_enabled and extensions_path on Windows."
@@ -37,6 +37,7 @@ evidence:
   - "WebView2 loads unpacked extensions from a local folder and does not provide an integrated extension store."
   - "The official browser-v2026.7.0 dist-chrome archive is 22 MB compressed, about 80 MB uncompressed across 261 entries, and exposes a root Manifest V3 with version 2026.7.0 and homepage_url https://bitwarden.com; it fits the implemented bounds and identity checks."
   - "GitHub Actions run 32308452620 passed the Windows backend compilation and Rust tests on windows-latest, alongside the complete frontend quality job."
+  - "Managed import now requires the SHA-256 digest published beside the official GitHub release asset and verifies it before extraction."
 next_step: "Run the packaged application on Windows with an official Bitwarden Chromium archive and record compatibility results."
 ---
 
@@ -44,17 +45,18 @@ next_step: "Run the packaged application on Windows with an official Bitwarden C
 
 ## Status
 
-The environment-gated loader, manifest guard, and guided Windows Settings flow are implemented. The Windows backend now compiles and passes its Rust tests on a hosted Windows runner. A packaged application run and physical Bitwarden compatibility proof remain required.
+The environment-gated loader, SHA-256 provenance check, manifest guard, and guided Windows Settings flow are implemented. The Windows backend previously compiled and passed its Rust tests on a hosted Windows runner. A fresh Windows CI run, packaged application run, and physical Bitwarden compatibility proof remain required after the provenance change.
 
 ## Decision
 
-CommunityGlows may load a locally installed official Bitwarden Chromium extension into Windows social WebViews. The primary path is a guided Settings flow that imports a user-selected official `dist-chrome-*.zip`, validates it, extracts it under application data, records only a local relative installation reference, and requests an application restart. `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` remains a developer override.
+CommunityGlows may load a locally installed official Bitwarden Chromium extension into Windows social WebViews. The primary path is a guided Settings flow that imports a user-selected `dist-chrome-*.zip`, requires the SHA-256 digest displayed beside that asset on Bitwarden's official GitHub release, verifies the local bytes before extraction, applies bounded archive and manifest checks, records only a local relative installation reference, and requests an application restart. `COMMUNITYGLOWS_BITWARDEN_EXTENSION_PATH` remains a developer override and is not an end-user provenance path.
 
 The prototype does not download or redistribute Bitwarden, does not use the Bitwarden CLI or Vault Management API, does not register a Native Messaging host, and does not inspect filled field values. Bitwarden remains responsible for vault login, unlock, origin matching, account choice, fill, and save behavior.
 
 ## Security Invariants
 
 - The configured path must resolve to an existing directory containing a valid Manifest V2 or V3 `manifest.json` that identifies Bitwarden.
+- A managed ZIP import must fail before extraction unless its SHA-256 exactly matches the 64-hex digest copied from the official Bitwarden GitHub release asset; the manifest remains a second structural check, not proof of publisher identity.
 - Imported archives must be local ZIP files, stay below bounded compressed/uncompressed limits, use safe enclosed paths, contain no symbolic links, and expose one root Bitwarden manifest.
 - Managed installations live only beneath the CommunityGlows application-data extension root. A persisted reference may never escape that root after canonicalization.
 - Import, status, disable, and restart commands never return or log credential, vault, cookie, or extension-path values.
@@ -90,11 +92,13 @@ WebView2 extension configuration is fixed when an environment is created. Instal
 - [x] Document local operator setup and the per-session limitation.
 - [x] Add Windows-only Settings discovery and the official download handoff.
 - [x] Import and safely extract an official Chromium ZIP into versioned local application data.
+- [x] Require and verify the official GitHub release SHA-256 digest before managed ZIP extraction.
 - [x] Persist a managed installation reference and preserve the environment variable as a developer override.
 - [x] Expose status, replace, disable, and restart actions without exposing local paths or credential data.
 - [x] Add French and English UI copy and focused automated contract coverage.
 - [x] Update operator documentation from developer-only setup to the guided flow.
 - [x] Add a non-publishing Windows Rust test job to the quality workflow.
+- [ ] Compile and test the Windows backend after the SHA-256 provenance change.
 - [ ] Compile the packaged Windows application with a representative official Bitwarden package.
 - [ ] Prove initial vault login/unlock UI is accessible.
 - [ ] Prove inline Autofill on one-page and split-login flows.
@@ -142,12 +146,13 @@ Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwar
 | 2026-08-19 | sg-development | GPT-5 | Prepared the approved guided Windows installation slice and its proof contract. | ready | Implement native import/persistence and Settings UI. |
 | 2026-08-19 | sg-development | GPT-5 | Implemented the local ZIP import, managed installation lifecycle, Settings UX, translations, tests, documentation, and Windows Rust CI lane. | partial | Hosted Windows compile/test and physical Bitwarden proof. |
 | 2026-08-19 | sg-development | GPT-5 | Verified the complete quality workflow, including hosted Windows backend compilation and Rust tests. | partial | Physical packaged-Windows Bitwarden proof. |
+| 2026-08-24 | sg-development | GPT-5 | Added user-mediated verification of the GitHub release SHA-256 before extraction, aligned technical and public documentation, and registered the remaining provider/device proof tasks. | partial | Run fresh Windows CI, then packaged-Windows and Android provider proofs. |
 
 ## Current Chantier Flow
 
 - 100-sg-spec: ready — this spec owns the guided Settings slice.
 - 101-sg-ready: passed — outcome, security invariants, UI states, documentation impact, and proof path are explicit.
 - 102-sg-start: complete — implementation and directly mapped documentation are present.
-- 103-sg-verify: partial — 166 frontend tests, RustSec audit, token check, core and Convex typechecks, lint, Tauri frontend build, design drift scan, diff check, and hosted Windows backend compilation/tests pass; packaged-Windows Bitwarden behavior is unverified.
+- 103-sg-verify: partial — focused metadata, JSON, static contract, and diff checks pass; this environment has no Cargo or installed JavaScript dependencies, so the new SHA-256 path still requires fresh Windows CI and packaged-app proof. Historical Windows compilation evidence predates this change.
 - 104-sg-end: partial — physical Bitwarden compatibility evidence remains outside this local Linux environment.
-- 005-sg-ship: complete — implementation commits `5771698c` and `0d165d9f` were pushed to `master`; this proof update is the final bounded documentation delivery.
+- 005-sg-ship: partial — the earlier prototype commits remain on `master`; the 2026-08-24 provenance hardening and documentation updates are local and unshipped.

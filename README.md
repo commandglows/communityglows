@@ -224,9 +224,11 @@ pnpm run design:tokens:check    # Carriers générés à jour
 
 Dans l'application Windows, ouvrir **Paramètres > Gestionnaire de mots de passe**.
 Le parcours guidé ouvre la page officielle des versions Bitwarden, puis importe
-l'archive Chromium `dist-chrome-*.zip`, la valide et l'installe uniquement dans
-les données locales de CommunityGlows. Un redémarrage est nécessaire avant que
-les pages réseau utilisent la nouvelle configuration.
+l'archive Chromium `dist-chrome-*.zip`. Avant l'import, copier également la
+valeur `sha256` affichée par GitHub à côté de l'archive : CommunityGlows recalcule
+la somme du fichier local et refuse toute différence, puis contrôle le manifeste
+et extrait l'extension uniquement dans ses données locales. Un redémarrage est
+nécessaire avant que les pages réseau utilisent la nouvelle configuration.
 
 CommunityGlows ne téléverse pas l'archive, ne redistribue pas Bitwarden et ne lit
 aucun élément du coffre ni aucune valeur remplie. Le chemin d'environnement reste

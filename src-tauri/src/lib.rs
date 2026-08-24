@@ -946,6 +946,7 @@ fn toggle_window(app: &AppHandle) {
 fn extract_bitwarden_archive(
     archive_path: &std::path::Path,
     destination: &std::path::Path,
+    expected_sha256: &str,
 ) -> Result<String, String> {
     if !archive_path
         .extension()
@@ -960,6 +961,8 @@ fn extract_bitwarden_archive(
     if archive_size == 0 || archive_size > MAX_BITWARDEN_ARCHIVE_BYTES {
         return Err("The selected Bitwarden archive has an invalid size".to_string());
     }
+
+    verify_bitwarden_archive_sha256(archive_path, expected_sha256)?;
 
     let file = std::fs::File::open(archive_path)
         .map_err(|_| "The selected Bitwarden archive cannot be opened")?;
@@ -1017,6 +1020,53 @@ fn extract_bitwarden_archive(
     Ok(bitwarden_extension_version(&manifest).unwrap_or_else(|| "unknown".to_string()))
 }
 
+#[cfg(target_os = "windows")]
+fn normalize_sha256(value: &str) -> Result<String, String> {
+    let normalized = value
+        .trim()
+        .strip_prefix("sha256:")
+        .unwrap_or(value.trim())
+        .trim()
+        .to_ascii_lowercase();
+    if normalized.len() != 64 || !normalized.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err(
+            "Enter the SHA-256 digest shown on the official Bitwarden GitHub release".to_string(),
+        );
+    }
+    Ok(normalized)
+}
+
+#[cfg(target_os = "windows")]
+fn verify_bitwarden_archive_sha256(
+    archive_path: &std::path::Path,
+    expected_sha256: &str,
+) -> Result<(), String> {
+    use sha2::{Digest, Sha256};
+    use std::io::Read;
+
+    let expected = normalize_sha256(expected_sha256)?;
+    let mut file = std::fs::File::open(archive_path)
+        .map_err(|_| "The selected Bitwarden archive cannot be opened")?;
+    let mut digest = Sha256::new();
+    let mut buffer = [0_u8; 64 * 1024];
+    loop {
+        let read = file
+            .read(&mut buffer)
+            .map_err(|_| "The selected Bitwarden archive cannot be verified")?;
+        if read == 0 {
+            break;
+        }
+        digest.update(&buffer[..read]);
+    }
+    let actual = format!("{:x}", digest.finalize());
+    if actual != expected {
+        return Err(
+            "The archive SHA-256 does not match the digest published by Bitwarden".to_string(),
+        );
+    }
+    Ok(())
+}
+
 #[tauri::command]
 #[cfg(target_os = "windows")]
 fn get_bitwarden_extension_status(
@@ -1067,6 +1117,7 @@ fn get_bitwarden_extension_status(
 fn import_bitwarden_extension(
     app: AppHandle,
     archive_path: String,
+    expected_sha256: String,
 ) -> Result<BitwardenExtensionStatus, String> {
     if environment_bitwarden_extension_path()?.is_some() {
         return Err("Bitwarden is controlled by a developer environment setting".to_string());
@@ -1080,7 +1131,11 @@ fn import_bitwarden_extension(
         chrono::Utc::now().timestamp_nanos_opt().unwrap_or_default()
     );
     let destination = root.join(&package_name);
-    let extraction = extract_bitwarden_archive(std::path::Path::new(&archive_path), &destination);
+    let extraction = extract_bitwarden_archive(
+        std::path::Path::new(&archive_path),
+        &destination,
+        &expected_sha256,
+    );
     if let Err(error) = extraction {
         let _ = std::fs::remove_dir_all(&destination);
         return Err(error);
@@ -1109,6 +1164,7 @@ fn import_bitwarden_extension(
 fn import_bitwarden_extension(
     _app: AppHandle,
     _archive_path: String,
+    _expected_sha256: String,
 ) -> Result<BitwardenExtensionStatus, String> {
     Err("Bitwarden extension import is available on Windows only".to_string())
 }
@@ -2198,6 +2254,17 @@ mod tests {
         archive.finish().expect("finish test archive");
     }
 
+    #[cfg(target_os = "windows")]
+    fn file_sha256(path: &std::path::Path) -> String {
+        use sha2::{Digest, Sha256};
+        use std::io::Read;
+
+        let mut file = std::fs::File::open(path).expect("open test archive");
+        let mut bytes = Vec::new();
+        file.read_to_end(&mut bytes).expect("read test archive");
+        format!("{:x}", Sha256::digest(bytes))
+    }
+
     #[test]
     #[cfg(target_os = "windows")]
     fn extracts_a_bounded_official_style_bitwarden_archive() {
@@ -2208,13 +2275,45 @@ mod tests {
             br#"{"manifest_version":3,"name":"Bitwarden Password Manager","version":"2026.8.0"}"#,
         );
 
-        let version = super::extract_bitwarden_archive(&archive_path, &destination)
+        let expected_sha256 = file_sha256(&archive_path);
+        let version = super::extract_bitwarden_archive(
+            &archive_path,
+            &destination,
+            &format!("sha256:{expected_sha256}"),
+        )
             .expect("extract valid Bitwarden archive");
         assert_eq!(version, "2026.8.0");
         assert!(destination.join("manifest.json").is_file());
 
         std::fs::remove_file(archive_path).expect("remove test archive");
         std::fs::remove_dir_all(destination).expect("remove extracted test archive");
+    }
+
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn rejects_a_bitwarden_archive_with_a_mismatched_or_invalid_digest() {
+        let (archive_path, destination) = temporary_archive_paths("bitwarden-digest");
+        write_test_archive(
+            &archive_path,
+            "manifest.json",
+            br#"{"manifest_version":3,"name":"Bitwarden Password Manager","version":"2026.8.0"}"#,
+        );
+
+        let mismatch = super::extract_bitwarden_archive(
+            &archive_path,
+            &destination,
+            &"0".repeat(64),
+        )
+        .expect_err("reject mismatched digest");
+        assert!(mismatch.contains("does not match"));
+        assert!(!destination.exists());
+
+        let invalid = super::extract_bitwarden_archive(&archive_path, &destination, "not-a-digest")
+            .expect_err("reject invalid digest");
+        assert!(invalid.contains("SHA-256 digest"));
+        assert!(!destination.exists());
+
+        std::fs::remove_file(archive_path).expect("remove test archive");
     }
 
     #[test]
@@ -2227,7 +2326,12 @@ mod tests {
             br#"{"manifest_version":3,"name":"Bitwarden Password Manager"}"#,
         );
 
-        let error = super::extract_bitwarden_archive(&archive_path, &destination)
+        let expected_sha256 = file_sha256(&archive_path);
+        let error = super::extract_bitwarden_archive(
+            &archive_path,
+            &destination,
+            &expected_sha256,
+        )
             .expect_err("reject traversal archive");
         assert!(error.contains("unsafe path"));
 

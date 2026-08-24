@@ -43,9 +43,27 @@
         class="bitwarden-steps"
       >
         <li>{{ $t('bitwarden_settings.step_download') }}</li>
+        <li>{{ $t('bitwarden_settings.step_checksum') }}</li>
         <li>{{ $t('bitwarden_settings.step_choose') }}</li>
         <li>{{ $t('bitwarden_settings.step_restart') }}</li>
       </ol>
+
+      <label
+        v-if="!status.installed || status.source === 'managed'"
+        class="bitwarden-checksum"
+      >
+        <span>{{ $t('bitwarden_settings.checksum_label') }}</span>
+        <input
+          v-model.trim="expectedSha256"
+          type="text"
+          name="bitwarden-sha256"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          :placeholder="$t('bitwarden_settings.checksum_placeholder')"
+        />
+        <small>{{ $t('bitwarden_settings.checksum_help') }}</small>
+      </label>
 
       <p
         v-if="status.installed && status.version"
@@ -97,7 +115,7 @@
         <button
           type="button"
           class="bitwarden-button primary"
-          :disabled="busy || status.source === 'environment'"
+          :disabled="busy || status.source === 'environment' || !hasValidSha256"
           @click="chooseArchive"
         >
           <SgIcon
@@ -158,7 +176,9 @@ const { t } = useI18n()
 const status = ref<BitwardenExtensionStatus>(emptyStatus())
 const busyAction = ref<'status' | 'download' | 'import' | 'disable' | 'restart' | null>('status')
 const errorMessage = ref('')
+const expectedSha256 = ref('')
 const busy = computed(() => busyAction.value !== null)
+const hasValidSha256 = computed(() => /^(?:sha256:)?[a-f\d]{64}$/i.test(expectedSha256.value.trim()))
 const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
 
 const statusLabel = computed(() => {
@@ -220,7 +240,10 @@ async function chooseArchive() {
       }],
     })
     if (typeof selected !== 'string') return
-    await invokeStatus('import_bitwarden_extension', { archivePath: selected })
+    await invokeStatus('import_bitwarden_extension', {
+      archivePath: selected,
+      expectedSha256: expectedSha256.value,
+    })
   } catch {
     errorMessage.value = t('bitwarden_settings.import_error')
   } finally {
@@ -373,6 +396,32 @@ onMounted(loadStatus)
   padding-left: var(--sg-space-1d5rem);
   color: var(--sg-color-text-muted);
   font-size: var(--sg-font-size-0d8rem);
+  line-height: var(--sg-settings-hint-line-height);
+}
+
+.bitwarden-checksum {
+  display: grid;
+  gap: var(--sg-space-0d35rem);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d8rem);
+  font-weight: 700;
+}
+
+.bitwarden-checksum input {
+  min-height: var(--sg-size-2d4rem);
+  padding: var(--sg-space-0d55rem-0d75rem);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-10px);
+  background: var(--sg-color-surface-muted);
+  color: var(--sg-color-text);
+  font: inherit;
+  font-family: monospace;
+  font-weight: 400;
+}
+
+.bitwarden-checksum small {
+  color: var(--sg-color-text-muted);
+  font-weight: 400;
   line-height: var(--sg-settings-hint-line-height);
 }
 

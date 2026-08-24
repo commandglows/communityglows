@@ -18,6 +18,8 @@ describe('Windows Bitwarden Settings flow', () => {
     expect(parsed.errors).toEqual([])
     expect(source).toContain("invoke('open_bitwarden_download_page')")
     expect(source).toContain("invokeStatus('import_bitwarden_extension'")
+    expect(source).toContain('expectedSha256: expectedSha256.value')
+    expect(source).toContain('!hasValidSha256')
     expect(source).toContain("invokeStatus('disable_bitwarden_extension')")
     expect(source).toContain("invoke('restart_communityglows')")
     expect(source).toContain("extensions: ['zip']")
@@ -34,6 +36,8 @@ describe('Windows Bitwarden Settings flow', () => {
     expect(template).toContain(':aria-busy="busy"')
     expect(fr.bitwarden_settings.local_only).toContain('jamais envoyée')
     expect(en.bitwarden_settings.local_only).toContain('never uploaded')
+    expect(fr.bitwarden_settings.checksum_help).toContain('refusé')
+    expect(en.bitwarden_settings.checksum_help).toContain('rejected')
   })
 
   it('keeps every Bitwarden Settings key aligned in English and French', () => {
