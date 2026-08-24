@@ -6,8 +6,8 @@ project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
 updated: "2026-08-24"
-updated_at: "2026-08-24 08:58:24 UTC"
-status: active
+updated_at: "2026-08-24 09:03:00 UTC"
+status: reviewed
 source_skill: shipglows
 scope: windows-password-manager-interoperability
 owner: "Diane"
@@ -36,14 +36,14 @@ evidence:
   - "Bitwarden officially supports dragging username and password fields from its desktop app into a login form."
   - "Bitwarden does not currently document released Windows desktop Auto-Type as a generally available feature."
   - "WebView2 profile sync is disabled and its password autosave would create app-local data rather than reuse the user's external synchronized vault."
-next_step: "Build the packaged Windows app and run the recorded 1Password Auto-Type and Bitwarden drag-and-drop matrix."
+next_step: "Run task communityglows-windows-password-manager-standard-proof on the operator's Windows test machine."
 ---
 
 # Windows Password Manager Interoperability
 
 ## Status
 
-The proven hidden-WebView focus defect is corrected and covered by a focused Rust unit test. Packaged-Windows provider proofs remain pending; compatibility claims remain provisional.
+Implementation scope reviewed and closed: the hidden-WebView focus defect is corrected and covered by a focused Rust unit test. Packaged-Windows provider proofs continue under task `communityglows-windows-password-manager-standard-proof`; compatibility claims remain provisional.
 
 ## User Story
 

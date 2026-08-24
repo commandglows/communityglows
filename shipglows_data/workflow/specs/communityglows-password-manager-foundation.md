@@ -6,8 +6,8 @@ project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
 updated: "2026-08-24"
-updated_at: "2026-08-24 08:58:24 UTC"
-status: active
+updated_at: "2026-08-24 09:03:00 UTC"
+status: reviewed
 source_skill: shipglows
 scope: authentication-interoperability
 owner: "Diane"
@@ -36,14 +36,14 @@ evidence:
   - "Both SignupNudge forms expose stable email/password names with username/new-password autocomplete tokens."
   - "SgPassword forwards non-style attributes to its native input, so semantic attributes can remain caller-owned."
   - "Convex Auth currently exposes Anonymous and Password providers; this spec does not change the backend authentication method."
-next_step: "Verify wrapper fill-event propagation and complete browser, Android, and packaged-Windows compatibility proofs."
+next_step: "Continue device and provider proof through the dedicated Windows and Android tasks in shipglows_data/workflow/TASKS.md."
 ---
 
 # CommunityGlows Password Manager Foundation
 
 ## Status
 
-Implemented and statically verified. Runtime component and platform compatibility proofs remain pending because the local JavaScript dependencies and target devices are unavailable.
+Implementation scope reviewed and closed. Runtime component and platform compatibility proofs are transferred to the dedicated Windows and Android tasks in `shipglows_data/workflow/TASKS.md`; they remain required before public compatibility claims.
 
 ## User Story
 

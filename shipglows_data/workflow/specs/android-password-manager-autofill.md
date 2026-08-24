@@ -6,8 +6,8 @@ project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 12:06:29 UTC"
 updated: "2026-08-24"
-updated_at: "2026-08-24 08:58:24 UTC"
-status: active
+updated_at: "2026-08-24 09:03:00 UTC"
+status: reviewed
 source_skill: shipglows
 scope: android-password-manager-autofill
 owner: "Diane"
@@ -38,14 +38,14 @@ evidence:
   - "The main, managed social, and child WebViews set importantForAutofill=YES behind the Android API 26 guard."
   - "Android WebView maps HTML forms, web domains, placeholders, and W3C autocomplete tokens into its virtual Autofill structure."
   - "CommunityGlows isolates Android WebKit sessions per profile and network, while the system credential store is explicitly outside that isolation contract."
-next_step: "Compile in an Android toolchain and validate Google Password Manager, 1Password, and Bitwarden on physical or representative devices."
+next_step: "Run task communityglows-android-password-manager-provider-proof on the operator's Android test machine."
 ---
 
 # Android Password Manager Autofill
 
 ## Status
 
-Guarded Autofill participation is implemented for the main, managed social, and child WebViews. Android compilation and provider/device validation remain pending.
+Implementation scope reviewed and closed: guarded Autofill participation is present for the main, managed social, and child WebViews. Android compilation and provider/device validation continue under task `communityglows-android-password-manager-provider-proof` before any compatibility claim.
 
 ## User Story
 

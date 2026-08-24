@@ -6,8 +6,8 @@ project: "communityglows"
 created: "2026-08-19"
 created_at: "2026-08-19 13:20:00 UTC"
 updated: "2026-08-24"
-updated_at: "2026-08-24 08:58:24 UTC"
-status: active
+updated_at: "2026-08-24 09:03:00 UTC"
+status: reviewed
 source_skill: shipglows
 scope: windows-bitwarden-webview2-extension-prototype
 owner: "Diane"
@@ -38,14 +38,14 @@ evidence:
   - "The official browser-v2026.7.0 dist-chrome archive is 22 MB compressed, about 80 MB uncompressed across 261 entries, and exposes a root Manifest V3 with version 2026.7.0 and homepage_url https://bitwarden.com; it fits the implemented bounds and identity checks."
   - "GitHub Actions run 32308452620 passed the Windows backend compilation and Rust tests on windows-latest, alongside the complete frontend quality job."
   - "Managed import now requires the SHA-256 digest published beside the official GitHub release asset and verifies it before extraction."
-next_step: "Run the packaged application on Windows with an official Bitwarden Chromium archive and record compatibility results."
+next_step: "Run tasks fresh-windows-bitwarden-sha256-ci and communityglows-bitwarden-webview2-packaged-proof on the operator's Windows test machine."
 ---
 
 # Windows Bitwarden WebView2 Extension Prototype
 
 ## Status
 
-The environment-gated loader, SHA-256 provenance check, manifest guard, and guided Windows Settings flow are implemented. The Windows backend previously compiled and passed its Rust tests on a hosted Windows runner. A fresh Windows CI run, packaged application run, and physical Bitwarden compatibility proof remain required after the provenance change.
+Implementation scope reviewed and closed. The environment-gated loader, SHA-256 provenance check, manifest guard, and guided Windows Settings flow are implemented and pushed in commit `95cbb6d`. Fresh Windows CI, packaged application, and physical Bitwarden compatibility proofs continue under the dedicated tasks in `shipglows_data/workflow/TASKS.md` before any public compatibility claim.
 
 ## Decision
 
@@ -147,6 +147,7 @@ Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwar
 | 2026-08-19 | sg-development | GPT-5 | Implemented the local ZIP import, managed installation lifecycle, Settings UX, translations, tests, documentation, and Windows Rust CI lane. | partial | Hosted Windows compile/test and physical Bitwarden proof. |
 | 2026-08-19 | sg-development | GPT-5 | Verified the complete quality workflow, including hosted Windows backend compilation and Rust tests. | partial | Physical packaged-Windows Bitwarden proof. |
 | 2026-08-24 | sg-development | GPT-5 | Added user-mediated verification of the GitHub release SHA-256 before extraction, aligned technical and public documentation, and registered the remaining provider/device proof tasks. | partial | Run fresh Windows CI, then packaged-Windows and Android provider proofs. |
+| 2026-08-24 | sg-engineering | GPT-5 | Reviewed and pushed the bounded implementation, then transferred machine-dependent proof to explicit operational tasks. | reviewed | Continue the recorded tasks on the operator's Windows and Android test machine. |
 
 ## Current Chantier Flow
 
@@ -154,5 +155,5 @@ Test only with non-production accounts. Record Windows, WebView2 Runtime, Bitwar
 - 101-sg-ready: passed — outcome, security invariants, UI states, documentation impact, and proof path are explicit.
 - 102-sg-start: complete — implementation and directly mapped documentation are present.
 - 103-sg-verify: partial — focused metadata, JSON, static contract, and diff checks pass; this environment has no Cargo or installed JavaScript dependencies, so the new SHA-256 path still requires fresh Windows CI and packaged-app proof. Historical Windows compilation evidence predates this change.
-- 104-sg-end: partial — physical Bitwarden compatibility evidence remains outside this local Linux environment.
-- 005-sg-ship: partial — the earlier prototype commits remain on `master`; the 2026-08-24 provenance hardening and documentation updates are local and unshipped.
+- 104-sg-end: complete — implementation scope is closed; physical compatibility proof is deliberately transferred to the dedicated operational tasks and remains a release-claim gate.
+- 005-sg-ship: complete — provenance hardening, documentation alignment, and future-proof task registration were pushed to `master` in commit `95cbb6d`.
