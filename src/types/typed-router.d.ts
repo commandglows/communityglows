@@ -127,9 +127,11 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/AppSidebar'
       | '/setup/CommunityGlows/components/BackupRestore'
       | '/setup/CommunityGlows/components/BillingAccessPanel'
+      | '/setup/CommunityGlows/components/BitwardenExtensionSettings'
       | '/setup/CommunityGlows/components/DashboardFilters'
       | '/setup/CommunityGlows/components/DesktopControlBar'
       | '/setup/CommunityGlows/components/DesktopQuickNavigation'
+      | '/setup/CommunityGlows/components/DesktopWorkspace'
       | '/setup/CommunityGlows/components/ExtensionParitySurface'
       | '/setup/CommunityGlows/components/FriendsPanel'
       | '/setup/CommunityGlows/components/KeyboardShortcuts'
@@ -138,6 +140,7 @@ declare module 'vue-router/auto-routes' {
       | '/setup/CommunityGlows/components/MobileSettingsSheet'
       | '/setup/CommunityGlows/components/NetworkBrandIcon'
       | '/setup/CommunityGlows/components/NetworkWebviewHost'
+      | '/setup/CommunityGlows/components/NetworkWorkspacePanel'
       | '/setup/CommunityGlows/components/OnboardingFlow'
       | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
       | '/setup/CommunityGlows/components/ProductAccessGate'
@@ -242,6 +245,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/setup/CommunityGlows/components/BitwardenExtensionSettings': RouteRecordInfo<
+      '/setup/CommunityGlows/components/BitwardenExtensionSettings',
+      '/setup/CommunityGlows/components/BitwardenExtensionSettings',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/setup/CommunityGlows/components/common/NetworkLogo': RouteRecordInfo<
       '/setup/CommunityGlows/components/common/NetworkLogo',
       '/setup/CommunityGlows/components/common/NetworkLogo',
@@ -273,6 +283,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/DesktopQuickNavigation': RouteRecordInfo<
       '/setup/CommunityGlows/components/DesktopQuickNavigation',
       '/setup/CommunityGlows/components/DesktopQuickNavigation',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/DesktopWorkspace': RouteRecordInfo<
+      '/setup/CommunityGlows/components/DesktopWorkspace',
+      '/setup/CommunityGlows/components/DesktopWorkspace',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -469,6 +486,13 @@ declare module 'vue-router/auto-routes' {
     '/setup/CommunityGlows/components/NetworkWebviewHost': RouteRecordInfo<
       '/setup/CommunityGlows/components/NetworkWebviewHost',
       '/setup/CommunityGlows/components/NetworkWebviewHost',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/setup/CommunityGlows/components/NetworkWorkspacePanel': RouteRecordInfo<
+      '/setup/CommunityGlows/components/NetworkWorkspacePanel',
+      '/setup/CommunityGlows/components/NetworkWorkspacePanel',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -837,9 +861,11 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/AppSidebar'
         | '/setup/CommunityGlows/components/BackupRestore'
         | '/setup/CommunityGlows/components/BillingAccessPanel'
+        | '/setup/CommunityGlows/components/BitwardenExtensionSettings'
         | '/setup/CommunityGlows/components/DashboardFilters'
         | '/setup/CommunityGlows/components/DesktopControlBar'
         | '/setup/CommunityGlows/components/DesktopQuickNavigation'
+        | '/setup/CommunityGlows/components/DesktopWorkspace'
         | '/setup/CommunityGlows/components/ExtensionParitySurface'
         | '/setup/CommunityGlows/components/FriendsPanel'
         | '/setup/CommunityGlows/components/KeyboardShortcuts'
@@ -848,6 +874,7 @@ declare module 'vue-router/auto-routes' {
         | '/setup/CommunityGlows/components/MobileSettingsSheet'
         | '/setup/CommunityGlows/components/NetworkBrandIcon'
         | '/setup/CommunityGlows/components/NetworkWebviewHost'
+        | '/setup/CommunityGlows/components/NetworkWorkspacePanel'
         | '/setup/CommunityGlows/components/OnboardingFlow'
         | '/setup/CommunityGlows/components/PostAuthSyncOverlay'
         | '/setup/CommunityGlows/components/ProductAccessGate'
@@ -963,6 +990,14 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
+    'src/ui/setup/pages/CommunityGlows/components/BitwardenExtensionSettings.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/BitwardenExtensionSettings'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
     'src/ui/setup/pages/CommunityGlows/components/common/NetworkLogo.vue': {
       routes:
         | '/setup/CommunityGlows/components/common/NetworkLogo'
@@ -998,6 +1033,14 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/DesktopQuickNavigation.vue': {
       routes:
         | '/setup/CommunityGlows/components/DesktopQuickNavigation'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/DesktopWorkspace.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/DesktopWorkspace'
       views:
         | never
       pathParamNames:
@@ -1222,6 +1265,14 @@ declare module 'vue-router/auto-routes' {
     'src/ui/setup/pages/CommunityGlows/components/NetworkWebviewHost.vue': {
       routes:
         | '/setup/CommunityGlows/components/NetworkWebviewHost'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/ui/setup/pages/CommunityGlows/components/NetworkWorkspacePanel.vue': {
+      routes:
+        | '/setup/CommunityGlows/components/NetworkWorkspacePanel'
       views:
         | never
       pathParamNames:
