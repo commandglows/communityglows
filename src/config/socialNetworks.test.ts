@@ -46,7 +46,7 @@ describe('social network isolation policy', () => {
       'medium', 'circle', 'stackoverflow', 'github-community', 'huzzler', 'substack',
       'youtube', 'uneed', 'indiehackers', 'devhunt', 'hackernoon', 'freelance', 'coder',
       'codeur', 'utest', 'hashnode', 'beehiiv', 'betalist', 'dribbble', 'behance',
-      'malt', 'superprof', 'codepen', 'devto',
+      'malt', 'superprof', 'codepen', 'devto', 'couchsurfing',
     ]
     const requestedEntries = requested.map((id) => builtInSocialNetworks.find((network) => network.id === id))
 
@@ -109,5 +109,20 @@ describe('social network isolation policy', () => {
     expect(getNetworkIsolationOriginsByNetwork(['luma'])).toEqual({
       luma: ['https://luma.com'],
     })
+  })
+
+  it('includes Couchsurfing with its canonical HTTPS origin', () => {
+    const network = builtInSocialNetworks.find(({ id }) => id === 'couchsurfing')
+
+    expect(network).toMatchObject({
+      label: 'Couchsurfing',
+      route: '/couchsurfing',
+      url: 'https://www.couchsurfing.com/',
+      onboarding: true,
+      defaultSelected: false,
+    })
+    expect(getNetworkIsolationOrigins('couchsurfing')).toEqual([
+      'https://www.couchsurfing.com',
+    ])
   })
 })
