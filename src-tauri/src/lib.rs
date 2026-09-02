@@ -1037,6 +1037,19 @@ fn normalize_sha256(value: &str) -> Result<String, String> {
 }
 
 #[cfg(target_os = "windows")]
+fn sha256_hex(digest: &[u8]) -> String {
+    use std::fmt::Write;
+
+    digest.iter().fold(
+        String::with_capacity(digest.len() * 2),
+        |mut encoded, byte| {
+            write!(encoded, "{byte:02x}").expect("writing to a String cannot fail");
+            encoded
+        },
+    )
+}
+
+#[cfg(target_os = "windows")]
 fn verify_bitwarden_archive_sha256(
     archive_path: &std::path::Path,
     expected_sha256: &str,
@@ -1058,7 +1071,7 @@ fn verify_bitwarden_archive_sha256(
         }
         digest.update(&buffer[..read]);
     }
-    let actual = format!("{:x}", digest.finalize());
+    let actual = sha256_hex(digest.finalize().as_slice());
     if actual != expected {
         return Err(
             "The archive SHA-256 does not match the digest published by Bitwarden".to_string(),
@@ -2151,6 +2164,8 @@ mod tests {
         validate_desktop_session_segment, validate_desktop_webview_bounds,
         validate_desktop_webview_identity,
     };
+    #[cfg(target_os = "windows")]
+    use super::sha256_hex;
 
     #[test]
     fn accepts_only_safe_desktop_webview_targets() {
@@ -2262,7 +2277,7 @@ mod tests {
         let mut file = std::fs::File::open(path).expect("open test archive");
         let mut bytes = Vec::new();
         file.read_to_end(&mut bytes).expect("read test archive");
-        format!("{:x}", Sha256::digest(bytes))
+        sha256_hex(Sha256::digest(bytes).as_slice())
     }
 
     #[test]
