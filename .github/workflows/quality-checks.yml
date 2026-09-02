@@ -2,7 +2,7 @@ name: CommunityGlows - Quality Checks
 
 on:
   push:
-    branches: [master, develop, 'release/**']
+    branches: [main, develop, 'release/**']
     paths:
       - 'src/**'
       - 'src-tauri/**'
@@ -12,7 +12,7 @@ on:
       - 'vite.tauri.config.ts'
       - '.github/workflows/quality-checks.yml'
   pull_request:
-    branches: [master, develop, 'release/**']
+    branches: [main, develop, 'release/**']
     paths:
       - 'src/**'
       - 'src-tauri/**'
