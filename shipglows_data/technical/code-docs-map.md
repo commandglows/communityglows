@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.6.1"
+artifact_version: "1.6.2"
 project: "communityglows"
 created: "2026-05-14"
-updated: "2026-08-24"
+updated: "2026-09-02"
 status: active
 source_skill: 300-sg-docs
 scope: code_docs_map
@@ -46,6 +46,36 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ---
 
 # CODE DOCS MAP
+
+## Dependency and CI maintenance
+
+- Code:
+  - `package.json`
+  - `pnpm-lock.yaml`
+  - `site/package.json`
+  - `site/package-lock.json`
+  - `.github/dependabot.yml`
+  - `.github/workflows/`
+  - `src-tauri/gen/android/build.gradle.kts`
+  - `src-tauri/gen/android/app/build.gradle.kts`
+  - `src-tauri/gen/android/gradle/wrapper/`
+  - `src-tauri/gen/android/gradlew`
+  - `src-tauri/gen/android/gradlew.bat`
+- Behavior:
+  - Dependency updates must preserve the supported Node, pnpm, Rust, Gradle, Kotlin and Android toolchain contracts.
+  - Android dependency changes require an APK build; incompatible Kotlin or Gradle migrations remain deferred instead of bypassing compiler or build checks.
+  - GitHub quality checks target the canonical integration branch and remain required before dependency PRs are merged.
+- Docs:
+  - `ENVIRONMENT.md`
+  - `shipglows_data/technical/context.md`
+  - `shipglows_data/technical/code-docs-map.md`
+- Validation:
+  - `pnpm test:once`
+  - `pnpm typecheck`
+  - `pnpm lint:check`
+  - `pnpm run design:tokens:check`
+  - GitHub quality checks and Rust tests
+  - Android APK build for Android dependency or workflow changes
 
 ## Windows/Tauri component and design-system runtime
 
