@@ -63,6 +63,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - `src-tauri/gen/android/gradlew.bat`
 - Behavior:
   - Dependency updates must preserve the supported Node, pnpm, Rust, Gradle, Kotlin and Android toolchain contracts.
+  - The Android compatibility baseline is Gradle `8.14.5`, Android Gradle Plugin `8.11.0` and Kotlin Gradle Plugin `2.2.21`; Kotlin/JVM targets use the `compilerOptions` DSL.
   - Android dependency changes require an APK build; incompatible Kotlin or Gradle migrations remain deferred instead of bypassing compiler or build checks.
   - GitHub quality checks target the canonical integration branch and remain required before dependency PRs are merged.
 - Docs:

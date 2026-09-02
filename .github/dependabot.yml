@@ -68,21 +68,6 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
-      - dependency-name: "androidx.webkit:webkit"
-        update-types:
-          - "version-update:semver-minor"
-      - dependency-name: "androidx.appcompat:appcompat"
-        update-types:
-          - "version-update:semver-minor"
-      - dependency-name: "com.google.android.material:material"
-        update-types:
-          - "version-update:semver-minor"
-      - dependency-name: "androidx.test.ext:junit"
-        update-types:
-          - "version-update:semver-minor"
-      - dependency-name: "androidx.test.espresso:espresso-core"
-        update-types:
-          - "version-update:semver-minor"
     groups:
       android-gradle-dependencies:
         patterns:
