@@ -68,6 +68,9 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+      - dependency-name: "org.jetbrains.kotlin:kotlin-gradle-plugin"
+        update-types:
+          - "version-update:semver-minor"
     groups:
       android-gradle-dependencies:
         patterns:
