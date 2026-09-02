@@ -237,6 +237,7 @@ private val NETWORKS = listOf(
     NetworkInfo("pinterest", "\uea09", Color.parseColor("#E60023"), "https://www.pinterest.com"),
     NetworkInfo("telegram",  "\ue9d3", Color.parseColor("#0088CC"), "https://web.telegram.org"),
     NetworkInfo("nextdoor",  "\ue968", Color.parseColor("#8ED500"), "https://nextdoor.com"),
+    NetworkInfo("couchsurfing", "\ue9ab", Color.parseColor("#ED6504"), "https://www.couchsurfing.com/"),
     NetworkInfo("patreon",   "\ue9da", Color.parseColor("#FF424D"), "https://www.patreon.com"),
     NetworkInfo("theresanaiforthat", "\ue9e7", Color.parseColor("#111827"), "https://theresanaiforthat.com"),
     NetworkInfo("industrysocial", "\ue9bb", Color.parseColor("#2563EB"), "https://industrysocial.net"),
