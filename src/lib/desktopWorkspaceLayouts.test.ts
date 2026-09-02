@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import type { SerializedDockview } from 'dockview-vue'
-import { DESKTOP_WORKSPACE_CONSTRAINTS } from '@/design-tokens'
 import {
   DESKTOP_WORKSPACE_AUTOSAVE_KEY,
   LEGACY_DESKTOP_WORKSPACE_AUTOSAVE_KEY,
@@ -24,6 +23,8 @@ import {
 
 const PROFILE_ID = 'profile-1'
 const OTHER_PROFILE_ID = 'profile-2'
+const TEST_WORKSPACE_WIDTH = 240
+const TEST_WORKSPACE_HEIGHT = 180
 
 const knownNetworks = new Map([
   [
@@ -51,8 +52,8 @@ function layoutFor(
           activeView: `network:${networkId}`,
         },
       },
-      width: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinWidth,
-      height: DESKTOP_WORKSPACE_CONSTRAINTS.panelMinHeight,
+      width: TEST_WORKSPACE_WIDTH,
+      height: TEST_WORKSPACE_HEIGHT,
       orientation: 'HORIZONTAL',
     },
     panels: {

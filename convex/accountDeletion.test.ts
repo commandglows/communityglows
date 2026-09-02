@@ -47,13 +47,12 @@ describe("account deletion", () => {
     await t.run(async (ctx) => {
       expect(await ctx.db.get(seeded.userId)).toBeNull();
       expect(await ctx.db.get(seeded.socialAccountId)).toBeNull();
-      expect(await ctx.db.get(seeded.redemptionCodeId)).toMatchObject({
-        redeemedBy: undefined,
-      });
-      expect(await ctx.db.get(seeded.billingEventId)).toMatchObject({
-        userId: undefined,
-        payload: undefined,
-      });
+      expect(await ctx.db.get(seeded.redemptionCodeId)).not.toHaveProperty(
+        "redeemedBy",
+      );
+      const billingEvent = await ctx.db.get(seeded.billingEventId);
+      expect(billingEvent).not.toHaveProperty("userId");
+      expect(billingEvent).not.toHaveProperty("payload");
     });
   });
 
