@@ -190,6 +190,17 @@ export const builtInSocialNetworks: BuiltInSocialNetwork[] = [
     defaultSelected: false,
   },
   {
+    id: 'couchsurfing',
+    label: 'Couchsurfing',
+    route: '/couchsurfing',
+    url: 'https://www.couchsurfing.com/',
+    icon: 'pi pi-users',
+    color: '#ED6504',
+    tileColor: '#ED6504',
+    onboarding: true,
+    defaultSelected: false,
+  },
+  {
     id: 'patreon',
     label: 'Patreon',
     route: '/patreon',

@@ -14,6 +14,8 @@ declare global {
   const PROFILE_AVATAR_MAX_LENGTH: typeof import('../../../../../stores/profiles').PROFILE_AVATAR_MAX_LENGTH
   const PROFILE_EMOJI_MAX_LENGTH: typeof import('../../../../../stores/profiles').PROFILE_EMOJI_MAX_LENGTH
   const PROFILE_NAME_MAX_LENGTH: typeof import('../../../../../stores/profiles').PROFILE_NAME_MAX_LENGTH
+  const TRIAL_REMINDER_SNOOZE_MS: typeof import('../../../../../composables/useTrialReminder').TRIAL_REMINDER_SNOOZE_MS
+  const TRIAL_REMINDER_STORAGE_KEY: typeof import('../../../../../composables/useTrialReminder').TRIAL_REMINDER_STORAGE_KEY
   const WEBVIEW_URLS: typeof import('../../../../../stores/webviewState').WEBVIEW_URLS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const appRouter: typeof import('../../../../../utils/router/index')['appRouter']
@@ -38,6 +40,7 @@ declare global {
   const createReusableTemplate: typeof import('@vueuse/core').createReusableTemplate
   const createSharedComposable: typeof import('@vueuse/core').createSharedComposable
   const createTemplatePromise: typeof import('@vueuse/core').createTemplatePromise
+  const createTrialReminderSnooze: typeof import('../../../../../composables/useTrialReminder').createTrialReminderSnooze
   const createUnrefFn: typeof import('@vueuse/core').createUnrefFn
   const customRef: typeof import('vue').customRef
   const debouncedRef: typeof import('@vueuse/core').debouncedRef
@@ -55,6 +58,8 @@ declare global {
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getSafeAccessCheckError: typeof import('../../../../../composables/useBillingAccess').getSafeAccessCheckError
   const getSafeBillingError: typeof import('../../../../../composables/useBillingAccess').getSafeBillingError
+  const getTrialReminderCycleKey: typeof import('../../../../../composables/useTrialReminder').getTrialReminderCycleKey
+  const getTrialReminderDecision: typeof import('../../../../../composables/useTrialReminder').getTrialReminderDecision
   const h: typeof import('vue').h
   const i18n: typeof import('../../../../../utils/i18n').i18n
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
@@ -204,6 +209,7 @@ declare global {
   const useDebounceFn: typeof import('@vueuse/core').useDebounceFn
   const useDebouncedRefHistory: typeof import('@vueuse/core').useDebouncedRefHistory
   const useDesktopControlBarStore: typeof import('../../../../../stores/desktopControlBar').useDesktopControlBarStore
+  const useDesktopWorkspacesStore: typeof import('../../../../../stores/desktopWorkspaces').useDesktopWorkspacesStore
   const useDeviceMotion: typeof import('@vueuse/core').useDeviceMotion
   const useDeviceOrientation: typeof import('@vueuse/core').useDeviceOrientation
   const useDevicePixelRatio: typeof import('@vueuse/core').useDevicePixelRatio
@@ -333,6 +339,7 @@ declare global {
   const useToString: typeof import('@vueuse/core').useToString
   const useToggle: typeof import('@vueuse/core').useToggle
   const useTransition: typeof import('@vueuse/core').useTransition
+  const useTrialReminder: typeof import('../../../../../composables/useTrialReminder').useTrialReminder
   const useUrlSearchParams: typeof import('@vueuse/core').useUrlSearchParams
   const useUser: typeof import('../../../../../composables/useAuth').useUser
   const useUserMedia: typeof import('@vueuse/core').useUserMedia
@@ -379,6 +386,9 @@ declare global {
   export type { SupportedLocale } from '../../../../../composables/useLocale'
   import('../../../../../composables/useLocale')
   // @ts-ignore
+  export type { TrialReminderMilestone, TrialReminderState, TrialReminderDecision } from '../../../../../composables/useTrialReminder'
+  import('../../../../../composables/useTrialReminder')
+  // @ts-ignore
   export type { Account } from '../../../../../stores/accounts'
   import('../../../../../stores/accounts')
   // @ts-ignore
@@ -390,6 +400,9 @@ declare global {
   // @ts-ignore
   export type { DesktopControlBarPosition } from '../../../../../stores/desktopControlBar'
   import('../../../../../stores/desktopControlBar')
+  // @ts-ignore
+  export type { DesktopWorkspaceSyncResult } from '../../../../../stores/desktopWorkspaces'
+  import('../../../../../stores/desktopWorkspaces')
   // @ts-ignore
   export type { KanbanItem, KanbanColumnId } from '../../../../../stores/kanban'
   import('../../../../../stores/kanban')
@@ -415,6 +428,8 @@ declare module 'vue' {
     readonly PROFILE_AVATAR_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']>
     readonly PROFILE_EMOJI_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']>
     readonly PROFILE_NAME_MAX_LENGTH: UnwrapRef<typeof import('../../../../../stores/profiles')['PROFILE_NAME_MAX_LENGTH']>
+    readonly TRIAL_REMINDER_SNOOZE_MS: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['TRIAL_REMINDER_SNOOZE_MS']>
+    readonly TRIAL_REMINDER_STORAGE_KEY: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['TRIAL_REMINDER_STORAGE_KEY']>
     readonly WEBVIEW_URLS: UnwrapRef<typeof import('../../../../../stores/webviewState')['WEBVIEW_URLS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly applyDisableCopyProtection: UnwrapRef<typeof import('../../../../../utils/disableCopyProtection')['applyDisableCopyProtection']>
@@ -438,6 +453,7 @@ declare module 'vue' {
     readonly createReusableTemplate: UnwrapRef<typeof import('@vueuse/core')['createReusableTemplate']>
     readonly createSharedComposable: UnwrapRef<typeof import('@vueuse/core')['createSharedComposable']>
     readonly createTemplatePromise: UnwrapRef<typeof import('@vueuse/core')['createTemplatePromise']>
+    readonly createTrialReminderSnooze: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['createTrialReminderSnooze']>
     readonly createUnrefFn: UnwrapRef<typeof import('@vueuse/core')['createUnrefFn']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly debouncedRef: UnwrapRef<typeof import('@vueuse/core')['debouncedRef']>
@@ -455,6 +471,8 @@ declare module 'vue' {
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getSafeAccessCheckError: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['getSafeAccessCheckError']>
     readonly getSafeBillingError: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['getSafeBillingError']>
+    readonly getTrialReminderCycleKey: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['getTrialReminderCycleKey']>
+    readonly getTrialReminderDecision: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['getTrialReminderDecision']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly i18n: UnwrapRef<typeof import('../../../../../utils/i18n')['i18n']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
@@ -601,6 +619,7 @@ declare module 'vue' {
     readonly useDebounceFn: UnwrapRef<typeof import('@vueuse/core')['useDebounceFn']>
     readonly useDebouncedRefHistory: UnwrapRef<typeof import('@vueuse/core')['useDebouncedRefHistory']>
     readonly useDesktopControlBarStore: UnwrapRef<typeof import('../../../../../stores/desktopControlBar')['useDesktopControlBarStore']>
+    readonly useDesktopWorkspacesStore: UnwrapRef<typeof import('../../../../../stores/desktopWorkspaces')['useDesktopWorkspacesStore']>
     readonly useDeviceMotion: UnwrapRef<typeof import('@vueuse/core')['useDeviceMotion']>
     readonly useDeviceOrientation: UnwrapRef<typeof import('@vueuse/core')['useDeviceOrientation']>
     readonly useDevicePixelRatio: UnwrapRef<typeof import('@vueuse/core')['useDevicePixelRatio']>
@@ -729,6 +748,7 @@ declare module 'vue' {
     readonly useToString: UnwrapRef<typeof import('@vueuse/core')['useToString']>
     readonly useToggle: UnwrapRef<typeof import('@vueuse/core')['useToggle']>
     readonly useTransition: UnwrapRef<typeof import('@vueuse/core')['useTransition']>
+    readonly useTrialReminder: UnwrapRef<typeof import('../../../../../composables/useTrialReminder')['useTrialReminder']>
     readonly useUrlSearchParams: UnwrapRef<typeof import('@vueuse/core')['useUrlSearchParams']>
     readonly useUser: UnwrapRef<typeof import('../../../../../composables/useAuth')['useUser']>
     readonly useUserMedia: UnwrapRef<typeof import('@vueuse/core')['useUserMedia']>

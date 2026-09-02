@@ -5,6 +5,7 @@ artifact_version: "1.2.0"
 project: communityglows
 created: "2026-04-26"
 status: reviewed
+delivery_posture: development
 source_skill: 300-sg-docs
 scope: business
 owner: "Diane"
