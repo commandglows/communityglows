@@ -1,7 +1,13 @@
 import { action, query } from './_generated/server'
+import { makeFunctionReference } from 'convex/server'
 import { v } from 'convex/values'
 import { requireAuthUserId } from './authHelpers'
-import { api } from './_generated/api'
+
+const getCurrentUser = makeFunctionReference<
+  'query',
+  Record<string, never>,
+  { email?: string; emailVerificationTime?: number } | null
+>('users:getMe')
 
 /**
  * Suite entitlement bridge adapter.
@@ -402,7 +408,7 @@ export const getProductAccess = action({
   },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const user = await ctx.runQuery(api.users.getMe, {})
+    const user = await ctx.runQuery(getCurrentUser, {})
     return (await getSuiteAccessForUser(userId, 'snapshot', args.installationHash, user?.email)).access
   },
 })
@@ -411,7 +417,7 @@ export const restartTrial = action({
   args: { installationHash: v.string() },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const user = await ctx.runQuery(api.users.getMe, {})
+    const user = await ctx.runQuery(getCurrentUser, {})
     const access = (await getSuiteAccessForUser(userId, 'restart_trial', args.installationHash, user?.email)).access
     if (access.accessState !== 'trial_active') {
       throw new Error('trial_restart_not_eligible')
@@ -424,7 +430,7 @@ export const startCheckout = action({
   args: { installationHash: v.string() },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const user = await ctx.runQuery(api.users.getMe, {})
+    const user = await ctx.runQuery(getCurrentUser, {})
     const response = await getSuiteAccessForUser(userId, 'snapshot', args.installationHash, user?.email)
     if (!response.checkoutIdentityToken) throw new Error('checkout_handoff_unavailable')
     return {
@@ -440,7 +446,7 @@ export const redeemCode = action({
   },
   handler: async (ctx, args) => {
     const userId = await requireAuthUserId(ctx)
-    const user = await ctx.runQuery(api.users.getMe, {})
+    const user = await ctx.runQuery(getCurrentUser, {})
     const code = normalizeCode(args.code)
     if (!code) {
       throw new Error('code_required')
@@ -476,7 +482,7 @@ export const relinkRetainedAccount = action({
   args: {},
   handler: async (ctx) => {
     const userId = await requireAuthUserId(ctx)
-    const user = await ctx.runQuery(api.users.getMe, {})
+    const user = await ctx.runQuery(getCurrentUser, {})
     if (!user?.email || !user.emailVerificationTime) {
       return { relinked: false, reason: 'verified_email_required' as const }
     }
