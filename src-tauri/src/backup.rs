@@ -3,7 +3,6 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use argon2::Argon2;
-use rand::RngCore;
 use std::io::{Cursor, Read as IoRead, Write as IoWrite};
 use std::path::{Component, Path};
 use zip::write::SimpleFileOptions;
@@ -92,15 +91,15 @@ pub fn create_backup_archive(sessions_dir: &Path, store_data: &str) -> Result<Ve
 pub fn encrypt_archive(plaintext: &[u8], password: &str) -> Result<Vec<u8>, String> {
     let mut salt = [0u8; 16];
     let mut nonce_bytes = [0u8; 12];
-    rand::thread_rng().fill_bytes(&mut salt);
-    rand::thread_rng().fill_bytes(&mut nonce_bytes);
+    rand::fill(&mut salt);
+    rand::fill(&mut nonce_bytes);
 
     let key = derive_key(password, &salt)?;
     let cipher = Aes256Gcm::new_from_slice(&key).map_err(|e| format!("cipher init: {e}"))?;
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = Nonce::try_from(nonce_bytes.as_slice()).map_err(|e| format!("nonce init: {e}"))?;
 
     let ciphertext = cipher
-        .encrypt(nonce, plaintext)
+        .encrypt(&nonce, plaintext)
         .map_err(|_| "Encryption failed".to_string())?;
 
     let ct_len = (ciphertext.len() as u32).to_le_bytes();
@@ -145,10 +144,10 @@ pub fn decrypt_archive(blob: &[u8], password: &str) -> Result<Vec<u8>, String> {
 
     let key = derive_key(password, &salt)?;
     let cipher = Aes256Gcm::new_from_slice(&key).map_err(|e| format!("cipher init: {e}"))?;
-    let nonce = Nonce::from_slice(&nonce_bytes);
+    let nonce = Nonce::try_from(nonce_bytes.as_slice()).map_err(|e| format!("nonce init: {e}"))?;
 
     cipher
-        .decrypt(nonce, ciphertext)
+        .decrypt(&nonce, ciphertext)
         .map_err(|_| "Mot de passe incorrect ou fichier corrompu".to_string())
 }
 
@@ -295,6 +294,20 @@ mod tests {
             writer.write_all(data).expect("write zip entry");
         }
         writer.finish().expect("finish zip").into_inner()
+    }
+
+    #[test]
+    fn encrypted_backup_round_trip_preserves_payload_and_rejects_wrong_password() {
+        let payload = br#"{"dataVersion":2,"profiles":{"profiles":[]}}"#;
+        let encrypted = encrypt_archive(payload, "correct horse battery staple")
+            .expect("encrypt backup payload");
+
+        assert_eq!(
+            decrypt_archive(&encrypted, "correct horse battery staple")
+                .expect("decrypt backup payload"),
+            payload
+        );
+        assert!(decrypt_archive(&encrypted, "wrong password").is_err());
     }
 
     #[test]
