@@ -3,6 +3,7 @@ name = "tauri-plugin-android-webview"
 version = "0.1.0"
 edition = "2021"
 links = "tauri-plugin-android-webview"
+build = "build.rs"
 
 [build-dependencies]
 tauri-plugin = { version = "2", features = ["build"] }
