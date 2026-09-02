@@ -68,3 +68,6 @@ updates:
       android-gradle-dependencies:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
