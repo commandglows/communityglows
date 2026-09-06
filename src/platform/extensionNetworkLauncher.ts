@@ -1,4 +1,15 @@
+import {
+  managedNetworkCommand,
+  hasManagedNetworkTabs,
+  type NetworkTarget,
+} from "./managedNetworkTabs"
 import { supportsSidePanel } from "@/platform/capabilities"
+import {
+  createExtensionTab,
+  currentExtensionWindowId,
+  extensionUrl,
+  openExtensionSidePanel as openSidePanelApi,
+} from "@/platform/webExtensionApi"
 
 const FORBIDDEN_PROTOCOLS = new Set([
   "javascript:",
@@ -36,15 +47,17 @@ export type ExtensionLaunchErrorCode =
   | "runtime_url_unavailable"
   | "side_panel_unavailable"
   | "side_panel_failed"
+  | "restore_required"
 
 export type ExtensionLaunchResult =
-  | { ok: true }
-  | { ok: false; code: ExtensionLaunchErrorCode }
+  { ok: true } | { ok: false; code: ExtensionLaunchErrorCode }
 
 function parseCandidateUrl(rawInput: string): URL | null {
   const trimmed = rawInput.trim()
   if (!trimmed) return null
-  const candidate = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed) ? trimmed : `https://${trimmed}`
+  const candidate = /^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`
   try {
     return new URL(candidate)
   } catch {
@@ -82,50 +95,21 @@ export function normalizeHttpsUrl(rawInput: string): UrlValidationResult {
   }
 }
 
-function withChromeTabsCreate(url: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    const chromeApi = globalThis.chrome
-    if (!chromeApi?.tabs?.create) {
-      reject(new Error("tabs.create unavailable"))
-      return
-    }
-    chromeApi.tabs.create({ url }, () => {
-      const runtimeError = chromeApi.runtime?.lastError
-      if (runtimeError) {
-        reject(new Error(runtimeError.message))
-        return
-      }
-      resolve(true)
-    })
-  })
-}
-
-async function withBrowserTabsCreate(url: string): Promise<boolean> {
-  const browserApi = (globalThis as { browser?: { tabs?: { create?: (props: { url: string }) => Promise<unknown> } } }).browser
-  await browserApi?.tabs?.create?.({ url })
-  return true
-}
-
 async function openInNewTab(url: string): Promise<ExtensionLaunchResult> {
   try {
-    if (globalThis.chrome?.tabs?.create) {
-      await withChromeTabsCreate(url)
-      return { ok: true }
+    await createExtensionTab({ url })
+    return { ok: true }
+  } catch (error) {
+    if (error instanceof Error && error.message === "tabs_api_unavailable") {
+      return { ok: false, code: "tabs_api_unavailable" }
     }
-
-    const browserApi = (globalThis as { browser?: { tabs?: { create?: (props: { url: string }) => Promise<unknown> } } }).browser
-    if (browserApi?.tabs?.create) {
-      await withBrowserTabsCreate(url)
-      return { ok: true }
-    }
-
-    return { ok: false, code: "tabs_api_unavailable" }
-  } catch {
     return { ok: false, code: "tab_creation_failed" }
   }
 }
 
-export async function launchExternalUrl(rawInput: string): Promise<ExtensionLaunchResult> {
+export async function launchExternalUrl(
+  rawInput: string,
+): Promise<ExtensionLaunchResult> {
   const normalized = normalizeHttpsUrl(rawInput)
   if (!normalized.ok) {
     return { ok: false, code: normalized.code }
@@ -134,30 +118,50 @@ export async function launchExternalUrl(rawInput: string): Promise<ExtensionLaun
   return openInNewTab(normalized.url)
 }
 
-export async function openExtensionDashboard(route = "/setup/CommunityGlows"): Promise<ExtensionLaunchResult> {
-  const runtimeUrl = globalThis.chrome?.runtime?.getURL?.(`src/ui/setup/index.html#${route}`)
+export async function launchManagedNetwork(
+  rawInput: string,
+  target?: Omit<NetworkTarget, "url">,
+): Promise<ExtensionLaunchResult> {
+  const normalized = normalizeHttpsUrl(rawInput)
+  if (!normalized.ok) return normalized
+  // Only the Chrome manifest opts into managed grouping. Other targets keep their launcher.
+  if (!hasManagedNetworkTabs()) return launchExternalUrl(rawInput)
+  try {
+    const windowId = await currentExtensionWindowId()
+    await managedNetworkCommand({
+      action: "open",
+      target: {
+        ...(target ?? {
+          profileId: "default",
+          networkId: normalized.url,
+          groupKey: "other",
+          groupTitle: "CommunityGlows",
+          label: normalized.host,
+        }),
+        url: normalized.url,
+      },
+      windowId,
+    })
+    return { ok: true }
+  } catch (error) {
+    return {
+      ok: false,
+      code:
+        error instanceof Error && error.message === "restore_required"
+          ? "restore_required"
+          : "tab_creation_failed",
+    }
+  }
+}
+
+export async function openExtensionDashboard(
+  route = "/setup/CommunityGlows",
+): Promise<ExtensionLaunchResult> {
+  const runtimeUrl = extensionUrl(`src/ui/setup/index.html#${route}`)
   if (!runtimeUrl) {
     return { ok: false, code: "runtime_url_unavailable" }
   }
   return openInNewTab(runtimeUrl)
-}
-
-function getCurrentWindowId(): Promise<number> {
-  return new Promise((resolve, reject) => {
-    const chromeApi = globalThis.chrome
-    if (!chromeApi?.windows?.getCurrent) {
-      reject(new Error("windows.getCurrent unavailable"))
-      return
-    }
-    chromeApi.windows.getCurrent((window) => {
-      const runtimeError = chromeApi.runtime?.lastError
-      if (runtimeError || typeof window?.id !== "number") {
-        reject(new Error(runtimeError?.message ?? "No current window"))
-        return
-      }
-      resolve(window.id)
-    })
-  })
 }
 
 export async function openExtensionSidePanel(): Promise<ExtensionLaunchResult> {
@@ -165,14 +169,9 @@ export async function openExtensionSidePanel(): Promise<ExtensionLaunchResult> {
     return { ok: false, code: "side_panel_unavailable" }
   }
 
-  const sidePanelApi = globalThis.chrome?.sidePanel
-  if (!sidePanelApi?.open) {
-    return { ok: false, code: "side_panel_unavailable" }
-  }
-
   try {
-    const windowId = await getCurrentWindowId()
-    await sidePanelApi.open({ windowId })
+    const windowId = await currentExtensionWindowId()
+    await openSidePanelApi(windowId)
     return { ok: true }
   } catch {
     return { ok: false, code: "side_panel_failed" }

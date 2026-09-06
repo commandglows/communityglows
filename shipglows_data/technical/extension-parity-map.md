@@ -82,3 +82,9 @@ Cette carte décrit la parité réelle entre la cible extension (Chrome/Firefox)
   - `pnpm build:firefox`
   - `pnpm lint:manifest`
   - `python3 /home/claude/shipflow/tools/shipflow_metadata_lint.py shipglows_data/technical/extension-parity-map.md`
+
+## Compagnon des onglets Chrome
+
+Le panneau latéral suit plusieurs groupes Chrome, leurs noms, leur ordre et leurs onglets actifs. Le worker conserve le suivi d'un onglet déplacé vers une autre fenêtre et l'active sur place sans rechargement imposé. L'intégration d'un onglet personnel, son retour dans la fenêtre du panneau et le rassemblement des onglets gérés sont des actions explicites. Une fermeture reste fermée jusqu'au prochain clic d'ouverture. Les groupes mixtes restent sous contrôle Chrome pour le nom et le repli.
+
+La reprise MV3 utilise les identifiants de session. La reprise du navigateur conserve uniquement les identités métier : le panneau demande de rattacher l'onglet restauré ou d'ouvrir explicitement un nouvel onglet. Le compagnon ne confond pas deux liens identiques ni les espaces CommunityGlows avec des sessions Chrome séparées. Scénarios automatisés : `scripts/verifyManagedNetworkTabs.mjs`. Limite de preuve : Chromium isolé avec document du panneau rendu comme page d'extension ; panneau natif du profil Chrome personnel et accès authentifié non vérifiés.

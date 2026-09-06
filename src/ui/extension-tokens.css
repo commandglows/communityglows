@@ -3,15 +3,14 @@
 
 body {
   margin: 0;
-  min-width: var(--sg-size-24rem);
+  min-width: 0;
   overflow-y: scroll !important;
   background: var(--sg-color-surface-raised);
   color: var(--sg-color-text);
 }
 
-* {
-  -webkit-user-select: none;
-  user-select: none;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 input,
@@ -95,6 +94,7 @@ select {
 }
 
 .ext-parity-root {
+  min-width: 0;
   margin-inline: auto;
   width: var(--sg-size-100pct);
   max-width: var(--sg-size-64rem);
@@ -125,6 +125,7 @@ select {
 }
 
 .ext-parity-grid {
+  min-width: 0;
   display: grid;
   gap: var(--sg-space-0d75rem);
 }
@@ -209,6 +210,8 @@ select {
 }
 
 .ext-link-item {
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   justify-content: space-between;
