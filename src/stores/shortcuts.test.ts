@@ -1,8 +1,27 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { isEditableShortcutTarget, normalizeShortcutEvent } from './shortcuts'
+import { createPinia, setActivePinia } from 'pinia'
+import { isEditableShortcutTarget, normalizeShortcutEvent, useShortcutsStore } from './shortcuts'
 
 describe('keyboard shortcut guards', () => {
   afterEach(() => vi.unstubAllGlobals())
+
+  it('recognizes Ctrl + zero on AZERTY without requiring Shift', () => {
+    expect(normalizeShortcutEvent({ ctrlKey: true, code: 'Digit0', key: 'à' } as KeyboardEvent)).toBe('Ctrl+0')
+    expect(normalizeShortcutEvent({ ctrlKey: true, altKey: true, code: 'Digit0', key: '@' } as KeyboardEvent)).toBe('Ctrl+Alt+@')
+  })
+
+  it('adds reset to saved shortcuts without replacing existing customizations', () => {
+    vi.stubGlobal('localStorage', {
+      getItem: () => JSON.stringify([{ id: 'increase-ui-scale', action: 'increase-ui-scale', keys: 'Alt+=', enabled: false }]),
+      setItem: vi.fn(),
+    })
+    setActivePinia(createPinia())
+    const store = useShortcutsStore()
+    expect(store.findById('reset-ui-scale')).toMatchObject({ action: 'reset-ui-scale', keys: 'Ctrl+0', enabled: true })
+    expect(store.findById('increase-ui-scale')).toMatchObject({ keys: 'Alt+=', enabled: false })
+    store.setFromCloud([{ id: 'reset-ui-scale', action: 'reset-ui-scale', keys: 'Alt+0', enabled: false }])
+    expect(store.findById('reset-ui-scale')).toMatchObject({ action: 'reset-ui-scale', keys: 'Alt+0', enabled: false })
+  })
 
   it('normalizes modifier combinations consistently', () => {
     expect(normalizeShortcutEvent({

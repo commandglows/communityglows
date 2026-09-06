@@ -182,6 +182,8 @@ import { preloadWebviews } from "./composables/useWebviewPreload"
 import { TEXT_ZOOM_DEFAULT, normalizeTextZoomLevel } from "./utils/textZoom"
 import {
   applyUiScaleLevel,
+  createUiScaleWheelHandler,
+  UI_SCALE_DEFAULT,
   persistUiScaleLevel,
   readUiScaleLevel,
 } from "./utils/uiScale"
@@ -429,6 +431,8 @@ function updateIconScale(level: number) {
   )
 }
 
+const onUiScaleWheel = createUiScaleWheelHandler(() => uiScaleLevel.value, updateUiScale)
+
 const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (event.type === "keyup") return
   if (isEditableShortcutTarget(event.target)) return
@@ -449,6 +453,9 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
   }
   if (shortcut.action === "increase-ui-scale") {
     updateUiScale(uiScaleLevel.value + 5)
+  }
+  if (shortcut.action === "reset-ui-scale") {
+    updateUiScale(UI_SCALE_DEFAULT)
   }
   if (shortcut.action === "decrease-network-text-size") {
     updateNetworkTextZoom(textZoomLevel.value - 5)
@@ -984,6 +991,7 @@ onMounted(async () => {
     onWebviewReady,
   )
   window.addEventListener("keydown", onKeyboardShortcut, { capture: true })
+  window.addEventListener("wheel", onUiScaleWheel, { passive: false })
   window.addEventListener("keyup", onKeyboardShortcut, { capture: true })
 
   if (isTauri) {
@@ -1102,6 +1110,7 @@ onUnmounted(() => {
     onWebviewReady,
   )
   window.removeEventListener("keydown", onKeyboardShortcut, { capture: true })
+  window.removeEventListener("wheel", onUiScaleWheel)
   window.removeEventListener("keyup", onKeyboardShortcut, { capture: true })
   window.removeEventListener("communityglows-webview-back", onWebviewBack)
   window.removeEventListener(

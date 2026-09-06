@@ -10,6 +10,7 @@ export type CoreShortcutAction =
   | 'open-profile-selector'
   | 'decrease-ui-scale'
   | 'increase-ui-scale'
+  | 'reset-ui-scale'
   | 'decrease-network-text-size'
   | 'increase-network-text-size'
   | 'decrease-icon-size'
@@ -38,6 +39,7 @@ const defaults: AppShortcut[] = [
   { id: 'open-profile-selector', action: 'open-profile-selector', label: 'Ouvrir le sélecteur de profil', keys: 'Alt+P', enabled: true },
   { id: 'decrease-ui-scale', action: 'decrease-ui-scale', label: 'Réduire la taille de l’interface', keys: 'Ctrl+-', enabled: true },
   { id: 'increase-ui-scale', action: 'increase-ui-scale', label: 'Agrandir la taille de l’interface', keys: 'Ctrl+=', enabled: true },
+  { id: 'reset-ui-scale', action: 'reset-ui-scale', label: 'Rétablir la taille de l’interface à 100 %', keys: 'Ctrl+0', enabled: true },
   { id: 'decrease-network-text-size', action: 'decrease-network-text-size', label: 'Réduire le texte des réseaux', keys: 'Ctrl+Alt+-', enabled: true },
   { id: 'increase-network-text-size', action: 'increase-network-text-size', label: 'Agrandir le texte des réseaux', keys: 'Ctrl+Alt+=', enabled: true },
   { id: 'decrease-icon-size', action: 'decrease-icon-size', label: 'Réduire la taille des icônes', keys: 'Ctrl+Shift+-', enabled: true },
@@ -61,6 +63,7 @@ function normalizeShortcutAction(value: unknown): ShortcutAction {
     || value === 'open-profile-selector'
     || value === 'decrease-ui-scale'
     || value === 'increase-ui-scale'
+    || value === 'reset-ui-scale'
     || value === 'decrease-network-text-size'
     || value === 'increase-network-text-size'
     || value === 'decrease-icon-size'
@@ -311,7 +314,10 @@ export function normalizeShortcutEvent(event: KeyboardEvent): string {
     event.shiftKey ? 'Shift' : '',
     event.metaKey ? 'Meta' : '',
   ].filter(Boolean)
-  const key = event.key === ' ' ? 'Space' : event.key.length === 1 ? event.key.toUpperCase() : event.key
+  // AZERTY emits "à" for the physical zero key without Shift.
+  const key = event.ctrlKey && !event.altKey && !event.shiftKey && event.code === 'Digit0'
+    ? '0'
+    : event.key === ' ' ? 'Space' : event.key.length === 1 ? event.key.toUpperCase() : event.key
   return [...modifiers, key].join('+')
 }
 

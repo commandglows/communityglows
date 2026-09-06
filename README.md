@@ -24,6 +24,8 @@ Any product claim in the repo should be backed by the product registry, a live r
 
 ## Plateformes
 
+Le zoom de l’interface se règle de 75 à 150 % dans les paramètres ou avec `Ctrl` + molette (pas de 5 %). `Ctrl` + `0` rétablit 100 % ; ce raccourci est personnalisable dans les paramètres. Le niveau est mémorisé. Ces commandes concernent l’interface CommunityGlows ; le contenu des réseaux intégrés dispose de son réglage séparé.
+
 | Plateforme              | Technologie    | Build                     | Statut     |
 | ----------------------- | -------------- | ------------------------- | ---------- |
 | Chrome Extension        | CRXJS + Vite   | `pnpm build:chrome`       | Production |

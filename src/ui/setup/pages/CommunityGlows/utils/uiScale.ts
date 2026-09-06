@@ -6,6 +6,22 @@ export const UI_SCALE_MAX = 150
 export const UI_SCALE_STEP = 5
 export const UI_SCALE_DEFAULT = 100
 
+export function createUiScaleWheelHandler(readLevel: () => number, updateLevel: (level: number) => void) {
+  // Limit high-frequency trackpad events to one step per 80 ms.
+  let lastStepAt = -Infinity
+  return (event: WheelEvent) => {
+    if (!event.ctrlKey || event.altKey || event.shiftKey || event.metaKey || event.defaultPrevented
+      || !Number.isFinite(event.deltaY) || event.deltaY === 0) return
+    // Prevent WebView/browser zoom even at the configured bounds.
+    event.preventDefault()
+    if (event.timeStamp - lastStepAt < 80) return
+    lastStepAt = event.timeStamp
+    const current = readLevel()
+    const next = normalizeUiScaleLevel(current - Math.sign(event.deltaY) * UI_SCALE_STEP)
+    if (next !== current) updateLevel(next)
+  }
+}
+
 export function normalizeUiScaleLevel(level: number) {
   if (!Number.isFinite(level)) return UI_SCALE_DEFAULT
 
