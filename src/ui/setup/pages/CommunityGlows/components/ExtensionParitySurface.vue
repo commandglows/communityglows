@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue"
-import { getVisibleBuiltInSocialNetworks } from "@/config/socialNetworks"
+import { builtInSocialNetworks, getVisibleBuiltInSocialNetworks } from "@/config/socialNetworks"
+import ManagedNetworkTabs from './ManagedNetworkTabs.vue'
+import { hasManagedNetworkTabs, type NetworkTarget } from '@/platform/managedNetworkTabs'
+import { getNetworkGroupId } from '@/config/socialNetworkGroups'
 import { i18n, setLocale } from "@/utils/i18n"
 import { useProfilesStore } from "@/stores/profiles"
 import { useCustomLinksStore } from "@/stores/customLinks"
@@ -8,7 +11,7 @@ import { useThemeStore } from "@/stores/theme"
 import { getPlatformCapabilities } from "@/platform/capabilities"
 import ExtensionTaskCapture from './tasks/ExtensionTaskCapture.vue'
 import {
-  launchExternalUrl,
+  launchManagedNetwork,
   normalizeHttpsUrl,
   openExtensionDashboard,
   openExtensionSidePanel,
@@ -93,11 +96,16 @@ const profileLinks = computed(() => {
   return customLinksStore.getLinks(activeProfileId.value)
 })
 
+const managedTargets = computed<NetworkTarget[]>(() => [
+  ...builtInSocialNetworks.map(network => ({ profileId: activeProfileId.value, networkId: network.id, groupKey: getNetworkGroupId(network.id), groupTitle: `${activeProfile.value?.name ?? 'CommunityGlows'} · ${i18n.global.t('networkGroups.' + getNetworkGroupId(network.id))}`, label: network.label, url: network.url })),
+  ...profileLinks.value.map(link => ({ profileId: activeProfileId.value, networkId: 'link:' + link.id, groupKey: 'custom', groupTitle: `${activeProfile.value?.name ?? 'CommunityGlows'} · ${i18n.global.t('extension.custom_links.title')}`, label: link.label, url: link.url })),
+])
+const managedTabsAvailable = hasManagedNetworkTabs()
 const canOpenSidePanel = computed(() => capabilities.supportsSidePanel)
 const isDarkMode = computed(() => themeStore.isDarkMode)
 
 function messageForCode(code: ExtensionLaunchErrorCode): string {
-  return i18n.global.t(`extension.launch.errors.${code}`)
+  return i18n.global.t(code === "restore_required" ? "extension.managed.errors.restore_required" : `extension.launch.errors.${code}`)
 }
 
 function clearMessages() {
@@ -105,24 +113,13 @@ function clearMessages() {
   errorMessage.value = null
 }
 
-async function openBuiltInNetwork(url: string) {
+async function openNetworkIdentity(networkId: string) {
   clearMessages()
-  const result = await launchExternalUrl(url)
-  if (!result.ok) {
-    errorMessage.value = messageForCode(result.code)
-    return
-  }
-  statusMessage.value = i18n.global.t("extension.launch.opened")
-}
-
-async function openCustomLink(url: string) {
-  clearMessages()
-  const result = await launchExternalUrl(url)
-  if (!result.ok) {
-    errorMessage.value = messageForCode(result.code)
-    return
-  }
-  statusMessage.value = i18n.global.t("extension.launch.opened")
+  const target = managedTargets.value.find(target => target.networkId === networkId)
+  if (!target) { errorMessage.value = 'extension.launch.errors.invalid'; return }
+  const result = await launchManagedNetwork(target.url, target)
+  if (!result.ok) { errorMessage.value = messageForCode(result.code); return }
+  statusMessage.value = i18n.global.t('extension.launch.opened')
 }
 
 async function addCustomLink() {
@@ -236,6 +233,13 @@ onMounted(() => {
       </div>
     </div>
 
+    <ManagedNetworkTabs
+      v-if="managedTabsAvailable && props.surface === 'side-panel'"
+      :targets="managedTargets"
+      :profile-id="activeProfileId"
+      @activate-profile="activeProfileId = $event"
+    />
+
     <div class="ext-parity-grid">
       <h2 class="ext-parity-section-title">
         {{ $t("extension.networks.title") }}
@@ -249,7 +253,7 @@ onMounted(() => {
           :key="network.id"
           class="ext-btn ext-btn--small ext-btn--primary ext-btn--left"
           type="button"
-          @click="openBuiltInNetwork(network.url)"
+          @click="openNetworkIdentity(network.id)"
         >
           {{ network.label }}
         </button>
@@ -292,7 +296,7 @@ onMounted(() => {
           <button
             class="ext-btn ext-btn--xs ext-btn--outline"
             type="button"
-            @click="openCustomLink(link.url)"
+            @click="openNetworkIdentity('link:' + link.id)"
           >
             {{ $t("common.open") }}
           </button>

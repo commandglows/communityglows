@@ -454,3 +454,29 @@ Update these docs when implementation begins or changes platform status:
 | sf-verify | partial | Automated proof and parity surfaces remain in place; remaining gate is manual Chrome/Firefox extension smoke validation in real browsers. |
 | sf-end | pending | Close docs/tasks/changelog after implementation proof. |
 | sf-ship | pending | Commit/push/release only after verification. |
+
+## Compagnon Chrome et groupes — plan validé du 7 septembre 2026
+
+Le panneau latéral accompagne les réseaux dans de vrais onglets Chrome. Chaque réseau ou lien est identifié par son profil CommunityGlows et son identifiant métier ; le worker suit l'identifiant Chrome, la fenêtre, le groupe et l'ordre observés. Deux liens ayant la même URL restent distincts. Les catégories du catalogue constituent la destination initiale, puis les déplacements et noms Chrome font autorité.
+
+- L'onglet actif reste dans son groupe, déplié. À l'activation, les autres groupes entièrement gérés sont repliés. Une expansion explicite pour parcourir un groupe inactif reste possible jusqu'à la prochaine activation.
+- Les onglets personnels ne sont jamais intégrés par correspondance d'URL. « Ajouter à CommunityGlows » associe volontairement l'onglet actif au réseau choisi. Les conflits d'identité sont refusés.
+- Déplacer ou dégrouper manuellement un onglet ne supprime pas son suivi. Le clic suivant l'active là où il se trouve sans modifier son URL. « Ramener » déplace uniquement l'onglet choisi. « Réunir » ramène les onglets gérés dans la fenêtre du panneau ; les groupes entièrement gérés sont déplacés comme unités distinctes.
+- Les groupes mixtes sont observés mais leur nom et leur repli restent contrôlés dans Chrome. Les commandes de rassemblement n'emportent pas leurs onglets personnels.
+- Fermer un onglet le marque fermé. Aucun événement ne le recrée ; seule une ouverture explicite le fait. Les échecs partiels de regroupement sont récupérables sans création d'un second onglet.
+- Le redémarrage du worker MV3 reprend les identifiants depuis storage.session. Après redémarrage du navigateur, l'identité métier locale reste disponible mais les anciens identifiants Chrome sont abandonnés. Un onglet précédemment ouvert demande une reprise explicite : rattacher l'onglet restauré, ou choisir « Ouvrir un nouvel onglet ». Aucune récupération silencieuse par URL n'est utilisée.
+- Le panneau suit noms, ordre, groupes et activation Chrome. Les noms sont édités inline (Entrée valide, Échap annule). Les actions secondaires apparaissent au survol et au focus, et restent disponibles au tactile. FR/EN et thèmes existants sont conservés.
+
+Permissions Chrome : ajout ciblé de tabGroups, sans host permission supplémentaire. Firefox conserve son lancement ordinaire. Les routes publiques de l'extension utilisent déjà l'état local ; aucun nouveau parcours d'authentification ni contournement du verrou desktop n'est introduit.
+
+Preuves : tests Vitest du manager/protocole et de la plateforme ; typecheck extension ; build Chrome ; scripts/verifyManagedNetworkTabs.mjs charge le vrai bundle MV3 dans un Chromium isolé, teste les mouvements, groupes mixtes, fermetures, noms au clavier, doublons d'URL, 320 px, FR/EN, clair/sombre, arrêt/reprise du worker et redémarrage complet du navigateur. Le document du panneau est rendu comme page d'extension dans ce laboratoire : ce n'est pas une preuve d'ouverture dans la barre latérale native du Chrome personnel, ni une preuve de connexion ou d'accès protégé aux réseaux.
+
+Vérification manuelle restante : charger dist/chrome dans Chrome, ouvrir le panneau natif, sélectionner deux réseaux, déplacer un onglet dans une fenêtre mixte, l'activer depuis Chrome puis depuis le panneau, le fermer/rouvrir, essayer « Ramener » et « Réunir ». Après redémarrage de Chrome, rattacher un onglet restauré via l'action explicite. Les connexions des réseaux restent celles du profil Chrome ; les applications portent les sessions séparées.
+
+Statut de cette tranche : implémentation et preuve Chromium isolée ; validation Chrome personnel et login/protected access non acquises. Aucun commit, push ou publication demandé.
+
+Receipt de vérification de la tranche : 52 tests ciblés réussis (6 fichiers), typecheck extension et ESLint ciblé réussis, builds Chrome/Firefox réussis. Le scénario du compagnon passe dans Chromium 153.0.8010.12 ; preuve locale : [local evidence retained outside Git].json. Le scénario général de l'extension passe également, sans exception de page : [local evidence retained outside Git].json. Ses sélecteurs ont été actualisés vers la carte native déjà existante, sans modification de son parcours produit. Le dernier ajustement du protocole accepte les groupes renommés sans titre dans Chrome et possède son test ciblé.
+
+Le scan global de dérive visuelle trouve 23 défauts dans l'ensemble des modifications locales préexistantes ; aucune occurrence n'est attribuée à ManagedNetworkTabs.vue ou ExtensionParitySurface.vue. Ce résultat ne constitue pas un audit vert de tout le dépôt.
+
+Execution batches / receipt : un sous-agent a revu le manager en lecture seule puis écrit exclusivement networkTabGroup.test.ts et networkTabMessages.test.ts. L'agent principal a conservé les sources runtime/UI, le scénario Chromium et l'intégration. Agents: 1 ; topology: write-batch parallel ; integration: tests ciblés passés. Aucun staging/commit/push.

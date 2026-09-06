@@ -13,6 +13,7 @@ export const i18n = createI18n({
 })
 
 export function setLocale(locale: string, sync = true) {
+  if (locale !== 'fr' && locale !== 'en') return
   i18n.global.locale.value = locale
   localStorage.setItem('user-locale', locale)
   if (sync) {

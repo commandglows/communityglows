@@ -1,4 +1,23 @@
 {
+  "networkGroups": {
+    "social": "Réseaux sociaux",
+    "communities": "Messageries et communautés",
+    "webdev": "Développement web et tech",
+    "startups": "Entrepreneuriat et lancements",
+    "design": "Design et création",
+    "video": "Vidéo et streaming",
+    "publishing": "Publication et newsletters",
+    "freelance": "Freelance et prestations",
+    "local": "Rencontres et événements",
+    "creators": "Soutien aux créateurs",
+    "crm": "CRM",
+    "tools": "Outils professionnels",
+    "other": "Autres",
+    "toggle": "{name} : {count} sites sélectionnés sur {total} — tout sélectionner ou désélectionner",
+    "expand": "Déplier {name}",
+    "collapse": "Replier {name}",
+    "edit": "Choisir les sites"
+  },
   "menu": {
     "about": "À propos",
     "contact": "Contact",
@@ -470,6 +489,32 @@
     "delete_success": "Votre compte CommunityGlows a été supprimé."
   },
   "extension": {
+    "managed": {
+      "title": "Onglets CommunityGlows",
+      "sessions": "Dans l’extension, vos espaces partagent les connexions de votre profil Chrome. Utilisez les applications pour des sessions séparées.",
+      "restart": "Après un redémarrage de Chrome, utilisez « Ajouter à CommunityGlows » pour reprendre un onglet restauré, ou ouvrez explicitement un nouvel onglet.",
+      "target": "Réseau de l’onglet actif",
+      "choose": "Choisir un réseau ou un lien",
+      "adopt": "Ajouter à CommunityGlows",
+      "gather": "Réunir mes onglets CommunityGlows",
+      "bring": "Ramener dans la fenêtre CommunityGlows",
+      "closed": "Fermé — rouvrir",
+      "ungrouped": "Sans groupe",
+      "untitled": "Groupe sans nom",
+      "mixed": "Ce groupe contient des onglets personnels. Son nom et son repli restent gérés dans Chrome.",
+      "empty": "Ouvrez un réseau ou ajoutez explicitement l’onglet actif.",
+      "restore": "Reprise nécessaire",
+      "reopen": "Ouvrir un nouvel onglet",
+      "errors": {
+        "invalid": "Choisissez un onglet HTTPS et un réseau.",
+        "already_managed": "Cet onglet ou ce réseau est déjà suivi. Activez l’onglet existant.",
+        "mixed_group": "Ce groupe contient des onglets personnels. Modifiez-le dans Chrome.",
+        "active_group": "Le groupe actif reste déplié.",
+        "tab_creation_failed": "Chrome n’a pas terminé l’action. Réessayez ; les onglets déjà créés restent suivis.",
+        "restore_required": "Ajoutez l’onglet restauré ou choisissez « Ouvrir un nouvel onglet » dans le compagnon."
+      }
+    },
+    "repair": { "edit": "Modifier" },
     "surface": {
       "popup_title": "Lanceur rapide",
       "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis la fenêtre contextuelle de la barre d’outils.",
