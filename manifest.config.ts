@@ -1,8 +1,7 @@
 import { env } from "node:process"
-import type { ManifestV3Export } from "@crxjs/vite-plugin"
 import packageJson from "./package.json" with { type: "json" }
 
-const { version, name, description, displayName } = packageJson
+const { version } = packageJson
 // Convert from Semver (example: 0.1.0-beta6)
 const [major, minor, patch, label = "0"] = version
   // can only contain digits, dots, or dash
@@ -11,9 +10,9 @@ const [major, minor, patch, label = "0"] = version
   .split(/[.-]/)
 
 export default {
-  author: "mubaidr@gmail.com",
-  name: env.mode === "staging" ? `[INTERNAL] ${name}` : displayName || name,
-  description,
+  author: "CommunityGlows",
+  name: env.mode === "staging" ? "[INTERNAL] CommunityGlows" : "CommunityGlows",
+  description: "A unified social workspace for opening and managing your networks from the browser.",
   // up to four numbers separated by dots
   version: `${major}.${minor}.${patch}.${label}`,
   // semver is OK in "version_name"
@@ -38,4 +37,4 @@ export default {
     32: "src/assets/logo.png",
     128: "src/assets/logo.png",
   },
-} as ManifestV3Export
+}

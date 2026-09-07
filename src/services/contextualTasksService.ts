@@ -181,6 +181,7 @@ function canUseStorage() {
 
 export class ContextualTasksService {
   private tasks: ContextualTask[] = []
+  constructor(private readonly storageKey = CONTEXTUAL_TASKS_STORAGE_KEY) {}
 
   getTasks() {
     return [...this.tasks]
@@ -192,25 +193,25 @@ export class ContextualTasksService {
 
   replaceState(value: unknown) {
     if (!Array.isArray(value)) throw new Error('invalid_tasks_state')
-    this.tasks = value
+    const next = value
       .filter((task): task is ContextualTask => this.isTask(task))
       .map((task) => ({ ...task, people: task.people ?? [], links: task.links ?? [] }))
-    this.saveState()
+    this.commit(next)
   }
 
   loadState() {
     if (!canUseStorage()) return
-    const raw = localStorage.getItem(CONTEXTUAL_TASKS_STORAGE_KEY)
+    const raw = localStorage.getItem(this.storageKey)
     if (!raw) return
     const parsed: unknown = JSON.parse(raw)
-    if (!Array.isArray(parsed)) throw new Error('invalid_tasks_state')
-    this.tasks = parsed
-      .filter((task): task is ContextualTask => this.isTask(task))
+    if (!Array.isArray(parsed) || !parsed.every(task => this.isTask(task))) throw new Error('invalid_tasks_state')
+    this.tasks = (parsed as ContextualTask[])
       .map((task) => ({ ...task, people: task.people ?? [], links: task.links ?? [] }))
   }
 
   migrateLegacyKanbanState() {
-    if (!canUseStorage() || localStorage.getItem(CONTEXTUAL_TASKS_STORAGE_KEY)) return 0
+    if (this.storageKey !== CONTEXTUAL_TASKS_STORAGE_KEY) return 0
+    if (!canUseStorage() || localStorage.getItem(this.storageKey)) return 0
     const raw = localStorage.getItem('kanban-state')
     if (!raw) return 0
     let parsed: unknown
@@ -245,20 +246,24 @@ export class ContextualTasksService {
         }
       }
     }
-    if (migrated.length) localStorage.setItem(CONTEXTUAL_TASKS_STORAGE_KEY, JSON.stringify(migrated))
+    if (migrated.length) localStorage.setItem(this.storageKey, JSON.stringify(migrated))
     return migrated.length
   }
 
+  private commit(tasks: ContextualTask[]) {
+    // Publish only after persistence succeeds; failed writes must not leave phantom mutations.
+    if (canUseStorage()) localStorage.setItem(this.storageKey, JSON.stringify(tasks))
+    this.tasks = tasks
+  }
+
   saveState() {
-    if (!canUseStorage()) return
-    localStorage.setItem(CONTEXTUAL_TASKS_STORAGE_KEY, JSON.stringify(this.tasks))
+    this.commit(this.tasks)
   }
 
   add(input: ContextualTaskInput) {
     const order = this.tasks.filter((task) => task.status === (input.status ?? 'todo')).length
     const task = createContextualTask(input, order)
-    this.tasks.push(task)
-    this.saveState()
+    this.commit([...this.tasks, task])
     return task
   }
 
@@ -272,7 +277,8 @@ export class ContextualTasksService {
         ? sanitizeContextualUrl(input.url)
         : null
     if (nextUrl && !nextUrl.ok) throw new Error(nextUrl.code)
-    Object.assign(current, {
+    const updated = {
+      ...current,
       ...input,
       title: input.title === undefined ? current.title : input.title.trim().slice(0, MAX_TITLE_LENGTH),
       note: input.note === undefined ? current.note : input.note.trim().slice(0, MAX_NOTE_LENGTH),
@@ -283,9 +289,9 @@ export class ContextualTasksService {
       host: input.url === undefined ? current.host : nextUrl?.ok ? nextUrl.host : undefined,
       networkId: input.networkId ?? (input.url === undefined ? current.networkId : nextUrl?.ok ? inferNetworkId(nextUrl.host) : undefined),
       updatedAt: now(),
-    })
-    this.saveState()
-    return current
+    }
+    this.commit(this.tasks.map(task => task.id === id ? updated : task))
+    return updated
   }
 
   move(id: string, status: ContextualTaskStatus) {
@@ -293,8 +299,7 @@ export class ContextualTasksService {
   }
 
   remove(id: string) {
-    this.tasks = this.tasks.filter((task) => task.id !== id)
-    this.saveState()
+    this.commit(this.tasks.filter((task) => task.id !== id))
   }
 
   private isTask(value: unknown): value is ContextualTask {
@@ -305,7 +310,7 @@ export class ContextualTasksService {
       && (task.url === undefined || typeof task.url === 'string')
       && (task.host === undefined || typeof task.host === 'string')
       && typeof task.note === 'string'
-      && Array.isArray(task.tags)
+      && Array.isArray(task.tags) && task.tags.every(tag => typeof tag === 'string')
       && (task.people === undefined || (Array.isArray(task.people) && task.people.every((person) => person && typeof person === 'object' && typeof (person as ContextualTaskPerson).name === 'string')))
       && (task.links === undefined || (Array.isArray(task.links) && task.links.every((link) => typeof link === 'string')))
       && (task.status === 'todo' || task.status === 'waiting' || task.status === 'done')

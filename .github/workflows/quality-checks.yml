@@ -9,7 +9,11 @@ on:
       - 'convex/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
-      - 'vite.tauri.config.ts'
+      - 'vite*.config.ts'
+      - 'manifest*.config.ts'
+      - 'pnpm-workspace.yaml'
+      - 'tsconfig*.json'
+      - 'scripts/**'
       - '.github/workflows/quality-checks.yml'
   pull_request:
     branches: [main, develop, 'release/**']
@@ -19,7 +23,11 @@ on:
       - 'convex/**'
       - 'package.json'
       - 'pnpm-lock.yaml'
-      - 'vite.tauri.config.ts'
+      - 'vite*.config.ts'
+      - 'manifest*.config.ts'
+      - 'pnpm-workspace.yaml'
+      - 'tsconfig*.json'
+      - 'scripts/**'
       - '.github/workflows/quality-checks.yml'
   workflow_dispatch:
 
@@ -89,3 +97,30 @@ jobs:
 
       - name: Compile and test the Windows backend
         run: cargo test --lib --manifest-path src-tauri/Cargo.toml
+
+  extension:
+    name: Browser extension build and runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.0.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck:extension
+      - run: pnpm build:chrome
+      - run: pnpm build:firefox
+      - run: pnpm lint:manifest
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:extension
+      - run: node scripts/verifyManagedNetworkTabs.mjs
+      - name: Upload validated browser packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: communityglows-browser-extensions
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 14

@@ -1,4 +1,3 @@
-import fs from "node:fs"
 import { URL, fileURLToPath } from "node:url"
 import vue from "@vitejs/plugin-vue"
 import AutoImport from "unplugin-auto-import/vite"
@@ -7,7 +6,6 @@ import { PrimeVueResolver } from "unplugin-vue-components/resolvers"
 import Icons from "unplugin-icons/vite"
 import Components from "unplugin-vue-components/vite"
 import { createHtmlPlugin } from "vite-plugin-html"
-import VueRouter from "vue-router/vite"
 import { defineConfig } from "vite"
 import tailwindcss from "@tailwindcss/vite"
 // @ts-expect-error commonjs module
@@ -20,20 +18,6 @@ import "dotenv/config"
 
 const PORT = Number(process.env.PORT || "") || 3303
 
-function getImmediateDirectories(dirPath: string): string[] {
-  try {
-    // Read the directory contents synchronously
-    const items = fs.readdirSync(dirPath, { withFileTypes: true })
-
-    // Filter and map to get only directory names
-    return items
-      .filter((item): item is fs.Dirent => item.isDirectory()) // Type guard
-      .map((item) => item.name)
-  } catch (err) {
-    throw Object.assign(new Error(`Error reading directories: ${(err as Error).message}`), { cause: err })
-  }
-}
-
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
@@ -42,14 +26,6 @@ export default defineConfig({
       "~": fileURLToPath(new URL("src", import.meta.url)),
       src: fileURLToPath(new URL("src", import.meta.url)),
       "@assets": fileURLToPath(new URL("src/assets", import.meta.url)),
-    },
-  },
-
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern",
-      },
     },
   },
 
@@ -64,18 +40,7 @@ export default defineConfig({
       compositionOnly: true,
     }),
 
-    vueDevTools(),
-
-    // https://github.com/posva/unplugin-vue-router
-    VueRouter({
-      dts: "src/types/typed-router.d.ts",
-      routesFolder: getImmediateDirectories("src/ui").map((dir) => {
-        return {
-          src: `src/ui/${dir}/pages`,
-          path: `${dir}/`,
-        }
-      }),
-    }),
+    ...(process.env.NODE_ENV === "development" ? [vueDevTools()] : []),
 
     vue(),
 
@@ -90,9 +55,6 @@ export default defineConfig({
         "vue-router",
         "@vueuse/core",
         "pinia",
-        {
-          "vue-router/auto": ["definePage"],
-        },
         {
           "vue-i18n": ["useI18n", "t"],
         },
@@ -129,7 +91,7 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-icons
     Icons({
-      autoInstall: true,
+      autoInstall: false,
       compiler: "vue3",
       scale: 1.5,
     }),

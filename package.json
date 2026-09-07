@@ -20,7 +20,7 @@
     "vue-router": "^5.3.0",
     "webextension-polyfill": "^0.12.0"
   },
-  "description": "Un projet Vue 3 + Vite pour la construction d'extensions Chrome",
+  "description": "A unified social workspace for opening and managing your networks from the browser.",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.7.1",
     "@edge-runtime/vm": "^5.0.0",
@@ -67,21 +67,22 @@
     "vite-plugin-zip-pack": "^1.2.4",
     "vitest": "^4.1.11",
     "vue-tsc": "^3.3.11",
-    "web-ext": "^10.6.0"
+    "web-ext": "^10.6.0",
+    "playwright": "1.63.0"
   },
-  "displayName": "Vite Vue 3 Chrome Extension",
+  "displayName": "CommunityGlows",
   "engines": {
     "node": ">=24.0.0 <25"
   },
   "license": "UNLICENSED",
-  "name": "vite-vue3-browser-extension-v3",
+  "name": "communityglows",
   "overrides": {
     "@crxjs/vite-plugin": "$@crxjs/vite-plugin"
   },
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/mubaidr/vite-vue3-browser-extension-v3"
+    "url": "https://github.com/commandglows/communityglows"
   },
   "scripts": {
     "tauri:info": "pnpm exec tauri info",
@@ -118,7 +119,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.core.json",
     "typecheck:core": "tsc --noEmit -p tsconfig.typecheck.core.json",
     "typecheck:full": "vue-tsc --noEmit -p tsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck:extension": "vue-tsc --noEmit -p tsconfig.extension.json",
+    "test:extension": "node scripts/verifyChromeExtension.mjs"
   },
   "type": "module",
   "version": "0.0.1",
@@ -130,7 +133,7 @@
       "browserslist": "4.28.8",
       "shell-quote": "1.9.0",
       "immutable": "5.1.8",
-      "fast-uri": "3.1.5",
+      "fast-uri": "3.1.6",
       "undici": "7.29.0",
       "postcss": "8.5.26"
     }

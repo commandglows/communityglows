@@ -1,85 +1,106 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useContextualTasksStore } from '@/stores/contextualTasks'
-import { captureActiveTabUrl } from '@/platform/extensionTaskCapture'
-import TaskForm from './TaskForm.vue'
-
-const tasksStore = useContextualTasksStore()
-const capturedUrl = ref('')
+import { ref, watch } from "vue"
+import { saveExtensionTask } from "@/platform/extensionState"
+import { captureActiveTabUrl } from "@/platform/extensionTaskCapture"
+import { openExtensionDashboard } from "@/platform/extensionNetworkLauncher"
+import type { ContextualTaskInput } from "@/services/contextualTasksService"
+import TaskForm from "./TaskForm.vue"
+const capturedUrl = ref("")
 const message = ref<string | null>(null)
 const error = ref<string | null>(null)
 const formVisible = ref(false)
-
-onMounted(() => {
-  tasksStore.initialize()
-})
-
+const emit = defineEmits<{ draftChange: [pending: boolean] }>()
+watch(formVisible, value => emit("draftChange", value), { immediate: true })
+const busy = ref(false)
+function manual() { capturedUrl.value = ""; formVisible.value = true; message.value = null; error.value = null }
 async function capture() {
-  message.value = null
   error.value = null
-  const result = await captureActiveTabUrl()
-  if (!result.ok) {
-    error.value = result.code === 'https_required'
-      ? 'Cette page ne fournit pas une URL HTTPS utilisable.'
-      : 'Impossible de lire l’URL de l’onglet actif. Tu peux la coller manuellement.'
-    return
+  message.value = null
+  busy.value = true
+  try {
+    const result = await captureActiveTabUrl()
+    formVisible.value = true
+    if (!result.ok) {
+      capturedUrl.value = ""
+      error.value = "extension.repair.capture_error"
+      return
+    }
+    capturedUrl.value = result.url
+    message.value = result.removedSensitiveParts ? "extension.repair.cleaned" : "extension.repair.captured"
+  } finally {
+    busy.value = false
   }
-  capturedUrl.value = result.url
-  formVisible.value = true
-  message.value = result.removedSensitiveParts
-    ? 'Le lien a été nettoyé avant affichage.'
-    : 'URL capturée à ta demande. La page n’a pas été lue.'
 }
-
-function createTask(input: Parameters<typeof tasksStore.create>[0]) {
-  const task = tasksStore.create({ ...input, url: capturedUrl.value })
-  if (!task) {
-    error.value = 'Impossible de créer la tâche. Vérifie le titre et l’URL.'
-    return
+async function createTask(input: ContextualTaskInput) {
+  busy.value = true
+  error.value = null
+  try {
+    await saveExtensionTask(input)
+    message.value = "extension.repair.created"
+    formVisible.value = false
+  } catch {
+    error.value = "extension.repair.storage_error"
+  } finally {
+    busy.value = false
   }
-  message.value = 'Tâche créée.'
-  formVisible.value = false
+}
+async function viewTasks() {
+  const result = await openExtensionDashboard("/setup/tasks")
+  if (!result.ok) error.value = "extension.launch.errors." + result.code
 }
 </script>
-
 <template>
   <section class="ext-task-capture-panel">
     <div class="ext-task-capture-heading">
       <div>
-        <h2>Créer une tâche depuis cet onglet</h2>
-        <p>Seule l’URL HTTPS est capturée après ton clic. Aucun contenu de page n’est lu.</p>
+        <h2>{{ $t("extension.repair.capture_title") }}</h2>
+        <p>{{ $t("extension.repair.capture_description") }}</p>
       </div>
       <button
         class="ext-btn ext-btn--small ext-btn--secondary"
         type="button"
+        :disabled="busy"
         @click="capture"
       >
-        <SgIcon icon="pi pi-link" />
-        Utiliser l’onglet actif
+        {{ $t("extension.repair.capture") }}
+      </button>
+      <button
+        class="ext-btn ext-btn--small ext-btn--outline"
+        type="button"
+        :disabled="busy"
+        @click="manual"
+      >
+        {{ $t("extension.repair.manual") }}
+      </button>
+      <button
+        class="ext-btn ext-btn--small ext-btn--outline"
+        type="button"
+        @click="viewTasks"
+      >
+        {{ $t("extension.repair.view_tasks") }}
       </button>
     </div>
-
     <TaskForm
       v-if="formVisible"
       :initial-url="capturedUrl"
-      submit-label="Enregistrer la tâche"
+      :busy="busy"
+      :submit-label="$t('extension.repair.save')"
       @submit="createTask"
       @cancel="formVisible = false"
     />
-
     <p
       v-if="message"
       class="ext-task-capture-message"
       role="status"
     >
-      {{ message }}
+      {{ $t(message) }}
     </p>
     <p
       v-if="error"
       class="ext-task-capture-error"
       role="alert"
     >
-      {{ error }}
+      {{ $t(error) }}
     </p>
   </section>
 </template>
@@ -117,5 +138,7 @@ function createTask(input: Parameters<typeof tasksStore.create>[0]) {
   font-size: var(--sg-crm-secondary-copy-size);
 }
 
-.ext-task-capture-error { color: var(--sg-color-danger); }
+.ext-task-capture-error {
+  color: var(--sg-color-danger);
+}
 </style>

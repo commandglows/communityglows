@@ -5,8 +5,8 @@ artifact_version: "1.0.0"
 project: "socialglowz"
 created: "2026-05-25"
 created_at: "2026-05-25 17:59:45 UTC"
-updated: "2026-05-27"
-updated_at: "2026-05-28 18:18:00 UTC"
+updated: "2026-09-04"
+updated_at: "2026-09-04 17:09:21 UTC"
 status: ready
 source_skill: 100-sg-spec
 source_model: "GPT-5 Codex"
@@ -24,6 +24,7 @@ linked_systems:
   - "vite.chrome.config.ts"
   - "vite.firefox.config.ts"
   - "src/background/index.ts"
+  - "src/platform/webExtensionApi.ts"
   - "src/content-script/index.ts"
   - "src/ui/action-popup/"
   - "src/ui/side-panel/"
@@ -443,6 +444,7 @@ Update these docs when implementation begins or changes platform status:
 | 2026-05-27 21:46:53 | sf-verify | GPT-5 Codex | Re-verified checks, manifests, dependency posture, Tauri frontend build, and automated extension evidence | partial | Fix or explicitly accept web-ext tmp advisory, run real Chrome/Firefox extension smoke, then rerun /sf-verify |
 | 2026-05-28 18:18:00 | sf-start | GPT-5 Codex | Bumped web-ext to ^10.3.0 and forced `tmp` to ^0.2.6 via pnpm overrides to remove the dev-only high-risk tmp advisory; updated lockfile and validated `pnpm audit` is clean at audit-level low | implemented | /sf-verify extension-tauri-feature-parity |
 | 2026-05-29 21:59:07 UTC | sf-build | gpt-5.3-codex | Ran autonomous sf-build verification wave: typecheck, test:once, build:chrome, build:firefox, lint:manifest, manifest shape checks, and targeted scaffold/deprecation scan | partial | Execute manual Chrome/Firefox extension smoke and then rerun sf-verify |
+| 2026-09-04 17:09:21 UTC | sg-start | GPT-5 Codex | Aligned product identity and minimum browser versions, centralized WebExtension APIs, hardened background/storage behavior, rebuilt both targets, and exercised isolated browser Labs | partial | Keep Chromium proof; investigate the Firefox Lab popup timeout before closure |
 
 ## Current Chantier Flow
 
@@ -450,7 +452,57 @@ Update these docs when implementation begins or changes platform status:
 |------|--------|-------|
 | sf-spec | done | Draft spec created from local extension audit and official extension API freshness check. |
 | sf-ready | done | Ready after explicit URL validation, permission, redaction, and browser/Tauri boundary requirements were added. |
-| sf-start | done | Automatable extension verification gaps were executed with agent-run proof (builds, lint, manifests/entrypoints/routes inspection, Playwright smoke), and web-ext tooling posture was then hardened (`web-ext` ^10.3.0, `tmp` -> 0.2.7 via override), leaving manual browser smoke as the remaining verification gate. |
-| sf-verify | partial | Automated proof and parity surfaces remain in place; remaining gate is manual Chrome/Firefox extension smoke validation in real browsers. |
+| sf-start | done | Product identity, Chrome 116 / Firefox 142 floors, a typed cross-browser API adapter, restart-safe background handling, and serialized reactive extension storage are implemented. |
+| sf-verify | partial | Tests, typecheck, both builds, manifest lint/inspection, and isolated Chromium 153 load are proven. Firefox Nightly 153 installs the temporary extension/background, but direct popup navigation still times out in the Lab. |
 | sf-end | pending | Close docs/tasks/changelog after implementation proof. |
 | sf-ship | pending | Commit/push/release only after verification. |
+
+## Approved native-app guidance — 2026-09-05
+
+Owner: sg-experience. User approved explaining unavailable extension features and guiding users to native apps. Ready for this bounded implementation; no auth/cloud implementation or permission change is included.
+
+End-User Contract:
+- Target user: extension user looking for an unavailable native capability.
+- First success: understand why the feature is unavailable and reach the official localized download page without losing the current task.
+- Primary path: contextual profile explanation, expandable capability guide, explicit new-tab download link.
+- Trust and optionality: no forced navigation, no installation claim, no automatic data/session transfer claim; extension remains usable. Windows is the currently published native target in the catalog.
+- States: guidance collapsed/expanded, extension-only features available, native-only or currently absent features explained separately.
+- Recovery: original extension document remains open; official page URL supports ordinary browser retry.
+- Documentation/editorial: update parity map; keep download catalog as availability authority. No public site mutation.
+- Proof: real Chromium extension, FR/EN CTA destinations, keyboard expansion, new-tab opening, draft preservation, 320px layout, extension typecheck and build.
+
+Popup departure protection: while a task form is open or custom-link fields contain input, the download link is intercepted and explains how to save/cancel first. This prevents a new tab from closing the real popup and losing unsaved input. Normal download navigation resumes after input is resolved.
+
+Verification receipt (2026-09-05): Chrome and Firefox builds passed; extension vue-tsc and targeted ESLint passed. Chromium 153 loaded the extension and verified localized CTA URLs, keyboard disclosure, pending-input blocking, later new-tab navigation, and 320px layout with no page exceptions. The official French download URL returned HTTP 200 in a separate live check. The browser scenario intercepts the destination page and proves navigation rather than installation. Native app installation and automatic data transfer are not claimed.
+
+## Compagnon Chrome et groupes — plan validé du 7 septembre 2026
+
+Le panneau latéral accompagne les réseaux dans de vrais onglets Chrome. Chaque réseau ou lien est identifié par son profil CommunityGlows et son identifiant métier ; le worker suit l'identifiant Chrome, la fenêtre, le groupe et l'ordre observés. Deux liens ayant la même URL restent distincts. Les catégories du catalogue constituent la destination initiale, puis les déplacements et noms Chrome font autorité.
+
+- L'onglet actif reste dans son groupe, déplié. À l'activation, les autres groupes entièrement gérés sont repliés. Une expansion explicite pour parcourir un groupe inactif reste possible jusqu'à la prochaine activation.
+- Les onglets personnels ne sont jamais intégrés par correspondance d'URL. « Ajouter à CommunityGlows » associe volontairement l'onglet actif au réseau choisi. Les conflits d'identité sont refusés.
+- Déplacer ou dégrouper manuellement un onglet ne supprime pas son suivi. Le clic suivant l'active là où il se trouve sans modifier son URL. « Ramener » déplace uniquement l'onglet choisi. « Réunir » ramène les onglets gérés dans la fenêtre du panneau ; les groupes entièrement gérés sont déplacés comme unités distinctes.
+- Les groupes mixtes sont observés mais leur nom et leur repli restent contrôlés dans Chrome. Les commandes de rassemblement n'emportent pas leurs onglets personnels.
+- Fermer un onglet le marque fermé. Aucun événement ne le recrée ; seule une ouverture explicite le fait. Les échecs partiels de regroupement sont récupérables sans création d'un second onglet.
+- Le redémarrage du worker MV3 reprend les identifiants depuis storage.session. Après redémarrage du navigateur, l'identité métier locale reste disponible mais les anciens identifiants Chrome sont abandonnés. Un onglet précédemment ouvert demande une reprise explicite : rattacher l'onglet restauré, ou choisir « Ouvrir un nouvel onglet ». Aucune récupération silencieuse par URL n'est utilisée.
+- Le panneau suit noms, ordre, groupes et activation Chrome. Les noms sont édités inline (Entrée valide, Échap annule). Les actions secondaires apparaissent au survol et au focus, et restent disponibles au tactile. FR/EN et thèmes existants sont conservés.
+
+Permissions Chrome : ajout ciblé de tabGroups, sans host permission supplémentaire. Firefox conserve son lancement ordinaire. Les routes publiques de l'extension utilisent déjà l'état local ; aucun nouveau parcours d'authentification ni contournement du verrou desktop n'est introduit.
+
+Preuves : tests Vitest du manager/protocole et de la plateforme ; typecheck extension ; build Chrome ; scripts/verifyManagedNetworkTabs.mjs charge le vrai bundle MV3 dans un Chromium isolé, teste les mouvements, groupes mixtes, fermetures, noms au clavier, doublons d'URL, 320 px, FR/EN, clair/sombre, arrêt/reprise du worker et redémarrage complet du navigateur. Le document du panneau est rendu comme page d'extension dans ce laboratoire : ce n'est pas une preuve d'ouverture dans la barre latérale native du Chrome personnel, ni une preuve de connexion ou d'accès protégé aux réseaux.
+
+Vérification manuelle restante : charger dist/chrome dans Chrome, ouvrir le panneau natif, sélectionner deux réseaux, déplacer un onglet dans une fenêtre mixte, l'activer depuis Chrome puis depuis le panneau, le fermer/rouvrir, essayer « Ramener » et « Réunir ». Après redémarrage de Chrome, rattacher un onglet restauré via l'action explicite. Les connexions des réseaux restent celles du profil Chrome ; les applications portent les sessions séparées.
+
+Statut de cette tranche : implémentation et preuve Chromium isolée ; validation Chrome personnel et login/protected access non acquises. Aucun commit, push ou publication demandé.
+
+Receipt de vérification de la tranche : 52 tests ciblés réussis (6 fichiers), typecheck extension et ESLint ciblé réussis, builds Chrome/Firefox réussis. Le scénario du compagnon passe dans Chromium 153.0.8010.12 ; preuve locale : local-evidence (not published) Le scénario général de l'extension passe également, sans exception de page : local-evidence (not published) Ses sélecteurs ont été actualisés vers la carte native déjà existante, sans modification de son parcours produit. Le dernier ajustement du protocole accepte les groupes renommés sans titre dans Chrome et possède son test ciblé.
+
+Le scan global de dérive visuelle trouve 23 défauts dans l'ensemble des modifications locales préexistantes ; aucune occurrence n'est attribuée à ManagedNetworkTabs.vue ou ExtensionParitySurface.vue. Ce résultat ne constitue pas un audit vert de tout le dépôt.
+
+Execution batches / receipt : un sous-agent a revu le manager en lecture seule puis écrit exclusivement networkTabGroup.test.ts et networkTabMessages.test.ts. L'agent principal a conservé les sources runtime/UI, le scénario Chromium et l'intégration. Agents: 1 ; topology: write-batch parallel ; integration: tests ciblés passés. Aucun staging/commit/push.
+
+## Git delivery validation — 2026-09-07
+
+The delivery branch was assembled from origin/main with the Chrome tab-group companion and the bounded extension audit/guidance changes. Unrelated desktop, Kanban, backend and site edits were excluded. A shared catalogue and group header are included because the extension consumes them.
+
+Independent checkout: 41 Vitest files / 256 tests passed; extension typecheck passed; Chrome and Firefox packages built. Both Chromium scenarios passed (general extension and managed tabs, including worker/browser restart). These tests exercise the existing local-data extension surface: authentication is not initialized there and no protected remote data is accessed. They do not prove native account login, protected social access, Chrome personal-profile interaction, Firefox runtime or store publication.
