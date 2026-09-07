@@ -514,7 +514,6 @@
         "restore_required": "Add the restored tab or choose “Open a new tab” in the companion."
       }
     },
-    "repair": { "edit": "Edit" },
     "surface": {
       "popup_title": "Quick Launcher",
       "popup_description": "Open your social networks quickly from the toolbar popup.",
@@ -566,6 +565,46 @@
       "session_isolation": "Extension mode uses regular browser tabs. It cannot isolate cookies and localStorage per CommunityGlows profile like native Tauri WebViews.",
       "native_backup": "Native backup and restore workflows are unavailable in extension mode.",
       "native_haptics": "Haptics and Android bottom-bar controls are unavailable in extension mode."
+    },
+    "repair": {
+      "storage_error": "Unable to save or read data. Your input has been kept. Check browser storage and try again.",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleted": "Link deleted.",
+      "view_tasks": "Kanban",
+      "capture_title": "Create a task",
+      "capture_description": "Only the HTTPS URL is captured after your click. No page content is read.",
+      "capture": "Use active tab",
+      "manual": "Enter manually",
+      "capture_error": "This tab has no usable link. You can enter a link in the form.",
+      "cleaned": "Sensitive URL parts were removed before display.",
+      "captured": "URL captured at your request. No page content was read.",
+      "created": "Task created. Find it in Kanban.",
+      "tasks_local": "Tasks stay in this browser and are shared between extension windows.",
+      "saved": "Changes saved.",
+      "new_task": "New task",
+      "no_tasks": "No tasks yet.",
+      "status_todo": "To do",
+      "status_waiting": "Waiting",
+      "status_done": "Done"
+    },
+    "native_guide": {
+      "title": "When should I use the native app?",
+      "intro": "The extension opens your networks in tabs. For the uses below, explore the Windows app on the official download page.",
+      "details": "Understand the differences",
+      "workspace_title": "Several networks in one workspace",
+      "workspace": "The Bento workspace is available in the Windows app. Sites can refuse embedding inside an extension page; here, they open in separate tabs.",
+      "sessions_title": "Separate social sessions for each profile",
+      "sessions": "This extension uses your browser sessions. Its profiles organize your links but do not separate social logins. Use native profiles for separate sessions, then sign in to your networks in the app.",
+      "backup_title": "Native backup and restore",
+      "backup": "App backup import and export are not offered in this version of the extension. These commands are available in the native app; they do not automatically retrieve extension data.",
+      "data_notice": "Your tasks and links stay in this browser. Installing the app does not transfer them automatically. Sync with the app is not yet available in this extension.",
+      "action": "View official downloads",
+      "new_tab": "(new tab)",
+      "optional": "You can keep using the extension. The official page lists the platforms currently available.",
+      "profile_hint": "This profile organizes your links; your social logins remain those of your browser.",
+      "pending_input": "You have input in progress. Save or cancel your task and finish your links before leaving: opening another tab can close the popup."
     }
   },
   "auth_sync": {

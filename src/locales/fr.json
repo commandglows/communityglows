@@ -514,7 +514,6 @@
         "restore_required": "Ajoutez l’onglet restauré ou choisissez « Ouvrir un nouvel onglet » dans le compagnon."
       }
     },
-    "repair": { "edit": "Modifier" },
     "surface": {
       "popup_title": "Lanceur rapide",
       "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis la fenêtre contextuelle de la barre d’outils.",
@@ -566,6 +565,46 @@
       "session_isolation": "L’extension utilise des onglets de navigateur classiques. Elle ne peut pas isoler les cookies et le stockage local pour chaque profil CommunityGlows comme les vues web natives de Tauri.",
       "native_backup": "Les parcours natifs de sauvegarde et de restauration ne sont pas disponibles dans l’extension.",
       "native_haptics": "Les vibrations et la barre Android native ne sont pas disponibles dans l’extension."
+    },
+    "repair": {
+      "storage_error": "Impossible d’enregistrer ou de lire les données. Ta saisie est conservée. Réessaie après avoir vérifié le stockage.",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleted": "Lien supprimé.",
+      "view_tasks": "Kanban",
+      "capture_title": "Créer une tâche",
+      "capture_description": "Seule l’URL HTTPS est capturée après ton clic. Aucun contenu de page n’est lu.",
+      "capture": "Utiliser l’onglet actif",
+      "manual": "Saisir manuellement",
+      "capture_error": "Cet onglet ne fournit pas de lien utilisable. Tu peux saisir un lien dans le formulaire.",
+      "cleaned": "Le lien a été nettoyé avant affichage.",
+      "captured": "URL capturée à ta demande. La page n’a pas été lue.",
+      "created": "Tâche créée. Retrouve-la dans le Kanban.",
+      "tasks_local": "Les tâches sont conservées dans ce navigateur et partagées entre les fenêtres de l’extension.",
+      "saved": "Modification enregistrée.",
+      "new_task": "Nouvelle tâche",
+      "no_tasks": "Aucune tâche pour le moment.",
+      "status_todo": "À faire",
+      "status_waiting": "En attente",
+      "status_done": "Terminé"
+    },
+    "native_guide": {
+      "title": "Quand utiliser l’app native ?",
+      "intro": "L’extension ouvre vos réseaux dans des onglets. Pour les usages ci-dessous, découvrez l’app Windows sur la page officielle.",
+      "details": "Comprendre les différences",
+      "workspace_title": "Plusieurs réseaux dans un même espace",
+      "workspace": "Le workspace Bento s’utilise dans l’app Windows. Les sites peuvent refuser leur intégration dans une page d’extension ; ici, ils s’ouvrent dans des onglets séparés.",
+      "sessions_title": "Des sessions sociales séparées par profil",
+      "sessions": "Cette extension utilise les sessions de votre navigateur. Ses profils organisent vos liens, mais ne séparent pas les connexions aux réseaux. Utilisez les profils natifs pour gérer des sessions distinctes, puis connectez-vous à vos réseaux dans l’app.",
+      "backup_title": "Sauvegarde et restauration natives",
+      "backup": "L’import et l’export des sauvegardes de l’app ne sont pas proposés dans cette version de l’extension. Ces commandes sont disponibles dans l’app native ; elles ne récupèrent pas automatiquement les données de l’extension.",
+      "data_notice": "Vos tâches et liens restent dans ce navigateur. Installer l’app ne les transfère pas automatiquement. La synchronisation avec l’app n’est pas encore disponible dans cette extension.",
+      "action": "Voir les téléchargements officiels",
+      "new_tab": "(nouvel onglet)",
+      "optional": "Vous pouvez continuer à utiliser l’extension. La page officielle indique les plateformes actuellement disponibles.",
+      "profile_hint": "Ce profil organise vos liens ; vos connexions aux réseaux restent celles du navigateur.",
+      "pending_input": "Une saisie est en cours. Enregistrez ou annulez votre tâche et terminez vos liens avant de partir : ouvrir un autre onglet peut fermer la popup."
     }
   },
   "auth_sync": {

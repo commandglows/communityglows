@@ -10,6 +10,16 @@ import {
 } from '@/config/socialNetworks'
 
 describe('social network visibility', () => {
+  it('makes Dex selectable in the app and onboarding without selecting it by default', () => {
+    expect(builtInSocialNetworks.find(network => network.id === 'dex')).toMatchObject({
+      label: 'Dex', route: '/dex', url: 'https://getdex.com/',
+      onboarding: true, defaultSelected: false,
+    })
+    expect(getVisibleBuiltInSocialNetworks([]).some(network => network.id === 'dex')).toBe(true)
+    expect(getVisibleBuiltInSocialNetworks(['dex']).some(network => network.id === 'dex')).toBe(false)
+    expect(getNetworkIsolationOrigins('dex')).toEqual(['https://getdex.com'])
+  })
+
   it('uses only catalogue defaults when a legacy profile has no selection', () => {
     const expectedVisibleIds = builtInSocialNetworks
       .filter(network => network.defaultSelected)
@@ -41,6 +51,24 @@ describe('social network visibility', () => {
 })
 
 describe('social network isolation policy', () => {
+  it.each([
+    ['breakcold', 'https://us.breakcold.com/login', 'https://us.breakcold.com'],
+    ['clarkup', 'https://app.clarkup.com/', 'https://app.clarkup.com'],
+    ['clay', 'https://app.clay.com/', 'https://app.clay.com'],
+  ])('opens %s at its application URL and keeps it optional for new profiles', (id, url, origin) => {
+    expect(builtInSocialNetworks.filter(network => network.id === id)).toHaveLength(1)
+    expect(builtInSocialNetworks.find(network => network.id === id)).toMatchObject({
+      route: `/${id}`,
+      url,
+      onboarding: true,
+      defaultSelected: false,
+    })
+    expect(getNetworkIsolationOrigins(id)).toEqual([origin])
+    expect(getVisibleBuiltInSocialNetworks().some(network => network.id === id)).toBe(false)
+    expect(getVisibleBuiltInSocialNetworks([]).some(network => network.id === id)).toBe(true)
+    expect(getVisibleBuiltInSocialNetworks([id]).some(network => network.id === id)).toBe(false)
+  })
+
   it('includes the requested community catalogue entries without duplicates', () => {
     const requested = [
       'medium', 'circle', 'stackoverflow', 'github-community', 'huzzler', 'substack',
@@ -124,5 +152,18 @@ describe('social network isolation policy', () => {
     expect(getNetworkIsolationOrigins('couchsurfing')).toEqual([
       'https://www.couchsurfing.com',
     ])
+  })
+
+  it('includes Nostr as an optional network with its isolated HTTPS origin', () => {
+    const network = builtInSocialNetworks.find(({ id }) => id === 'nostr')
+
+    expect(network).toMatchObject({
+      label: 'Nostr',
+      route: '/nostr',
+      url: 'https://nostr.com/',
+      onboarding: true,
+      defaultSelected: false,
+    })
+    expect(getNetworkIsolationOrigins('nostr')).toEqual(['https://nostr.com'])
   })
 })

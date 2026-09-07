@@ -217,7 +217,7 @@ try {
   )
   checkpoint("FR/EN, light/dark rendered companion and 320px layout")
   for (const label of ['Same URL A', 'Same URL B']) {
-    const form = panel.locator('.ext-parity-grid--links')
+    const form = panel.locator('form.ext-parity-grid--links')
     await form.locator('input').nth(0).fill(label)
     await form.locator('input').nth(1).fill('https://example.com/shared')
     await form.locator('button').click()

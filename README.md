@@ -263,3 +263,26 @@ La dernière version de test Windows est disponible directement ici :
 Ce fichier est remplacé automatiquement après chaque exécution réussie du workflow manuel Windows.
 
 Avant de lancer ce workflow, configurer le secret GitHub Actions `VITE_CONVEX_URL` avec l'URL du déploiement Convex. Le workflow refuse désormais de publier un installeur si cette configuration est absente.
+
+## Extension navigateur : fonctionnement et vérification
+
+Le paquet Chrome se charge depuis `dist/chrome` via « Charger l'extension non empaquetée » dans `chrome://extensions`. Après une reconstruction, utiliser « Recharger » sur la fiche existante pour conserver les données de ce navigateur. Le ZIP est `dist/chrome-0.0.1.zip`.
+
+La popup, les options et le panneau latéral partagent les profils et liens locaux. Les mutations sont sérialisées par Web Locks et relisent la dernière valeur enregistrée avant écriture. La création de tâches propose la capture volontaire de l'URL HTTPS de l'onglet actif et une saisie manuelle. « Mes tâches » permet la modification et la suppression. Aucun contenu de page n'est lu. Les erreurs de stockage conservent les formulaires.
+
+Les routes publiques sont déclarées dans `src/utils/router/index.ts` : popup, options, panneau latéral, installation, mise à jour, tableau de bord et tâches. Les composants desktop ne sont pas des routes d'extension. Authentification, synchronisation cloud et gestion complète des profils restent à cadrer pour cette surface.
+
+Vérification reproductible avec Node 24 et pnpm 8.11.0 :
+
+```sh
+corepack pnpm install --frozen-lockfile
+corepack pnpm test:once
+corepack pnpm typecheck:extension
+corepack pnpm build:chrome
+corepack pnpm exec playwright install chromium
+corepack pnpm test:extension
+corepack pnpm build:firefox
+corepack pnpm lint:manifest
+```
+
+Le test Chromium utilise un profil temporaire isolé, publie les preuves dans son répertoire de sortie et ferme ce profil. Il ne modifie pas le profil personnel. Les overrides de dépendances sont définis uniquement dans `package.json#pnpm.overrides` pour la version pnpm déclarée. L'audit du 5 septembre 2026 conserve deux alertes élevées sans correctif publié sur `image-size`, dépendance de l'outil `web-ext`, absente du paquet exécuté dans Chrome.

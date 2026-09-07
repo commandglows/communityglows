@@ -9,5 +9,5 @@ export default defineManifest((env) => ({
     default_path: "src/ui/side-panel/index.html",
   },
   permissions: [...ManifestConfig.permissions, "sidePanel", "tabGroups"],
-  key: env["CHROME_ADDON_KEY"],
+  key: (env as unknown as Record<string, string | undefined>)["CHROME_ADDON_KEY"],
 }))

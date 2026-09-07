@@ -5,10 +5,15 @@ import type { ContextualTaskInput, ContextualTaskPriority, ContextualTaskStatus 
 import SgButton from '../ui/SgButton.vue'
 
 const props = withDefaults(defineProps<{
+  initialTask?: ContextualTaskInput
+  busy?: boolean
   initialUrl?: string
   submitLabel?: string
 }>(), {
   initialUrl: '',
+  initialTask: undefined,
+  submitLabel: undefined,
+  busy: false,
 })
 
 const { t } = useI18n()
@@ -18,28 +23,28 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-const title = ref('')
-const url = ref(props.initialUrl)
-const note = ref('')
-const tags = ref('')
-const people = ref('')
-const links = ref('')
-const priority = ref<ContextualTaskPriority>('normal')
-const status = ref<ContextualTaskStatus>('todo')
-const dueDate = ref('')
+const title = ref(props.initialTask?.title ?? '')
+const url = ref(props.initialTask?.url ?? props.initialUrl)
+const note = ref(props.initialTask?.note ?? '')
+const tags = ref(props.initialTask?.tags?.join(', ') ?? '')
+const people = ref(props.initialTask?.people?.map(p => p.name).join(', ') ?? '')
+const links = ref(props.initialTask?.links?.join('\n') ?? '')
+const priority = ref<ContextualTaskPriority>(props.initialTask?.priority ?? 'normal')
+const status = ref<ContextualTaskStatus>(props.initialTask?.status ?? 'todo')
+const dueDate = ref(props.initialTask?.dueDate ?? '')
 
 watch(() => props.initialUrl, (value) => {
-  if (value) url.value = value
-}, { immediate: true })
+  url.value = value
+})
 
 const canSubmit = computed(() => title.value.trim().length > 0)
 const resolvedSubmitLabel = computed(() => props.submitLabel ?? t('tasks.form.create'))
 
 function submit() {
-  if (!canSubmit.value) return
+  if (!canSubmit.value || props.busy) return
   emit('submit', {
     title: title.value,
-    url: url.value || undefined,
+    url: url.value,
     note: note.value,
     tags: tags.value.split(',').map((tag) => tag.trim()).filter(Boolean),
     people: people.value.split(',').map((name) => ({ name })).filter((person) => person.name.trim()),
@@ -107,6 +112,7 @@ function submit() {
       </label>
     </div>
 
+
     <div class="task-form-grid task-form-grid--details">
       <label>
         <span>{{ $t('tasks.form.tags') }}</span>
@@ -145,13 +151,14 @@ function submit() {
       <SgButton
         :label="$t('common.cancel')"
         text
+        :disabled="busy"
         type="button"
         @click="emit('cancel')"
       />
       <SgButton
         :label="resolvedSubmitLabel"
         type="submit"
-        :disabled="!canSubmit"
+        :disabled="!canSubmit || busy"
       />
     </div>
   </form>
@@ -166,12 +173,12 @@ function submit() {
 
 .task-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--sg-tasks-form-column-min-width), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sg-tasks-form-column-min-width)), 1fr));
   gap: var(--sg-sidebar-form-gap);
 }
 
 .task-form-grid--details {
-  grid-template-columns: repeat(auto-fit, minmax(var(--sg-tasks-form-column-min-width), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sg-tasks-form-column-min-width)), 1fr));
 }
 
 .task-form label {

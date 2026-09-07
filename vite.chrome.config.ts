@@ -1,5 +1,5 @@
 import { crx } from "@crxjs/vite-plugin"
-import { defineConfig } from "vite"
+import { defineConfig, type Plugin } from "vite"
 import zipPack from "vite-plugin-zip-pack"
 import manifest from "./manifest.chrome.config"
 import packageJson from "./package.json" with { type: "json" }
@@ -85,20 +85,23 @@ if (IS_DEV) {
     },
   })
 } else {
-  ViteConfig.plugins.push(
-    zipPack({
+  const archivePlugin = zipPack({
       inDir: browserOutDir,
       outDir,
       outFileName,
+      done(error) { if (error) throw error },
       filter: (fileName, filePath, isDirectory) =>
         !(isDirectory && filePath.includes(".vite")),
-    }),
-  )
+    })
+  // closeBundle also runs after a failed compilation. Package only written output.
+  archivePlugin.writeBundle = archivePlugin.closeBundle as Plugin["writeBundle"]
+  delete archivePlugin.closeBundle
+  ViteConfig.plugins.push(archivePlugin)
 
   ViteConfig.plugins.push({
     name: "vite-plugin-build-message",
     enforce: "post",
-    closeBundle: {
+    writeBundle: {
       sequential: true,
       handler() {
         printProdMessage()

@@ -10,210 +10,211 @@ overrides:
   browserslist: 4.28.8
   shell-quote: 1.9.0
   immutable: 5.1.8
-  fast-uri: 3.1.5
+  fast-uri: 3.1.6
   undici: 7.29.0
   postcss: 8.5.26
 
-importers:
+dependencies:
+  '@auth/core':
+    specifier: 0.41.3
+    version: 0.41.3
+  '@convex-dev/auth':
+    specifier: ^0.0.95
+    version: 0.0.95(@auth/core@0.41.3)(convex@1.45.0)
+  '@tauri-apps/api':
+    specifier: 2.11.1
+    version: 2.11.1
+  '@tauri-apps/plugin-dialog':
+    specifier: 2.7.2
+    version: 2.7.2
+  '@tauri-apps/plugin-fs':
+    specifier: 2.5.1
+    version: 2.5.1
+  '@vueuse/core':
+    specifier: ^14.4.0
+    version: 14.4.0(vue@3.5.42)
+  convex:
+    specifier: ^1.45.0
+    version: 1.45.0
+  dockview-vue:
+    specifier: ^8.2.0
+    version: 8.2.0(vue@3.5.42)
+  notivue:
+    specifier: ^2.4.5
+    version: 2.4.5
+  pinia:
+    specifier: ^4.0.3
+    version: 4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.42)
+  pinia-plugin-persistedstate:
+    specifier: 4.7.1
+    version: 4.7.1(pinia@4.0.3)
+  primeflex:
+    specifier: ^4.0.0
+    version: 4.0.0
+  primeicons:
+    specifier: ^8.0.0
+    version: 8.0.0
+  primevue:
+    specifier: ^5.0.1
+    version: 5.0.1(vue@3.5.42)
+  reka-ui:
+    specifier: ^2.10.4
+    version: 2.10.4(vue@3.5.42)
+  vue:
+    specifier: ^3.5.42
+    version: 3.5.42(typescript@6.0.3)
+  vue-i18n:
+    specifier: ^11.4.10
+    version: 11.4.10(vue@3.5.42)
+  vue-router:
+    specifier: ^5.3.0
+    version: 5.3.0(@vue/compiler-sfc@3.5.42)(pinia@4.0.3)(vite@8.2.2)(vue@3.5.42)
+  webextension-polyfill:
+    specifier: ^0.12.0
+    version: 0.12.0
 
-  .:
-    dependencies:
-      '@auth/core':
-        specifier: 0.41.3
-        version: 0.41.3
-      '@convex-dev/auth':
-        specifier: ^0.0.95
-        version: 0.0.95(@auth/core@0.41.3)(convex@1.45.0)
-      '@tauri-apps/api':
-        specifier: 2.11.1
-        version: 2.11.1
-      '@tauri-apps/plugin-dialog':
-        specifier: 2.7.2
-        version: 2.7.2
-      '@tauri-apps/plugin-fs':
-        specifier: 2.5.1
-        version: 2.5.1
-      '@vueuse/core':
-        specifier: ^14.4.0
-        version: 14.4.0(vue@3.5.42)
-      convex:
-        specifier: ^1.45.0
-        version: 1.45.0
-      dockview-vue:
-        specifier: ^8.2.0
-        version: 8.2.0(vue@3.5.42)
-      notivue:
-        specifier: ^2.4.5
-        version: 2.4.5
-      pinia:
-        specifier: ^4.0.3
-        version: 4.0.3(@vue/devtools-api@8.2.1)(typescript@6.0.3)(vue@3.5.42)
-      pinia-plugin-persistedstate:
-        specifier: 4.7.1
-        version: 4.7.1(pinia@4.0.3)
-      primeflex:
-        specifier: ^4.0.0
-        version: 4.0.0
-      primeicons:
-        specifier: ^8.0.0
-        version: 8.0.0
-      primevue:
-        specifier: ^5.0.1
-        version: 5.0.1(vue@3.5.42)
-      reka-ui:
-        specifier: ^2.10.4
-        version: 2.10.4(vue@3.5.42)
-      vue:
-        specifier: ^3.5.42
-        version: 3.5.42(typescript@6.0.3)
-      vue-i18n:
-        specifier: ^11.4.10
-        version: 11.4.10(vue@3.5.42)
-      vue-router:
-        specifier: ^5.3.0
-        version: 5.3.0(@vue/compiler-sfc@3.5.42)(pinia@4.0.3)(vite@8.2.2)(vue@3.5.42)
-      webextension-polyfill:
-        specifier: ^0.12.0
-        version: 0.12.0
-    devDependencies:
-      '@crxjs/vite-plugin':
-        specifier: ^2.7.1
-        version: 2.7.1(vite@8.2.2)
-      '@edge-runtime/vm':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@eslint/compat':
-        specifier: ^2.1.0
-        version: 2.1.0(eslint@10.9.1)
-      '@eslint/js':
-        specifier: ^10.0.1
-        version: 10.0.1(eslint@10.9.1)
-      '@iconify-json/ph':
-        specifier: ^1.2.2
-        version: 1.2.2
-      '@iconify-json/simple-icons':
-        specifier: ^1.2.94
-        version: 1.2.94
-      '@intlify/unplugin-vue-i18n':
-        specifier: ^11.2.5
-        version: 11.2.5(eslint@10.9.1)(typescript@6.0.3)(vite@8.2.2)(vue-i18n@11.4.10)(vue@3.5.42)
-      '@tailwindcss/typography':
-        specifier: ^0.5.20
-        version: 0.5.20(tailwindcss@4.3.3)
-      '@tailwindcss/vite':
-        specifier: ^4.3.3
-        version: 4.3.3(vite@8.2.2)
-      '@tauri-apps/cli':
-        specifier: 2.11.4
-        version: 2.11.4
-      '@types/eslint':
-        specifier: ^9.6.1
-        version: 9.6.1
-      '@types/node':
-        specifier: ^26.4.0
-        version: 26.4.0
-      '@types/webextension-polyfill':
-        specifier: ^0.12.5
-        version: 0.12.5
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.8
-        version: 6.0.8(vite@8.2.2)(vue@3.5.42)
-      '@vue/compiler-sfc':
-        specifier: ^3.5.42
-        version: 3.5.42
-      autoprefixer:
-        specifier: ^10.5.4
-        version: 10.5.4(postcss@8.5.26)
-      chalk:
-        specifier: ^6.0.0
-        version: 6.0.0
-      chrome-types:
-        specifier: ^0.1.440
-        version: 0.1.440
-      commander:
-        specifier: ^15.0.0
-        version: 15.0.0
-      concurrently:
-        specifier: ^10.0.5
-        version: 10.0.5
-      convex-test:
-        specifier: ^0.0.56
-        version: 0.0.56(convex@1.45.0)
-      cross-env:
-        specifier: ^10.1.0
-        version: 10.1.0
-      daisyui:
-        specifier: ^5.7.22
-        version: 5.7.22
-      dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
-      eslint:
-        specifier: ^10.9.1
-        version: 10.9.1
-      eslint-plugin-vue:
-        specifier: ^10.10.0
-        version: 10.10.0(@typescript-eslint/parser@8.68.0)(eslint@10.9.1)(vue-eslint-parser@10.4.1)
-      globals:
-        specifier: ^17.11.0
-        version: 17.11.0
-      postcss:
-        specifier: 8.5.26
-        version: 8.5.26
-      prettier:
-        specifier: ^3.9.6
-        version: 3.9.6
-      sass:
-        specifier: ^1.103.1
-        version: 1.103.1
-      tailwindcss:
-        specifier: ^4.3.3
-        version: 4.3.3
-      terser:
-        specifier: ^5.51.2
-        version: 5.51.2
-      tsx:
-        specifier: ^4.23.13
-        version: 4.23.13
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.68.0
-        version: 8.68.0(eslint@10.9.1)(typescript@6.0.3)
-      unplugin-auto-import:
-        specifier: ^21.1.0
-        version: 21.1.0(@vueuse/core@14.4.0)(vite@8.2.2)
-      unplugin-icons:
-        specifier: ^23.0.1
-        version: 23.0.1(@vue/compiler-sfc@3.5.42)
-      unplugin-turbo-console:
-        specifier: ^2.3.3
-        version: 2.3.3(vite@8.2.2)(vue@3.5.42)
-      unplugin-vue-components:
-        specifier: ^32.1.0
-        version: 32.1.0(vite@8.2.2)(vue@3.5.42)
-      vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@26.4.0)(sass@1.103.1)(terser@5.51.2)(tsx@4.23.13)
-      vite-plugin-html:
-        specifier: ^3.2.2
-        version: 3.2.2(vite@8.2.2)
-      vite-plugin-vue-devtools:
-        specifier: ^8.2.1
-        version: 8.2.1(vite@8.2.2)(vue@3.5.42)
-      vite-plugin-zip-pack:
-        specifier: ^1.2.4
-        version: 1.2.4(vite@8.2.2)
-      vitest:
-        specifier: ^4.1.11
-        version: 4.1.11(@edge-runtime/vm@5.0.0)(@types/node@26.4.0)(vite@8.2.2)
-      vue-tsc:
-        specifier: ^3.3.11
-        version: 3.3.11(typescript@6.0.3)
-      web-ext:
-        specifier: ^10.6.0
-        version: 10.6.0
+devDependencies:
+  '@crxjs/vite-plugin':
+    specifier: ^2.7.1
+    version: 2.7.1(vite@8.2.2)
+  '@edge-runtime/vm':
+    specifier: ^5.0.0
+    version: 5.0.0
+  '@eslint/compat':
+    specifier: ^2.1.0
+    version: 2.1.0(eslint@10.9.1)
+  '@eslint/js':
+    specifier: ^10.0.1
+    version: 10.0.1(eslint@10.9.1)
+  '@iconify-json/ph':
+    specifier: ^1.2.2
+    version: 1.2.2
+  '@iconify-json/simple-icons':
+    specifier: ^1.2.94
+    version: 1.2.94
+  '@intlify/unplugin-vue-i18n':
+    specifier: ^11.2.5
+    version: 11.2.5(eslint@10.9.1)(typescript@6.0.3)(vite@8.2.2)(vue-i18n@11.4.10)(vue@3.5.42)
+  '@tailwindcss/typography':
+    specifier: ^0.5.20
+    version: 0.5.20(tailwindcss@4.3.3)
+  '@tailwindcss/vite':
+    specifier: ^4.3.3
+    version: 4.3.3(vite@8.2.2)
+  '@tauri-apps/cli':
+    specifier: 2.11.4
+    version: 2.11.4
+  '@types/eslint':
+    specifier: ^9.6.1
+    version: 9.6.1
+  '@types/node':
+    specifier: ^26.4.0
+    version: 26.4.0
+  '@types/webextension-polyfill':
+    specifier: ^0.12.5
+    version: 0.12.5
+  '@vitejs/plugin-vue':
+    specifier: ^6.0.8
+    version: 6.0.8(vite@8.2.2)(vue@3.5.42)
+  '@vue/compiler-sfc':
+    specifier: ^3.5.42
+    version: 3.5.42
+  autoprefixer:
+    specifier: ^10.5.4
+    version: 10.5.4(postcss@8.5.26)
+  chalk:
+    specifier: ^6.0.0
+    version: 6.0.0
+  chrome-types:
+    specifier: ^0.1.440
+    version: 0.1.440
+  commander:
+    specifier: ^15.0.0
+    version: 15.0.0
+  concurrently:
+    specifier: ^10.0.5
+    version: 10.0.5
+  convex-test:
+    specifier: ^0.0.56
+    version: 0.0.56(convex@1.45.0)
+  cross-env:
+    specifier: ^10.1.0
+    version: 10.1.0
+  daisyui:
+    specifier: ^5.7.22
+    version: 5.7.22
+  dotenv:
+    specifier: ^17.4.2
+    version: 17.4.2
+  eslint:
+    specifier: ^10.9.1
+    version: 10.9.1
+  eslint-plugin-vue:
+    specifier: ^10.10.0
+    version: 10.10.0(@typescript-eslint/parser@8.68.0)(eslint@10.9.1)(vue-eslint-parser@10.4.1)
+  globals:
+    specifier: ^17.11.0
+    version: 17.11.0
+  playwright:
+    specifier: 1.63.0
+    version: 1.63.0
+  postcss:
+    specifier: 8.5.26
+    version: 8.5.26
+  prettier:
+    specifier: ^3.9.6
+    version: 3.9.6
+  sass:
+    specifier: ^1.103.1
+    version: 1.103.1
+  tailwindcss:
+    specifier: ^4.3.3
+    version: 4.3.3
+  terser:
+    specifier: ^5.51.2
+    version: 5.51.2
+  tsx:
+    specifier: ^4.23.13
+    version: 4.23.13
+  typescript:
+    specifier: ^6.0.3
+    version: 6.0.3
+  typescript-eslint:
+    specifier: ^8.68.0
+    version: 8.68.0(eslint@10.9.1)(typescript@6.0.3)
+  unplugin-auto-import:
+    specifier: ^21.1.0
+    version: 21.1.0(@vueuse/core@14.4.0)(vite@8.2.2)
+  unplugin-icons:
+    specifier: ^23.0.1
+    version: 23.0.1(@vue/compiler-sfc@3.5.42)
+  unplugin-turbo-console:
+    specifier: ^2.3.3
+    version: 2.3.3(vite@8.2.2)(vue@3.5.42)
+  unplugin-vue-components:
+    specifier: ^32.1.0
+    version: 32.1.0(vite@8.2.2)(vue@3.5.42)
+  vite:
+    specifier: ^8.2.2
+    version: 8.2.2(@types/node@26.4.0)(sass@1.103.1)(terser@5.51.2)(tsx@4.23.13)
+  vite-plugin-html:
+    specifier: ^3.2.2
+    version: 3.2.2(vite@8.2.2)
+  vite-plugin-vue-devtools:
+    specifier: ^8.2.1
+    version: 8.2.1(vite@8.2.2)(vue@3.5.42)
+  vite-plugin-zip-pack:
+    specifier: ^1.2.4
+    version: 1.2.4(vite@8.2.2)
+  vitest:
+    specifier: ^4.1.11
+    version: 4.1.11(@edge-runtime/vm@5.0.0)(@types/node@26.4.0)(vite@8.2.2)
+  vue-tsc:
+    specifier: ^3.3.11
+    version: 3.3.11(typescript@6.0.3)
+  web-ext:
+    specifier: ^10.6.0
+    version: 10.6.0
 
 packages:
 
@@ -3314,7 +3315,7 @@ packages:
     resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.5
+      fast-uri: 3.1.6
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
     dev: true
@@ -4530,8 +4531,8 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
     dev: true
 
-  /fast-uri@3.1.5:
-    resolution: {integrity: sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==}
+  /fast-uri@3.1.6:
+    resolution: {integrity: sha512-7Ical1vFEMr0onbVzEDIreM22I4khW+fzyQPwvAFWBp1iwdshSZRsL4jjRvPG9JP1uiqMHRto+YU6R2/CzDz5Q==}
     dev: true
 
   /fastq@1.20.1:
@@ -5883,6 +5884,20 @@ packages:
       confbox: 0.2.4
       exsolve: 1.1.1
       pathe: 2.0.3
+
+  /playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dev: true
+
+  /playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+    dependencies:
+      playwright-core: 1.63.0
+    dev: true
 
   /postcss-selector-parser@6.0.10:
     resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
