@@ -24,7 +24,7 @@ tauri-plugin-log = "2.9"
 tauri-plugin-android-webview = { path = "plugins/android-webview" }
 tauri-plugin-deep-link = "2"
 tauri-plugin-dialog = "=2.7.2"
-tauri-plugin-fs = "=2.5.1"
+tauri-plugin-fs = "=2.5.2"
 base64 = "0.23"
 url = "2"
 aes-gcm = "0.11"
