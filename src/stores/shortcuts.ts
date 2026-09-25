@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
 import { computed, ref, toRaw } from 'vue'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
+import { isValidShortcutKeys } from '@/utils/shortcutKeys'
 
 export type CoreShortcutAction =
   | 'toggle-left-sidebar'
   | 'toggle-right-sidebar'
   | 'open-settings'
   | 'open-tasks'
+  | 'open-kanban-item-dialog'
+  | 'new-kanban-task'
   | 'open-profile-selector'
   | 'decrease-ui-scale'
   | 'increase-ui-scale'
@@ -35,7 +38,9 @@ const defaults: AppShortcut[] = [
   { id: 'toggle-left-sidebar', action: 'toggle-left-sidebar', label: 'Afficher/masquer le panneau gauche', keys: 'Alt+L', enabled: true },
   { id: 'toggle-right-sidebar', action: 'toggle-right-sidebar', label: 'Afficher/masquer le panneau droit', keys: 'Alt+R', enabled: true },
   { id: 'open-settings', action: 'open-settings', label: 'Ouvrir les paramètres', keys: 'Alt+,', enabled: true },
-  { id: 'open-tasks', action: 'open-tasks', label: 'Ouvrir les tÃ¢ches', keys: 'Alt+C', enabled: true },
+  { id: 'open-tasks', action: 'open-tasks', label: 'Ouvrir le Kanban', keys: 'Alt+C', enabled: true },
+  { id: 'open-kanban-item-dialog', action: 'open-kanban-item-dialog', label: 'Ajouter une tâche ou un contact', keys: 'Ctrl+K', enabled: true },
+  { id: 'new-kanban-task', action: 'new-kanban-task', label: 'Créer une tâche Kanban', keys: 'Ctrl+Shift+K', enabled: true },
   { id: 'open-profile-selector', action: 'open-profile-selector', label: 'Ouvrir le sélecteur de profil', keys: 'Alt+P', enabled: true },
   { id: 'decrease-ui-scale', action: 'decrease-ui-scale', label: 'Réduire la taille de l’interface', keys: 'Ctrl+-', enabled: true },
   { id: 'increase-ui-scale', action: 'increase-ui-scale', label: 'Agrandir la taille de l’interface', keys: 'Ctrl+=', enabled: true },
@@ -60,6 +65,8 @@ function normalizeShortcutAction(value: unknown): ShortcutAction {
     || value === 'toggle-right-sidebar'
     || value === 'open-settings'
     || value === 'open-tasks'
+    || value === 'open-kanban-item-dialog'
+    || value === 'new-kanban-task'
     || value === 'open-profile-selector'
     || value === 'decrease-ui-scale'
     || value === 'increase-ui-scale'
@@ -84,7 +91,7 @@ function parseShortcutEntry(entry: unknown): Partial<AppShortcut> {
     id: typeof entry.id === 'string' ? entry.id : '',
     action: normalizeShortcutAction(entry.action),
     label: typeof entry.label === 'string' ? entry.label : '',
-    keys: typeof entry.keys === 'string' ? entry.keys : '',
+    keys: typeof entry.keys === 'string' && (!entry.keys || isValidShortcutKeys(entry.keys)) ? entry.keys : undefined,
     enabled: parseBoolean(entry.enabled, false),
     target: typeof entry.target === 'string' ? entry.target : undefined,
   }
@@ -99,6 +106,10 @@ function normalizeShortcutList(raw: unknown): AppShortcut[] {
     return {
       ...fallback,
       ...item,
+      keys: item.keys ?? fallback.keys,
+      label: fallback.id === 'open-tasks' && ['Ouvrir les tâches', 'Ouvrir les tÃ¢ches'].indexOf(item.label ?? '') >= 0
+        ? fallback.label
+        : item.label || fallback.label,
       enabled: parseBoolean(item.enabled, fallback.enabled),
     }
   })
@@ -207,6 +218,7 @@ export const useShortcutsStore = defineStore('shortcuts', () => {
   }
 
   function setKeys(id: string, keys: string): boolean {
+    if (keys && !isValidShortcutKeys(keys)) return false
     if (hasKeysConflict(keys, id)) return false
     const index = shortcuts.value.findIndex(item => item.id === id)
     if (index < 0) return false

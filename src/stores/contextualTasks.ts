@@ -7,9 +7,9 @@ import {
 } from '@/services/contextualTasksService'
 import { enqueueContextualTasksSnapshot, flushCloudSyncQueue } from '@/lib/cloudSyncQueue'
 
-export const useContextualTasksStore = defineStore('contextualTasks', {
+const createTasksStore = (id: string, localOnly = false) => defineStore(id, {
   state: () => ({
-    service: new ContextualTasksService(),
+    service: new ContextualTasksService(localOnly ? 'communityglows.guest-tasks.v1' : undefined),
     tasks: [] as ContextualTask[],
     initialized: false,
     loading: false,
@@ -59,7 +59,16 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
       }
     },
 
+    importLocalTasks(tasks: ContextualTask[]) {
+      if (localOnly) return false
+      const known = new Set(this.tasks.map(task => task.id))
+      this.replaceFromCloud(JSON.stringify([...this.tasks, ...tasks.filter(task => !known.has(task.id)).map(task => ({ ...task, profileId: undefined }))]))
+      if (this.error) return false
+      void this.syncToCloud()
+      return true
+    },
     syncToCloud() {
+      if (localOnly) return Promise.resolve()
       enqueueContextualTasksSnapshot(this.service.serializeState())
       return flushCloudSyncQueue()
     },
@@ -108,12 +117,12 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
       const nextLabel = label.trim().slice(0, 40)
       if (!nextLabel) return
       this.stageLabels[status] = nextLabel
-      localStorage.setItem('contextual-task-stage-labels-v1', JSON.stringify(this.stageLabels))
+      localStorage.setItem(localOnly ? 'communityglows.guest-task-labels.v1' : 'contextual-task-stage-labels-v1', JSON.stringify(this.stageLabels))
     },
 
     loadStageLabels() {
       try {
-        const raw = localStorage.getItem('contextual-task-stage-labels-v1')
+        const raw = localStorage.getItem(localOnly ? 'communityglows.guest-task-labels.v1' : 'contextual-task-stage-labels-v1')
         if (!raw) return
         const parsed: unknown = JSON.parse(raw)
         if (!parsed || typeof parsed !== 'object') return
@@ -133,5 +142,8 @@ export const useContextualTasksStore = defineStore('contextualTasks', {
     },
   },
 })
+
+export const useContextualTasksStore = createTasksStore('contextualTasks')
+export const useLocalTasksStore = createTasksStore('localTasks', true)
 
 export type { ContextualTask, ContextualTaskInput, ContextualTaskStatus }

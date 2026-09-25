@@ -30,6 +30,20 @@ describe("profiles store atomic drafts", () => {
     vi.clearAllMocks()
   })
 
+  it("updates an entire category once without changing another profile or unrelated visibility", () => {
+    const store = useProfilesStore()
+    const first = store.create({ name: 'Work', hiddenNetworks: ['dex', 'clay', 'bento', 'reddit'] })
+    const second = store.create({ name: 'Personal', hiddenNetworks: ['clarkup'] })
+    vi.clearAllMocks()
+    store.setNetworksHidden(first.id, ['breakcold', 'clarkup', 'clay', 'dex'], false)
+    expect(store.profiles.find(p => p.id === first.id)?.hiddenNetworks).toEqual(['bento', 'reddit'])
+    expect(store.profiles.find(p => p.id === second.id)?.hiddenNetworks).toEqual(['clarkup'])
+    expect(syncProfile).toHaveBeenCalledTimes(1)
+    store.setNetworksHidden(first.id, ['breakcold', 'clarkup', 'clay', 'dex'], true)
+    expect(store.profiles.find(p => p.id === first.id)?.hiddenNetworks).toEqual(['bento', 'reddit', 'breakcold', 'clarkup', 'clay', 'dex'])
+    expect(syncProfile).toHaveBeenCalledTimes(2)
+  })
+
   it("creates exactly one complete profile from one draft", () => {
     const store = useProfilesStore()
     const profile = store.create({

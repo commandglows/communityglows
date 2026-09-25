@@ -110,18 +110,40 @@
         <h2 class="step-title">{{ $t('onboarding.networks_title') }}</h2>
         <p class="step-desc">{{ $t('onboarding.networks_desc') }}</p>
 
-        <div class="network-grid">
-          <button
-            v-for="net in NETWORKS"
-            :key="net.id"
-            class="network-chip"
-            :class="{ selected: selectedNetworks.has(net.id) }"
-            :style="getNetworkChipStyle(net)"
-            @click="toggleNetwork(net.id)"
+        <div class="network-groups">
+          <section
+            v-for="group in networkGroups"
+            :key="group.id"
+            class="network-group"
           >
-            <SgIcon :icon="net.icon" />
-            <span>{{ net.label }}</span>
-          </button>
+            <NetworkGroupHeader
+              :label="$t(group.labelKey)"
+              :icon="group.icon"
+              :selection="networkGroupSelection(group.items.map(net => net.id), [...selectedNetworks])"
+              :count="group.items.filter(net => selectedNetworks.has(net.id)).length"
+              :total="group.items.length"
+              :expanded="!collapsedNetworkGroups.has(group.id)"
+              @toggle="toggleGroup(group.items.map(net => net.id))"
+              @collapse="toggleGroupExpanded(group.id)"
+            />
+            <div
+              v-if="!collapsedNetworkGroups.has(group.id)"
+              class="network-grid"
+            >
+              <button
+                v-for="net in group.items"
+                :key="net.id"
+                class="network-chip"
+                :class="{ selected: selectedNetworks.has(net.id) }"
+                :aria-pressed="selectedNetworks.has(net.id)"
+                :style="getNetworkChipStyle(net)"
+                @click="toggleNetwork(net.id)"
+              >
+                <SgIcon :icon="net.icon" />
+                <span>{{ net.label }}</span>
+              </button>
+            </div>
+          </section>
         </div>
 
         <div class="step-actions">
@@ -217,6 +239,8 @@ import { ref, reactive, computed } from 'vue'
 import { useProfilesStore } from '@/stores/profiles'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
+import { groupNetworks, networkGroupSelection, toggleNetworkGroupSelection } from '@/config/socialNetworkGroups'
+import NetworkGroupHeader from './NetworkGroupHeader.vue'
 import { setLocale } from '@/utils/i18n'
 import logoUrl from '@/assets/logo.png'
 
@@ -240,6 +264,18 @@ const NETWORKS = computed(() =>
     .filter((network) => network.onboarding)
     .map(({ id, label, icon, color, defaultSelected }) => ({ id, label, icon, color, defaultSelected })),
 )
+
+const networkGroups = computed(() => groupNetworks(NETWORKS.value, network => network.id))
+const collapsedNetworkGroups = ref(new Set<string>())
+function toggleGroupExpanded(id: string) {
+  if (collapsedNetworkGroups.value.has(id)) collapsedNetworkGroups.value.delete(id)
+  else collapsedNetworkGroups.value.add(id)
+}
+function toggleGroup(ids: string[]) {
+  const next = toggleNetworkGroupSelection(ids, [...selectedNetworks])
+  selectedNetworks.clear()
+  next.forEach(id => selectedNetworks.add(id))
+}
 
 // Default: top 5 selected
 const selectedNetworks = reactive(
@@ -521,14 +557,24 @@ function finish() {
 }
 
 /* Network grid */
+.network-groups {
+  width: var(--sg-size-100pct);
+  max-height: var(--sg-size-45vh);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sg-space-2);
+}
+.network-group {
+  min-width: 0;
+}
+
 .network-grid {
   width: var(--sg-size-100pct);
   display: flex;
   flex-wrap: wrap;
   gap: var(--sg-space-0d5rem);
   justify-content: center;
-  max-height: var(--sg-size-45vh);
-  overflow-y: auto;
   padding: var(--sg-space-0d25rem);
 }
 

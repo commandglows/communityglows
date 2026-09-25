@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "integrating-password-managers-communityglows-webviews"
 title: "Comment utiliser son gestionnaire de mots de passe dans CommunityGlows ?"
 description: "Google Password Manager, 1Password, Bitwarden et les autres : les solutions réalistes pour se connecter à ses réseaux sans confier ses mots de passe à CommunityGlows."
 date: "2026-08-19"

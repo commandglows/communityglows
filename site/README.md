@@ -8,11 +8,21 @@ Copy `.env.example` and override these values when the domains change:
 
 ```bash
 PUBLIC_SITE_URL=https://communityglows.com
-PUBLIC_APP_URL=https://communityglows.com
+PUBLIC_APP_URL=https://communityglows.com/download
 PUBLIC_EMAIL_DOMAIN=communityglows.com
 ```
 
 All canonicals, structured data URLs, and marketing CTA links read from these variables through `src/config/site.ts`.
+
+Without `PUBLIC_APP_URL`, acquisition CTAs use `/download` or `/fr/download` for the current language. A custom override must lead to a working acquisition destination, never the site home or a retired repository. Purchase and purchase-return buttons use the installed-app billing deep link separately.
+
+## Windows launch content
+
+Windows is the current public preview download. Other targets must not be advertised as publicly available without a verified distribution URL. Features present in source do not establish inclusion in the downloadable installer. Release-gating evidence is recorded in `../shipglows_data/editorial/windows-launch-readiness.md`.
+
+The newsletter remains a planned launch feature, using the approved CommandGlows-owned consent/subscription system and Postmark transport. Signup is not operational yet: the section currently states this explicitly and links to release notes. Do not wire it to the legacy CommandGlows Resend signup (different audience and welcome content), invent a new contact store, or expose transport credentials in Astro public variables. Help is available at `/help` and `/fr/help`, with buyer activation guidance at `#activation`. Blog translations use declared article peers rather than generated `/fr/blog/...` URLs.
+
+After building, run `node scripts/check-launch.mjs` to check generated internal links, anchors, headings, locale alternates and retired placeholders.
 
 ### Checkout and payment flow
 

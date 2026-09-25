@@ -1,0 +1,11 @@
+# Login value and local Kanban
+
+Status: ready. User approved account-benefit login card, explicit local Kanban and preservation when signing in. Owner: sg-experience. Scope: login copy and CTA, isolated public local task view/store, authenticated opt-in copy retaining local originals. No auth bypass for existing protected routes, no billing changes, no deployment.
+
+Contract: first success is creating and retrieving a local task, then optionally copying it into an authenticated account. Public local tasks use a separate storage key, never hydrate from account state or enqueue cloud writes. Account tasks remain guarded. Copy merges unique task IDs, retains local originals and does not claim cloud completion before acknowledged synchronization. Benefits describe implemented profile/settings/task/Bento sync, not cookies or future aggregation. Explain browser data loss accurately.
+
+Proof: focused isolation/merge tests, login/guest rendered states, existing auth guards regression, build and lint. Real authenticated provider login and hosted synchronization require authorized test credentials and remain separate evidence.
+
+Implementation: login presents concrete account benefits and sign-up/sign-in/local choices in FR/EN. New /local-kanban is an explicit public product surface with dedicated guest task and label storage; it neither loads account tasks nor queues cloud writes. Existing /tasks stays guarded. Account Tasks offers explicit merge by stable ID, preserves existing account tasks and local originals, and uses the existing synchronization owner. No cloud hydration policy was weakened. Login overflow is safe on small screens.
+
+Proof: 11 tests pass for guest isolation, persistence, account clearing, idempotent copy, protected-route retention and auth-loading guest access. Real LoginView/TasksView fixture verifies sign-up form entry, local navigation, task creation/reload and compact layout at 420/700px without clipped login top or horizontal overflow. Screenshots under .playwright-mcp/login-benefits.png and local-kanban.png. Scoped ESLint passes; full typecheck retains unrelated preexisting issues and no new owned-code errors were found. Real account authentication and multi-device sync are not proven by these local fixtures. No commit or release.

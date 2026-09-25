@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "browser-extension-vs-desktop-app-communityglows"
 title: "Extension ou application desktop CommunityGlows : laquelle choisir ?"
 description: "L’extension ouvre vos réseaux dans le navigateur ; l’application desktop les réunit dans un Bento. Voici ce que cette différence change au quotidien."
 date: "2026-09-05"

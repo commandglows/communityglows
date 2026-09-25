@@ -246,6 +246,12 @@
           >
             {{ autoThemeHint }}
           </p>
+          <ThemePalettePicker />
+          <div class="settings-toggle-row"><span class="settings-toggle-label"><SgIcon icon="pi pi-th-large" />{{ $t('sidebar.bento_display.title') }}</span></div>
+          <div class="settings-theme-mode-group settings-control-bar-position" role="group" :aria-label="$t('sidebar.bento_display.title')">
+            <button v-for="mode in (['grouped', 'tabs'] as const)" :key="mode" type="button" class="settings-theme-mode-btn" :class="{ active: sidebarPreferences.bentoDisplay === mode }" :aria-pressed="sidebarPreferences.bentoDisplay === mode" @click="sidebarPreferences.setBentoDisplay(mode)">{{ $t(`sidebar.bento_display.${mode}`) }}</button>
+          </div>
+          <p v-if="sidebarPreferences.saveError" role="alert">{{ $t('sidebar.organization.save_error') }}</p>
 
           <div class="settings-toggle-row">
             <span class="settings-toggle-label">
@@ -308,7 +314,7 @@
             </button>
           </div>
           <div class="settings-sound-variant-row">
-            <span class="settings-label settings-sound-variant-label">
+            <span class="settings-toggle-label settings-sound-variant-label">
               <SgIcon icon="pi pi-sliders-h" />
               {{ $t('settings.tap_sound_variant') }}
             </span>
@@ -455,9 +461,12 @@
 </template>
 
 <script setup lang="ts">
+import { useSidebarPreferencesStore } from '@/stores/sidebarPreferences'
+const sidebarPreferences = useSidebarPreferencesStore()
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
+import ThemePalettePicker from './ThemePalettePicker.vue'
 import { useDesktopControlBarStore, type DesktopControlBarPosition } from '@/stores/desktopControlBar'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { useSignupNudge } from '@/composables/useSignupNudge'
@@ -939,7 +948,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--sg-space-0d55rem);
-  margin: var(--sg-space-neg-0d2rem-0-0d8rem);
+  padding-block: var(--sg-space-3);
+  margin-bottom: var(--sg-space-2);
 }
 
 .settings-sound-variant-label {
@@ -953,6 +963,8 @@ onUnmounted(() => {
 }
 
 .settings-sound-variant-btn {
+  min-width: 0;
+  overflow-wrap: anywhere;
   min-height: var(--sg-size-2d4rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
@@ -1345,9 +1357,11 @@ onUnmounted(() => {
   color: var(--sg-color-text);
 }
 
-.settings-toggle-label i {
+.settings-toggle-label :deep(.sg-icon) {
   font-size: var(--sg-font-size-1rem);
-  width: var(--sg-size-2rem);
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
   text-align: center;
 }
 

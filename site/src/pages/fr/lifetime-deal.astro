@@ -2,57 +2,107 @@
 import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
-import { appUrl, authenticatedPurchaseUrl, siteUrl } from '../../config/site'
-import EyebrowPill from '../../components/ui/EyebrowPill.astro'
+import { appUrl, authenticatedPurchaseUrl } from '../../config/site'
 import ActionLink from '../../components/ui/ActionLink.astro'
+import EyebrowPill from '../../components/ui/EyebrowPill.astro'
 
-const offerId = 'communityglows/lifetime_deal'
-const checkoutUrl = authenticatedPurchaseUrl()
-const workflow = [
-  { step: '01', title: 'Ouvrez chaque compte sans chaos', text: "Réunissez vos réseaux et profils dans un espace concentré plutôt que de multiplier les fenêtres." },
-  { step: '02', title: 'Préservez le contexte de chaque profil', text: "Séparez plus facilement les échanges personnels, clients et de marque grâce aux sessions liées aux profils et à l'état local de l'espace." },
-  { step: '03', title: "Transformez l'attention en suivi", text: "Passez de la consultation aux idées, réponses, notes de campagne et prochaines actions sans quitter votre système." },
-]
-const includes = [
-  "Accès à CommunityGlows Pro selon les conditions publiées de l'offre à vie",
-  'Espace social multi-profils pour créateurs et équipes',
-  'Contrôles anti-distraction, liens personnalisés, sauvegarde et restauration',
-  'Espace CRM et Kanban présenté séparément comme étant en développement',
-  "Orientation ordinateur et mobile à mesure que les versions sont publiées",
-  "Accès fourni par le système de commerce et de droits de la suite WinFlowz",
-  "Support pour la vérification du compte, le paiement, les remboursements et les événements rejoués",
-]
-const boundaries = [
-  "Les réseaux sociaux peuvent modifier leurs interfaces et règles ; le travail de compatibilité est continu.",
-  "La disponibilité future des plateformes suit les versions publiées et les notes produit publiques.",
-  "La synchronisation concerne les profils et préférences ; les sessions de connexion restent locales à chaque appareil.",
-  "Le paiement nécessite la configuration Lemon Squeezy via le parcours commercial central de WinFlowz.",
-]
-const faq = [
-  { q: "Que se passe-t-il après avoir choisi l'accès à vie ?", a: "Le bouton vous dirige vers le paiement sécurisé de la suite. Votre accès CommunityGlows est ensuite rattaché à votre compte par le système de droits actuel." },
-  { q: 'Pourquoi le paiement passe-t-il par WinFlowz ?', a: "WinFlowz fournit le paiement et le système d'accès partagés utilisés par CommunityGlows, afin que votre achat et votre accès restent liés." },
-  { q: "Que comprend l’essai de 30 jours ?", a: "L’essai comprend toutes les fonctions CommunityGlows disponibles aujourd’hui. Les éléments de la feuille de route et les fonctions encore en développement n’en font pas partie. Aucune carte bancaire n’est demandée et rien n’est facturé automatiquement à la fin." },
-  { q: "L'offre peut-elle évoluer ?", a: "Oui. Sa disponibilité, son prix, ses limites et ses conditions peuvent évoluer. Les conditions affichées au moment du paiement s'appliquent à votre achat." },
-]
-const jsonLd = [
-  { '@context': 'https://schema.org', '@type': 'Product', name: 'Offre à vie CommunityGlows', description: 'Essayez toutes les fonctions disponibles aujourd’hui pendant 30 jours sans carte bancaire, puis choisissez si vous le souhaitez l’accès à vie pour 149 €.', brand: { '@type': 'Brand', name: 'CommunityGlows' }, offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', price: '149', priceCurrency: 'EUR', url: siteUrl('/fr/lifetime-deal') } },
-  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })) },
-]
+const copy = {
+  "title": "Essai et accès à vie — CommunityGlows",
+  "description": "Préversion Windows, essai de 30 jours avec deux relances facultatives et tarif de 149 € TTC sans abonnement. Consultez les conditions et la disponibilité dans l’application.",
+  "eyebrow": "Le lancement commence sur Windows",
+  "heading": "Un espace pour vos communautés, sans abonnement.",
+  "intro": "Découvrez la préversion Windows avant de choisir un accès à vie. Réunissez vos profils, vos réseaux et vos liens utiles dans un espace de travail dédié.",
+  "download": "Télécharger la préversion Windows",
+  "access": "Vérifier l’accès dans l’application",
+  "note": "L’ouverture publique des parcours d’essai et de paiement est en cours de finalisation. Le téléchargement de la préversion ne garantit pas que l’achat soit déjà disponible.",
+  "price": "149 € · paiement unique",
+  "offer": "Les conditions prévues",
+  "trial": "Une période de 30 jours, jusqu’à deux relances facultatives, sans carte bancaire ni facturation automatique. Après la troisième période, un achat est nécessaire pour continuer à utiliser les fonctionnalités soumises à l’accès payant.",
+  "includes": [
+    "Espace multi-profils Windows avec sessions locales",
+    "Catalogue de réseaux, liens personnalisés et préférences de concentration selon le réseau",
+    "Synchronisation des profils et préférences via votre compte",
+    "Sauvegarde et restauration locales"
+  ],
+  "boundaryTitle": "Ce que vous pouvez attendre",
+  "boundaries": [
+    "Windows est actuellement la seule préversion téléchargeable publiquement. Android et les extensions Chrome et Firefox ne sont pas encore distribués publiquement.",
+    "Bento, Scènes et Tâches évoluent encore. Consultez les notes de votre version installée ; les améliorations à venir ne sont pas une garantie d’inclusion dans l’installeur actuel.",
+    "La séparation des profils réduit les mélanges accidentels de sessions. Elle ne contourne pas les règles des réseaux et ne garantit pas l’anonymat.",
+    "Les réseaux sociaux peuvent modifier leurs connexions, interfaces et règles. La compatibilité dépend de chaque service.",
+    "Les profils et préférences peuvent être synchronisés ; les sessions de connexion restent sur l’appareil, sauf export de sauvegarde explicite."
+  ],
+  "faqTitle": "Questions sur l’accès",
+  "faq": [
+    [
+      "Comment fonctionne l’achat ?",
+      "Lorsqu’il est disponible, ouvrez CommunityGlows et connectez-vous à votre compte. Le paiement démarre depuis l’application et s’ouvre dans Stripe via CommandGlows. Vérifiez le prix et les conditions avant de confirmer."
+    ],
+    [
+      "Pourquoi CommandGlows apparaît-il au paiement ?",
+      "CommandGlows gère le paiement Stripe et rattache l’accès CommunityGlows à votre compte."
+    ],
+    [
+      "L’essai se renouvelle-t-il automatiquement ?",
+      "Non. Les deux relances sont facultatives et se déclenchent dans l’application lorsqu’elles sont disponibles. Aucun prélèvement automatique n’est prévu."
+    ],
+    [
+      "Les fonctions à venir sont-elles garanties ?",
+      "Non. Choisissez le produit pour les fonctions présentes dans la version que vous pouvez utiliser. Les dates et disponibilités futures ne sont pas promises."
+    ],
+    [
+      "Que faire si l’application ne s’ouvre pas ?",
+      "Installez d’abord la préversion Windows, puis ouvrez ses paramètres d’accès. Consultez le centre d’aide si le lien du site ne lance pas l’application."
+    ]
+  ],
+  "help": "Consulter le centre d’aide"
+}
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: copy.faq.map(([question, answer]) => ({
+    '@type': 'Question', name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+}]
 ---
 
-<Layout title="Essai 30 jours et accès à vie à 149 € — CommunityGlows" description="Essayez toutes les fonctions CommunityGlows disponibles aujourd’hui pendant 30 jours, sans carte ni facturation automatique, puis choisissez l’accès à vie pour 149 €." path="/fr/lifetime-deal" lang="fr" jsonLd={jsonLd}>
+<Layout title={copy.title} description={copy.description} path="/fr/lifetime-deal" lang="fr" jsonLd={jsonLd}>
   <main id="main-content" class="min-h-screen bg-background text-foreground">
     <Navbar lang="fr" languageHref="/lifetime-deal" />
-    <div class="relative z-20 mx-auto -mb-24 flex max-w-6xl justify-center px-4 pt-24 lg:justify-end">
-      <EyebrowPill tone="default" class="text-foreground">149 € · paiement unique</EyebrowPill>
-    </div>
-    <section class="relative overflow-hidden border-b border-border pb-20 pt-32"><div class="absolute inset-0 bg-gradient-to-b from-card to-background" aria-hidden="true"></div><div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2"><div><EyebrowPill>Offre fondateur à vie</EyebrowPill><h1 class="mt-6 text-4xl font-bold tracking-tight sm:text-6xl">Restez présent pour votre communauté, sans le chaos des onglets.</h1><p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">Réunissez comptes, conversations et prochaines actions dans un espace concentré, afin de réserver davantage d'attention aux personnes derrière les notifications.</p><div class="mt-8 flex flex-col gap-3 sm:flex-row"><ActionLink href={appUrl()} size="md">Essayer 30 jours gratuitement</ActionLink><ActionLink href={checkoutUrl} variant="secondary" size="md">Acheter l’accès à vie pour 149 €</ActionLink></div></div><div class="rounded-2xl border border-border bg-card p-5 shadow-2xl"><EyebrowPill tag="p">CommunityGlows</EyebrowPill><p class="mt-1 text-lg font-semibold">Espace communautaire</p><div class="mt-6 grid gap-3 sm:grid-cols-3">{[['Profils','∞'],['Réseaux','18+'],['Formule','Pro']].map(([label,value]) => <div class="rounded-xl bg-background p-4"><p class="text-xs text-muted-foreground">{label}</p><p class="mt-2 text-3xl font-bold">{value}</p></div>)}</div><div class="mt-4 rounded-xl border border-border p-4"><EyebrowPill tag="p">Prochaine action</EyebrowPill><p class="mt-2 text-sm">Réponses chaleureuses et notes de suivi</p></div></div></div></section>
-    <section class="mx-auto max-w-6xl px-4 py-16"><div class="grid gap-8 lg:grid-cols-2"><div><EyebrowPill tag="p">Pourquoi cet espace compte</EyebrowPill><h2 class="mt-3 text-3xl font-bold">Une communauté grandit grâce aux détails retenus et à une attention renouvelée.</h2></div><p class="text-lg leading-relaxed text-muted-foreground">L'offre à vie vous donne un espace durable pour écouter, répondre et tenir vos engagements. CommunityGlows garde profils et contexte de travail proches pour vous aider à construire une présence plus humaine et régulière.</p></div></section>
-    <section class="mx-auto max-w-6xl px-4 py-16"><div class="rounded-2xl border border-border bg-card p-6 sm:p-8"><EyebrowPill tag="p">Votre rythme</EyebrowPill><h2 class="mt-3 text-3xl font-bold">Du bruit social à une présence qui dure.</h2><div class="mt-8 grid gap-4 md:grid-cols-3">{workflow.map((item) => <div class="rounded-xl border border-border bg-background p-5"><EyebrowPill tag="p">Étape {item.step}</EyebrowPill><h3 class="mt-3 text-xl font-semibold">{item.title}</h3><p class="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p></div>)}</div></div></section>
-    <section id="offer" class="mx-auto grid max-w-6xl gap-8 px-4 py-16 lg:grid-cols-5"><div class="lg:col-span-2"><EyebrowPill tag="p">L'offre</EyebrowPill><h2 class="mt-3 text-3xl font-bold">Accès à vie CommunityGlows</h2><p class="mt-4 text-muted-foreground">Commencez par un essai complet de 30 jours couvrant toutes les fonctions disponibles aujourd’hui, sans carte ni facturation automatique. Les éléments de la feuille de route ne font pas partie de l’essai. Si l’espace vous convient, un achat volontaire vous donne l’accès à vie selon les conditions publiées au paiement.</p></div><div class="rounded-2xl border border-foreground/30 bg-card p-6 shadow-2xl lg:col-span-3 sm:p-8"><EyebrowPill tag="p">Offre fondateur</EyebrowPill><h3 class="mt-3 text-4xl font-bold">Accès à vie</h3><p class="mt-3 text-sm text-muted-foreground">Payez une fois, puis utilisez l'espace Pro pour organiser vos comptes, revenir aux conversations importantes et préserver le contexte communautaire.</p><div class="mt-6 grid gap-3 sm:grid-cols-2">{includes.map((item) => <div class="rounded-xl bg-background p-4 text-sm leading-relaxed text-muted-foreground">{item}</div>)}</div><div class="mt-6 grid gap-3 sm:grid-cols-2"><ActionLink href={appUrl()} size="md" fullWidth>Essayer 30 jours gratuitement</ActionLink><ActionLink href={checkoutUrl} variant="secondary" size="md" fullWidth>Acheter une fois pour 149 €</ActionLink></div></div></section>
-    <section class="mx-auto max-w-6xl px-4 py-16"><div class="rounded-2xl border border-border bg-card p-6 sm:p-8"><h2 class="text-3xl font-bold">À quoi vous attendre lorsque le produit évolue</h2><div class="mt-6 grid gap-3 md:grid-cols-2">{boundaries.map((item) => <div class="rounded-xl border border-border bg-background p-4 text-sm leading-relaxed text-muted-foreground">{item}</div>)}</div></div></section>
-    <section class="mx-auto max-w-6xl px-4 py-16"><h2 class="text-3xl font-bold">Questions sur l'accès à vie</h2><div class="mt-6 grid gap-4">{faq.map((item) => <div class="rounded-xl border border-border bg-card p-5"><h3 class="font-semibold">{item.q}</h3><p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.a}</p></div>)}</div></section>
-    <section class="mx-auto max-w-6xl px-4 py-16"><div class="rounded-2xl bg-primary p-8 text-primary-foreground sm:p-10"><div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"><div class="max-w-2xl"><h2 class="text-3xl font-bold">Faites plus de place aux personnes de votre communauté.</h2><p class="mt-4 text-primary-foreground/70">Choisissez l'accès à vie et construisez un rythme plus serein autour de l'écoute, des réponses et du suivi.</p></div><div class="flex flex-col gap-3 sm:flex-row"><ActionLink href={appUrl()} size="md" class="bg-background text-foreground hover:bg-muted">Essayer 30 jours gratuitement</ActionLink><ActionLink href={checkoutUrl} variant="secondary" size="md" class="text-primary-foreground border border-primary-foreground/30 hover:bg-primary-foreground/10">Acheter une fois pour 149 €</ActionLink></div></div></div></section>
+    <section class="mx-auto max-w-5xl px-4 pt-32 pb-16 text-center">
+      <EyebrowPill>{copy.eyebrow}</EyebrowPill>
+      <h1 class="mt-6 text-4xl sm:text-6xl font-bold tracking-tight">{copy.heading}</h1>
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{copy.intro}</p>
+      <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <ActionLink href={appUrl('', 'fr')} size="md">{copy.download}</ActionLink>
+        <ActionLink href={authenticatedPurchaseUrl()} variant="secondary" size="md">{copy.access}</ActionLink>
+      </div>
+      <p class="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-muted-foreground">{copy.note}</p>
+      <a class="mt-4 inline-block underline underline-offset-4" href="/fr/help">{copy.help}</a>
+    </section>
+    <section class="mx-auto max-w-5xl px-4 py-12">
+      <div class="rounded-2xl border border-border bg-card p-6 sm:p-10">
+        <p class="text-sm text-muted-foreground">{copy.offer}</p>
+        <h2 class="mt-3 text-3xl font-bold">{copy.price}</h2>
+        <p class="mt-5 leading-relaxed text-muted-foreground">{copy.trial}</p>
+        <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+          {copy.includes.map(item => <li class="rounded-xl bg-background p-4">{item}</li>)}
+        </ul>
+      </div>
+    </section>
+    <section class="mx-auto max-w-5xl px-4 py-12">
+      <h2 class="text-3xl font-bold">{copy.boundaryTitle}</h2>
+      <ul class="mt-6 space-y-4">
+        {copy.boundaries.map(item => <li class="rounded-xl border border-border bg-card p-5 leading-relaxed text-muted-foreground">{item}</li>)}
+      </ul>
+    </section>
+    <section class="mx-auto max-w-5xl px-4 py-12 pb-20">
+      <h2 class="text-3xl font-bold">{copy.faqTitle}</h2>
+      <div class="mt-6 space-y-4">
+        {copy.faq.map(([question, answer]) => <article class="rounded-xl border border-border bg-card p-5"><h3 class="font-semibold">{question}</h3><p class="mt-3 leading-relaxed text-muted-foreground">{answer}</p></article>)}
+      </div>
+    </section>
     <Footer lang="fr" languageHref="/lifetime-deal" />
   </main>
 </Layout>

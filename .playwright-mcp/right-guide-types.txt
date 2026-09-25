@@ -1,0 +1,132 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+src/lib/buildDiagnostics.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/lib/buildDiagnostics.test.ts(4,3): error TS2593: Cannot find name 'beforeEach'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/lib/buildDiagnostics.test.ts(28,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/lib/buildDiagnostics.test.ts(34,5): error TS2304: Cannot find name 'expect'.
+src/lib/buildDiagnostics.test.ts(35,5): error TS2304: Cannot find name 'expect'.
+src/lib/cloudSyncDecisions.test.ts(11,28): error TS2345: Argument of type '{ settings: null; profiles: never[]; customLinks: never[]; friendsFilters: never[]; socialAccounts: never[]; activeAccounts: never[]; }' is not assignable to parameter of type 'CloudSnapshotShape'.
+  Property 'workspaceState' is missing in type '{ settings: null; profiles: never[]; customLinks: never[]; friendsFilters: never[]; socialAccounts: never[]; activeAccounts: never[]; }' but required in type 'CloudSnapshotShape'.
+src/lib/cloudSyncDecisions.test.ts(22,28): error TS2345: Argument of type '{ settings: null; profiles: { profileId: string; }[]; customLinks: never[]; friendsFilters: never[]; socialAccounts: never[]; activeAccounts: never[]; }' is not assignable to parameter of type 'CloudSnapshotShape'.
+  Property 'workspaceState' is missing in type '{ settings: null; profiles: { profileId: string; }[]; customLinks: never[]; friendsFilters: never[]; socialAccounts: never[]; activeAccounts: never[]; }' but required in type 'CloudSnapshotShape'.
+src/platform/capabilities.test.ts(26,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(29,3): error TS2593: Cannot find name 'beforeEach'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(43,3): error TS2304: Cannot find name 'afterEach'.
+src/platform/capabilities.test.ts(67,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(68,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(69,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(70,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(71,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(72,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(73,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(74,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(76,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(95,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(96,7): error TS2352: Conversion of type 'typeof globalThis' to type '{ window?: Record<string, unknown> | undefined; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'window' are incompatible.
+    Type 'Window & typeof globalThis' is not comparable to type 'Record<string, unknown> | undefined'.
+      Type 'Window & typeof globalThis' is not comparable to type 'Record<string, unknown>'.
+        Index signature for type 'string' is missing in type 'Window & typeof globalThis'.
+src/platform/capabilities.test.ts(97,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(98,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(99,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(100,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(103,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(105,7): error TS2352: Conversion of type 'typeof globalThis' to type '{ window?: Record<string, unknown> | undefined; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'window' are incompatible.
+    Type 'Window & typeof globalThis' is not comparable to type 'Record<string, unknown> | undefined'.
+      Type 'Window & typeof globalThis' is not comparable to type 'Record<string, unknown>'.
+        Index signature for type 'string' is missing in type 'Window & typeof globalThis'.
+src/platform/capabilities.test.ts(107,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(108,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(109,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(119,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(123,26): error TS2304: Cannot find name 'vi'.
+src/platform/capabilities.test.ts(126,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(127,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(128,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(129,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(132,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/capabilities.test.ts(138,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(139,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(140,5): error TS2304: Cannot find name 'expect'.
+src/platform/capabilities.test.ts(141,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(18,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(21,3): error TS2304: Cannot find name 'afterEach'.
+src/platform/extensionNetworkLauncher.test.ts(29,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(31,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(38,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(39,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(43,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(47,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(53,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(55,11): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(61,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(62,24): error TS2304: Cannot find name 'vi'.
+src/platform/extensionNetworkLauncher.test.ts(69,11): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(70,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(70,72): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(73,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionNetworkLauncher.test.ts(74,24): error TS2304: Cannot find name 'vi'.
+src/platform/extensionNetworkLauncher.test.ts(84,11): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(85,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionNetworkLauncher.test.ts(87,7): error TS2304: Cannot find name 'expect'.
+src/platform/extensionTaskCapture.test.ts(3,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionTaskCapture.test.ts(6,3): error TS2304: Cannot find name 'afterEach'.
+src/platform/extensionTaskCapture.test.ts(11,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionTaskCapture.test.ts(12,19): error TS2304: Cannot find name 'vi'.
+src/platform/extensionTaskCapture.test.ts(20,11): error TS2304: Cannot find name 'expect'.
+src/platform/extensionTaskCapture.test.ts(24,5): error TS2304: Cannot find name 'expect'.
+src/platform/extensionTaskCapture.test.ts(24,79): error TS2304: Cannot find name 'expect'.
+src/platform/extensionTaskCapture.test.ts(27,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/extensionTaskCapture.test.ts(28,19): error TS2304: Cannot find name 'vi'.
+src/platform/extensionTaskCapture.test.ts(32,11): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(5,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/manifest.test.ts(6,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/manifest.test.ts(7,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(7,21): error TS2339: Property 'content_scripts' does not exist on type '{ author: string; name: string; description: string; version: string; version_name: string; manifest_version: number; action: { default_popup: string; }; background: { service_worker: string; type: string; }; ... 5 more ...; icons: { ...; }; }'.
+src/platform/manifest.test.ts(8,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(8,21): error TS2339: Property 'devtools_page' does not exist on type '{ author: string; name: string; description: string; version: string; version_name: string; manifest_version: number; action: { default_popup: string; }; background: { service_worker: string; type: string; }; ... 5 more ...; icons: { ...; }; }'.
+src/platform/manifest.test.ts(11,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/manifest.test.ts(12,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(12,42): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(13,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(13,46): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(16,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/platform/manifest.test.ts(24,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(25,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(26,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(26,19): error TS2339: Property 'minimum_chrome_version' does not exist on type 'ManifestV3 | Promise<ManifestV3>'.
+  Property 'minimum_chrome_version' does not exist on type 'Promise<ManifestV3>'.
+src/platform/manifest.test.ts(27,5): error TS2304: Cannot find name 'expect'.
+src/platform/manifest.test.ts(27,20): error TS2339: Property 'browser_specific_settings' does not exist on type 'ManifestV3 | Promise<ManifestV3>'.
+  Property 'browser_specific_settings' does not exist on type 'Promise<ManifestV3>'.
+src/services/contextualTasksService.test.ts(7,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(8,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(9,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(17,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(18,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(19,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(25,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(33,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(34,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(35,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(36,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(39,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(46,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(47,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(48,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(52,1): error TS2593: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(55,3): error TS2593: Cannot find name 'beforeEach'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(66,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(70,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(72,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(73,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(75,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(78,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(82,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(85,3): error TS2593: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha` and then add 'jest' or 'mocha' to the types field in your tsconfig.
+src/services/contextualTasksService.test.ts(93,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(95,5): error TS2304: Cannot find name 'expect'.
+src/services/contextualTasksService.test.ts(96,5): error TS2304: Cannot find name 'expect'.
+src/ui/setup/pages/CommunityGlows/components/AppRightSidebar.vue(153,18): error TS2322: Type 'string' is not assignable to type 'Booleanish | undefined'.
+src/ui/setup/pages/CommunityGlows/components/ProfileAvatarEditor.vue(52,12): error TS2322: Type 'string' is not assignable to type 'Booleanish | "mixed" | undefined'.

@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "separer-plusieurs-comptes-sociaux-sur-un-meme-appareil"
 title: "Can You Really Separate Multiple Social Accounts on One Device?"
 description: "Profiles, local sessions, desktop, Android, and the browser extension: what CommunityGlows actually separates and where the boundaries end."
 date: "2026-09-05"

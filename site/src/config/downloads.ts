@@ -14,7 +14,7 @@ const platformIcons = icons as Record<DownloadPlatformId, { body: string }>
 
 export const downloadPlatforms: readonly DownloadPlatform[] = [
   { id: 'windows', availability: 'available', href: 'https://github.com/commandglows/communityglows/releases/download/windows-latest/CommunityGlows-Windows-latest.exe', iconBody: platformIcons.windows.body },
-  { id: 'linux', availability: 'release-page', href: 'https://github.com/commandglows/communityglows/releases/latest', iconBody: platformIcons.linux.body },
+  { id: 'linux', availability: 'coming-soon', iconBody: platformIcons.linux.body },
   { id: 'android', availability: 'coming-soon', iconBody: platformIcons.android.body },
   { id: 'apple', availability: 'coming-soon', iconBody: platformIcons.apple.body },
 ]

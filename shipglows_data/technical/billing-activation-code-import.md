@@ -1,10 +1,10 @@
 ---
 artifact: runbook
 metadata_schema_version: "1.0"
-artifact_version: "1.0.1"
+artifact_version: "1.0.2"
 project: "communityglows"
 created: "2026-05-30"
-updated: "2026-08-11"
+updated: "2026-09-05"
 status: active
 source_skill: 001-sg-build
 scope: "billing / activation-code-import"
@@ -131,6 +131,8 @@ Use `--continue-on-error` only when a partial import is acceptable and each fail
 - If a batch was imported into the wrong environment, disable the affected codes through the same bridge path instead of editing local tables.
 
 ## Validation
+
+The client must not announce code activation solely because the redemption request returned. It requires an active redemption result and a subsequent successful access check confirming `status=active` and `accessState=lifetime_active`. An inactive response, trial-only snapshot, or failed verification keeps an error visible and preserves the entered code for retry; a repeated code reports already-active only after the same verification. This feedback rule does not grant or modify entitlement authority.
 
 Local validation:
 

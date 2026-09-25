@@ -1,69 +1,70 @@
 ---
-import { getTranslations, type Locale } from '../i18n'
+import type { Locale } from '../i18n'
 import ActionLink from './ui/ActionLink.astro'
 interface Props { lang?: Locale }
 const { lang = 'en' } = Astro.props
-const t = getTranslations(lang)
+const controller = import.meta.env.PUBLIC_NEWSLETTER_CONTROLLER
+const noticeUrl = import.meta.env.PUBLIC_NEWSLETTER_NOTICE_URL
+const noticeVersion = import.meta.env.PUBLIC_NEWSLETTER_NOTICE_VERSION
+const enabled = import.meta.env.PUBLIC_NEWSLETTER_ENABLED === 'true' && Boolean(controller) && Boolean(noticeVersion) && typeof noticeUrl === 'string' && (noticeUrl.startsWith('https://') || /^\/(?!\/)/.test(noticeUrl))
 ---
 
 <section class="py-16 sm:py-24 bg-background">
-  <div class="max-w-2xl mx-auto px-4 text-center" data-reveal>
-    <h2 class="animate-fade-up text-2xl sm:text-3xl font-bold text-foreground mb-4" style="font-family: var(--font-instrument-sans);">
-      {t.newsletter.title}
+  <div class="max-w-2xl mx-auto px-4 text-center">
+    <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+      {lang === 'fr' ? 'La newsletter CommunityGlows' : 'The CommunityGlows newsletter'}
     </h2>
-    <p class="animate-fade-up delay-100 text-muted-foreground mb-8">
-      {t.newsletter.subtitle}
+    <p class="text-muted-foreground mb-8">
+      {enabled ? (lang === 'fr' ? 'Nouveautés, guides et conseils pour utiliser CommunityGlows.' : 'News, guides and tips for using CommunityGlows.') : (lang === 'fr' ? 'Nouveautés, guides et conseils pour utiliser CommunityGlows. L’inscription par e-mail est en préparation ; en attendant son ouverture, retrouvez les notes des versions publiées.' : 'News, guides and tips for using CommunityGlows. Email signup is being prepared; until it opens, you can browse the published release notes.')}
     </p>
-
-    <form class="animate-fade-up delay-200 flex flex-col sm:flex-row gap-3 max-w-md mx-auto" id="newsletter-form" novalidate>
-      <label for="newsletter-email" class="sr-only">{t.newsletter.emailLabel}</label>
-      <input
-        id="newsletter-email"
-        type="email"
-        placeholder={t.newsletter.placeholder}
-        required
-        autocomplete="email"
-        aria-describedby="newsletter-status"
-        class="flex-1 px-4 py-3 rounded-full bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 text-sm"
-      />
-      <ActionLink type="submit" variant="primary">
-        {t.newsletter.subscribe}
-      </ActionLink>
-    </form>
-
-    <p id="newsletter-status" role="status" aria-live="polite" class="animate-fade-up delay-300 mt-4 text-xs text-muted-foreground">{t.newsletter.noSpam}</p>
-
-    <div id="newsletter-copy" class="hidden" aria-hidden="true" data-invalid={t.newsletter.invalidEmail} data-subscribing={t.newsletter.subscribing} data-success={t.newsletter.success} data-subscribe={t.newsletter.subscribe}></div>
-
-    <script>
-      const form = document.getElementById('newsletter-form') as HTMLFormElement
-      const status = document.getElementById('newsletter-status') as HTMLParagraphElement
-      const input = document.getElementById('newsletter-email') as HTMLInputElement
-      const btn = form?.querySelector('button[type="submit"]') as HTMLButtonElement
-      const copy = document.getElementById('newsletter-copy') as HTMLElement
-
-      form?.addEventListener('submit', async (e) => {
-        e.preventDefault()
-        if (!input.value || !input.validity.valid) {
-          status.textContent = copy.dataset.invalid ?? ''
-        status.className = 'mt-4 text-xs text-destructive'
-          input.focus()
-          return
-        }
-        btn.disabled = true
-        btn.textContent = copy.dataset.subscribing ?? ''
-        status.textContent = ''
-        status.className = 'mt-4 text-xs text-muted-foreground'
-
-        // Simulate submission — replace with real endpoint
-        await new Promise((r) => setTimeout(r, 800))
-
-        form.reset()
-        btn.disabled = false
-        btn.textContent = copy.dataset.subscribe ?? ''
-        status.textContent = copy.dataset.success ?? ''
-        status.className = 'mt-4 text-xs text-[var(--sg-color-success)]'
-      })
-    </script>
+    {enabled ? <form action="/api/newsletter/subscribe" method="post" data-newsletter-form class="space-y-4 text-left">
+      <input type="hidden" name="locale" value={lang} />
+      <input type="hidden" name="notice_version" value={noticeVersion} />
+      <label class="block text-foreground">
+        {lang === 'fr' ? 'Adresse e-mail' : 'Email address'}
+        <input type="email" name="email" required maxlength="254" autocomplete="email" class="mt-2 block w-full rounded-lg border border-border bg-background p-3 text-foreground" />
+      </label>
+      <div hidden aria-hidden="true"><label>Website<input name="website" type="text" tabindex="-1" autocomplete="off" /></label></div>
+      <label class="flex items-start gap-3 text-muted-foreground">
+        <input type="checkbox" name="consent" value="yes" required class="mt-1" />
+        <span>{lang === 'fr' ? 'J’accepte de recevoir la newsletter CommunityGlows par e-mail. Je peux me désabonner à tout moment.' : 'I agree to receive the CommunityGlows newsletter by email. I can unsubscribe at any time.'}</span>
+      </label>
+      <p class="text-sm text-muted-foreground">{controller} · <a href={noticeUrl} class="underline">{lang === 'fr' ? 'Utilisation de vos données et vos droits' : 'How your data is used and your rights'}</a></p>
+      <button type="submit" class="rounded-lg bg-primary px-5 py-3 font-medium text-primary-foreground disabled:opacity-60">{lang === 'fr' ? 'S’abonner' : 'Subscribe'}</button>
+      <p data-newsletter-status role="status" aria-live="polite" class="text-sm text-muted-foreground"></p>
+    </form> : <ActionLink href="https://github.com/commandglows/communityglows/releases" variant="secondary">
+      {lang === 'fr' ? 'Voir les versions publiées' : 'View published releases'}
+    </ActionLink>}
   </div>
 </section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]').forEach(form => {
+    form.addEventListener('submit', async event => {
+      event.preventDefault()
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!
+      const status = form.querySelector<HTMLElement>('[data-newsletter-status]')!
+      if (button.disabled) return
+      const data = new FormData(form)
+      const fr = data.get('locale') === 'fr'
+      button.disabled = true
+      form.setAttribute('aria-busy', 'true')
+      status.textContent = fr ? 'Envoi de votre demande…' : 'Submitting your request…'
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 20000)
+      try {
+        const response = await fetch(form.action, { method: 'POST', headers: { accept: 'application/json' }, body: new URLSearchParams(Array.from(data.entries()).map(([key, value]) => [key, String(value)])), signal: controller.signal })
+        const result = await response.json()
+        if (!response.ok || result.ok !== true) throw new Error('signup_failed')
+        status.textContent = fr ? 'Demande acceptée. Consultez votre boîte mail pour confirmer votre inscription.' : 'Request accepted. Check your inbox to confirm your subscription.'
+        form.reset()
+      } catch {
+        status.textContent = fr ? 'L’inscription n’a pas pu aboutir. Réessayez plus tard.' : 'Signup could not be completed. Please try again later.'
+      } finally {
+        clearTimeout(timeout)
+        button.disabled = false
+        form.removeAttribute('aria-busy')
+      }
+    })
+  })
+</script>

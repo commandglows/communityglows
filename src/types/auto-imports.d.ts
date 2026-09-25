@@ -8,6 +8,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const BENTO_DISPLAY_KEY: typeof import('../stores/sidebarPreferences').BENTO_DISPLAY_KEY
   const BILLING_ACCESS_GRACE_MS: typeof import('../composables/useBillingAccess').BILLING_ACCESS_GRACE_MS
   const DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: typeof import('../stores/desktopControlBar').DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO
   const EffectScope: typeof import('vue').EffectScope
@@ -16,12 +17,15 @@ declare global {
   const PROFILE_AVATAR_MAX_LENGTH: typeof import('../stores/profiles').PROFILE_AVATAR_MAX_LENGTH
   const PROFILE_EMOJI_MAX_LENGTH: typeof import('../stores/profiles').PROFILE_EMOJI_MAX_LENGTH
   const PROFILE_NAME_MAX_LENGTH: typeof import('../stores/profiles').PROFILE_NAME_MAX_LENGTH
+  const THEME_PALETTES: typeof import('../utils/themePalette').THEME_PALETTES
   const TRIAL_REMINDER_SNOOZE_MS: typeof import('../composables/useTrialReminder').TRIAL_REMINDER_SNOOZE_MS
   const TRIAL_REMINDER_STORAGE_KEY: typeof import('../composables/useTrialReminder').TRIAL_REMINDER_STORAGE_KEY
   const WEBVIEW_URLS: typeof import('../stores/webviewState').WEBVIEW_URLS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const actions: typeof import('../stores/sidebarPreferences').actions
   const appRouter: typeof import('../utils/router/index').appRouter
   const applyDisableCopyProtection: typeof import('../utils/disableCopyProtection').applyDisableCopyProtection
+  const applyPalette: typeof import('../utils/themePalette').applyPalette
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
   const browser: typeof import('webextension-polyfill')
@@ -50,7 +54,6 @@ declare global {
   const debouncedWatch: typeof import('@vueuse/core').debouncedWatch
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
-  const definePage: typeof import('vue-router/auto').definePage
   const defineStore: typeof import('pinia').defineStore
   const eagerComputed: typeof import('@vueuse/core').eagerComputed
   const effectScope: typeof import('vue').effectScope
@@ -79,6 +82,7 @@ declare global {
   const isShallow: typeof import('vue').isShallow
   const isTrialRestartAllowed: typeof import('../composables/useBillingAccess').isTrialRestartAllowed
   const isTrustedStripeCheckoutUrl: typeof import('../composables/useBillingAccess').isTrustedStripeCheckoutUrl
+  const isValidShortcutKeys: typeof import('../utils/shortcutKeys').isValidShortcutKeys
   const makeDestructurable: typeof import('@vueuse/core').makeDestructurable
   const mapActions: typeof import('pinia').mapActions
   const mapGetters: typeof import('pinia').mapGetters
@@ -88,8 +92,10 @@ declare global {
   const markRaw: typeof import('vue').markRaw
   const mockPosts: typeof import('../stores/mockData/facebookMock').mockPosts
   const nextTick: typeof import('vue').nextTick
+  const normalizeBentoDisplay: typeof import('../stores/sidebarPreferences').normalizeBentoDisplay
   const normalizeDesktopControlBarHeight: typeof import('../stores/desktopControlBar').normalizeDesktopControlBarHeight
   const normalizeDesktopControlBarPosition: typeof import('../stores/desktopControlBar').normalizeDesktopControlBarPosition
+  const normalizePalette: typeof import('../utils/themePalette').normalizePalette
   const normalizeShortcutEvent: typeof import('../stores/shortcuts').normalizeShortcutEvent
   const notivue: typeof import('../utils/notifications').notivue
   const onActivated: typeof import('vue').onActivated
@@ -113,6 +119,7 @@ declare global {
   const onUnmounted: typeof import('vue').onUnmounted
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
+  const paletteTokens: typeof import('../utils/themePalette').paletteTokens
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
   const pinia: typeof import('../utils/pinia').pinia
   const provide: typeof import('vue').provide
@@ -134,8 +141,6 @@ declare global {
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const resolveAutoTheme: typeof import('../utils/themeAuto').resolveAutoTheme
   const resolveComponent: typeof import('vue').resolveComponent
-  const resolveRef: typeof import('@vueuse/core')['resolveRef']
-  const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const setActivePinia: typeof import('pinia').setActivePinia
   const setLocale: typeof import('../utils/i18n').setLocale
   const setMapStoreSuffix: typeof import('pinia').setMapStoreSuffix
@@ -233,6 +238,7 @@ declare global {
   const useEventBus: typeof import('@vueuse/core').useEventBus
   const useEventListener: typeof import('@vueuse/core').useEventListener
   const useEventSource: typeof import('@vueuse/core').useEventSource
+  const useExtensionState: typeof import('../composables/useExtensionState').useExtensionState
   const useEyeDropper: typeof import('@vueuse/core').useEyeDropper
   const useFacebookMockStore: typeof import('../stores/mockData/facebookMock').useFacebookMockStore
   const useFavicon: typeof import('@vueuse/core').useFavicon
@@ -254,11 +260,15 @@ declare global {
   const useIntersectionObserver: typeof import('@vueuse/core').useIntersectionObserver
   const useInterval: typeof import('@vueuse/core').useInterval
   const useIntervalFn: typeof import('@vueuse/core').useIntervalFn
+  const useKanbanContactsStore: typeof import('../stores/kanbanContacts').useKanbanContactsStore
+  const useKanbanItemDialogStore: typeof import('../stores/kanbanItemDialog').useKanbanItemDialogStore
   const useKanbanStore: typeof import('../stores/kanban').useKanbanStore
   const useKeyModifier: typeof import('@vueuse/core').useKeyModifier
   const useLastChanged: typeof import('@vueuse/core').useLastChanged
   const useLink: typeof import('vue-router').useLink
+  const useLocalKanbanContactsStore: typeof import('../stores/kanbanContacts').useLocalKanbanContactsStore
   const useLocalStorage: typeof import('@vueuse/core').useLocalStorage
+  const useLocalTasksStore: typeof import('../stores/contextualTasks').useLocalTasksStore
   const useLocale: typeof import('../composables/useLocale').useLocale
   const useLogoCacheStore: typeof import('../stores/logoCache').useLogoCacheStore
   const useMagicKeys: typeof import('@vueuse/core').useMagicKeys
@@ -311,6 +321,7 @@ declare global {
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
   const useShare: typeof import('@vueuse/core').useShare
   const useShortcutsStore: typeof import('../stores/shortcuts').useShortcutsStore
+  const useSidebarPreferencesStore: typeof import('../stores/sidebarPreferences').useSidebarPreferencesStore
   const useSignupNudge: typeof import('../composables/useSignupNudge').useSignupNudge
   const useSlots: typeof import('vue').useSlots
   const useSocialNetworksStore: typeof import('../stores/socialNetworks').useSocialNetworksStore
@@ -407,11 +418,14 @@ declare global {
   export type { DesktopControlBarPosition } from '../stores/desktopControlBar'
   import('../stores/desktopControlBar')
   // @ts-ignore
-  export type { DesktopWorkspaceSyncResult } from '../stores/desktopWorkspaces'
+  export type { DesktopWorkspaceSyncResult, DesktopSceneCommand } from '../stores/desktopWorkspaces'
   import('../stores/desktopWorkspaces')
   // @ts-ignore
   export type { KanbanItem, KanbanColumnId } from '../stores/kanban'
   import('../stores/kanban')
+  // @ts-ignore
+  export type { KanbanContact, KanbanContactInput, KanbanContactProfileLink } from '../stores/kanbanContacts'
+  import('../stores/kanbanContacts')
   // @ts-ignore
   export type { FacebookPost } from '../stores/mockData/facebookMock'
   import('../stores/mockData/facebookMock')
@@ -422,8 +436,14 @@ declare global {
   export type { CoreShortcutAction, NetworkShortcutAction, ProfileShortcutAction, RightPanelShortcutAction, ShortcutAction, AppShortcut } from '../stores/shortcuts'
   import('../stores/shortcuts')
   // @ts-ignore
+  export type { BentoDisplay } from '../stores/sidebarPreferences'
+  import('../stores/sidebarPreferences')
+  // @ts-ignore
   export type { ThemeMode, AutoThemeSource, AutoThemeResolution } from '../utils/themeAuto'
   import('../utils/themeAuto')
+  // @ts-ignore
+  export type { ThemePalette } from '../utils/themePalette'
+  import('../utils/themePalette')
 }
 
 // for vue template auto import
@@ -431,6 +451,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly BENTO_DISPLAY_KEY: UnwrapRef<typeof import('../stores/sidebarPreferences')['BENTO_DISPLAY_KEY']>
     readonly BILLING_ACCESS_GRACE_MS: UnwrapRef<typeof import('../composables/useBillingAccess')['BILLING_ACCESS_GRACE_MS']>
     readonly DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO: UnwrapRef<typeof import('../stores/desktopControlBar')['DESKTOP_CONTROL_BAR_MAX_HEIGHT_RATIO']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
@@ -439,12 +460,15 @@ declare module 'vue' {
     readonly PROFILE_AVATAR_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_AVATAR_MAX_LENGTH']>
     readonly PROFILE_EMOJI_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_EMOJI_MAX_LENGTH']>
     readonly PROFILE_NAME_MAX_LENGTH: UnwrapRef<typeof import('../stores/profiles')['PROFILE_NAME_MAX_LENGTH']>
+    readonly THEME_PALETTES: UnwrapRef<typeof import('../utils/themePalette')['THEME_PALETTES']>
     readonly TRIAL_REMINDER_SNOOZE_MS: UnwrapRef<typeof import('../composables/useTrialReminder')['TRIAL_REMINDER_SNOOZE_MS']>
     readonly TRIAL_REMINDER_STORAGE_KEY: UnwrapRef<typeof import('../composables/useTrialReminder')['TRIAL_REMINDER_STORAGE_KEY']>
     readonly WEBVIEW_URLS: UnwrapRef<typeof import('../stores/webviewState')['WEBVIEW_URLS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly actions: UnwrapRef<typeof import('../stores/sidebarPreferences')['actions']>
     readonly appRouter: UnwrapRef<typeof import('../utils/router/index')['appRouter']>
     readonly applyDisableCopyProtection: UnwrapRef<typeof import('../utils/disableCopyProtection')['applyDisableCopyProtection']>
+    readonly applyPalette: UnwrapRef<typeof import('../utils/themePalette')['applyPalette']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly browser: UnwrapRef<typeof import('webextension-polyfill')>
@@ -473,7 +497,6 @@ declare module 'vue' {
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
-    readonly definePage: UnwrapRef<typeof import('vue-router/auto')['definePage']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
@@ -502,6 +525,7 @@ declare module 'vue' {
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
     readonly isTrialRestartAllowed: UnwrapRef<typeof import('../composables/useBillingAccess')['isTrialRestartAllowed']>
     readonly isTrustedStripeCheckoutUrl: UnwrapRef<typeof import('../composables/useBillingAccess')['isTrustedStripeCheckoutUrl']>
+    readonly isValidShortcutKeys: UnwrapRef<typeof import('../utils/shortcutKeys')['isValidShortcutKeys']>
     readonly makeDestructurable: UnwrapRef<typeof import('@vueuse/core')['makeDestructurable']>
     readonly mapActions: UnwrapRef<typeof import('pinia')['mapActions']>
     readonly mapGetters: UnwrapRef<typeof import('pinia')['mapGetters']>
@@ -511,8 +535,10 @@ declare module 'vue' {
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly mockPosts: UnwrapRef<typeof import('../stores/mockData/facebookMock')['mockPosts']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
+    readonly normalizeBentoDisplay: UnwrapRef<typeof import('../stores/sidebarPreferences')['normalizeBentoDisplay']>
     readonly normalizeDesktopControlBarHeight: UnwrapRef<typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarHeight']>
     readonly normalizeDesktopControlBarPosition: UnwrapRef<typeof import('../stores/desktopControlBar')['normalizeDesktopControlBarPosition']>
+    readonly normalizePalette: UnwrapRef<typeof import('../utils/themePalette')['normalizePalette']>
     readonly normalizeShortcutEvent: UnwrapRef<typeof import('../stores/shortcuts')['normalizeShortcutEvent']>
     readonly notivue: UnwrapRef<typeof import('../utils/notifications')['notivue']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
@@ -536,6 +562,7 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly paletteTokens: UnwrapRef<typeof import('../utils/themePalette')['paletteTokens']>
     readonly pausableWatch: UnwrapRef<typeof import('@vueuse/core')['pausableWatch']>
     readonly pinia: UnwrapRef<typeof import('../utils/pinia')['pinia']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
@@ -654,6 +681,7 @@ declare module 'vue' {
     readonly useEventBus: UnwrapRef<typeof import('@vueuse/core')['useEventBus']>
     readonly useEventListener: UnwrapRef<typeof import('@vueuse/core')['useEventListener']>
     readonly useEventSource: UnwrapRef<typeof import('@vueuse/core')['useEventSource']>
+    readonly useExtensionState: UnwrapRef<typeof import('../composables/useExtensionState')['useExtensionState']>
     readonly useEyeDropper: UnwrapRef<typeof import('@vueuse/core')['useEyeDropper']>
     readonly useFacebookMockStore: UnwrapRef<typeof import('../stores/mockData/facebookMock')['useFacebookMockStore']>
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
@@ -675,11 +703,15 @@ declare module 'vue' {
     readonly useIntersectionObserver: UnwrapRef<typeof import('@vueuse/core')['useIntersectionObserver']>
     readonly useInterval: UnwrapRef<typeof import('@vueuse/core')['useInterval']>
     readonly useIntervalFn: UnwrapRef<typeof import('@vueuse/core')['useIntervalFn']>
+    readonly useKanbanContactsStore: UnwrapRef<typeof import('../stores/kanbanContacts')['useKanbanContactsStore']>
+    readonly useKanbanItemDialogStore: UnwrapRef<typeof import('../stores/kanbanItemDialog')['useKanbanItemDialogStore']>
     readonly useKanbanStore: UnwrapRef<typeof import('../stores/kanban')['useKanbanStore']>
     readonly useKeyModifier: UnwrapRef<typeof import('@vueuse/core')['useKeyModifier']>
     readonly useLastChanged: UnwrapRef<typeof import('@vueuse/core')['useLastChanged']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useLocalKanbanContactsStore: UnwrapRef<typeof import('../stores/kanbanContacts')['useLocalKanbanContactsStore']>
     readonly useLocalStorage: UnwrapRef<typeof import('@vueuse/core')['useLocalStorage']>
+    readonly useLocalTasksStore: UnwrapRef<typeof import('../stores/contextualTasks')['useLocalTasksStore']>
     readonly useLocale: UnwrapRef<typeof import('../composables/useLocale')['useLocale']>
     readonly useLogoCacheStore: UnwrapRef<typeof import('../stores/logoCache')['useLogoCacheStore']>
     readonly useMagicKeys: UnwrapRef<typeof import('@vueuse/core')['useMagicKeys']>
@@ -732,6 +764,7 @@ declare module 'vue' {
     readonly useSessionStorage: UnwrapRef<typeof import('@vueuse/core')['useSessionStorage']>
     readonly useShare: UnwrapRef<typeof import('@vueuse/core')['useShare']>
     readonly useShortcutsStore: UnwrapRef<typeof import('../stores/shortcuts')['useShortcutsStore']>
+    readonly useSidebarPreferencesStore: UnwrapRef<typeof import('../stores/sidebarPreferences')['useSidebarPreferencesStore']>
     readonly useSignupNudge: UnwrapRef<typeof import('../composables/useSignupNudge')['useSignupNudge']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSocialNetworksStore: UnwrapRef<typeof import('../stores/socialNetworks')['useSocialNetworksStore']>

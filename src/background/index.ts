@@ -1,4 +1,8 @@
-import { createExtensionTab, extensionUrl } from "@/platform/webExtensionApi"
+import {
+  createExtensionTab,
+  createExtensionWindow,
+  extensionUrl,
+} from "@/platform/webExtensionApi"
 import { createNetworkTabManager } from "./networkTabGroup"
 import { parseNetworkCommand } from "./networkTabMessages"
 
@@ -70,24 +74,26 @@ chrome.runtime.onInstalled.addListener((details) => {
   void handleInstalled(details.reason)
 })
 
+const DASHBOARD_PATH =
+  "src/ui/setup/pages/CommunityGlows/extension-dashboard.html"
+
+async function openCommunityGlowsExperience() {
+  const url = extensionUrl(DASHBOARD_PATH)
+  if (!url) throw new Error("runtime_url_unavailable")
+
+  await createExtensionWindow({ focused: true, url })
+}
+
 async function handleInstalled(
   reason: chrome.runtime.OnInstalledReason,
 ): Promise<void> {
-  const route =
-    reason === "install"
-      ? "/setup/install"
-      : reason === "update"
-        ? "/setup/update"
-        : null
-  if (!route) return
+  if (reason !== "install" && reason !== "update") return
 
   try {
-    const url = extensionUrl(`src/ui/setup/index.html#${route}`)
-    if (!url) throw new Error("runtime_url_unavailable")
-    await createExtensionTab({ active: true, url })
+    await openCommunityGlowsExperience()
   } catch (error) {
     console.error(
-      `[CommunityGlows] Unable to open the extension setup flow (${reason}): ${error instanceof Error ? error.message : "unknown_error"}`,
+      `[CommunityGlows] Unable to open the extension experience (${reason}): ${error instanceof Error ? error.message : "unknown_error"}`,
     )
   }
 }

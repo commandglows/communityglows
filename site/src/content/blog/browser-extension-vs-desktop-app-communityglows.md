@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "extension-ou-application-desktop-communityglows"
 title: "CommunityGlows Browser Extension or Desktop App: Which Should You Use?"
 description: "The extension opens networks in your browser; the desktop app brings them into a Bento workspace. Here is what that changes in daily use."
 date: "2026-09-05"

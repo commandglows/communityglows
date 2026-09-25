@@ -1,0 +1,111 @@
+- generic [ref=e6]:
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - button "Toggle left sidebar" [ref=e11] [cursor=pointer]
+      - heading "CommunityGlows" [level=1] [ref=e15]
+    - button "🟦 Profile 1" [ref=e17] [cursor=pointer]:
+      - generic [ref=e18]: 🟦
+      - generic [ref=e19]: Profile 1
+    - button "Bento" [ref=e23] [cursor=pointer]
+    - generic [ref=e29]:
+      - status
+      - generic [ref=e30]:
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e32]:
+          - button "Réseaux sociaux" [expanded] [ref=e33] [cursor=pointer]:
+            - generic [ref=e37]: 4/4
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e43]:
+          - button "Twitter / X" [ref=e45] [cursor=pointer]
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e55]:
+          - button "Facebook" [ref=e57] [cursor=pointer]
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e67]:
+          - button "Instagram" [ref=e69] [cursor=pointer]
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e79]:
+          - button "LinkedIn" [ref=e81] [cursor=pointer]
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e89]:
+          - button "Vidéo et streaming" [expanded] [ref=e90] [cursor=pointer]:
+            - generic [ref=e94]: 1/1
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e100]:
+          - button "TikTok" [ref=e102] [cursor=pointer]
+        - generic "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions" [ref=e112]:
+          - button "Kanban" [ref=e114] [cursor=pointer]
+  - separator [ref=e121]
+  - generic [ref=e123]:
+    - main [ref=e127]:
+      - generic [ref=e128]:
+        - strong [ref=e129]: Kanban local · Sans synchronisation
+        - paragraph [ref=e130]: Vos cartes et contacts restent dans ce navigateur ou cette installation, sans synchronisation. Effacer ses données ou perdre cet appareil peut entraîner leur perte.
+        - paragraph [ref=e131]: Vos tâches locales restent conservées après connexion. Vous pourrez les copier dans votre compte depuis le Kanban.
+        - link "Créer mon compte" [ref=e132] [cursor=pointer]:
+          - /url: "#/login"
+      - generic [ref=e133]:
+        - generic [ref=e134]:
+          - paragraph [ref=e135]: Organisation communautaire
+          - heading "Kanban" [level=1] [ref=e136]
+          - paragraph [ref=e137]: Organisez vos tâches et vos suivis avec des notes, des échéances, des personnes associées et des liens vers vos réseaux.
+        - generic [ref=e138]:
+          - button "Contacts (1)" [ref=e139] [cursor=pointer]
+          - button "Nouvelle tâche" [ref=e144] [cursor=pointer]
+      - generic [ref=e149]:
+        - generic [ref=e150]:
+          - generic [ref=e151]:
+            - 'textbox "Nom de l’étape : À faire" [ref=e152]': À faire
+            - generic [ref=e153]: "2"
+          - generic [ref=e154]:
+            - article [ref=e155]:
+              - generic [ref=e156]:
+                - generic [ref=e157]: Normale
+                - button "Supprimer la tâche" [ref=e158] [cursor=pointer]
+              - heading "Vérification kanban local" [level=4] [ref=e161]
+              - button "Modifier la carte" [ref=e162] [cursor=pointer]
+            - article [ref=e165]:
+              - generic [ref=e166]:
+                - generic [ref=e167]: Normale
+                - button "Supprimer la tâche" [ref=e168] [cursor=pointer]
+              - heading "Relancer Camille" [level=4] [ref=e171]
+              - generic [ref=e172]: Camille Suivi
+              - button "Modifier la carte" [ref=e174] [cursor=pointer]
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - 'textbox "Nom de l’étape : En attente" [ref=e179]': En attente
+            - generic [ref=e180]: "0"
+          - paragraph [ref=e182]: Aucune tâche
+        - generic [ref=e183]:
+          - generic [ref=e184]:
+            - 'textbox "Nom de l’étape : Terminé" [ref=e185]': Terminé
+            - generic [ref=e186]: "0"
+          - paragraph [ref=e188]: Aucune tâche
+    - separator [ref=e189]
+    - generic [ref=e191]:
+      - button "Toggle right sidebar" [ref=e193] [cursor=pointer]
+      - generic [ref=e197]:
+        - generic [ref=e198]:
+          - generic [ref=e199]: 🟦
+          - button "Modifier l’image du profil"
+        - button "Profile 1" [ref=e202] [cursor=pointer]
+      - generic [ref=e204]:
+        - button "Fil d'actualité" [ref=e206] [cursor=pointer]
+        - button "Profil" [ref=e213] [cursor=pointer]
+        - button "Notifications" [ref=e220] [cursor=pointer]:
+          - generic [ref=e221]:
+            - generic [ref=e222]: "3"
+            - generic [ref=e227]: Notifications
+        - button "Enregistrements" [ref=e229] [cursor=pointer]
+        - button "Événements" [ref=e236] [cursor=pointer]
+      - generic [ref=e244]:
+        - generic [ref=e245]:
+          - button "Replier Kanban" [expanded] [ref=e246] [cursor=pointer]:
+            - generic [ref=e250]: Kanban
+          - button "Ouvrir Kanban" [ref=e253] [cursor=pointer]
+        - generic [ref=e258]:
+          - group "Archivé (0)" [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]: Archivé
+              - generic [ref=e262]: "0"
+          - group "À faire (0)" [ref=e263]:
+            - generic [ref=e264]:
+              - generic [ref=e265]: À faire
+              - generic [ref=e266]: "0"
+          - group "En attente (0)" [ref=e267]:
+            - generic [ref=e268]:
+              - generic [ref=e269]: En attente
+              - generic [ref=e270]: "0"

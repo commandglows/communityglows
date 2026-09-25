@@ -1,5 +1,5 @@
 const DEFAULT_SITE_URL = 'https://communityglows.com'
-const DEFAULT_APP_URL = 'https://github.com/dianedef/CommunityGlows/releases/latest'
+const DEFAULT_APP_URL = 'https://communityglows.com/download'
 const DEFAULT_EMAIL_DOMAIN = 'communityglows.com'
 
 function stripTrailingSlash(url: string): string {
@@ -21,7 +21,8 @@ export function siteUrl(path = '/'): string {
   return new URL(path, `${SITE_URL}/`).toString()
 }
 
-export function appUrl(path = ''): string {
+export function appUrl(path = '', locale: 'en' | 'fr' = 'en'): string {
+  if (!import.meta.env.PUBLIC_APP_URL && (!path || path === '/')) return locale === 'fr' ? '/fr/download' : '/download'
   if (!path || path === '/') return APP_URL
   return new URL(path.replace(/^\/+/, ''), `${APP_URL}/`).toString()
 }

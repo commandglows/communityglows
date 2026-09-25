@@ -1,0 +1,22 @@
+name: CommunityGlows production runtime
+description: Load and verify the public EU production endpoints from Doppler.
+inputs:
+  doppler-token:
+    description: Read-only token scoped to communityglows/prd
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: dopplerhq/secrets-fetch-action@v2.0.0
+      id: doppler
+      with:
+        doppler-token: ${{ inputs.doppler-token }}
+        doppler-project: communityglows
+        doppler-config: prd
+        inject-env-vars: false
+    - name: Verify and expose public production endpoints
+      shell: bash
+      env:
+        VITE_CONVEX_URL: ${{ steps.doppler.outputs.VITE_CONVEX_URL }}
+        VITE_CONVEX_SITE_URL: ${{ steps.doppler.outputs.VITE_CONVEX_SITE_URL }}
+      run: node scripts/verify-production-runtime.mjs --github-env

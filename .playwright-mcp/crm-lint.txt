@@ -1,0 +1,75 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+C:\Users\Diane\ShipGlows\communityglows\src\ui\setup\pages\CommunityGlows\components\tasks\KanbanContacts.vue
+  40:36   warning  ':aria-label' should be on a new line      vue/max-attributes-per-line
+  43:48   warning  'icon' should be on a new line             vue/max-attributes-per-line
+  43:71   warning  '@click' should be on a new line           vue/max-attributes-per-line
+  45:26   warning  'ref' should be on a new line              vue/max-attributes-per-line
+  45:44   warning  'class' should be on a new line            vue/max-attributes-per-line
+  45:65   warning  '@submit.prevent' should be on a new line  vue/max-attributes-per-line
+  48:71   warning  'required' should be on a new line         vue/max-attributes-per-line
+  48:80   warning  'maxlength' should be on a new line        vue/max-attributes-per-line
+  48:96   warning  'autocomplete' should be on a new line     vue/max-attributes-per-line
+  49:77   warning  'type' should be on a new line             vue/max-attributes-per-line
+  49:88   warning  'placeholder' should be on a new line      vue/max-attributes-per-line
+  50:89   warning  'type' should be on a new line             vue/max-attributes-per-line
+  52:83   warning  'rows' should be on a new line             vue/max-attributes-per-line
+  52:92   warning  'maxlength' should be on a new line        vue/max-attributes-per-line
+  53:24   warning  'role' should be on a new line             vue/max-attributes-per-line
+  54:61   warning  ':label' should be on a new line           vue/max-attributes-per-line
+  54:90   warning  'text' should be on a new line             vue/max-attributes-per-line
+  54:95   warning  '@click' should be on a new line           vue/max-attributes-per-line
+  54:146  warning  ':label' should be on a new line           vue/max-attributes-per-line
+  56:35   warning  'class' should be on a new line            vue/max-attributes-per-line
+  56:117  warning  'type' should be on a new line             vue/max-attributes-per-line
+  60:44   warning  ':key' should be on a new line             vue/max-attributes-per-line
+  60:62   warning  'class' should be on a new line            vue/max-attributes-per-line
+  63:32   warning  'class' should be on a new line            vue/max-attributes-per-line
+  64:31   warning  ':href' should be on a new line            vue/max-attributes-per-line
+  64:51   warning  'target' should be on a new line           vue/max-attributes-per-line
+  64:67   warning  'rel' should be on a new line              vue/max-attributes-per-line
+  65:81   warning  'text' should be on a new line             vue/max-attributes-per-line
+  65:86   warning  '@click' should be on a new line           vue/max-attributes-per-line
+  65:151  warning  'text' should be on a new line             vue/max-attributes-per-line
+  65:156  warning  '@click' should be on a new line           vue/max-attributes-per-line
+
+C:\Users\Diane\ShipGlows\communityglows\src\ui\setup\pages\CommunityGlows\components\tasks\TaskBoard.vue
+  73:47   warning  'class' should be on a new line   vue/max-attributes-per-line
+  74:100  warning  ':key' should be on a new line    vue/max-attributes-per-line
+  76:50   warning  'text' should be on a new line    vue/max-attributes-per-line
+  76:55   warning  '@click' should be on a new line  vue/max-attributes-per-line
+  91:41   warning  'class' should be on a new line   vue/max-attributes-per-line
+  92:40   warning  'class' should be on a new line   vue/max-attributes-per-line
+
+C:\Users\Diane\ShipGlows\communityglows\src\ui\setup\pages\CommunityGlows\components\tasks\TaskForm.vue
+  120:38  warning  'class' should be on a new line   vue/max-attributes-per-line
+  122:42  warning  ':key' should be on a new line    vue/max-attributes-per-line
+  122:60  warning  'class' should be on a new line   vue/max-attributes-per-line
+  123:37  warning  'type' should be on a new line    vue/max-attributes-per-line
+  123:53  warning  ':value' should be on a new line  vue/max-attributes-per-line
+
+C:\Users\Diane\ShipGlows\communityglows\src\ui\setup\pages\CommunityGlows\views\TasksView.vue
+  119:31   warning  'class' should be on a new line                       vue/max-attributes-per-line
+  125:217  warning  'class' should be on a new line                       vue/max-attributes-per-line
+  127:55   warning  '@click' should be on a new line                      vue/max-attributes-per-line
+  137:1    warning  Expected indentation of 8 spaces but found 6 spaces   vue/html-indent
+  137:85   warning  'icon' should be on a new line                        vue/max-attributes-per-line
+  137:104  warning  ':aria-expanded' should be on a new line              vue/max-attributes-per-line
+  137:134  warning  '@click' should be on a new line                      vue/max-attributes-per-line
+  138:1    warning  Expected indentation of 8 spaces but found 6 spaces   vue/html-indent
+  139:1    warning  Expected indentation of 10 spaces but found 8 spaces  vue/html-indent
+  140:1    warning  Expected indentation of 10 spaces but found 8 spaces  vue/html-indent
+  141:1    warning  Expected indentation of 10 spaces but found 8 spaces  vue/html-indent
+  142:1    warning  Expected indentation of 10 spaces but found 8 spaces  vue/html-indent
+  143:1    warning  Expected indentation of 8 spaces but found 6 spaces   vue/html-indent
+  147:64   warning  'role' should be on a new line                        vue/max-attributes-per-line
+  148:41   warning  ':contacts' should be on a new line                   vue/max-attributes-per-line
+  148:76   warning  ':save' should be on a new line                       vue/max-attributes-per-line
+  148:96   warning  '@filter' should be on a new line                     vue/max-attributes-per-line
+  149:31   warning  'class' should be on a new line                       vue/max-attributes-per-line
+  151:45   warning  'text' should be on a new line                        vue/max-attributes-per-line
+  151:50   warning  '@click' should be on a new line                      vue/max-attributes-per-line
+
+✖ 62 problems (0 errors, 62 warnings)
+  0 errors and 40 warnings potentially fixable with the `--fix` option.
+

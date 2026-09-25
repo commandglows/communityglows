@@ -5,9 +5,9 @@
   "identifier": "com.communityglows.desktop",
   "build": {
     "frontendDist": "../dist/tauri",
-    "devUrl": "http://localhost:1420",
-    "beforeDevCommand": "pnpm tauri:dev",
-    "beforeBuildCommand": "pnpm tauri:build"
+    "devUrl": "http://127.0.0.1:3006",
+    "beforeDevCommand": "corepack pnpm run tauri:dev",
+    "beforeBuildCommand": "corepack pnpm run tauri:build"
   },
   "app": {
     "windows": [

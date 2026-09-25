@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Grouped site selection in onboarding and the application, including a CRM category for Breakcold, ClarkUp, Clay and Dex; Bento additions can use category or personal tab groups without rearranging existing tabs.
+- Added Nostr as an optional, non-default social network backed by the `nostr.com` web client and the existing per-profile WebView isolation policy.
 - Added a shared desktop/mobile settings panel for CommunityGlows Lifetime Deal and early-bird code activation, backed by the internal processor-agnostic billing entitlement layer.
 - Added an operator import script and runbook for direct Lifetime Deal and early-bird activation-code batches through the suite entitlement bridge.
 - Added local contextual tasks with HTTPS URL capture, notes, tags, priority, due date, status columns, and backup/restore support.

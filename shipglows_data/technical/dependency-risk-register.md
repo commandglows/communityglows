@@ -14,7 +14,7 @@ risk_level: medium
 security_impact: yes
 docs_impact: yes
 depends_on:
-  - artifact: "shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md"
+  - artifact: "shipglows_data/workflow/specs/communityglows-dependency-hygiene-and-major-line-migration.md"
     artifact_version: "1.0.0"
     required_status: "ready"
 supersedes: []

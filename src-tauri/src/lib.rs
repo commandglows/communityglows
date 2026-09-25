@@ -431,6 +431,10 @@ fn allowed_hosts_for_network(network_id: &str) -> &'static [&'static str] {
         "stackoverflow" => &["stackoverflow.com"],
         "github-community" => &["github.com"],
         "huzzler" => &["huzzler.so"],
+        "breakcold" => &["us.breakcold.com"],
+        "clarkup" => &["app.clarkup.com"],
+        "clay" => &["app.clay.com"],
+        "dex" => &["getdex.com"],
         _ => &[],
     }
 }
@@ -747,6 +751,27 @@ fn validate_desktop_webview_bounds(
 #[cfg(not(target_os = "android"))]
 fn webview_label(profile_id: &str, network_id: &str) -> String {
     format!("social-{}-{}", profile_id, network_id)
+}
+
+/// The instance labels a tab, never its account/session storage directory.
+#[cfg(not(target_os = "android"))]
+fn instance_webview_label(
+    profile_id: &str,
+    network_id: &str,
+    instance_id: Option<&str>,
+) -> Result<String, String> {
+    let base = webview_label(profile_id, network_id);
+    match instance_id {
+        None => Ok(base),
+        Some(id)
+            if !id.is_empty()
+                && id.len() <= 64
+                && id.bytes().all(|c| c.is_ascii_alphanumeric() || c == b'_' || c == b'-') =>
+        {
+            Ok(format!("social-{profile_id}-instance--{}-{network_id}-{id}", network_id.len()))
+        }
+        Some(_) => Err("Invalid webview instance ID".into()),
+    }
 }
 
 /// A child webview can only receive focus when it has a rendered surface.
@@ -1320,6 +1345,7 @@ async fn open_webview(
     url: String,
     profile_id: String,
     network_id: String,
+    instance_id: Option<String>,
     dark_mode: bool,
     _storage_origins: Option<Vec<String>>,
     hidden: Option<bool>,
@@ -1330,7 +1356,7 @@ async fn open_webview(
 ) -> Result<(), String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
     validate_desktop_webview_bounds(x, y, width, height)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     let parsed = parse_desktop_webview_url(&url, &network_id)?;
     let start_hidden = hidden.unwrap_or(false);
 
@@ -1479,9 +1505,10 @@ async fn navigate_webview(
     url: String,
     profile_id: String,
     network_id: String,
+    instance_id: Option<String>,
 ) -> Result<(), String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     if let Some(wv) = app.get_webview(&label) {
         let parsed = parse_desktop_webview_url(&url, &network_id)?;
         wv.navigate(parsed).map_err(|e| e.to_string())?;
@@ -1510,6 +1537,7 @@ fn resize_webview(
     app: AppHandle,
     profile_id: String,
     network_id: String,
+    instance_id: Option<String>,
     x: f64,
     y: f64,
     width: f64,
@@ -1517,7 +1545,7 @@ fn resize_webview(
 ) -> Result<(), String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
     validate_desktop_webview_bounds(x, y, width, height)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     if let Some(wv) = app.get_webview(&label) {
         wv.set_bounds(tauri::Rect {
             position: tauri::Position::Logical(tauri::LogicalPosition::new(x, y)),
@@ -1530,9 +1558,14 @@ fn resize_webview(
 
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
-fn close_webview(app: AppHandle, profile_id: String, network_id: String) -> Result<(), String> {
+fn close_webview(
+    app: AppHandle,
+    profile_id: String,
+    network_id: String,
+    instance_id: Option<String>,
+) -> Result<(), String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     if let Some(wv) = app.get_webview(&label) {
         wv.close().map_err(|e| e.to_string())?;
     }
@@ -1548,9 +1581,14 @@ fn close_webview(app: AppHandle, profile_id: String, network_id: String) -> Resu
 /// Hide a webview without destroying it (webview pooling).
 #[tauri::command]
 #[cfg(not(target_os = "android"))]
-fn hide_webview(app: AppHandle, profile_id: String, network_id: String) -> Result<(), String> {
+fn hide_webview(
+    app: AppHandle,
+    profile_id: String,
+    network_id: String,
+    instance_id: Option<String>,
+) -> Result<(), String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     if let Some(wv) = app.get_webview(&label) {
         wv.hide().map_err(|e| e.to_string())?;
         // Hiding a child does not move focus. Return it to the host so desktop
@@ -1573,6 +1611,7 @@ fn show_webview(
     app: AppHandle,
     profile_id: String,
     network_id: String,
+    instance_id: Option<String>,
     x: f64,
     y: f64,
     width: f64,
@@ -1580,7 +1619,7 @@ fn show_webview(
 ) -> Result<bool, String> {
     validate_desktop_webview_identity(&profile_id, &network_id)?;
     validate_desktop_webview_bounds(x, y, width, height)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     if let Some(wv) = app.get_webview(&label) {
         wv.set_bounds(tauri::Rect {
             position: tauri::Position::Logical(tauri::LogicalPosition::new(x, y)),
@@ -1823,6 +1862,7 @@ fn set_webview_preferences(
     app: AppHandle,
     profile_id: Option<String>,
     network_id: Option<String>,
+    instance_id: Option<String>,
     grayscale: bool,
     dark_mode: bool,
     text_zoom: i32,
@@ -1831,7 +1871,7 @@ fn set_webview_preferences(
         return Ok(());
     };
     validate_desktop_webview_identity(&profile_id, &network_id)?;
-    let label = webview_label(&profile_id, &network_id);
+    let label = instance_webview_label(&profile_id, &network_id, instance_id.as_deref())?;
     let Some(wv) = app.get_webview(&label) else {
         return Ok(());
     };
@@ -1970,7 +2010,16 @@ fn delete_network_session(
         .join(&profile_id)
         .join(&network_id);
 
-    close_webview(app.clone(), profile_id.clone(), network_id.clone())?;
+    // All tab instances use this same session; release every view before wiping it.
+    let base = webview_label(&profile_id, &network_id);
+    let instance_prefix = format!("social-{profile_id}-instance--{}-{network_id}-", network_id.len());
+    for (label, view) in app.webviews() {
+        if label == base || label.starts_with(&instance_prefix) {
+            view.close().map_err(|e| e.to_string())?;
+            app.state::<DesktopWebviewPoolState>().entries.lock()
+                .map_err(|_| "webview pool lock poisoned")?.remove(&label);
+        }
+    }
     if data_dir.exists() {
         std::fs::remove_dir_all(&data_dir).map_err(|e| e.to_string())?;
     }
@@ -2355,5 +2404,24 @@ mod tests {
         if destination.exists() {
             std::fs::remove_dir_all(destination).expect("remove extraction directory");
         }
+    }
+}
+
+#[cfg(all(test, not(target_os = "android")))]
+mod network_instance_tests {
+    use super::*;
+    #[test]
+    fn instance_labels_are_distinct_and_leave_default_compatible() {
+        assert_eq!(instance_webview_label("profile1", "twitter", None).unwrap(), webview_label("profile1", "twitter"));
+        assert_ne!(instance_webview_label("profile1", "twitter", Some("copy1")).unwrap(), instance_webview_label("profile1", "twitter", Some("copy2")).unwrap());
+        assert_ne!(instance_webview_label("profile1", "twitter", Some("copy1")).unwrap(), instance_webview_label("profile2", "twitter", Some("copy1")).unwrap());
+        assert_ne!(instance_webview_label("profile1", "custom-a", Some("b-c")).unwrap(), instance_webview_label("profile1", "custom-a-b", Some("c")).unwrap());
+    }
+    #[test]
+    fn rejects_invalid_instance_identifiers() {
+        for id in ["", "../escape", "a:b", "copy name"] {
+            assert!(instance_webview_label("profile1", "twitter", Some(id)).is_err());
+        }
+        assert!(instance_webview_label("profile1", "twitter", Some(&"a".repeat(65))).is_err());
     }
 }

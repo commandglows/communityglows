@@ -60,7 +60,7 @@ const decisions = [
   },
   {
     need: 'Protect attention and make follow-up visible',
-    direction: 'CommunityGlows brings focus controls and a visual workflow into the same workspace.',
+    direction: 'CommunityGlows offers focus controls on Windows. Bento, Scenes and contextual Tasks are being prepared for release.',
   },
 ]
 
@@ -92,14 +92,16 @@ const jsonLd = [{
         Some tools help teams publish more. Others isolate browser sessions. CommunityGlows is shaped around another priority: being present, keeping human context, and building continuity with the people behind every account.
       </p>
       <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <ActionLink href={appUrl()} size="md">
-          Try everything for 30 days
+        <ActionLink href={appUrl('', 'en')} size="md">
+          Download the Windows preview
         </ActionLink>
         <ActionLink href="/pricing" variant="secondary" size="md">
           View pricing
         </ActionLink>
       </div>
     </section>
+
+    <aside class="mx-auto max-w-5xl px-4 pb-8 text-sm leading-relaxed text-muted-foreground">Windows public preview. Android and the Chrome and Firefox extensions are not publicly distributed yet. Available features depend on your version; Bento, Scenes and Tasks are in preparation.</aside>
 
     <section class="max-w-6xl mx-auto px-4 py-16" aria-labelledby="approaches-title">
       <div class="mx-auto mb-12 max-w-3xl text-center">
@@ -158,8 +160,8 @@ const jsonLd = [{
       <p class="mt-4 text-lg leading-8 text-muted-foreground">
         If your best work happens when you can listen, understand, and return with care, CommunityGlows gives that rhythm a dedicated home.
       </p>
-      <ActionLink href={appUrl()} size="md" class="mt-8">
-        Try CommunityGlows free for 30 days
+      <ActionLink href={appUrl('', 'en')} size="md" class="mt-8">
+        Download CommunityGlows for Windows
       </ActionLink>
     </section>
 

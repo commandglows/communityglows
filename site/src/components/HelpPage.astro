@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Navbar from './Navbar.astro'
+import Footer from './Footer.astro'
+import { authenticatedPurchaseUrl } from '../config/site'
+const { lang = 'en' } = Astro.props
+const fr = lang === 'fr'
+const base = fr ? '/fr' : ''
+const guide = fr ? 'bien-demarrer-communityglows-guide-windows' : 'getting-started-with-video-notes'
+const items = fr ? [
+  ['Quelle version télécharger ?', 'Le lancement public se concentre sur Windows. La page Téléchargement indique le canal disponible et les notes de version. Android, les extensions et les autres systèmes ne sont pas inclus dans cette promesse de distribution.'],
+  ['Faut-il un compte pour chaque réseau ?', 'Le compte CommunityGlows et les comptes sociaux sont distincts. Connectez-vous à chaque réseau dans le profil souhaité et vérifiez son avatar avant une action. Un profil ne crée pas de compte auprès du réseau.'],
+  ['La connexion au réseau est refusée.', 'Notez le message exact, vérifiez votre connexion et testez le même compte dans votre navigateur habituel. Une plateforme peut refuser une WebView ou exiger une double authentification. Ne contournez pas ses protections ; évitez de supprimer les sessions avant d’avoir sauvegardé et compris le problème.'],
+  ['Pourquoi le mauvais compte apparaît-il ?', 'Vérifiez le profil actif et l’identité affichée dans le site. Ne publiez rien tant que ce contexte est incertain. Signalez le réseau et les étapes de changement de profil, sans joindre de cookies ni de données de connexion.'],
+  ['Les tâches et les connexions sont-elles synchronisées ?', 'Les tâches participent à la synchronisation du workspace dans les versions compatibles, avec stockage local et transmission lorsque connecté. Les sessions sociales restent liées à l’appareil. Un enregistrement local ne prouve pas qu’un second appareil a reçu les données.'],
+  ['Une Scène remplace-t-elle une sauvegarde ?', 'Non. Une Scène retient une organisation de panneaux. La sauvegarde native est un fichier distinct protégé par mot de passe. Avant une restauration, sauvegardez l’état actuel : la restauration peut remplacer des données et affecter la synchronisation.'],
+  ['L’application ou un réseau ralentit.', 'Réduisez le nombre de réseaux ouverts, puis répétez la même action. Une vidéo ou une page masquée peut encore travailler. Indiquez le réseau, le nombre de vues et l’action concernée si le problème persiste.'],
+  ['Pourquoi une fonction du guide manque-t-elle ?', 'Comparez votre version aux notes de release. Les améliorations du Bento et ses panneaux de tâches peuvent être en préparation. Une démonstration de développement ne prouve pas leur présence dans l’installeur public.'],
+  ['Comment vérifier mon essai ou mon achat ?', 'Consultez les conditions sur la page Tarifs et le statut affiché par votre compte. Le téléchargement ne vaut pas activation. Si un achat semble débité sans accès, conservez sa référence et contactez-nous par le canal indiqué ; ne publiez pas de reçu ou de donnée bancaire dans un ticket public.'],
+] : [
+  ['Which version should I download?', 'The public launch focuses on Windows. The download page lists the available channel and release notes. Android, extensions and other operating systems are not included in that distribution promise.'],
+  ['Do I need an account for each network?', 'Your CommunityGlows account and your social accounts are separate. Sign in to each network inside the intended profile and check its avatar before acting. Creating a profile does not create an account with that network.'],
+  ['A network refuses to sign in.', 'Record the exact message, check your connection and test the same account in your usual browser. A platform may reject a WebView or require two-factor authentication. Do not bypass its protections; avoid clearing sessions before backing up and understanding the problem.'],
+  ['Why is the wrong account showing?', 'Check the active profile and the identity displayed inside the site. Do not publish while the context is uncertain. Report the network and the profile-switching steps without including cookies or sign-in data.'],
+  ['Do tasks and sign-ins sync?', 'Tasks participate in workspace synchronization in compatible versions, using local storage and transmission when connected. Social sessions remain attached to the device. A local save does not prove that another device has received the data.'],
+  ['Does a Scene replace a backup?', 'No. A Scene records a panel arrangement. A native backup is a separate password-protected file. Back up your current state before restoring: restoration can replace data and affect synchronization.'],
+  ['The app or a network is slow.', 'Reduce the number of open networks, then repeat the same action. A video or hidden page may still do background work. If the issue persists, report the network, number of views and affected action.'],
+  ['Why is a feature from the guide missing?', 'Compare your version with its release notes. Bento refinements and its task panels may still be awaiting release. A development demonstration does not prove they are present in the public installer.'],
+  ['How do I check a trial or purchase?', 'Read the pricing conditions and the status displayed by your account. Downloading is not activation. If a payment appears charged without access, keep its reference and use the indicated contact channel; do not post receipts or payment details in a public issue.'],
+]
+---
+<Layout lang={lang} path={base + '/help'} title={fr ? 'Aide et prise en main — CommunityGlows' : 'Help and getting started — CommunityGlows'} description={fr ? 'Guide Windows, questions fréquentes et dépannage de CommunityGlows.' : 'Windows guide, frequently asked questions and CommunityGlows troubleshooting.'}>
+  <main id="main-content" class="min-h-screen bg-background text-foreground">
+    <Navbar lang={lang} languageHref={fr ? '/help' : '/fr/help'} />
+    <section class="max-w-3xl mx-auto px-4 pt-32 pb-16">
+      <h1 class="text-4xl sm:text-5xl font-bold mb-6">{fr ? 'Comment pouvons-nous vous aider ?' : 'How can we help?'}</h1>
+      <p class="text-lg text-muted-foreground mb-8">{fr ? 'Votre point de départ pour installer CommunityGlows sur Windows, organiser vos profils et résoudre les problèmes courants.' : 'Start here to install CommunityGlows on Windows, organize your profiles and resolve common issues.'}</p>
+      <nav aria-label={fr ? 'Premiers pas' : 'First steps'} class="flex flex-wrap gap-4 mb-12">
+        <a class="underline" href={'/blog/' + guide}>{fr ? 'Guide complet Windows' : 'Complete Windows guide'}</a>
+        <a class="underline" href={base + '/download'}>{fr ? 'Téléchargement' : 'Download'}</a>
+        <a class="underline" href={base + '/pricing'}>{fr ? 'Conditions d’accès' : 'Access conditions'}</a>
+      </nav>
+      <section id="activation" class="rounded-xl border border-border bg-card p-6 mb-12">
+        <h2 class="text-2xl font-bold mb-4">{fr ? 'Vous avez déjà acheté ou reçu un code ?' : 'Already purchased or received a code?'}</h2>
+        <p class="text-muted-foreground mb-4">{fr ? 'Ne rachetez pas une licence pour débloquer un achat existant. Connectez-vous au compte CommunityGlows auquel vous voulez rattacher votre accès, puis ouvrez la facturation. Un code d’activation se saisit dans l’application ; ce n’est pas un code de réduction à entrer dans Stripe.' : 'Do not buy another license to unlock an existing purchase. Sign in to the CommunityGlows account you intend to use, then open billing. An activation code is redeemed inside the app; it is not a discount code to enter in Stripe.'}</p>
+        <a class="underline" href={authenticatedPurchaseUrl()}>{fr ? 'Ouvrir la facturation dans CommunityGlows' : 'Open billing in CommunityGlows'}</a>
+        <p class="text-muted-foreground mt-4">{fr ? 'Ce lien nécessite l’application Windows installée. Vérifiez le statut d’accès après activation. Si le code est refusé, déjà utilisé, ou si le statut ne change pas, conservez le message exact et contactez le vendeur par le canal privé de votre commande. Ne publiez jamais votre code dans un ticket public.' : 'This link requires the installed Windows app. Check your access status after redemption. If the code is rejected, already used, or the status does not change, keep the exact message and contact the seller through your order’s private support channel. Never post your code in a public issue.'}</p>
+        <p class="text-muted-foreground mt-4">{fr ? 'Les droits inclus, le cumul éventuel de codes et les conditions de remboursement sont ceux de l’offre que vous avez achetée. Une offre partenaire et l’offre directe du site peuvent avoir des conditions différentes.' : 'Included access, any code-stacking rules and refund conditions are defined by the offer you purchased. A partner offer and the website’s direct offer may have different terms.'}</p>
+      </section>
+      <h2 class="text-2xl font-bold mb-6">{fr ? 'Questions fréquentes' : 'Frequently asked questions'}</h2>
+      <div class="space-y-4">
+        {items.map(([question, answer]) => <details class="rounded-xl border border-border bg-card p-5">
+          <summary class="font-semibold cursor-pointer">{question}</summary>
+          <p class="text-muted-foreground mt-4 leading-relaxed">{answer}</p>
+        </details>)}
+      </div>
+      <section id="contact" class="mt-12 rounded-xl border border-border p-6">
+        <h2 class="text-2xl font-bold mb-4">{fr ? 'Signaler un problème' : 'Report a problem'}</h2>
+        <p class="text-muted-foreground mb-4">{fr ? 'Pour un problème technique non confidentiel, consultez les tickets existants puis ouvrez un signalement sur le dépôt officiel. Indiquez les versions de CommunityGlows et de Windows, le réseau, les étapes, le résultat attendu et le message exact.' : 'For a non-confidential technical problem, check existing issues and then report it in the official repository. Include the CommunityGlows and Windows versions, network, steps, expected result and exact error.'}</p>
+        <a href="https://github.com/commandglows/communityglows/issues" class="underline">{fr ? 'Ouvrir les signalements GitHub' : 'Open GitHub issues'}</a>
+        <p class="text-muted-foreground mt-4">{fr ? 'Les tickets GitHub sont publics et nécessitent un compte GitHub pour publier. N’y joignez aucun mot de passe, jeton, cookie, message privé, reçu ou donnée bancaire. Pour un sujet privé lié à un achat, utilisez le contact présent dans votre confirmation de commande.' : 'GitHub issues are public and posting requires a GitHub account. Never include passwords, tokens, cookies, private messages, receipts or payment information. For a private purchase question, use the contact provided in your order confirmation.'}</p>
+      </section>
+    </section>
+    <Footer lang={lang} languageHref={fr ? '/help' : '/fr/help'} />
+  </main>
+</Layout>

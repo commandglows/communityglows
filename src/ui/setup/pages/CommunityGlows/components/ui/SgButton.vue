@@ -30,7 +30,7 @@
       <span
         v-if="label"
         class="sg-button__label"
-      >{{ label }}</span>
+      ><slot name="label">{{ label }}</slot></span>
       <slot />
       <span
         v-if="badge"
@@ -99,7 +99,7 @@ const resolvedAriaLabel = computed(() => {
 .sg-button:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sg-button__content { display: inline-flex; align-items: center; justify-content: center; gap: var(--sg-button-gap); }
 .sg-button__content--loading { opacity: 0; }
-.sg-button__badge { min-width: var(--sg-button-badge-size); height: var(--sg-button-badge-size); padding: 0 var(--sg-button-badge-padding); border-radius: var(--sg-radius-pill); background: var(--sg-color-danger); color: var(--sg-color-text-on-action); font-size: var(--sg-button-badge-font-size); line-height: var(--sg-button-badge-size); }
+.sg-button__badge { min-width: var(--sg-button-badge-size); height: var(--sg-button-badge-size); padding: 0 var(--sg-button-badge-padding); border-radius: var(--sg-radius-pill); background: var(--sg-color-danger); color: var(--sg-color-white); font-size: var(--sg-button-badge-font-size); line-height: var(--sg-button-badge-size); }
 .sg-button__spinner { position: absolute; width: var(--sg-button-spinner-size); height: var(--sg-button-spinner-size); border: var(--sg-spinner-border) solid currentColor; border-inline-end-color: transparent; border-radius: var(--sg-radius-pill); animation: sg-button-spin var(--sg-spinner-duration) linear infinite; }
 @keyframes sg-button-spin { to { transform: rotate(1turn); } }
 @media (prefers-reduced-motion: reduce) { .sg-button__spinner { animation: none; } }

@@ -646,7 +646,7 @@ None blocking for spec readiness. This spec assumes the project remains private/
 
 | Step | Status | Notes |
 |------|--------|-------|
-| 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md`. |
+| 100-sg-spec | done | Draft spec updated after readiness findings in `shipglows_data/workflow/specs/communityglows-dependency-hygiene-and-major-line-migration.md`. |
 | sf-ready | ready | 2026-04-30 readiness gate passed after fresh-docs, native packaging, RustSec, Node floor, and Convex/Auth security updates. |
 | sf-start | done | All approved dependency PR slices are integrated through final code SHA `0fb768ae13f454b101dd954fad360628d20e2fe4`; Vite 8 CI installs force platform-native optional binding selection in Quality and Windows, matching the already-hardened Android/Linux paths. |
 | sf-verify | done | Quality `31883332373`, Vercel Production `5920170434`, and public `/`, `/download`, `/privacy` smoke passed. Android `31883479399`, Windows `31883713271`, and Linux `31883973654` passed with non-empty APK, MSI/NSIS, EXE, AppImage, and DEB evidence. |

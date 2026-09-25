@@ -14,6 +14,7 @@ import { useFriendsFilterStore } from "@/stores/friendsFilter";
 import { useThemeStore } from "@/stores/theme";
 import { useOnboardingStore } from "@/stores/onboarding";
 import { useShortcutsStore } from "@/stores/shortcuts";
+import { useKanbanContactsStore } from "@/stores/kanbanContacts";
 import { useContextualTasksStore } from "@/stores/contextualTasks";
 import { useKanbanStore } from "@/stores/kanban";
 import { useDesktopWorkspacesStore } from "@/stores/desktopWorkspaces";
@@ -47,6 +48,7 @@ type CloudSnapshot = CloudSnapshotShape & {
   activeAccounts: CloudActiveAccount[];
   workspaceState: {
     contextualTasksJson?: string;
+    kanbanContactsJson?: string;
     kanbanStateJson?: string;
     desktopWorkspacesJson?: string;
   } | null;
@@ -469,6 +471,7 @@ async function fetchCloudSnapshot(client: ReturnType<typeof getConvexClient>): P
     activeAccounts: asCloudActiveAccounts(activeAccounts),
     workspaceState: workspaceState && typeof workspaceState === "object"
       ? {
+          kanbanContactsJson: typeof workspaceState.kanbanContactsJson === "string" ? workspaceState.kanbanContactsJson : undefined,
           contextualTasksJson: typeof workspaceState.contextualTasksJson === "string"
             ? workspaceState.contextualTasksJson
             : undefined,
@@ -521,6 +524,7 @@ function clearCloudBackedLocalState() {
   const profilesStore = useProfilesStore();
   const accountsStore = useAccountsStore();
   const tasksStore = useContextualTasksStore();
+  const contactsStore = useKanbanContactsStore();
   const kanbanStore = useKanbanStore();
   const customLinksStore = useCustomLinksStore();
   const friendsStore = useFriendsFilterStore();
@@ -533,6 +537,7 @@ function clearCloudBackedLocalState() {
   customLinksStore.clearLocal();
   friendsStore.clearLocal();
   tasksStore.clearLocal();
+  contactsStore.clearLocal();
   kanbanStore.clearLocal();
   themeStore.resetLocalPreferences();
   onboardingStore.completed = false;
@@ -556,6 +561,7 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   const friendsStore = useFriendsFilterStore();
   const accountsStore = useAccountsStore();
   const tasksStore = useContextualTasksStore();
+  const contactsStore = useKanbanContactsStore();
   const kanbanStore = useKanbanStore();
   const desktopWorkspacesStore = useDesktopWorkspacesStore();
 
@@ -569,6 +575,7 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   );
   accountsStore.replaceFromCloud(snapshot.socialAccounts, snapshot.activeAccounts);
   tasksStore.replaceFromCloud(snapshot.workspaceState?.contextualTasksJson);
+  contactsStore.replaceFromCloud(snapshot.workspaceState?.kanbanContactsJson);
   kanbanStore.replaceFromCloud(snapshot.workspaceState?.kanbanStateJson);
 
   const workspaceCatalog = new Map(
@@ -609,6 +616,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
   const onboardingStore = useOnboardingStore();
   const shortcutsStore = useShortcutsStore();
   const tasksStore = useContextualTasksStore();
+  const contactsStore = useKanbanContactsStore();
   const kanbanStore = useKanbanStore();
   const desktopWorkspacesStore = useDesktopWorkspacesStore();
 
@@ -648,6 +656,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
 
   if (!snapshot.workspaceState) {
     tasksStore.initialize();
+    contactsStore.initialize();
     kanbanStore.initialize();
     const workspaceCatalog = new Map(
       builtInSocialNetworks.map((network) => [
@@ -666,7 +675,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       profilesStore.activeProfileId,
     );
     desktopWorkspacesStore.syncToCloud();
-    await Promise.all([tasksStore.syncToCloud(), kanbanStore.syncToCloud()]);
+    await Promise.all([tasksStore.syncToCloud(), contactsStore.syncToCloud(), kanbanStore.syncToCloud()]);
   }
 }
 
