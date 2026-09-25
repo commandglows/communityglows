@@ -25,6 +25,7 @@
     "android-webview:allow-set-tap-sound",
     "android-webview:allow-set-tap-sound-variant",
     "android-webview:allow-preview-tap-sound",
-    "android-webview:allow-trigger-haptic"
+    "android-webview:allow-trigger-haptic",
+    "opener:default"
   ]
 }

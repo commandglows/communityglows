@@ -74,7 +74,7 @@ export const deleteLocalAccountData = internalMutation({
 
 export const deleteMyAccount = action({
   args: { confirmation: v.string() },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ status: "deleted" | "already_deleted" }> => {
     const userId = await requireAuthUserId(ctx);
     const user = await ctx.runQuery(internal.users.getDeletionIdentity, { userId });
     if (!user?.email) throw new Error("email_account_required");
@@ -89,7 +89,7 @@ export const deleteMyAccount = action({
     });
 
     return await ctx.runMutation(
-      (internal as any).accountDeletion.deleteLocalAccountData,
+      internal.accountDeletion.deleteLocalAccountData,
       { userId },
     );
   },

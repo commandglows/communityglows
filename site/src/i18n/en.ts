@@ -103,7 +103,7 @@ export default {
     subtitle: 'No credit card and no automatic billing. Each cycle lasts 30 days and you may restart twice. After the third cycle, purchase is required to continue protected actions.',
     badge: '30-day full trial',
     name: 'CommunityGlows',
-    price: 79,
+    price: 149,
     priceSuffix: 'one-time payment · no subscription',
     availableTitle: 'Available now',
     available: ['Windows and Android apps', 'Isolated profiles and local sessions', '18+ social networks and custom links', 'Configurable keyboard shortcuts on Windows', 'Adjustable network text size', 'Instant switching between preserved pages on Windows', 'Focus and appearance controls', 'Profiles and preferences sync', 'Backup and restore'],
@@ -116,7 +116,7 @@ export default {
     cta: 'Try 30 days free',
     purchaseCta: 'Open the app to buy with Stripe',
     whyTitle: 'Why a one-time price?',
-    whyBody: 'Nothing is billed automatically. You receive one 30-day cycle and may restart twice; after all three cycles, pay €79 once through Stripe to keep protected access. CommunityGlows runs primarily on your devices, so there is no subscription.',
+    whyBody: 'Nothing is billed automatically. You receive one 30-day cycle and may restart twice; after all three cycles, pay €149 once through Stripe to keep protected access. CommunityGlows runs primarily on your devices, so there is no subscription.',
   },
   finalCta: {
     title: 'Make room for the work that matters.',

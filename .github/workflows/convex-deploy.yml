@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: Type DEPLOY to deploy the Convex backend from master
+        description: Type DEPLOY to deploy the EU production Convex backend from main
         required: true
         type: string
 
@@ -18,7 +18,7 @@ permissions:
 jobs:
   deploy:
     name: Deploy Convex backend
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 15
 
@@ -37,6 +37,10 @@ jobs:
             echo 'CONVEX_DEPLOY_KEY is not configured in GitHub Actions secrets.' >&2
             exit 1
           fi
+          case "$CONVEX_DEPLOY_KEY" in
+            'prod:dependable-coyote-77|'*) ;;
+            *) echo 'Deploy key must target CommunityGlows EU production.' >&2; exit 1 ;;
+          esac
 
       - uses: actions/checkout@v7
 
@@ -57,6 +61,7 @@ jobs:
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
         run: >-
           pnpm exec convex deploy
+          --yes --typecheck enable
           --message "GitHub Actions ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
 
       - name: Record deployment summary

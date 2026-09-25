@@ -33,6 +33,9 @@ describe("Convex mutation invariants (convex-test)", () => {
     authState.authenticated = false;
 
     await expect(t.query(api.customLinks.list, {})).rejects.toThrow(/not authenticated/i);
+    await expect(t.mutation(api.workspaceState.setKanbanContacts, {
+      kanbanContactsJson: "[]", updatedAt: Date.now(),
+    })).rejects.toThrow(/not authenticated/i);
     await expect(
       t.mutation(api.socialAccounts.setActive, {
         networkId: "twitter",
@@ -186,6 +189,12 @@ describe("Convex mutation invariants (convex-test)", () => {
       contextualTasksJson: "[]",
       updatedAt: Date.now(),
     });
+    await t.mutation(api.workspaceState.setKanbanContacts, {
+      kanbanContactsJson: "[]", updatedAt: Date.now(),
+    });
+    await expect(t.mutation(api.workspaceState.setKanbanContacts, {
+      kanbanContactsJson: '[{"id":"bad"}]', updatedAt: Date.now(),
+    })).rejects.toThrow(/invalid contact/i);
     await t.mutation(api.workspaceState.setKanbanState, {
       kanbanStateJson: "[]",
       updatedAt: Date.now(),
@@ -200,6 +209,7 @@ describe("Convex mutation invariants (convex-test)", () => {
     authState.userId = userA;
     expect(await t.query(api.workspaceState.get, {})).toMatchObject({
       contextualTasksJson: "[]",
+      kanbanContactsJson: "[]",
       kanbanStateJson: "[]",
     });
   });

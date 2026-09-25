@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { effectScope, type EffectScope } from 'vue'
 import {
   BILLING_ACCESS_GRACE_MS,
   getSafeAccessCheckError,
@@ -6,7 +7,69 @@ import {
   isAccessWithinGrace,
   isTrialRestartAllowed,
   isTrustedStripeCheckoutUrl,
+  useBillingAccess,
 } from './useBillingAccess'
+
+const billingAction = vi.hoisted(() => vi.fn())
+vi.mock('@/lib/convex', () => ({ getConvexClient: () => ({ action: billingAction }) }))
+vi.mock('@/lib/convexAuth', async () => {
+  const { ref } = await import('vue')
+  return { isAuthenticated: ref(true), isAuthLoading: ref(false), isConvexConfigured: ref(true) }
+})
+vi.mock('@/lib/communityGlowsInstallation', () => ({
+  getCommunityGlowsInstallationHash: async () => 'test-installation-hash',
+}))
+
+describe('redemption confirmation', () => {
+  let scope: EffectScope | undefined
+  const lifetime = { status: 'active', accessState: 'lifetime_active', planId: 'lifetime_deal' }
+  const redemption = { status: 'active', planId: 'lifetime_deal', alreadyRedeemed: false }
+
+  afterEach(() => {
+    scope?.stop()
+    billingAction.mockReset()
+  })
+
+  async function createBilling() {
+    billingAction.mockResolvedValueOnce({ status: 'inactive', accessState: 'trial_expired' })
+    scope = effectScope()
+    const billing = scope.run(() => useBillingAccess())!
+    await vi.waitFor(() => expect(billing.isLoading.value).toBe(false))
+    return billing
+  }
+
+  it('does not announce success for an inactive redemption response', async () => {
+    const billing = await createBilling()
+    billingAction.mockResolvedValueOnce({ ...redemption, status: 'inactive' }).mockResolvedValueOnce(lifetime)
+    expect(await billing.redeemCode('TEST-CODE')).toBeNull()
+    expect(billing.successKey.value).toBeNull()
+    expect(billing.errorKey.value).toBeTruthy()
+  })
+
+  it('keeps a failed verification visible instead of announcing success', async () => {
+    const billing = await createBilling()
+    billingAction.mockResolvedValueOnce(redemption).mockRejectedValueOnce(new Error('bridge unavailable'))
+    expect(await billing.redeemCode('TEST-CODE')).toBeNull()
+    expect(billing.successKey.value).toBeNull()
+    expect(billing.errorKey.value).toBe('billing.errors.bridge_unavailable')
+  })
+
+  it('does not treat trial access as confirmation of a lifetime code', async () => {
+    const billing = await createBilling()
+    billingAction.mockResolvedValueOnce(redemption).mockResolvedValueOnce({ status: 'active', accessState: 'trial_active' })
+    expect(await billing.redeemCode('TEST-CODE')).toBeNull()
+    expect(billing.successKey.value).toBeNull()
+    expect(billing.errorKey.value).toBe('billing.errors.access_check_failed')
+  })
+
+  it.each([false, true])('confirms verified lifetime access (already redeemed: %s)', async (alreadyRedeemed) => {
+    const billing = await createBilling()
+    billingAction.mockResolvedValueOnce({ ...redemption, alreadyRedeemed }).mockResolvedValueOnce(lifetime)
+    await billing.redeemCode('TEST-CODE')
+    expect(billing.errorKey.value).toBeNull()
+    expect(billing.successKey.value).toBe(alreadyRedeemed ? 'billing.redeem_already_active' : 'billing.redeem_success')
+  })
+})
 
 describe('billing access grace', () => {
   const lifetime = {

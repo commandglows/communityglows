@@ -93,7 +93,7 @@ function getSuiteBridgeUrl(raw: string | undefined): string {
 }
 
 function getSuiteBridgeSecret() {
-  const secret = process.env.COMMUNITYGLOWS_SUITE_BRIDGE_SECRET
+  const secret = process.env.COMMUNITYGLOWS_SUITE_BRIDGE_SECRET?.trim()
   if (!secret) {
     throw new Error('suite_bridge_not_configured')
   }
@@ -194,7 +194,7 @@ export async function callSuiteBridge<T extends Record<string, unknown> = Record
     response = await fetch(suiteBridgeUrl, {
       method: 'POST',
       headers: getSuiteRequestHeaders({
-        'x-communityglows-suite-secret': suiteBridgeSecret,
+        Authorization: `Bearer ${suiteBridgeSecret}`,
       }),
       body: JSON.stringify({
         ...args,

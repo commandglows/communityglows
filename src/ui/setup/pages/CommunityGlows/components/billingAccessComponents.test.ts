@@ -76,8 +76,8 @@ describe('CommunityGlows billing UI contract', () => {
     expect(fr.billing.trial_reminder_snooze).toBeTruthy()
     expect(fr.billing.trial_reminder_message).toContain('données restent en sécurité')
     expect(en.billing.trial_reminder_message).toContain('data stays safe')
-    expect(fr.billing.trial_reminder_price).toContain('79 €')
-    expect(en.billing.trial_reminder_price).toContain('€79')
+    expect(fr.billing.trial_reminder_price).toContain('149 €')
+    expect(en.billing.trial_reminder_price).toContain('€149')
   })
 
   it('turns the expired-access gate into an honest lifetime conversion moment', () => {
@@ -89,7 +89,7 @@ describe('CommunityGlows billing UI contract', () => {
     expect(template).toContain('recovery_paths_available')
     expect(fr.billing.gate_trial_expired_message).toContain('données restent en sécurité')
     expect(en.billing.gate_trial_expired_message).toContain('data stays safe')
-    expect(fr.billing.gate_lifetime_price).toContain('79 €')
-    expect(en.billing.gate_lifetime_price).toContain('€79')
+    expect(fr.billing.gate_lifetime_price).toContain('149 €')
+    expect(en.billing.gate_lifetime_price).toContain('€149')
   })
 })

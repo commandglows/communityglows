@@ -97,6 +97,7 @@ export default defineSchema({
   workspaceState: defineTable({
     userId: v.id("users"),
     contextualTasksJson: v.optional(v.string()),
+    kanbanContactsJson: v.optional(v.string()),
     kanbanStateJson: v.optional(v.string()),
     desktopWorkspacesJson: v.optional(v.string()),
     updatedAt: v.number(),

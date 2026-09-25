@@ -1,4 +1,6 @@
-import { computed, ref, watch } from 'vue'
+import { openUrl } from '@tauri-apps/plugin-opener'
+import { createSharedComposable } from '@vueuse/core'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { getConvexClient } from '@/lib/convex'
 import {
   isAuthenticated,
@@ -107,7 +109,7 @@ export function getSafeAccessCheckError(error: unknown) {
   return 'billing.errors.access_check_failed'
 }
 
-export function useBillingAccess() {
+export const useBillingAccess = createSharedComposable(() => {
   const access = ref<ProductAccess | null>(null)
   const redeemResult = ref<RedeemResult | null>(null)
   const isLoading = ref(false)
@@ -117,6 +119,8 @@ export function useBillingAccess() {
   const errorKey = ref<string | null>(null)
   const successKey = ref<string | null>(null)
   const lastVerifiedAt = ref<number | null>(null)
+  let accessRequestVersion = 0
+  onScopeDispose(() => { accessRequestVersion += 1 })
 
   const canLoadAccess = computed(
     () => isConvexConfigured.value && isAuthenticated.value,
@@ -165,6 +169,7 @@ export function useBillingAccess() {
   })
 
   async function refreshAccess() {
+    const requestVersion = ++accessRequestVersion
     if (!canLoadAccess.value) {
       access.value = null
       lastVerifiedAt.value = null
@@ -179,16 +184,20 @@ export function useBillingAccess() {
     errorKey.value = null
     try {
       const installationHash = await getCommunityGlowsInstallationHash()
-      access.value = await getConvexClient().action(api.billing.getProductAccess, { installationHash })
+      if (requestVersion !== accessRequestVersion) return
+      const result = await getConvexClient().action(api.billing.getProductAccess, { installationHash })
+      if (requestVersion !== accessRequestVersion) return
+      access.value = result
       lastVerifiedAt.value = Date.now()
     } catch (error) {
+      if (requestVersion !== accessRequestVersion) return
       errorKey.value = getSafeAccessCheckError(error)
       if (errorKey.value !== 'billing.errors.bridge_unavailable') {
         access.value = null
         lastVerifiedAt.value = null
       }
     } finally {
-      isLoading.value = false
+      if (requestVersion === accessRequestVersion) isLoading.value = false
     }
   }
 
@@ -217,19 +226,21 @@ export function useBillingAccess() {
   }
 
   async function startPurchase(
-    checkoutWindow: Window | null = window.open('', '_blank'),
+    checkoutWindow?: Window | null,
   ): Promise<string | null> {
     successKey.value = null
     errorKey.value = null
-    if (checkoutWindow) checkoutWindow.opener = null
+    const isTauri = '__TAURI_INTERNALS__' in window
+    const browserCheckoutWindow = isTauri ? null : (checkoutWindow ?? window.open('', '_blank'))
+    if (browserCheckoutWindow) browserCheckoutWindow.opener = null
     if (!canStartCheckout.value) {
-      checkoutWindow?.close()
+      browserCheckoutWindow?.close()
       errorKey.value = isConvexConfigured.value
         ? 'billing.errors.unauthorized'
         : 'billing.errors.unconfigured'
       return null
     }
-    if (!checkoutWindow) {
+    if (!isTauri && !browserCheckoutWindow) {
       errorKey.value = 'billing.errors.checkout_popup_blocked'
       return null
     }
@@ -240,11 +251,15 @@ export function useBillingAccess() {
       const result = await getConvexClient().action(api.billing.startCheckout, { installationHash })
       const checkoutUrl = new URL(result.checkoutUrl)
       if (!isTrustedStripeCheckoutUrl(checkoutUrl)) throw new Error('checkout_malformed_response')
-      checkoutWindow.location.replace(checkoutUrl.toString())
+      if (isTauri) {
+        await openUrl(checkoutUrl.toString())
+      } else {
+        browserCheckoutWindow?.location.replace(checkoutUrl.toString())
+      }
       successKey.value = 'billing.checkout_opened'
       return checkoutUrl.toString()
     } catch (error) {
-      checkoutWindow.close()
+      browserCheckoutWindow?.close()
       errorKey.value = getSafeBillingError(error)
       return null
     } finally {
@@ -275,10 +290,19 @@ export function useBillingAccess() {
         code,
       })
       redeemResult.value = result
+      await refreshAccess()
+      if (
+        result.status !== 'active' ||
+        errorKey.value ||
+        access.value?.status !== 'active' ||
+        access.value.accessState !== 'lifetime_active'
+      ) {
+        errorKey.value ??= 'billing.errors.access_check_failed'
+        return null
+      }
       successKey.value = result.alreadyRedeemed
         ? 'billing.redeem_already_active'
         : 'billing.redeem_success'
-      await refreshAccess()
       return result
     } catch (error) {
       errorKey.value = getSafeBillingError(error)
@@ -293,7 +317,7 @@ export function useBillingAccess() {
     () => {
       void refreshAccess()
     },
-    { immediate: true },
+    { immediate: true, flush: 'sync' },
   )
 
   return {
@@ -321,4 +345,4 @@ export function useBillingAccess() {
     successKey,
     trialRestartsRemaining,
   }
-}
+})

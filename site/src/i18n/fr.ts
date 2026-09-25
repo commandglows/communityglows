@@ -103,7 +103,7 @@ export default {
     subtitle: 'Sans carte bancaire ni facturation automatique. Chaque période dure 30 jours et vous pouvez la relancer deux fois. Après la troisième période, l’achat est obligatoire pour continuer les actions protégées.',
     badge: 'Essai complet de 30 jours',
     name: 'CommunityGlows',
-    price: 79,
+    price: 149,
     priceSuffix: 'paiement unique · sans abonnement',
     availableTitle: 'Disponible maintenant',
     available: ['Applications Windows et Android', 'Profils isolés et sessions locales', 'Plus de 18 réseaux sociaux et liens personnalisés', 'Raccourcis clavier configurables sur Windows', 'Taille du texte des réseaux ajustable', 'Changement instantané entre les pages conservées sur Windows', 'Contrôles de concentration et d’apparence', 'Synchronisation des profils et préférences', 'Sauvegarde et restauration'],
@@ -116,7 +116,7 @@ export default {
     cta: 'Essayer 30 jours gratuitement',
     purchaseCta: 'Ouvrir l’app pour payer avec Stripe',
     whyTitle: 'Pourquoi un prix unique ?',
-    whyBody: 'Rien n’est facturé automatiquement. Vous disposez d’une période de 30 jours et de deux relances ; après ces trois périodes, payez 79 € une seule fois via Stripe pour conserver l’accès protégé. CommunityGlows fonctionne principalement sur vos appareils : aucun abonnement.',
+    whyBody: 'Rien n’est facturé automatiquement. Vous disposez d’une période de 30 jours et de deux relances ; après ces trois périodes, payez 149 € une seule fois via Stripe pour conserver l’accès protégé. CommunityGlows fonctionne principalement sur vos appareils : aucun abonnement.',
   },
   finalCta: {
     title: 'Faites de la place au travail qui compte.',
