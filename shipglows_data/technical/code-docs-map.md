@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.6.2"
+artifact_version: "1.6.3"
 project: "communityglows"
 created: "2026-05-14"
-updated: "2026-09-02"
+updated: "2026-09-28"
 status: active
 source_skill: 300-sg-docs
 scope: code_docs_map
@@ -33,6 +33,8 @@ linked_systems:
   - "src-tauri/Cargo.toml"
   - "src-tauri/capabilities/default.json"
   - "src-tauri/tauri.conf.json"
+  - ".github/workflows/shipglows-required-gate.yml"
+  - ".shipglows/required-gate.json"
 depends_on:
   - "shipglows_data/technical/context.md"
 supersedes: []
@@ -42,6 +44,8 @@ evidence:
   - "src-tauri/plugins/android-webview/android/src/main/java/com/communityglows/webview/NativeWebViewPlugin.kt"
   - "shipglows_data/technical/android-webview-session-isolation.md"
   - "shipglows_data/technical/design-system-authority.md"
+  - ".github/workflows/shipglows-required-gate.yml"
+  - ".shipglows/required-gate.json"
 next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
 ---
 
@@ -56,6 +60,7 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - `site/package-lock.json`
   - `.github/dependabot.yml`
   - `.github/workflows/`
+  - `.shipglows/required-gate.json`
   - `src-tauri/gen/android/build.gradle.kts`
   - `src-tauri/gen/android/app/build.gradle.kts`
   - `src-tauri/gen/android/gradle/wrapper/`
@@ -65,17 +70,19 @@ next_step: "/300-sg-docs maintain shipglows_data/technical/code-docs-map.md"
   - Dependency updates must preserve the supported Node, pnpm, Rust, Gradle, Kotlin and Android toolchain contracts.
   - The Android compatibility baseline is Gradle `8.14.5`, Android Gradle Plugin `8.11.0` and Kotlin Gradle Plugin `2.2.21`; Kotlin/JVM targets use the `compilerOptions` DSL.
   - Android dependency changes require an APK build; incompatible Kotlin or Gradle migrations remain deferred instead of bypassing compiler or build checks.
-  - GitHub quality checks target the canonical integration branch and remain required before dependency PRs are merged.
+  - `ShipGlows required gate` runs for every pull request and push to `main`; path selection stays inside the workflow so the exact status is always reported. The active default-branch ruleset requires that status and a pull request while retaining deletion and force-push restrictions.
 - Docs:
-  - `ENVIRONMENT.md`
   - `shipglows_data/technical/context.md`
   - `shipglows_data/technical/code-docs-map.md`
+  - `ENVIRONMENT.md` only when development-server or runtime environment behavior changes
 - Validation:
   - `pnpm test:once`
   - `pnpm typecheck`
   - `pnpm lint:check`
   - `pnpm run design:tokens:check`
-  - GitHub quality checks and Rust tests
+  - `python tools/shipglows_required_gate.py audit --project .`
+  - GitHub `ShipGlows required gate` on pull requests and pushes to `main`
+  - Rust tests
   - Android APK build for Android dependency or workflow changes
 
 ## Windows/Tauri component and design-system runtime
