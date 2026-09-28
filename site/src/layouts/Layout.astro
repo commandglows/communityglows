@@ -11,16 +11,18 @@ interface Props {
   noIndex?: boolean
   jsonLd?: Record<string, unknown>[]
   lang?: string
+  alternatePath?: string | null
 }
 
 const {
-  title = 'CommunityGlows — All your social networks. One app.',
-  description = 'Manage multiple accounts on each network without ever logging out. Isolated profiles, separate sessions, zero distractions.',
+  title = 'CommunityGlows — Your social workspace on Windows',
+  description = 'Organize profiles, networks and working links in a Windows workspace. Session behavior depends on the network and platform.',
   path = '',
   image = '/og-image.png',
   noIndex = false,
   jsonLd = [],
   lang = 'en',
+  alternatePath,
 } = Astro.props
 
 const canonicalUrl = siteUrl(path)
@@ -48,15 +50,15 @@ const defaultSchemas = [
   },
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
+    "@type": "SoftwareApplication",
     name: "CommunityGlows",
     url: SITE_URL,
     applicationCategory: "SocialNetworkingApplication",
-    operatingSystem: "Windows, Android",
+    operatingSystem: "Windows",
     description: schemaDescription,
     offers: {
       "@type": "Offer",
-      price: "79",
+      price: "149",
       priceCurrency: "EUR",
     },
   },
@@ -77,8 +79,12 @@ const allSchemas = [...defaultSchemas, ...jsonLd]
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonicalUrl} />
     {(() => {
-      const enPath = path.startsWith('/fr') ? path.replace(/^\/fr/, '') || '/' : path || '/'
-      const frPath = path.startsWith('/fr') ? path : `/fr${path || ''}`
+      const basePath = path.replace(/^\/fr(?=\/|$)/, '') || '/'
+      const pairedPages = ['/', '/features', '/compare', '/pricing', '/download', '/lifetime-deal', '/help', '/privacy', '/terms', '/account-deletion']
+      if (alternatePath === null || (alternatePath === undefined && !pairedPages.includes(basePath))) return null
+      const peer = alternatePath ?? (lang === 'fr' ? basePath : `/fr${basePath === '/' ? '' : basePath}`)
+      const enPath = lang === 'fr' ? peer : path || '/'
+      const frPath = lang === 'fr' ? path : peer
       return <>
         <link rel="alternate" hreflang="en" href={siteUrl(enPath)} />
         <link rel="alternate" hreflang="fr" href={siteUrl(frPath)} />

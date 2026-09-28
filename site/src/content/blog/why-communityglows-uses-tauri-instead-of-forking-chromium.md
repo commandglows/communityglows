@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "pourquoi-communityglows-utilise-tauri-plutot-que-fork-chromium"
 title: "Why CommunityGlows Uses Tauri Instead of Forking Chromium"
 description: "Vue, Tauri, WebView2, Android WebView, Flutter, or Chromium: the technical choices behind CommunityGlows and their real tradeoffs."
 date: "2026-09-04"

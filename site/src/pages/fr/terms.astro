@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import Navbar from '../../components/Navbar.astro'
+import Footer from '../../components/Footer.astro'
+import { contactEmail, siteUrl } from '../../config/site'
+const legalEmail = contactEmail('legal')
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl('/fr') },
+  { '@type': 'ListItem', position: 2, name: 'Conditions d’utilisation', item: siteUrl('/fr/terms') },
+] }]
+---
+<Layout title="Conditions d’utilisation - CommunityGlows" description="Les conditions régissant votre utilisation des services CommunityGlows." path="/fr/terms" lang="fr" jsonLd={jsonLd}>
+  <main id="main-content" class="min-h-screen bg-background text-foreground"><Navbar lang="fr" languageHref="/terms" />
+    <div class="max-w-4xl mx-auto px-4 pt-32 pb-16">
+      <h1 class="text-3xl font-bold md:text-4xl">Conditions d’utilisation</h1>
+      <p class="mt-4 text-muted-foreground">Dernière mise à jour du texte source : 15 juillet 2026</p>
+      <div class="mt-8 space-y-8">
+        <section><h2 class="text-xl font-semibold">1. Acceptation des conditions</h2><p class="mt-3 text-muted-foreground">En accédant à CommunityGlows ou en l’utilisant, vous acceptez d’être lié par ces conditions d’utilisation. Si vous ne les acceptez pas, veuillez ne pas utiliser notre service.</p></section>
+        <section><h2 class="text-xl font-semibold">2. Utilisation du service</h2><p class="mt-3 text-muted-foreground">CommunityGlows fournit un espace de travail pour vos activités sur les réseaux sociaux :</p><ul class="mt-3 list-disc space-y-2 pl-6 text-muted-foreground"><li>Créer des profils sociaux et passer de l’un à l’autre</li><li>Accéder aux réseaux sociaux pris en charge depuis une interface unique</li><li>Planifier et organiser les workflows de publication</li><li>Synchroniser les données de profils et de préférences prises en charge ; les sessions des réseaux sociaux restent locales</li></ul><p class="mt-3 text-muted-foreground">Vous acceptez d’utiliser le service uniquement à des fins licites et conformément à ces conditions.</p></section>
+        <section><h2 class="text-xl font-semibold">3. Comptes utilisateurs</h2><p class="mt-3 text-muted-foreground">Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités effectuées sur votre compte. Vous devez nous informer immédiatement de toute utilisation non autorisée de votre compte.</p></section>
+        <section><h2 class="text-xl font-semibold">4. Contenu utilisateur</h2><p class="mt-3 text-muted-foreground">Vous conservez la propriété du contenu social et de la configuration que vous créez avec CommunityGlows. En utilisant notre service, vous nous accordez une licence limitée pour les traiter uniquement afin de vous fournir le service.</p></section>
+        <section><h2 class="text-xl font-semibold">5. Propriété intellectuelle</h2><p class="mt-3 text-muted-foreground">CommunityGlows ainsi que ses contenus, fonctionnalités et fonctions d’origine appartiennent à CommunityGlows et sont protégés par les lois internationales relatives au droit d’auteur, aux marques et aux autres droits de propriété intellectuelle.</p></section>
+        <section><h2 class="text-xl font-semibold">6. Services tiers</h2><p class="mt-3 text-muted-foreground">CommunityGlows peut charger les plateformes sociales prises en charge sous forme de sites web au sein de l’application. Votre utilisation de chaque service social reste soumise aux conditions et politiques de son fournisseur. CommunityGlows n’est pas affilié à ces fournisseurs, ne garantit pas la disponibilité continue d’une plateforme intégrée et ne fait pas de choix de consentement ni n’automatise d’actions dans les interfaces tierces à votre place.</p></section>
+        <section><h2 class="text-xl font-semibold">7. Limitation de responsabilité</h2><p class="mt-3 text-muted-foreground">CommunityGlows est fourni « en l’état », sans garantie d’aucune sorte. Nous ne saurions être tenus responsables de dommages indirects, accessoires, spéciaux, consécutifs ou punitifs résultant de votre utilisation du service.</p></section>
+        <section><h2 class="text-xl font-semibold">8. Modification des conditions</h2><p class="mt-3 text-muted-foreground">Nous nous réservons le droit de modifier ces conditions à tout moment. Nous informerons les utilisateurs des modifications importantes en publiant les conditions mises à jour sur cette page. La poursuite de votre utilisation du service après modification vaut acceptation des nouvelles conditions.</p></section>
+        <section><h2 class="text-xl font-semibold">9. Nous contacter</h2><p class="mt-3 text-muted-foreground">Pour toute question concernant ces conditions, contactez-nous à <a href={`mailto:${legalEmail}`} class="underline underline-offset-4">{legalEmail}</a>.</p></section>
+      </div>
+      <section class="mt-12 border-t border-border pt-8"><h2 class="text-lg font-semibold">Pages associées</h2><ul class="mt-4 flex flex-wrap gap-4"><li><a href="/fr/privacy" class="underline underline-offset-4">Politique de confidentialité</a></li><li><a href="/fr/features" class="underline underline-offset-4">Fonctionnalités</a></li><li><a href="/blog/fr" class="underline underline-offset-4">Blog</a></li></ul></section>
+    </div><Footer lang="fr" languageHref="/terms" />
+  </main>
+</Layout>

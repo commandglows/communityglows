@@ -2,278 +2,107 @@
 import Layout from '../layouts/Layout.astro'
 import Navbar from '../components/Navbar.astro'
 import Footer from '../components/Footer.astro'
-import { appUrl, authenticatedPurchaseUrl, siteUrl } from '../config/site'
+import { appUrl, authenticatedPurchaseUrl } from '../config/site'
 import ActionLink from '../components/ui/ActionLink.astro'
 import EyebrowPill from '../components/ui/EyebrowPill.astro'
-import StatusBadge from '../components/ui/StatusBadge.astro'
 
-const offerId = 'communityglows/lifetime_deal'
-const purchaseUrl = authenticatedPurchaseUrl()
-
-const workflow = [
-  {
-    step: '01',
-    title: 'Open every account without tab chaos',
-    text: 'Keep your main social networks and profiles in one focused workspace instead of juggling browser windows.',
-  },
-  {
-    step: '02',
-    title: 'Protect context by profile',
-    text: 'Use profile-aware sessions and local workspace state so personal, client, and brand workflows stay easier to separate.',
-  },
-  {
-    step: '03',
-    title: 'Turn attention into follow-up',
-    text: 'Move from browsing to content ideas, replies, campaign notes, and lightweight execution without leaving the system.',
-  },
-]
-
-const includes = [
-  'CommunityGlows Pro access under the published Lifetime Deal terms',
-  'Multi-profile social workspace for creators and operators',
-  'Anti-distraction controls, custom links, backup and restore',
-  'CRM and Kanban workspace shown separately as in development',
-  'Desktop and mobile-oriented product direction as released builds mature',
-  'Access fulfilled through the CommandGlows suite commerce and entitlement bridge',
-  'Support path for account verification, checkout issues, refunds, and replayed events',
-]
-
-const boundaries = [
-  'Social networks can change their web interfaces and policies; compatibility work is ongoing.',
-  'Future platform availability follows released builds and public product notes.',
-  'Sync covers profiles and preferences; live login sessions remain local to each device.',
-  'Purchase starts inside the authenticated CommunityGlows app, then opens the central Stripe checkout.',
-]
-
-const faq = [
-  {
-    q: 'What happens after I choose lifetime access?',
-    a: 'The CTA opens CommunityGlows. After sign-in, the app requests a short-lived signed handoff and opens the secure Stripe checkout, keeping the purchase connected to your account.',
-  },
-  {
-    q: 'Why does checkout go through CommandGlows?',
-    a: 'CommandGlows provides the shared Stripe checkout and account-access system used by CommunityGlows, so your purchase and access stay connected.',
-  },
-  {
-    q: 'What is included in the 30-day trial?',
-    a: 'Each cycle includes every CommunityGlows feature available today. The first cycle lasts 30 days and you may restart it twice. No card is required; after the third cycle, purchase is required to continue protected actions.',
-  },
-  {
-    q: 'Can the offer change?',
-    a: 'Yes. Availability, price, limits, and terms may evolve. The terms shown at checkout are the ones that apply to your purchase.',
-  },
-]
-
-const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: 'CommunityGlows Lifetime Deal',
-    description: 'Try CommunityGlows in 30-day cycles with up to two restarts, then purchase lifetime access through Stripe to continue.',
-    brand: { '@type': 'Brand', name: 'CommunityGlows' },
-    offers: {
-      '@type': 'Offer',
-      availability: 'https://schema.org/InStock',
-      price: '149',
-      priceCurrency: 'EUR',
-      url: siteUrl('/lifetime-deal'),
-    },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faq.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
-    })),
-  },
-]
+const copy = {
+  "title": "Trial and lifetime access — CommunityGlows",
+  "description": "Windows preview, 30-day trial with two optional restarts and a €149 one-time price. Check terms and availability in the app.",
+  "eyebrow": "Starting with Windows",
+  "heading": "A workspace for your communities, without a subscription.",
+  "intro": "Explore the Windows preview before choosing lifetime access. Bring profiles, networks and useful links into a dedicated workspace.",
+  "download": "Download the Windows preview",
+  "access": "Check access in the app",
+  "note": "Public availability of trial and purchase journeys is being finalized. Downloading the preview does not guarantee that checkout is already available.",
+  "price": "€149 · one-time payment",
+  "offer": "The proposed terms",
+  "trial": "One 30-day period with up to two optional restarts, no credit card and no automatic billing. After the third period, a purchase is required to continue using features that require paid access.",
+  "includes": [
+    "Windows workspace with separate profiles and local sessions",
+    "Social network catalogue, custom links and focus preferences where supported",
+    "Profiles and preferences sync through your account",
+    "Local backup and restore"
+  ],
+  "boundaryTitle": "What to expect",
+  "boundaries": [
+    "Windows is currently the only publicly downloadable preview. Android and the Chrome and Firefox extensions are not publicly distributed yet.",
+    "Bento, Scenes and Tasks are still evolving. Check your installed version’s release notes; upcoming improvements are not guaranteed to be in the current installer.",
+    "Separate profiles reduce accidental session mix-ups. They do not bypass network rules or guarantee anonymity.",
+    "Social networks can change their sign-in flows, interfaces and policies. Compatibility depends on each service.",
+    "Profiles and preferences can sync; login sessions stay on the device unless explicitly exported in a backup."
+  ],
+  "faqTitle": "Access questions",
+  "faq": [
+    [
+      "How does purchasing work?",
+      "When available, open CommunityGlows and sign in. Checkout starts in the app and opens Stripe through CommandGlows. Confirm the price and terms before completing payment."
+    ],
+    [
+      "Why does CommandGlows appear at checkout?",
+      "CommandGlows manages Stripe payments and connects CommunityGlows access to your account."
+    ],
+    [
+      "Does the trial restart automatically?",
+      "No. The two restarts are optional and are started in the app when available. There is no automatic charge."
+    ],
+    [
+      "Are upcoming features guaranteed?",
+      "No. Choose the product for the features in the version you can use today. Future dates and availability are not promised."
+    ],
+    [
+      "What if the app does not open?",
+      "Install the Windows preview first, then open its access settings. Visit the help centre if the website link does not launch the app."
+    ]
+  ],
+  "help": "Visit the help centre"
+}
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: copy.faq.map(([question, answer]) => ({
+    '@type': 'Question', name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+}]
 ---
 
-<Layout
-  title="30-day trial and €149 lifetime access — CommunityGlows"
-  description="Try every CommunityGlows feature available today for 30 days with no credit card or automatic billing, then choose lifetime access for €149 once."
-  path="/lifetime-deal"
-  jsonLd={jsonLd}
->
+<Layout title={copy.title} description={copy.description} path="/lifetime-deal" lang="en" jsonLd={jsonLd}>
   <main id="main-content" class="min-h-screen bg-background text-foreground">
-    <Navbar languageHref="/fr/lifetime-deal" />
-    <div class="relative z-20 mx-auto -mb-24 flex max-w-6xl justify-center px-4 pt-24 lg:justify-end">
-      <span class="rounded-full border border-foreground/20 bg-background px-4 py-2 text-sm font-semibold text-foreground">€149 · one-time payment</span>
-    </div>
-
-    <section class="relative overflow-hidden border-b border-border pt-32 pb-20">
-      <div class="absolute inset-0 bg-gradient-to-b from-card to-background" aria-hidden="true"></div>
-      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 lg:grid-cols-2">
-        <div>
-          <p class="inline-flex rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Founder Lifetime Deal
-          </p>
-          <h1 class="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
-            Keep showing up for your community, without the tab chaos.
-          </h1>
-          <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            Bring your accounts, conversations, and next actions into one focused workspace—so more of your attention can go to the people behind the notifications.
-          </p>
-          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ActionLink href={appUrl()} size="md">
-              Try 30 days free
-            </ActionLink>
-            <ActionLink href={purchaseUrl} variant="secondary" size="md">
-              Buy lifetime access for €149
-            </ActionLink>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-border bg-card p-4 shadow-2xl">
-          <div class="rounded-xl border border-border bg-background p-5">
-            <div class="flex items-center justify-between gap-4">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">CommunityGlows</p>
-                <p class="mt-1 text-lg font-semibold text-foreground">Community workspace</p>
-              </div>
-              <span class="rounded-full bg-[var(--sg-color-success)]/15 px-3 py-1 text-xs font-semibold text-[var(--sg-color-success)]">Direct LTD</span>
-            </div>
-            <div class="mt-6 grid gap-3 sm:grid-cols-3">
-              <div class="rounded-xl bg-card p-4">
-                <p class="text-xs font-medium text-muted-foreground">Profiles</p>
-                <p class="mt-2 text-3xl font-bold text-foreground">∞</p>
-              </div>
-              <div class="rounded-xl bg-card p-4">
-                <p class="text-xs font-medium text-muted-foreground">Networks</p>
-                <p class="mt-2 text-3xl font-bold text-foreground">18+</p>
-              </div>
-              <div class="rounded-xl bg-card p-4">
-                <p class="text-xs font-medium text-muted-foreground">Plan</p>
-                <p class="mt-2 text-3xl font-bold text-foreground">Pro</p>
-              </div>
-            </div>
-            <div class="mt-4 grid gap-3 sm:grid-cols-2">
-              <div class="rounded-xl border border-border p-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Next action</p>
-                <p class="mt-2 text-sm text-foreground">Warm reply queue and launch notes</p>
-              </div>
-              <div class="rounded-xl border border-border p-4">
-                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Access route</p>
-                <p class="mt-2 text-sm text-foreground">Secure suite checkout</p>
-              </div>
-            </div>
-          </div>
-        </div>
+    <Navbar lang="en" languageHref="/fr/lifetime-deal" />
+    <section class="mx-auto max-w-5xl px-4 pt-32 pb-16 text-center">
+      <EyebrowPill>{copy.eyebrow}</EyebrowPill>
+      <h1 class="mt-6 text-4xl sm:text-6xl font-bold tracking-tight">{copy.heading}</h1>
+      <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{copy.intro}</p>
+      <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+        <ActionLink href={appUrl('', 'en')} size="md">{copy.download}</ActionLink>
+        <ActionLink href={authenticatedPurchaseUrl()} variant="secondary" size="md">{copy.access}</ActionLink>
+      </div>
+      <p class="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-muted-foreground">{copy.note}</p>
+      <a class="mt-4 inline-block underline underline-offset-4" href="/help">{copy.help}</a>
+    </section>
+    <section class="mx-auto max-w-5xl px-4 py-12">
+      <div class="rounded-2xl border border-border bg-card p-6 sm:p-10">
+        <p class="text-sm text-muted-foreground">{copy.offer}</p>
+        <h2 class="mt-3 text-3xl font-bold">{copy.price}</h2>
+        <p class="mt-5 leading-relaxed text-muted-foreground">{copy.trial}</p>
+        <ul class="mt-6 grid gap-4 sm:grid-cols-2">
+          {copy.includes.map(item => <li class="rounded-xl bg-background p-4">{item}</li>)}
+        </ul>
       </div>
     </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="grid gap-8 lg:grid-cols-2">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Why this workspace matters</p>
-          <h2 class="mt-3 text-3xl font-bold text-foreground">Community grows through remembered details and repeated care.</h2>
-        </div>
-        <p class="text-lg leading-relaxed text-muted-foreground">
-          The Lifetime Deal gives you a lasting place to listen, respond, and follow through. CommunityGlows keeps profiles and working context close together, helping you move from scattered activity to a more human, consistent presence.
-        </p>
+    <section class="mx-auto max-w-5xl px-4 py-12">
+      <h2 class="text-3xl font-bold">{copy.boundaryTitle}</h2>
+      <ul class="mt-6 space-y-4">
+        {copy.boundaries.map(item => <li class="rounded-xl border border-border bg-card p-5 leading-relaxed text-muted-foreground">{item}</li>)}
+      </ul>
+    </section>
+    <section class="mx-auto max-w-5xl px-4 py-12 pb-20">
+      <h2 class="text-3xl font-bold">{copy.faqTitle}</h2>
+      <div class="mt-6 space-y-4">
+        {copy.faq.map(([question, answer]) => <article class="rounded-xl border border-border bg-card p-5"><h3 class="font-semibold">{question}</h3><p class="mt-3 leading-relaxed text-muted-foreground">{answer}</p></article>)}
       </div>
     </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <div class="max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Workflow</p>
-          <h2 class="mt-3 text-3xl font-bold text-foreground">From social noise to an operating rhythm.</h2>
-        </div>
-        <div class="mt-8 grid gap-4 md:grid-cols-3">
-          {workflow.map((item) => (
-            <div class="rounded-xl border border-border bg-background p-5">
-              <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Step {item.step}</p>
-              <h3 class="mt-3 text-xl font-semibold text-foreground">{item.title}</h3>
-              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section id="offer" class="mx-auto grid max-w-6xl gap-8 px-4 py-16 lg:grid-cols-5">
-      <div class="lg:col-span-2">
-        <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">The offer</p>
-        <h2 class="mt-3 text-3xl font-bold text-foreground">CommunityGlows Lifetime Deal</h2>
-        <p class="mt-4 text-muted-foreground">
-          Start with a full 30-day trial of every feature available today—without a credit card or automatic billing. You may restart the trial twice. After the third cycle, purchase through Stripe is required to continue protected actions.
-        </p>
-      </div>
-
-      <div class="rounded-2xl border border-foreground/30 bg-card p-6 shadow-2xl lg:col-span-3 sm:p-8">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Founder early-bird</p>
-            <h3 class="mt-3 text-4xl font-bold text-foreground">€149 · Lifetime access</h3>
-            <p class="mt-3 max-w-2xl text-sm text-muted-foreground">
-              Pay once, then use the Pro workspace to keep accounts organized, return to important conversations, and carry community context forward.
-            </p>
-          </div>
-          <span class="rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {offerId}
-          </span>
-        </div>
-
-        <div class="mt-6 grid gap-3 sm:grid-cols-2">
-          {includes.map((item) => (
-            <div class="rounded-xl bg-background p-4 text-sm leading-relaxed text-muted-foreground">
-              {item}
-            </div>
-          ))}
-        </div>
-
-        <div class="mt-6 grid gap-3 sm:grid-cols-2">
-          <ActionLink href={appUrl()} size="md" fullWidth>Try 30 days free</ActionLink>
-          <ActionLink href={purchaseUrl} variant="secondary" size="md" fullWidth>Open the app to buy with Stripe</ActionLink>
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="rounded-2xl border border-border bg-card p-6 sm:p-8">
-        <h2 class="text-3xl font-bold text-foreground">What to expect as the product evolves</h2>
-        <div class="mt-6 grid gap-3 md:grid-cols-2">
-          {boundaries.map((item) => (
-            <div class="rounded-xl border border-border bg-background p-4 text-sm leading-relaxed text-muted-foreground">
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="grid gap-4">
-        <h2 class="text-3xl font-bold text-foreground">Lifetime access FAQ</h2>
-        {faq.map((item) => (
-          <div class="rounded-xl border border-border bg-card p-5">
-            <h3 class="text-base font-semibold text-foreground">{item.q}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section class="mx-auto max-w-6xl px-4 py-16">
-      <div class="rounded-2xl border border-foreground/20 bg-primary p-8 text-primary-foreground sm:p-10">
-        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div class="max-w-2xl">
-            <h2 class="text-3xl font-bold">Make more room for the people in your community.</h2>
-            <p class="mt-4 text-primary-foreground/70">
-              Choose lifetime access and build a calmer social rhythm around listening, responding, and following through.
-            </p>
-          </div>
-          <div class="flex flex-col gap-3 sm:flex-row">
-            <ActionLink href={appUrl()} variant="secondary" size="md">Try 30 days free</ActionLink>
-            <ActionLink href={purchaseUrl} variant="secondary" size="md">Open the app to buy with Stripe</ActionLink>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <Footer languageHref="/fr/lifetime-deal" />
+    <Footer lang="en" languageHref="/fr/lifetime-deal" />
   </main>
 </Layout>

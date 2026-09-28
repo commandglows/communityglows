@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "tauri-electron-or-flutter-how-to-choose-a-web-centered-app"
 title: "Tauri, Electron ou Flutter : comment choisir pour une app centrée sur le Web ?"
 description: "Une méthode de décision pour choisir Tauri, Electron ou Flutter selon votre code existant, vos plateformes, votre moteur web et votre capacité de maintenance."
 date: "2026-09-05"

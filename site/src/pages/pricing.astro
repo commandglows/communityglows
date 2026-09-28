@@ -4,19 +4,19 @@ import Navbar from '../components/Navbar.astro'
 import Pricing from '../components/Pricing.astro'
 import Newsletter from '../components/Newsletter.astro'
 import Footer from '../components/Footer.astro'
-import { siteUrl } from '../config/site'
+
 
 const jsonLd = [{
   '@context': 'https://schema.org', '@type': 'Product', name: 'CommunityGlows',
-  description: 'Use 30-day trial cycles with two restarts maximum, then purchase lifetime access through Stripe to continue protected CommunityGlows actions.',
-  offers: { '@type': 'Offer', price: '149', priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: siteUrl('/lifetime-deal') },
+  description: 'Use 30-day trial cycles with two restarts maximum, then purchase lifetime access through Stripe to continue using CommunityGlows. Public checkout availability is being finalized.',
+
 }]
 ---
 
-<Layout title="30-day cycles, then €149 once — CommunityGlows" description="Start with 30 days and restart twice at most. After the third cycle, purchase lifetime access through Stripe to continue, with no subscription." path="/pricing" lang="en" jsonLd={jsonLd}>
+<Layout title="Windows preview and €149 lifetime price — CommunityGlows" description="Explore the Windows preview. Trial terms: 30 days with up to two optional restarts, then €149 once. Check access and checkout availability in the app." path="/pricing" lang="en" jsonLd={jsonLd}>
   <main id="main-content" class="min-h-screen bg-background text-foreground">
     <Navbar languageHref="/fr/pricing" />
-    <div class="pt-20"><Pricing lang="en" /></div>
+    <div class="pt-20"><Pricing lang="en" headingLevel="h1" /></div>
     <Newsletter lang="en" />
     <Footer languageHref="/fr/pricing" />
   </main>

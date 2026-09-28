@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "social-platform-limits-communityglows"
 title: "Ce que CommunityGlows peut — et ne peut pas — faire face aux règles des réseaux sociaux"
 description: "Connexions refusées, captchas, quotas, API et automatisation : comprendre les limites que les plateformes sociales imposent à CommunityGlows et à ses utilisateurs."
 date: "2026-09-05"

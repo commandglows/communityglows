@@ -3,12 +3,20 @@ import Layout from '../../layouts/Layout.astro'
 import Navbar from '../../components/Navbar.astro'
 import Footer from '../../components/Footer.astro'
 import { getCollection, render } from 'astro:content'
-import { appUrl, siteUrl } from '../../config/site'
+import { siteUrl } from '../../config/site'
 import ActionLink from '../../components/ui/ActionLink.astro'
 import StatusBadge from '../../components/ui/StatusBadge.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
+  const byId = new Map(posts.map(post => [post.id, post]))
+  for (const post of posts) {
+    if (!post.data.alternateSlug) continue
+    const peer = byId.get(post.data.alternateSlug)
+    if (!peer || peer.data.locale === post.data.locale || peer.data.alternateSlug !== post.id) {
+      throw new Error(`Invalid blog translation pair: ${post.id}`)
+    }
+  }
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -17,12 +25,17 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props
 const { Content } = await render(post)
+const lang = post.data.locale
+const fr = lang === 'fr'
+const hubPath = fr ? '/blog/fr' : '/blog'
+const alternatePath = post.data.alternateSlug ? `/blog/${post.data.alternateSlug}` : null
 
 const jsonLd = [
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.data.title,
+    inLanguage: lang,
     description: post.data.description,
     url: siteUrl(`/blog/${post.id}`),
     datePublished: post.data.date,
@@ -40,8 +53,8 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl('/') },
-      { "@type": "ListItem", position: 2, name: "Blog", item: siteUrl('/blog') },
+      { "@type": "ListItem", position: 1, name: fr ? 'Accueil' : 'Home', item: siteUrl(fr ? '/fr' : '/') },
+      { "@type": "ListItem", position: 2, name: "Blog", item: siteUrl(hubPath) },
       { "@type": "ListItem", position: 3, name: post.data.title, item: siteUrl(`/blog/${post.id}`) },
     ],
   },
@@ -53,24 +66,26 @@ const jsonLd = [
   description={post.data.description}
   path={`/blog/${post.id}`}
   jsonLd={jsonLd}
+  lang={lang}
+  alternatePath={alternatePath}
 >
   <main id="main-content" class="min-h-screen bg-background text-foreground">
-    <Navbar />
+    <Navbar lang={lang} alternatePath={alternatePath} />
 
     <article class="max-w-3xl mx-auto px-4 pt-32 pb-16">
       <header class="mb-10">
-        <a href="/blog" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <a href={hubPath} class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
           <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-          Back to Blog
+          {fr ? 'Retour au blog' : 'Back to Blog'}
         </a>
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4" style="font-family: var(--font-cal-sans);">
           {post.data.title}
         </h1>
         <div class="flex items-center gap-4 text-sm text-muted-foreground">
           <time datetime={post.data.date}>
-            {new Date(post.data.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date(post.data.date).toLocaleDateString(fr ? 'fr-FR' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </time>
-          {post.data.author && <span>by {post.data.author}</span>}
+          {post.data.author && <span>{fr ? 'par' : 'by'} {post.data.author}</span>}
         </div>
         {post.data.tags && post.data.tags.length > 0 && (
           <div class="flex gap-2 mt-4">
@@ -87,15 +102,15 @@ const jsonLd = [
 
       <!-- CTA -->
       <div class="mt-16 p-8 rounded-2xl bg-card border border-border text-center">
-        <h3 class="text-xl font-bold text-foreground mb-3">Ready to run social without the clutter?</h3>
-        <p class="text-muted-foreground mb-6">Start with CommunityGlows’s profile-based workspace.</p>
-        <ActionLink href={appUrl()} size="md">
-          Try 30 Days Free
+        <h3 class="text-xl font-bold text-foreground mb-3">{fr ? 'Prêt à organiser vos réseaux ?' : 'Ready to organize your networks?'}</h3>
+        <p class="text-muted-foreground mb-6">{fr ? 'Découvrez la version Windows et son guide de prise en main.' : 'Explore the Windows app and its getting-started guide.'}</p>
+        <ActionLink href={fr ? '/fr/download' : '/download'} size="md">
+          {fr ? 'Télécharger pour Windows' : 'Download for Windows'}
           <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </ActionLink>
       </div>
     </article>
 
-    <Footer />
+    <Footer lang={lang} languageHref={alternatePath ?? (fr ? '/blog' : '/blog/fr')} />
   </main>
 </Layout>

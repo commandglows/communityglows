@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "ce-qui-reste-local-et-ce-qui-est-synchronise-communityglows"
 title: "CommunityGlows: What Stays on Your Device and What Syncs"
 description: "Sessions, profiles, preferences, Scenes, and backups: a clear guide to what CommunityGlows keeps locally and what can follow your account."
 date: "2026-09-05"
@@ -29,7 +31,7 @@ The following stay local to each device:
 - active social network sessions;
 - cookies and other web data that maintain those sessions;
 - the current cockpit draft for each profile;
-- contextual tasks in their current version;
+- local copies of contextual tasks, pending successful cloud synchronization;
 - engine- or system-specific data outside the sync contract.
 
 In practice, you can recover the structure of your workspace on another device while still needing to sign in to the networks on that device.
@@ -86,9 +88,9 @@ The current draft is different. It represents the profile’s unsaved working st
 
 ## What about tasks?
 
-The contextual task manager can store an intention, note, people, links, tags, priority, or due date. In its current version, this board uses versioned local storage and is not synced through the CommunityGlows cloud.
+The contextual task manager can store an intention, note, people, links, tags, priority, or due date. The implemented board uses versioned local storage and sends its snapshot through workspace cloud synchronization when a CommunityGlows account is connected.
 
-A task created on one computer should therefore not be assumed to exist on another device. That explicit limit is better than a vague promise: until a data type is part of the cloud contract, it should be treated as local.
+A local save does not prove that another device has received it. Confirm synchronization and use a compatible app version before relying on tasks elsewhere. This transfers task data, not the social sessions attached to their links.
 
 ## Sync can keep working through an unreliable connection
 

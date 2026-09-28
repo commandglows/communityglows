@@ -15,7 +15,7 @@ const copy = lang === 'fr' ? {
     eyebrow: 'Des outils au service de la relation',
     title: 'Moins de bruit. Plus de présence.',
     body: 'CommunityGlows rassemble vos comptes, vos réseaux et vos repères de travail dans un espace calme. Vous passez moins de temps à reconstruire le contexte — et davantage à écouter, répondre et faire vivre les relations qui comptent.',
-    primary: 'Essayer 30 jours gratuitement', secondary: 'Explorer les fonctionnalités',
+    primary: 'Télécharger la préversion Windows', secondary: 'Explorer les fonctionnalités',
   },
   bridge: {
     label: 'Le vrai travail se passe entre les publications',
@@ -27,16 +27,20 @@ const copy = lang === 'fr' ? {
       { icon: '🤝', title: 'Entretenir la continuité', desc: 'Gardez les prochaines actions à proximité pour reprendre une conversation sans perdre son fil humain.' },
     ],
   },
+  availability: 'Préversion Windows : les fonctionnalités dépendent de la version installée. Les cartes « en préparation » présentent les évolutions à venir, sans date promise. Les extensions ouvrent les réseaux dans les onglets du navigateur et ne séparent pas ses cookies par profil.',
   featureLabel: 'Votre espace de travail social',
   featureTitle: 'Des fonctionnalités qui protègent votre attention et votre contexte',
   features: [
-    { title: 'Profils isolés', desc: 'Séparez les espaces personnels, professionnels, clients ou projets. Chaque profil conserve ses propres sessions pour éviter de mélanger les identités et les conversations.', icon: '🔒' },
-    { title: 'Vos réseaux réunis', desc: 'Ouvrez X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram et d’autres services depuis la même interface.', icon: '🌐' },
+    { title: 'Profils isolés', desc: 'Séparez les espaces personnels, professionnels, clients ou projets. Sur Windows, chaque profil conserve ses sessions pour réduire les mélanges accidentels. Vérifiez le compte actif avant de publier ; cela ne rend pas votre identité anonyme auprès des réseaux.', icon: '🔒' },
+    { title: 'Vos réseaux réunis', desc: 'Ouvrez X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Telegram et d’autres services depuis la même interface.', icon: '🌐' },
     { title: 'Contrôles de concentration', desc: 'Utilisez les niveaux de gris, l’apparence claire ou sombre, la mise en sourdine des médias et la taille du texte, lorsqu’ils sont pris en charge, pour rester présent à la tâche.', icon: '🎯' },
-    { title: 'CRM et Kanban en développement', desc: 'Nous travaillons sur un espace pour garder idées, publications et suivis près des réseaux où le travail se déroule.', icon: '📋' },
+    { title: 'Bento — en préparation', desc: 'Affichez plusieurs réseaux côte à côte, déplacez et redimensionnez les panneaux. Vérifiez les notes de votre version : les ajouts récents ne sont pas encore confirmés dans l’installeur public.', icon: '▦' },
+    { title: 'Scènes — en préparation', desc: 'Enregistrez une disposition nommée pour un profil et retrouvez votre espace de travail. Cette évolution accompagne les prochaines versions du Bento.', icon: '🗂️' },
+    { title: 'Tâches — en préparation', desc: 'Gardez une prochaine action avec ses personnes, liens, notes, tags, priorité et échéance. Un tableau aux étapes renommables aide à organiser les suivis ; ce ne sont pas des publications automatisées.', icon: '📋' },
     { title: 'Liens personnalisés', desc: 'Placez vos ressources de travail utiles à côté de vos réseaux. Leur disponibilité et le comportement des sessions dépendent de chaque plateforme.', icon: '🔗' },
     { title: 'Synchronisation utile', desc: 'Retrouvez vos profils, comptes actifs, liens, réseaux masqués et préférences depuis votre compte, tout en gardant les sessions de connexion actives sur l’appareil.', icon: '☁️' },
-    { title: 'Ordinateur et Android', desc: 'Conservez un workflow familier sur ordinateur et Android, avec des passerelles web et mobile lorsque le contexte l’exige.', icon: '📱' },
+    { title: 'Windows en préversion publique', desc: 'Windows est le premier téléchargement public. Android, Chrome et Firefox sont en préparation ; aucun téléchargement public Linux ou Apple n’est proposé actuellement.', icon: '💻' },
+    { title: 'Raccourcis et sauvegarde', desc: 'Sur Windows, personnalisez les raccourcis et utilisez la sauvegarde locale pour conserver vos données. Les sessions ne voyagent que dans un export explicite lorsqu’elles sont incluses.', icon: '⌨️' },
   ],
   rhythm: {
     label: 'Du système au lien humain', title: 'Un espace qui soutient votre rythme, sans dicter votre voix.',
@@ -50,14 +54,14 @@ const copy = lang === 'fr' ? {
   closing: {
     title: 'Faites de votre espace social un lieu de relation.',
     body: 'Rassemblez les outils autour de votre communauté, puis redonnez votre attention aux personnes qui la font vivre.',
-    cta: 'Essayer 30 jours gratuitement',
+    cta: 'Télécharger la préversion Windows',
   },
 } : {
   hero: {
     eyebrow: 'Tools in service of the relationship',
     title: 'Less noise. More presence.',
     body: 'CommunityGlows brings your accounts, networks, and working context into one calm space. Spend less time rebuilding your setup — and more time listening, responding, and caring for the relationships that matter.',
-    primary: 'Try 30 days free', secondary: 'Explore the features',
+    primary: 'Download Windows preview', secondary: 'Explore the features',
   },
   bridge: {
     label: 'The real work happens between posts',
@@ -69,16 +73,20 @@ const copy = lang === 'fr' ? {
       { icon: '🤝', title: 'Protect continuity', desc: 'Keep next actions nearby so you can continue a conversation without losing its human thread.' },
     ],
   },
+  availability: 'Windows preview: features depend on your installed version. Cards marked “in preparation” describe upcoming improvements with no promised date. Browser extensions open networks in browser tabs and do not separate browser cookies by profile.',
   featureLabel: 'Your social workspace',
   featureTitle: 'Features that protect your attention and context',
   features: [
-    { title: 'Isolated profiles', desc: 'Separate personal, work, client, and project spaces. Each profile keeps its own sessions so identities and conversations do not get mixed together.', icon: '🔒' },
-    { title: 'Your networks together', desc: 'Open X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Gmail, WhatsApp, Telegram, and other services from the same interface.', icon: '🌐' },
+    { title: 'Isolated profiles', desc: 'Separate personal, work, client, and project spaces. On Windows, each profile keeps its sessions to reduce accidental mix-ups. Check the active account before posting; this does not make you anonymous to social networks.', icon: '🔒' },
+    { title: 'Your networks together', desc: 'Open X/Twitter, Facebook, Instagram, LinkedIn, TikTok, Discord, Reddit, Threads, Telegram, and other services from the same interface.', icon: '🌐' },
     { title: 'Focus controls', desc: 'Use grayscale, light or dark appearance, media mute, and adjustable text size where supported to stay present with the task in front of you.', icon: '🎯' },
-    { title: 'CRM and Kanban in development', desc: 'We are building a workspace to keep ideas, publishing work, and follow-ups near the networks where they happen.', icon: '📋' },
+    { title: 'Bento — in preparation', desc: 'Show networks side by side, move and resize panels. Check your version’s release notes: recent additions are not yet confirmed in the public installer.', icon: '▦' },
+    { title: 'Scenes — in preparation', desc: 'Save a named layout for a profile and return to your workspace. This improvement accompanies upcoming Bento releases.', icon: '🗂️' },
+    { title: 'Tasks — in preparation', desc: 'Keep a next action with people, links, notes, tags, a priority and a due date. Rename board stages to organize follow-ups; tasks do not automate social posts.', icon: '📋' },
     { title: 'Custom links', desc: 'Place useful working resources beside your networks. Availability and session behavior depend on each destination and platform.', icon: '🔗' },
     { title: 'Useful sync', desc: 'Find your profiles, active accounts, links, hidden networks, and preferences through your account while live login sessions stay on the device.', icon: '☁️' },
-    { title: 'Desktop and Android', desc: 'Keep a familiar workflow on desktop and Android, with web and mobile bridges where the context calls for them.', icon: '📱' },
+    { title: 'Windows public preview', desc: 'Windows is the first public download. Android, Chrome and Firefox are in preparation; no public Linux or Apple download is currently offered.', icon: '💻' },
+    { title: 'Shortcuts and backup', desc: 'On Windows, customize shortcuts and use local backup to keep your data. Sessions only travel through an explicit export when included.', icon: '⌨️' },
   ],
   rhythm: {
     label: 'From system to human connection', title: 'A workspace that supports your rhythm without dictating your voice.',
@@ -92,7 +100,7 @@ const copy = lang === 'fr' ? {
   closing: {
     title: 'Make your social workspace a place for connection.',
     body: 'Bring the tools together around your community, then give your attention back to the people who make it real.',
-    cta: 'Try 30 days free',
+    cta: 'Download Windows preview',
   },
 }
 ---
@@ -105,7 +113,7 @@ const copy = lang === 'fr' ? {
     <h1 class="animate-fade-up delay-100 mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground" style="font-family: var(--font-cal-sans);">{copy.hero.title}</h1>
     <p class="animate-fade-up delay-200 mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">{copy.hero.body}</p>
       <div class="animate-fade-up delay-300 mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <ActionLink href={appUrl()} size="md">
+        <ActionLink href={appUrl('', lang)} size="md">
           {copy.hero.primary}
         </ActionLink>
         <ActionLink href="#features" variant="secondary" size="md">{copy.hero.secondary}</ActionLink>
@@ -136,6 +144,7 @@ const copy = lang === 'fr' ? {
       <div class="mx-auto mb-14 max-w-3xl text-center">
         <EyebrowPill class="animate-fade-up">{copy.featureLabel}</EyebrowPill>
         <h2 class="animate-fade-up delay-100 mt-4 text-3xl sm:text-4xl font-bold text-foreground" style="font-family: var(--font-instrument-sans);">{copy.featureTitle}</h2>
+        <p class="mt-5 leading-relaxed text-muted-foreground">{copy.availability}</p>
       </div>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {copy.features.map((feature) => (
@@ -172,7 +181,7 @@ const copy = lang === 'fr' ? {
     <div class="max-w-3xl mx-auto rounded-2xl border border-border bg-card px-6 py-12 text-center sm:px-10" data-reveal>
       <h2 class="animate-fade-up text-3xl sm:text-4xl font-bold text-foreground">{copy.closing.title}</h2>
       <p class="animate-fade-up delay-100 mt-5 text-lg leading-relaxed text-muted-foreground">{copy.closing.body}</p>
-        <ActionLink href={appUrl()} size="md" class="animate-fade-up delay-200 mt-8">
+        <ActionLink href={appUrl('', lang)} size="md" class="animate-fade-up delay-200 mt-8">
           {copy.closing.cta}
         </ActionLink>
     </div>

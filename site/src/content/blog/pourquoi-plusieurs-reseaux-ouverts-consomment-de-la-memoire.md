@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "why-multiple-open-networks-use-memory"
 title: "Pourquoi plusieurs réseaux ouverts consomment-ils autant de mémoire ?"
 description: "WebViews, processus, pages actives et sessions chaudes : comprendre le coût d’un cockpit multi-réseaux et les compromis d’une future mise en veille."
 date: "2026-09-05"

@@ -60,7 +60,7 @@ const decisions = [
   },
   {
     need: 'Protéger son attention et rendre le suivi visible',
-    direction: 'CommunityGlows réunit contrôles de concentration et workflow visuel dans le même espace.',
+    direction: 'CommunityGlows propose des contrôles de concentration sur Windows. Bento, Scènes et Tâches contextuelles sont en préparation.',
   },
 ]
 
@@ -93,14 +93,16 @@ const jsonLd = [{
         Certains outils aident les équipes à publier davantage. D’autres isolent les sessions de navigation. CommunityGlows part d’une autre priorité : être présent, préserver le contexte humain et construire une continuité avec les personnes derrière chaque compte.
       </p>
       <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <ActionLink href={appUrl()} size="md">
-          Tout essayer pendant 30 jours
+        <ActionLink href={appUrl('', 'fr')} size="md">
+          Télécharger la préversion Windows
         </ActionLink>
         <ActionLink href="/fr/pricing" variant="secondary" size="md">
           Voir les tarifs
         </ActionLink>
       </div>
     </section>
+
+    <aside class="mx-auto max-w-5xl px-4 pb-8 text-sm leading-relaxed text-muted-foreground">Préversion publique Windows. Android et les extensions Chrome et Firefox ne sont pas encore distribués publiquement. Les fonctionnalités disponibles dépendent de votre version ; Bento, Scènes et Tâches sont en préparation.</aside>
 
     <section class="max-w-6xl mx-auto px-4 py-16" aria-labelledby="approaches-title">
       <div class="mx-auto mb-12 max-w-3xl text-center">
@@ -159,8 +161,8 @@ const jsonLd = [{
       <p class="mt-4 text-lg leading-8 text-muted-foreground">
         Si votre meilleur travail commence par écouter, comprendre et revenir avec attention, CommunityGlows donne à ce rythme un espace dédié.
       </p>
-      <ActionLink href={appUrl()} size="md" class="mt-8">
-        Essayer CommunityGlows gratuitement pendant 30 jours
+      <ActionLink href={appUrl('', 'fr')} size="md" class="mt-8">
+        Télécharger CommunityGlows pour Windows
       </ActionLink>
     </section>
 

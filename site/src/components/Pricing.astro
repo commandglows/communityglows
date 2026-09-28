@@ -5,8 +5,8 @@ import ActionLink from './ui/ActionLink.astro'
 import SectionHeading from './ui/SectionHeading.astro'
 import StatusBadge from './ui/StatusBadge.astro'
 import EyebrowPill from './ui/EyebrowPill.astro'
-interface Props { lang?: Locale }
-const { lang = 'en' } = Astro.props
+interface Props { lang?: Locale; headingLevel?: 'h1' | 'h2' }
+const { lang = 'en', headingLevel = 'h2' } = Astro.props
 const t = getTranslations(lang)
 const purchaseUrl = authenticatedPurchaseUrl()
 ---
@@ -17,7 +17,7 @@ const purchaseUrl = authenticatedPurchaseUrl()
       eyebrow={t.pricing.badge}
       title={t.pricing.title}
       subtitle={t.pricing.subtitle}
-      as="h2"
+      as={headingLevel}
       fontVariant="editorial"
       containerClass="mb-12 data-reveal"
       titleClass="mt-5 animate-fade-up delay-100"
@@ -34,13 +34,14 @@ const purchaseUrl = authenticatedPurchaseUrl()
           </div>
           <p class="mt-2 text-sm text-muted-foreground">{t.pricing.priceSuffix}</p>
           <div class="mt-7 flex flex-col gap-3">
-            <ActionLink href={appUrl()} fullWidth size="md">
+            <ActionLink href={appUrl('', lang)} fullWidth size="md">
               {t.pricing.cta}
             </ActionLink>
             <ActionLink href={purchaseUrl} variant="secondary" fullWidth size="md">
               {t.pricing.purchaseCta}
             </ActionLink>
           </div>
+          <p class="mt-4 text-sm text-muted-foreground">{lang === 'fr' ? 'L’achat s’ouvre dans l’application installée, après connexion. Si elle ne s’ouvre pas, téléchargez-la puis consultez l’aide.' : 'Purchase opens in the installed app after sign-in. If it does not open, download the app and visit Help.'} <a href={lang === 'fr' ? '/fr/help' : '/help'} class="underline">{lang === 'fr' ? 'Aide' : 'Help'}</a></p>
         </div>
 
         <div class="grid gap-5 sm:grid-cols-2">

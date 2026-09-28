@@ -3,15 +3,16 @@ import { getTranslations, localizeHref, type Locale } from '../i18n'
 import ActionLink from './ui/ActionLink.astro'
 import SiteLogo from './ui/SiteLogo.astro'
 
-interface Props { lang?: Locale }
-const { lang = 'en' } = Astro.props
+interface Props { lang?: Locale; languageHref?: string; alternatePath?: string | null }
+const { lang = 'en', languageHref = lang === 'fr' ? '/' : '/fr', alternatePath } = Astro.props
 const t = getTranslations(lang)
 
 const navItems = [
-  { label: t.nav.features, href: localizeHref('/#features', lang) },
+  { label: t.nav.features, href: localizeHref('/features', lang) },
   { label: t.nav.pricing, href: localizeHref('/pricing', lang) },
-  { label: t.nav.reviews, href: localizeHref('/#reviews', lang) },
-  { label: t.nav.blog, href: '/blog' },
+  { label: lang === 'fr' ? 'Aide' : 'Help', href: localizeHref('/help', lang) },
+  { label: t.nav.blog, href: lang === 'fr' ? '/blog/fr' : '/blog' },
+  ...(alternatePath === null ? [] : [{ label: lang === 'fr' ? 'EN' : 'FR', href: alternatePath ?? languageHref }]),
 ]
 const homeHref = lang === 'fr' ? '/fr' : '/'
 ---
