@@ -13,17 +13,17 @@ const footerLinks: Record<string, { label: string; href: string }[]> = {
     { label: t.footer.links.compare, href: localized('/compare') },
   ],
   [t.footer.resources]: [
-    { label: t.footer.links.blog, href: '/blog' },
+    { label: t.footer.links.blog, href: lang === 'fr' ? '/blog/fr' : '/blog' },
     { label: t.footer.links.downloads, href: localized('/download') },
-    { label: t.footer.links.github, href: 'https://github.com/dianedef/CommunityGlows' },
+    { label: t.footer.links.github, href: 'https://github.com/commandglows/communityglows' },
   ],
   [t.footer.company]: [
-    { label: t.footer.links.about, href: '#' },
-    { label: t.footer.links.contact, href: '#' },
+    { label: lang === 'fr' ? 'Aide et prise en main' : 'Help and getting started', href: localized('/help') },
+    { label: t.footer.links.contact, href: localized('/help') + '#contact' },
   ],
   [t.footer.legal]: [
-    { label: t.footer.links.privacy, href: '/privacy' },
-    { label: t.footer.links.terms, href: '/terms' },
+    { label: t.footer.links.privacy, href: localized('/privacy') },
+    { label: t.footer.links.terms, href: localized('/terms') },
   ],
 }
 const currentYear = new Date().getFullYear()
@@ -66,7 +66,7 @@ const languageHref = languageHrefProp ?? (lang === 'fr' ? '/' : '/fr')
       <p class="text-sm text-muted-foreground/70">{t.footer.copyright.replace('{year}', String(currentYear))}</p>
       <div class="flex items-center gap-6">
         <a href={languageHref} class="text-sm text-muted-foreground/70 hover:text-foreground transition-colors">{t.footer.links.language}</a>
-        <a href="https://github.com/dianedef/CommunityGlows" class="text-sm text-muted-foreground/70 hover:text-foreground transition-colors">GitHub</a>
+        <a href="https://github.com/commandglows/communityglows" class="text-sm text-muted-foreground/70 hover:text-foreground transition-colors">GitHub</a>
       </div>
     </div>
   </div>

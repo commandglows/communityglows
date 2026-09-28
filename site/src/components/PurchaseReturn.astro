@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Navbar from './Navbar.astro'
+import Footer from './Footer.astro'
+import ActionLink from './ui/ActionLink.astro'
+import { authenticatedPurchaseUrl } from '../config/site'
+interface Props { lang?: 'en' | 'fr'; status: 'success' | 'cancel' }
+const { lang = 'en', status } = Astro.props
+const fr = lang === 'fr'
+const base = fr ? '/fr' : ''
+const path = `${base}/purchase/${status}`
+const peer = `${fr ? '' : '/fr'}/purchase/${status}`
+const title = fr ? 'Vérifier votre accès' : 'Check your access'
+const message = status === 'success'
+  ? (fr ? 'Vous revenez du paiement. Cette page ne confirme ni le débit ni l’activation : ouvrez la facturation dans CommunityGlows pour vérifier le statut de votre compte.' : 'You have returned from checkout. This page does not confirm a charge or activation: open billing in CommunityGlows to check your account status.')
+  : (fr ? 'Vous avez quitté le paiement. Vérifiez le statut dans CommunityGlows avant de réessayer ; cette page ne permet pas de confirmer si une transaction a eu lieu.' : 'You left checkout. Check your status in CommunityGlows before trying again; this page cannot confirm whether a transaction occurred.')
+---
+<Layout title={`${title} — CommunityGlows`} description={message} path={path} alternatePath={peer} lang={lang} noIndex={true}>
+  <main id="main-content" class="min-h-screen bg-background text-foreground">
+    <Navbar lang={lang} languageHref={peer} />
+    <section class="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-24 text-center">
+      <h1 class="text-3xl font-bold">{title}</h1>
+      <p class="mt-4 text-muted-foreground">{message}</p>
+      <p class="mt-4 text-muted-foreground">{fr ? 'Si vous avez été débité sans accès, conservez la référence et utilisez le contact de votre confirmation de commande. Ne publiez aucune donnée de paiement dans un ticket public.' : 'If you were charged without access, keep the reference and use the contact in your order confirmation. Do not post payment information in a public issue.'}</p>
+      <div class="mt-8 flex flex-col gap-4">
+        <ActionLink href={authenticatedPurchaseUrl()}>{fr ? 'Ouvrir CommunityGlows' : 'Open CommunityGlows'}</ActionLink>
+        <a class="underline" href={`${base}/help`}>{fr ? 'L’application ne s’ouvre pas ? Aide' : 'App not opening? Get help'}</a>
+        <a class="underline" href={`${base}/pricing`}>{fr ? 'Revenir aux tarifs' : 'Back to pricing'}</a>
+      </div>
+    </section>
+    <Footer lang={lang} languageHref={peer} />
+  </main>
+</Layout>

@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "limites-plateformes-sociales-communityglows"
 title: "What CommunityGlows Can — and Cannot — Do About Social Platform Rules"
 description: "Blocked sign-ins, captchas, API quotas, and automation policies: understand the limits social platforms impose on CommunityGlows and its users."
 date: "2026-09-05"

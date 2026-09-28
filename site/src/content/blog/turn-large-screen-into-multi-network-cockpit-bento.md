@@ -1,4 +1,6 @@
 ---
+locale: "en"
+alternateSlug: "transformer-grand-ecran-cockpit-multi-reseaux-bento"
 title: "Turn Your Large Screen Into a Multi-Network Cockpit With CommunityGlows Bento"
 description: "Build a social cockpit around your workflow with freeform splits, resizable cards, multiple live networks, and profile-specific Bento Scenes."
 date: "2026-08-20"

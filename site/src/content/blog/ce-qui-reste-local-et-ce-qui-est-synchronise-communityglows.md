@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "what-stays-local-and-what-syncs-in-communityglows"
 title: "CommunityGlows : ce qui reste sur votre appareil et ce qui est synchronisé"
 description: "Sessions, profils, préférences, Scènes et sauvegardes : comprendre simplement quelles données CommunityGlows garde localement et lesquelles peuvent suivre votre compte."
 date: "2026-09-05"
@@ -29,7 +31,7 @@ Restent locaux à chaque appareil :
 - les sessions ouvertes dans les réseaux sociaux ;
 - les cookies et autres données web qui maintiennent ces connexions ;
 - le brouillon actuel du cockpit pour chaque profil ;
-- les tâches contextuelles dans leur version actuelle ;
+- les copies locales des tâches contextuelles, en attente d’une synchronisation cloud réussie ;
 - les données propres au moteur web ou au système qui ne font pas partie du contrat de synchronisation.
 
 En pratique, vous pouvez retrouver la structure de votre espace sur un autre appareil, tout en devant vous reconnecter aux réseaux sur cet appareil.
@@ -86,9 +88,9 @@ Le brouillon courant est différent. Il représente l’état de travail non enr
 
 ## Et les tâches ?
 
-Le gestionnaire de tâches contextuelles permet d’associer une intention, une note, des personnes, des liens, des tags, une priorité ou une échéance. Dans sa version actuelle, ce tableau utilise un stockage local versionné et n’est pas synchronisé par le cloud CommunityGlows.
+Le gestionnaire de tâches contextuelles permet d’associer une intention, une note, des personnes, des liens, des tags, une priorité ou une échéance. Le tableau implémenté utilise un stockage local versionné et transmet son état par la synchronisation cloud du workspace lorsqu’un compte CommunityGlows est connecté.
 
-Une tâche créée sur un ordinateur ne doit donc pas être supposée présente sur un autre appareil. Cette limite est préférable à une promesse floue : tant qu’une donnée ne fait pas explicitement partie du contrat cloud, elle doit être considérée comme locale.
+Un enregistrement local ne prouve pas que l’autre appareil l’a reçu. Vérifiez la synchronisation et utilisez une version compatible avant de compter sur vos tâches ailleurs. Ce transfert concerne les données des tâches, pas les sessions sociales associées à leurs liens.
 
 ## La synchronisation continue de fonctionner avec une connexion hésitante
 

@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "turn-large-screen-into-multi-network-cockpit-bento"
 title: "Transformez votre grand écran en cockpit multi-réseaux avec le Bento CommunityGlows"
 description: "Créez un cockpit social sur mesure : splits libres, cartes redimensionnables, réseaux visibles simultanément et Scènes propres à chaque profil."
 date: "2026-08-20"

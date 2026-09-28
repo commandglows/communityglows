@@ -10,20 +10,24 @@ import StatusBadge from '../ui/StatusBadge.astro'
 interface Props { lang: Locale }
 const { lang } = Astro.props
 const copy = lang === 'fr' ? {
-  eyebrow: 'Télécharger CommunityGlows', title: 'Choisissez votre plateforme.', intro: 'Accédez à la dernière version disponible de CommunityGlows.', available: 'Disponible', releasePage: 'Voir les releases', comingSoon: 'Bientôt disponible',
-  windows: { title: 'Windows', detail: 'Téléchargement direct de la dernière version Windows publiée.', action: 'Télécharger pour Windows' }, linux: { title: 'Linux', detail: 'Retrouvez les fichiers Linux dans les dernières releases du projet.', action: 'Voir les releases Linux' }, android: { title: 'Android', detail: 'Le téléchargement Android public n’est pas encore disponible.', action: '' }, apple: { title: 'iPhone et iPad', detail: 'CommunityGlows n’est pas encore disponible sur iPhone et iPad.', action: '' },
+  eyebrow: 'Télécharger CommunityGlows', title: 'Commencez sur Windows.', intro: 'La préversion Windows est le premier téléchargement public. Consultez ses notes de version pour connaître les fonctionnalités incluses. Android et les extensions Chrome et Firefox ne sont pas encore distribués publiquement.', available: 'Préversion publique', releasePage: 'Voir les versions', comingSoon: 'Pas encore disponible',
+  windows: { title: 'Windows', detail: 'Installeur de la préversion Windows. Le produit évolue encore ; les fonctionnalités peuvent différer des aperçus des prochaines versions.', action: 'Télécharger pour Windows' }, linux: { title: 'Linux', detail: 'Aucun téléchargement public Linux n’est proposé actuellement.', action: '' }, android: { title: 'Android', detail: 'Le téléchargement Android public n’est pas encore disponible. Aucune date n’est annoncée.', action: '' }, apple: { title: 'macOS, iPhone et iPad', detail: 'CommunityGlows n’est pas encore distribué publiquement sur les appareils Apple.', action: '' },
 } : {
-  eyebrow: 'Download CommunityGlows', title: 'Choose your platform.', intro: 'Get the latest available version of CommunityGlows.', available: 'Available', releasePage: 'View releases', comingSoon: 'Coming soon',
-  windows: { title: 'Windows', detail: 'Direct download of the latest published Windows version.', action: 'Download for Windows' }, linux: { title: 'Linux', detail: 'Find Linux files in the project’s latest releases.', action: 'View Linux releases' }, android: { title: 'Android', detail: 'A public Android download is not available yet.', action: '' }, apple: { title: 'iPhone and iPad', detail: 'CommunityGlows is not yet available for iPhone and iPad.', action: '' },
+  eyebrow: 'Download CommunityGlows', title: 'Start on Windows.', intro: 'The Windows preview is our first public download. Read its release notes to check which features are included. Android and the Chrome and Firefox extensions are not publicly distributed yet.', available: 'Public preview', releasePage: 'View releases', comingSoon: 'Not yet available',
+  windows: { title: 'Windows', detail: 'Installer for the Windows preview. The product is still evolving; included features may differ from previews of upcoming versions.', action: 'Download for Windows' }, linux: { title: 'Linux', detail: 'No public Linux download is currently offered.', action: '' }, android: { title: 'Android', detail: 'A public Android download is not available yet. No release date is announced.', action: '' }, apple: { title: 'macOS, iPhone and iPad', detail: 'CommunityGlows is not publicly distributed on Apple devices yet.', action: '' },
 }
 ---
 
 <main id="main-content" class="min-h-screen bg-background text-foreground">
-  <Navbar lang={lang} />
+  <Navbar lang={lang} languageHref={lang === 'fr' ? '/download' : '/fr/download'} />
   <section class="mx-auto max-w-5xl px-4 pb-16 pt-32 text-center sm:pb-20" data-reveal>
     <EyebrowPill class="animate-fade-up">{copy.eyebrow}</EyebrowPill>
     <h1 class="animate-fade-up delay-100 mx-auto mt-5 max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl" style="font-family: var(--font-cal-sans);">{copy.title}</h1>
     <p class="animate-fade-up delay-200 mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">{copy.intro}</p>
+    <nav class="mt-6 flex flex-wrap justify-center gap-5" aria-label={lang === 'fr' ? 'Avant de commencer' : 'Before you start'}>
+      <a class="underline" href="https://github.com/commandglows/communityglows/releases/tag/windows-latest">{lang === 'fr' ? 'Notes de la préversion Windows' : 'Windows preview release notes'}</a>
+      <a class="underline" href={lang === 'fr' ? '/blog/bien-demarrer-communityglows-guide-windows' : '/blog/getting-started-with-video-notes'}>{lang === 'fr' ? 'Guide d’installation et de prise en main' : 'Installation and getting-started guide'}</a>
+    </nav>
   </section>
   <section class="mx-auto max-w-5xl px-4 pb-20 sm:pb-28" aria-label={copy.eyebrow}>
     <div class="grid gap-5 sm:grid-cols-2" data-reveal>
@@ -47,5 +51,5 @@ const copy = lang === 'fr' ? {
       })}
     </div>
   </section>
-  <Footer lang={lang} />
+  <Footer lang={lang} languageHref={lang === 'fr' ? '/download' : '/fr/download'} />
 </main>

@@ -32,7 +32,7 @@ const t = getTranslations(lang)
 
     <!-- CTAs -->
     <div class="animate-fade-up delay-600 flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-      <ActionLink href={appUrl()} size="md">
+      <ActionLink href={appUrl('', lang)} size="md">
         {t.hero.cta}
         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </ActionLink>

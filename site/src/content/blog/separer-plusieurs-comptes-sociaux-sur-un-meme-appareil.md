@@ -1,4 +1,6 @@
 ---
+locale: "fr"
+alternateSlug: "separate-multiple-social-accounts-on-one-device"
 title: "Peut-on vraiment séparer plusieurs comptes sociaux sur le même appareil ?"
 description: "Profils, sessions locales, desktop, Android et extension : ce que CommunityGlows sépare réellement, et les limites à connaître avant de changer de compte."
 date: "2026-09-05"
