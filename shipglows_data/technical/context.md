@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.8.0"
+artifact_version: "1.8.1"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-20"
+updated: "2026-09-28"
 status: reviewed
 source_skill: 300-sg-docs
 scope: context
@@ -35,6 +35,8 @@ evidence:
   - "src/ui/setup/pages/CommunityGlows/components/ProductAccessGate.vue"
   - "src/lib/communityGlowsInstallation.ts"
   - "manifest.config.ts"
+  - ".github/workflows/shipglows-required-gate.yml"
+  - ".shipglows/required-gate.json"
 depends_on:
   - "README.md"
   - "AGENT.md"
@@ -52,6 +54,8 @@ linked_systems:
   - "src-tauri/tauri.conf.json"
   - "shipglows_data/technical/design-system-authority.md"
   - "convex/schema.ts"
+  - ".github/workflows/shipglows-required-gate.yml"
+  - ".shipglows/required-gate.json"
 next_step: "/300-sg-docs update shipglows_data/technical/context.md"
 ---
 
@@ -159,6 +163,8 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 
 ## Technical Decisions
 
+- La branche GitHub `main` accepte les changements par pull request avec le statut obligatoire `ShipGlows required gate`. Le workflow `.github/workflows/shipglows-required-gate.yml` s’exécute sur chaque push et pull request vers `main`; il sélectionne les lanes dans le job et publie un succès explicite lorsqu’une lane n’est pas concernée.
+- `.shipglows/required-gate.json` déclare les vérifications de l’application (Node 24, tests, tokens, typechecks et lint) et du site (Node 24, build Astro, checks de routes et tests). La ruleset active de la branche par défaut exige la pull request et le statut strict, et conserve les blocages de suppression et de force-push; aucune approbation humaine n’est imposée.
 - Tauri est retenu pour la couche desktop/mobile pour partager la même base JS tout en gardant contrôle WebView natif.
 - L'application CommunityGlows reste dans `src/ui/setup/pages/CommunityGlows` avec réutilisation contrôlée des modules partagés de `src/`.
 - Le runtime Windows/Tauri utilise Reka UI pour les interactions composites et des wrappers/tokens CommunityGlows pour l'autorité visuelle. Les composants PrimeVue et PrimeFlex sont limités aux anciennes surfaces extension; PrimeIcons reste la seule dépendance visuelle Prime active dans l'entrée Windows.
