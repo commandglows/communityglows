@@ -1,10 +1,10 @@
 ---
 artifact: spec
 metadata_schema_version: "1.0"
-artifact_version: "1.5.0"
+artifact_version: "1.6.0"
 project: "communityglows"
 created: "2026-08-06"
-updated: "2026-08-06"
+updated: "2026-09-29"
 status: reviewed
 source_skill: "009-sg-marketing"
 scope: "site-single-price-and-feature-status-contract"
@@ -31,15 +31,16 @@ evidence:
   - "Operator decision on 2026-08-06: replace the indefinite free version with a 30-day full trial requiring no payment card and no automatic charge, followed by an optional €79 lifetime purchase."
   - "Operator approved a future progressive 10 × €8 route with no debt commitment, retained payment progress, resumability, and lifetime conversion after ten successful payments; it remains non-public until implemented and verified."
   - "Operator confirmed community support and unspecified future cloud features do not exist."
+  - "Operator confirmed on 2026-09-29 that the current CommunityGlows lifetime price is €149 incl. VAT, paid once."
   - "Code and active tasks support classifying contextual tasks, Android link intake, task context reopening, direct Windows profile creation, CRM/Kanban, inactive-page sleeping, and multiple tabs per network as in development. Global search, configurable notifications, advanced Focus mode, browser extensions, Windows link intake with profile choice, local inactivity locking, Linux, macOS, and iPhone remain planned later without a guaranteed date."
-next_step: "Await separate commit, push, checkout-provider configuration, or deployment authorization"
+next_step: "Keep current offer copy aligned with the €149 lifetime price; historical run records retain the price that was true when recorded."
 ---
 
 # CommunityGlows Single Price Public Contract
 
 ## Success Behavior
 
-- Every pricing surface presents a 30-day full trial without a payment card or automatic charge, followed by an optional founder license at €79 paid once.
+- Every pricing surface presents a 30-day trial without a payment card or automatic charge, up to two optional 30-day restarts, then a €149 incl. VAT lifetime license paid once for continued protected access.
 - “Full trial” covers capabilities available now, never roadmap items.
 - Available capabilities and work in progress are visually and semantically separated.
 - Windows and Android availability, configurable Windows shortcuts, text sizing, instant preserved-page switching on Windows, local sessions, profiles/preferences sync, focus controls, custom links, and backup/restore are represented honestly.
@@ -56,12 +57,12 @@ next_step: "Await separate commit, push, checkout-provider configuration, or dep
 
 ## Tasks
 
-- [x] Replace homepage pricing with one €79 lifetime card and roadmap distinction.
+- [x] Replace homepage pricing with one lifetime card at the current €149 offer and roadmap distinction.
 - [x] Replace standalone EN/FR pricing plans and subscription FAQ with the single-price contract.
 - [x] Align Lifetime Deal EN/FR inclusions, boundaries, and metadata.
 - [x] Correct Kanban status across landing, Features, offer, and blog copy.
 - [x] Build, scan public copy, and verify both locales in browser.
-- [x] Align EN/FR acquisition CTAs and pricing surfaces around the 30-day no-card trial plus optional €79 lifetime purchase.
+- [x] Align EN/FR acquisition CTAs and pricing surfaces around the 30-day no-card trial, eligible restarts, and €149 lifetime offer.
 
 ## Acceptance Criteria
 

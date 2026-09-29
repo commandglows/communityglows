@@ -12,6 +12,7 @@
           class="dot"
           :class="{ active: i === step, done: i < step }"
           type="button"
+          :disabled="i >= step"
           :aria-label="$t('onboarding.go_to_step', { step: i })"
           :aria-current="i === step ? 'step' : undefined"
           @click="step = i"
@@ -56,6 +57,13 @@
         </div>
         <h1 class="step-title">{{ $t('onboarding.welcome_title') }}</h1>
         <p class="step-desc">{{ $t('onboarding.welcome_desc') }}</p>
+        <section class="onboarding-access" aria-labelledby="onboarding-access-title">
+          <h2 id="onboarding-access-title" class="onboarding-access-title">
+            {{ $t('onboarding.access_title') }}
+          </h2>
+          <p class="onboarding-access-copy">{{ $t('onboarding.access_terms') }}</p>
+          <p class="onboarding-access-maker-note">{{ $t('onboarding.access_maker_note') }}</p>
+        </section>
         <button
           class="btn-primary"
           @click="step = 3"
@@ -198,7 +206,7 @@
             </div>
           </div>
           <div class="feature-item">
-            <SgIcon icon="pi pi-heart feature-icon" />
+            <SgIcon icon="pi pi-download feature-icon" />
             <div>
               <strong>{{ $t('onboarding.feature_notifications') }}</strong>
               <p>{{ $t('onboarding.feature_notifications_desc') }}</p>
@@ -495,6 +503,38 @@ function finish() {
   margin: 0;
   line-height: var(--sg-line-height-1d5);
   max-width: var(--sg-size-360px);
+}
+
+.onboarding-access {
+  width: var(--sg-size-100pct);
+  padding: var(--sg-space-0d75rem) var(--sg-space-1rem);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-0d75rem);
+  background: var(--sg-color-surface-muted);
+  text-align: left;
+}
+
+.onboarding-access-title {
+  margin: 0 0 var(--sg-space-0d5rem);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d95rem);
+  font-weight: var(--sg-font-weight-bold);
+}
+
+.onboarding-access-copy {
+  margin: 0;
+  color: var(--sg-color-text-muted);
+  font-size: var(--sg-font-size-0d85rem);
+  line-height: var(--sg-line-height-1d5);
+}
+
+.onboarding-access-maker-note {
+  margin: var(--sg-space-0d75rem) 0 0;
+  padding-top: var(--sg-space-0d75rem);
+  border-top: var(--sg-border-1px) solid var(--sg-color-border);
+  color: var(--sg-color-text);
+  font-size: var(--sg-font-size-0d85rem);
+  line-height: var(--sg-line-height-1d5);
 }
 
 /* Language selection */

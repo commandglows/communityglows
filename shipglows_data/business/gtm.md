@@ -27,7 +27,7 @@ supersedes: []
 next_review: "2026-09-03"
 next_step: "/300-sg-docs audit shipglows_data/business/gtm.md"
 target_segment: "independent operators, small marketing teams, and social operators managing multiple accounts across networks and devices"
-offer: "a 30-day full trial without a payment card or automatic charge, followed by an optional €79 one-time founder license for a calm social operations workspace on Windows and Android; a progressive 10 × €8 path is approved but not public until implemented and verified"
+offer: "a 30-day trial without a payment card or automatic charge, with up to two optional 30-day restarts, followed by a €149 lifetime license paid once for continued protected access; the progressive 10 × €8 path remains separate, non-public, and unverified"
 channels: "developer and user documentation, landing pages, feature changelogs, social proof from update cadence, and onboarding walkthroughs"
 proof_points: "shared multi-platform build pipeline, Convex-backed profile/session architecture, native webview support, and explicit roadmap visibility in shipglows_data/workflow/TASKS.md"
 ---
@@ -43,9 +43,15 @@ proof_points: "shared multi-platform build pipeline, Convex-backed profile/sessi
 
 - CommunityGlows is positioned as a unified social operations workspace, not another fragmented extension or single-surface tool.
 - The practical promise is consistency: one interface and one codebase behavior across browser extension, desktop, and web.
-- The current commercial offer starts with a 30-day full trial without a card or automatic charge, followed by an optional one-time €79 payment. It is not a subscription and does not claim community support or unspecified future cloud services.
+- The current commercial offer starts with a 30-day trial without a card or automatic charge. Up to two 30-day restarts may follow; after three cycles, continued protected access requires the €149 incl. VAT lifetime licence, paid once. It is not a subscription. Checkout availability is shown in the app. The separate 10 × €8 path remains non-public and unverified.
 - A progressive 10 × €8 route is a planned commerce capability, not a current public option. It permits stopping without future charges, preserves paid-month progress, and converts to lifetime access after ten successful payments.
 - Current features and roadmap work must be separated visibly on public sales pages.
+
+## Founder Voice
+
+- CommunityGlows is made by Diane, an independent artisan solopreneur. Let her first-person voice and the care she puts into the product show in onboarding and offer moments.
+- Lead with the concrete value available today and the exact trial and lifetime terms. Then add the human note; do not bury eligibility, price, checkout availability, or roadmap boundaries.
+- Make the one-time lifetime price feel clear and compelling by describing the product available today, not by promising future features or using guilt, fake urgency, or invented customer outcomes.
 
 ## Positioning
 
