@@ -7,8 +7,11 @@
 - Observed: “Accès impossible à vérifier”, retry/purchase/support only; promised sign-out, account, export and privacy recovery have no visible controls.
 - Result: failed. Exact restored session state remains unknown from the screenshot.
 - Root diagnostic evidence: Community access action `bridge_not_configured`; CommandGlows Convex next-hop `bridge_secret_mismatch`. Existing Vercel secret alignment attempted with unchanged canonical Doppler/Convex value and existing immutable production redeployed READY. Actual calls at 10:32:35 UTC still failed with mismatch; hosted diagnosis continues.
+- Later production diagnostic retest: root observed different stored/evaluated credential values despite the stored value matching Doppler. Reapplying the unchanged canonical value restored evaluated equality. A read-only bridge query for a nonexistent diagnostic identity then reached `global_user_not_found`, proving the secret check passed with no data writes. The underlying divergence cause is unknown; complete Windows billing is still pending.
+- Provider evidence: Vercel deployment `dpl_75uDNpn1pdX8oZdWqcXHWUzBrZm8` READY, distinct from proof of a customer's access.
 - Local technical retest after bounded frontend patch: 428 tests pass in 64 files under Doppler dev; core TypeScript, focused ESLint (zero errors, 14 existing warnings) and changed-file design drift scan (zero findings) pass.
-- Native/rendered acceptance: not run. Automated tests do not substitute for the current installed app's sign-in/reconnect, session-lock, export/privacy recovery and denied-rights proof.
+- Real browser retest: `http://localhost:3016/#/login` renders empty email/password and Sign in after toggling to sign-in; no access-failure gate, account submitted or injected authentication. Capture `release-acceptance/240afc0/login-recovery-patch.png` inspected. Initial/HMR state unknown; full fresh installation and native behavior not proven.
+- Native acceptance: not run. Browser/automated checks do not substitute for the current installed app's sign-in/reconnect, session-lock, export/privacy recovery and denied-rights proof. Windows run `36556811536` builds exact code commit `37495179e44d784907ad0c978bf617499faa699c` and is in progress at this documentation checkpoint.
 - Durable record: `shipglows_data/workflow/bugs/BUG-2026-09-29-001.md`, `fix-attempted`.
 - Next owner: root review/browser verification and current Windows acceptance before public release.
 
