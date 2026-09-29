@@ -1,5 +1,16 @@
 # Test Log
 
+## 2026-09-29 - Onboarding lifetime and installed Windows lifecycle
+
+- Scope: BUG-2026-09-29-002; private candidate branch `codex/community-prod-readiness`, draft PR #67.
+- Product rule confirmed by Diane: once completed, onboarding stays hidden on normal launches of that install/build; an intentional new feature build/update or a reinstall reopens the existing journey at language choice; Settings can replay it manually.
+- Implementation reuses the existing wizard, account form, billing/access panel and protected gates. The onboarding witness is local-only, excluded from cloud acknowledgement and portable backups, and independent from the existing entitlement installation key. Profiles, network preferences, trial identity and AppData sentinels stay untouched in the installer checks.
+- Surface limits: Windows NSIS/MSI detect identical-package reinstall and update with an installer-owned marker; Chrome/Firefox use their existing install/update event. Web/dev and non-Windows native targets replay for a new build but identical-package reinstall detection is not claimed.
+- Doppler local checks: 466 tests / 68 files, core typecheck, production-configured Tauri frontend build, Chrome build/runtime, scoped lint, token drift and all required PR checks pass. Full Vue typecheck still has the previously recorded 123 diagnostics; it was not claimed green.
+- Windows [run 36572379605](https://github.com/commandglows/communityglows/actions/runs/36572379605), exact code SHA `cd9fcc5c0f0c3ef26a4a5581f51776b0b74728c1`: production EU configuration, Windows package build, Rust and PR checks pass. On the disposable runner, both NSIS and MSI install, rotate the witness on identical-package reinstall/repair, remove it on successful uninstall, preserve AppData sentinels and do not start the normal app. The MSI actually reused the previous NSIS install directory; the test reads the resolved location. The generated NSIS template check confirms witness cleanup follows the running-app cancellation check. GUI cancellation itself was not exercised.
+- Exact artifacts, downloaded and SHA256-verified without launching: NSIS `release-acceptance/cd9fcc5-onboarding/nsis/CommunityGlows_0.1.0_x64-setup.exe` (3,196,946 bytes; `815631DE863611D3612254D7AE33E18C89BBBEFC81D0C94F33A3EC5A5DA56787`); MSI `release-acceptance/cd9fcc5-onboarding/msi/CommunityGlows_0.1.0_x64_en-US.msi` (4,530,176 bytes; `F7C6E37DB05D08A7601B935EB2E121082E30D81961CFA48D0C7D8A67706ADAB9`). Stable/public publication was skipped on the candidate branch.
+- Result: private installed candidate is ready for Diane's real language/account/access/session-lock/native WebView acceptance. Production authentication, current trial/license outcome, restored sessions and protected native behavior remain unverified; do not close BUG-002 or promote the public installer yet.
+
 ## 2026-09-29 - Language-first onboarding using existing account and billing components
 
 - Scope: `BUG-2026-09-29-002`, related startup recovery `BUG-2026-09-29-001`; private candidate branch `codex/community-prod-readiness`, draft PR #67.
