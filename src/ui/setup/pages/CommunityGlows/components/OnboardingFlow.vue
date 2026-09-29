@@ -11,6 +11,19 @@
         />
       </div>
 
+      <div
+        v-if="step > 1 && onboardingStore.scopeUnavailable"
+        role="alert"
+      >
+        <p class="step-desc">{{ $t('onboarding.installation_unavailable') }}</p>
+        <button
+          class="btn-ghost"
+          @click="onboardingStore.resolveScope()"
+        >
+          {{ $t('billing.retry_access') }}
+        </button>
+      </div>
+
       <!-- Step 1: Language selection -->
       <div
         v-if="step === 1"
@@ -312,13 +325,17 @@ const billingAccess = useBillingAccess()
 const router = useRouter()
 const { locale } = useI18n()
 profilesStore.ensureDefault()
-const canFinish = computed(() => !isAuthLoading.value && onboardingStore.accountConfirmed &&
+const canFinish = computed(() => onboardingStore.scopeReady && !isAuthLoading.value && onboardingStore.accountConfirmed &&
   (onboardingStore.localOnly || (currentCloudAccount.value?.id === onboardingStore.confirmedAccountId &&
     canAcknowledgeBillingAccess(billingAccess.status.value, billingAccess.canAccessProtected.value))))
 
 const TOTAL_STEPS = 7
 const step = ref(!onboardingStore.languageSelected ? 1 :
   !onboardingStore.setupCompleted ? 2 : !onboardingStore.accountConfirmed ? 6 : 7)
+
+watch(() => onboardingStore.selectedLanguage, (language) => {
+  if (!language) step.value = 1
+}, { flush: 'sync' })
 
 const EMOJIS = ['🟦', '🔵', '🟣', '🟢', '🔴', '🟡', '🟠', '⚫', '🌊', '🔥', '⚡', '🎯']
 const selectedEmoji = ref('🟦')

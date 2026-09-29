@@ -631,7 +631,6 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot, assertCurrentS
   const friendsStore = useFriendsFilterStore();
   const accountsStore = useAccountsStore();
   const themeStore = useThemeStore();
-  const onboardingStore = useOnboardingStore();
   const shortcutsStore = useShortcutsStore();
   const tasksStore = useContextualTasksStore();
   const contactsStore = useKanbanContactsStore();
@@ -651,7 +650,6 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot, assertCurrentS
       tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem("communityglows_tap_sound_variant")),
       activeProfileId: profilesStore.activeProfileId || undefined,
       keyboardShortcuts: shortcutsStore.serializeForSync(),
-      onboardingCompleted: onboardingStore.completed,
       friendsFilterEnabled: friendsStore.enabled,
     });
     assertCurrentSession();

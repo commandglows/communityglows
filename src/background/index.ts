@@ -5,6 +5,7 @@ import {
 } from "@/platform/webExtensionApi"
 import { createNetworkTabManager } from "./networkTabGroup"
 import { parseNetworkCommand } from "./networkTabMessages"
+import { recordExtensionOnboardingInstallation } from "@/lib/onboardingLifecycle"
 
 const networkTabs = createNetworkTabManager(chrome)
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
@@ -90,6 +91,7 @@ async function handleInstalled(
   if (reason !== "install" && reason !== "update") return
 
   try {
+    await recordExtensionOnboardingInstallation()
     await openCommunityGlowsExperience()
   } catch (error) {
     console.error(

@@ -9,6 +9,33 @@ use std::time::Instant;
 use tauri::{AppHandle, Manager};
 
 mod backup;
+mod onboarding_installation;
+
+/// Used only by the two Windows installers. The caller exits before Tauri/UI/auth starts.
+#[cfg(target_os = "windows")]
+pub fn process_onboarding_installation_command() -> Option<Result<(), String>> {
+    let arguments: Vec<_> = std::env::args_os().collect();
+    if arguments.get(1).map(|arg| arg == "--record-onboarding-installation") != Some(true) {
+        return None;
+    }
+    if arguments.len() != 2 {
+        return Some(Err("Invalid installer invocation".into()));
+    }
+    let executable = match std::env::current_exe() {
+        Ok(path) => path,
+        Err(_) => return Some(Err("Cannot resolve installed executable".into())),
+    };
+    let mut bytes = [0_u8; 32];
+    rand::fill(&mut bytes);
+    let generation = bytes.iter().map(|byte| format!("{byte:02x}")).collect::<String>();
+    Some(onboarding_installation::write_generation(&executable, &generation))
+}
+
+#[tauri::command]
+fn get_onboarding_installation_generation() -> Result<String, String> {
+    let executable = std::env::current_exe().map_err(|_| "Cannot resolve installed executable")?;
+    onboarding_installation::read_generation(&executable)
+}
 
 #[cfg(not(target_os = "android"))]
 const MAX_WARM_DESKTOP_WEBVIEWS: usize = 3;
@@ -2175,6 +2202,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            get_onboarding_installation_generation,
             open_webview,
             resize_webview,
             close_webview,

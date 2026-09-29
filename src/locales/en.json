@@ -585,6 +585,7 @@
     "local_no_trial": "Local tasks do not require an account and do not grant a trial or access to connected networks.",
     "finish_local": "Open local tasks",
     "view_access_options": "View access options",
+    "installation_unavailable": "This installation cannot be confirmed. Retry before continuing. If the problem persists, reinstall the CommunityGlows package.",
     "back": "Back",
     "next": "Next",
     "skip": "Skip intro",

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { syncSettingsPatch } from '@/lib/cloudSettings'
+import { resolveOnboardingLifecycleScope, type OnboardingLifecycleScope } from '@/lib/onboardingLifecycle'
 
 const CURRENT_ONBOARDING_VERSION = 1
 
@@ -13,16 +13,40 @@ export const useOnboardingStore = defineStore('onboarding', {
     localOnly: false,
     accessConfirmed: false,
     completionVersion: 0,
+    journeyScope: null as OnboardingLifecycleScope | null,
+    scopeReady: false,
+    scopeUnavailable: false,
   }),
 
   getters: {
     languageSelected: (state) => state.selectedLanguage === 'fr' || state.selectedLanguage === 'en',
-    journeyCompleted: (state) => state.completionVersion === CURRENT_ONBOARDING_VERSION &&
+    journeyCompleted: (state) => state.scopeReady && state.completionVersion === CURRENT_ONBOARDING_VERSION &&
       state.selectedLanguage !== null && state.setupCompleted &&
       state.accountConfirmed && state.accessConfirmed,
   },
 
   actions: {
+    bindScope(scope: OnboardingLifecycleScope) {
+      if (this.journeyScope?.installation !== scope.installation || this.journeyScope?.build !== scope.build) {
+        this.selectedLanguage = null
+        this.setupCompleted = false
+        this.resetAccountConfirmation()
+      }
+      this.journeyScope = scope
+      this.scopeReady = true
+      this.scopeUnavailable = false
+    },
+    async resolveScope() {
+      this.scopeReady = false
+      try {
+        this.bindScope(await resolveOnboardingLifecycleScope())
+      } catch {
+        this.selectedLanguage = null
+        this.setupCompleted = false
+        this.resetAccountConfirmation()
+        this.scopeUnavailable = true
+      }
+    },
     selectLanguage(language: 'fr' | 'en') {
       this.selectedLanguage = language
     },
@@ -49,20 +73,18 @@ export const useOnboardingStore = defineStore('onboarding', {
       this.completionVersion = 0
     },
     complete() {
-      if (!this.languageSelected || !this.setupCompleted || !this.accountConfirmed) return
+      if (!this.scopeReady || !this.languageSelected || !this.setupCompleted || !this.accountConfirmed) return
       this.completed = true
       this.accessConfirmed = true
       this.completionVersion = CURRENT_ONBOARDING_VERSION
-      syncSettingsPatch({ onboardingCompleted: true, language: this.selectedLanguage! })
     },
     reset() {
       this.completed = false
       this.selectedLanguage = null
       this.setupCompleted = false
       this.resetAccountConfirmation()
-      syncSettingsPatch({ onboardingCompleted: false })
     },
   },
 
-  persist: true,
+  persist: { pick: ['completed', 'selectedLanguage', 'setupCompleted', 'accountConfirmed', 'confirmedAccountId', 'localOnly', 'accessConfirmed', 'completionVersion', 'journeyScope'] },
 })

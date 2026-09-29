@@ -214,7 +214,7 @@ async function restoreAuthentication() {
   }
 }
 
-function bootstrap() {
+async function bootstrap() {
   const app = createApp(App)
   const pinia = createPinia()
 
@@ -227,15 +227,16 @@ function bootstrap() {
 
   app.directive('sg-tooltip', sgTooltip)
 
+  const onboardingStore = useOnboardingStore(pinia)
+  await onboardingStore.resolveScope()
   app.mount('#app')
 
   // An old cloud/local completed flag cannot restore a session before language choice.
-  const onboardingStore = useOnboardingStore(pinia)
   if (onboardingStore.selectedLanguage && !['fr', 'en'].includes(localStorage.getItem('user-locale') ?? '')) {
     setLocale(onboardingStore.selectedLanguage, false)
   }
   let authenticationStarted = false
-  watch(() => onboardingStore.languageSelected, (selected) => {
+  watch(() => onboardingStore.languageSelected && onboardingStore.scopeReady, (selected) => {
     if (!selected || authenticationStarted) return
     authenticationStarted = true
     setupAndroidOAuthPendingRegistration()
@@ -244,4 +245,4 @@ function bootstrap() {
   }, { immediate: true })
 }
 
-bootstrap()
+void bootstrap()

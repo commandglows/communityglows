@@ -53,6 +53,7 @@ describe('onboarding account hydration boundary', () => {
   beforeEach(() => {
     resetCloudSyncState()
     setActivePinia(createPinia())
+    useOnboardingStore().bindScope({ installation: 'installation-a', build: 'build-a' })
     vi.clearAllMocks()
     isAuthenticated.value = true
     accountId = 'a'

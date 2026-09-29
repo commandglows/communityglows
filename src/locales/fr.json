@@ -585,6 +585,7 @@
     "local_no_trial": "Les tâches locales fonctionnent sans compte et n’accordent ni essai ni accès aux réseaux connectés.",
     "finish_local": "Ouvrir les tâches locales",
     "view_access_options": "Voir les options d’accès",
+    "installation_unavailable": "Impossible de confirmer cette installation. Réessayez avant de continuer. Si le problème persiste, réinstallez le paquet CommunityGlows.",
     "back": "Retour",
     "next": "Suivant",
     "skip": "Passer l'introduction",

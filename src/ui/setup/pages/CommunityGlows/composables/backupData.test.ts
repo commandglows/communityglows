@@ -52,4 +52,15 @@ describe('portable backup data', () => {
     expect(setItem).toHaveBeenCalledTimes(1)
     expect(removeItem).not.toHaveBeenCalled()
   })
+
+  it('never exports or imports installation scope, local completion, auth or billing identities', () => {
+    const privateKeys = ['onboarding', 'communityglows_onboarding_installation_v1', 'communityglows_installation_id', 'convexAuthToken']
+    const snapshot = collectPortableLocalStorage({ getItem: key => privateKeys.includes(key) ? 'must-stay-local' : null })
+    privateKeys.forEach(key => expect(snapshot).not.toHaveProperty(key))
+    const setItem = vi.fn()
+    const removeItem = vi.fn()
+    restorePortableLocalStorage(Object.fromEntries(privateKeys.map(key => [key, 'foreign-installation'])), { setItem, removeItem })
+    expect(setItem).not.toHaveBeenCalled()
+    expect(removeItem).not.toHaveBeenCalled()
+  })
 })
