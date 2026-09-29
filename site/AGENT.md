@@ -1,23 +1,22 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.3.0"
-project: "tubeflow-site"
+artifact_version: "1.4.0"
+project: "communityglows-site"
 created: "2026-04-26"
-updated: "2026-08-05"
-status: "reviewed"
+updated: "2026-09-28"
+status: "active"
 source_skill: "300-sg-docs"
 scope: "file"
 owner: "Diane"
 confidence: "high"
 risk_level: "low"
-security_impact: "yes"
+security_impact: "no"
 docs_impact: "yes"
 linked_systems:
-  - "TubeFlow app"
+  - "CommunityGlows app"
   - "Astro"
   - "Tailwind CSS"
-  - "Sentry"
 depends_on: []
 supersedes: []
 evidence:
@@ -27,7 +26,6 @@ evidence:
   - "src/layouts/Layout.astro"
   - "src/pages/index.astro"
   - "src/pages/fr/index.astro"
-  - "/home/claude/shipflow/skills/references/sentry-observability.md"
 next_step: "npm run build"
 ---
 
@@ -35,57 +33,44 @@ next_step: "npm run build"
 
 ## Purpose
 
-This repository is the public marketing site for TubeFlow. It is an Astro site with static pages for acquisition, SEO, pricing, product education, and a small blog.
+This directory contains CommunityGlows’ public marketing site: an Astro site with English and French acquisition pages, product information, legal pages, and a blog. It links to the CommunityGlows app and downloads; it is not the app itself.
 
 ## Working assumptions
 
-- The site is content-first and mostly static.
-- Primary conversion targets point to the TubeFlow app, usually `appUrl('/videos')`.
-- The codebase does not include the product app itself; it only links to it.
-- Route copy and structured data matter as much as visuals because this repo is SEO-facing.
-- Sentry is intentionally not required while this remains a static marketing/content site with no authentication or user-specific runtime workflow.
+- The site is static-first and deployed through Vercel.
+- Public site, app, and email URLs are defined in `src/config/site.ts` and configured through `PUBLIC_SITE_URL`, `PUBLIC_APP_URL`, and `PUBLIC_EMAIL_DOMAIN`.
+- Canonical URLs, language alternates, Open Graph, JSON-LD, `robots.txt`, and `sitemap.xml` affect search and social sharing.
+- Marketing, pricing, security, privacy, and availability claims must match current product behavior and documented proof.
 
-## Stack
+## Stack and entrypoints
 
-- Astro 6
-- Tailwind CSS 4
-- TypeScript
-- Markdown blog content via `astro:content`
-- Minimal client-side JavaScript embedded in Astro templates
-
-## Core entrypoints
-
-- `src/pages/index.astro`: English landing page assembled from shared, locale-aware components
-- `src/pages/fr/index.astro`: French landing page assembled from the same shared, locale-aware components
-- `src/pages/features.astro` and `src/pages/fr/features.astro`: bilingual feature marketing pages
-- `src/pages/pricing.astro` and `src/pages/fr/pricing.astro`: bilingual pricing and FAQ pages
-- `src/pages/compare.astro` and `src/pages/fr/compare.astro`: bilingual comparison pages organized around social-work approaches
-- `src/pages/lifetime-deal.astro` and `src/pages/fr/lifetime-deal.astro`: bilingual founder-offer pages
-- `src/pages/blog/index.astro`: blog listing
-- `src/pages/blog/[slug].astro`: blog article route
-- `src/pages/blog/feed.xml.ts`: RSS feed
-- `src/layouts/Layout.astro`: global SEO shell, fonts, JSON-LD injection, reduced-motion handling, and reveal/scroll behavior
-- `src/config/site.ts`: canonical site/app URL helpers and contact email composition
+- Astro 7 with static output; Tailwind CSS 4 through Vite.
+- `src/pages/` and `src/pages/fr/`: English and French public routes.
+- `src/pages/blog/` and `src/content/blog/`: blog routes and articles.
+- `src/layouts/Layout.astro`: shared metadata, canonical and language links, Open Graph, JSON-LD, fonts, motion, and accessibility shell.
+- `src/config/site.ts`: public URL and contact-email helpers.
+- `scripts/generate-sitemap.mjs`: sitemap generation from built canonical pages.
+- `scripts/check-launch.mjs`: generated-route and SEO checks.
 
 ## Agent guidance
 
-- Treat `src/config/site.ts` as the source of truth for public URLs and email domain.
-- Preserve canonical URLs, `hreflang`, Open Graph tags, and JSON-LD when editing pages.
-- Do not add Sentry browser instrumentation just to satisfy the monorepo observability default while the site remains static.
-- Add Sentry, or revisit this exception, as soon as the site gains authentication, account state, protected routes, checkout/payment flows, form submissions with server handling, or other user-specific runtime behavior.
-- Keep English and French experiences aligned through the shared landing component tree and locale dictionaries in `src/i18n/`.
-- Blog content lives in `src/content/blog/*.md` and must satisfy the schema in `src/content.config.ts`.
-- Prefer editing shared components when changing either homepage, and update both locale dictionaries when copy changes.
-- Expect some marketing claims to be copy assumptions unless they are traceable to the product app.
+- Treat `src/config/site.ts` as the source of truth for public URLs.
+- Preserve canonical URLs, only valid `hreflang` peers, Open Graph tags, and JSON-LD.
+- Keep English and French experiences aligned; publish language alternates only where a paired route exists.
+- Blog content in `src/content/blog/*.md` must satisfy `src/content.config.ts`.
+- Verify product claims against the CommunityGlows app before strengthening public copy.
+- Keep payment credentials, unsigned checkout creation, and app-only behavior out of this static site.
 
 ## Commands
 
 - `npm run dev`: local development
-- `npm run build`: production build
-- `npm run preview`: local preview of the build
+- `npm run build`: build the site and generate its sitemap
+- `npm run check:launch`: check generated routes, links, metadata, language alternates, robots, and sitemap
+- `npm test`: run site unit tests
+- `npm run preview`: preview the built site
 
-## Known risks for future agents
+## Known risks
 
-- French and English copy can still drift when locale dictionaries are updated independently; review both locales together.
-- Many conversion links assume `/videos` is the stable app entrypoint.
-- Pricing, feature, and security claims are marketing copy in this repo; verify them against the product before strengthening them.
+- English and French pages can drift when updated independently; verify both versions together.
+- A new route must be intentionally paired or left without `hreflang` alternates.
+- Pricing, feature, and security claims must be checked against current product behavior before release.

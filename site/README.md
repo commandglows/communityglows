@@ -22,7 +22,7 @@ Windows is the current public preview download. Other targets must not be advert
 
 The newsletter remains a planned launch feature, using the approved CommandGlows-owned consent/subscription system and Postmark transport. Signup is not operational yet: the section currently states this explicitly and links to release notes. Do not wire it to the legacy CommandGlows Resend signup (different audience and welcome content), invent a new contact store, or expose transport credentials in Astro public variables. Help is available at `/help` and `/fr/help`, with buyer activation guidance at `#activation`. Blog translations use declared article peers rather than generated `/fr/blog/...` URLs.
 
-After building, run `node scripts/check-launch.mjs` to check generated internal links, anchors, headings, locale alternates and retired placeholders.
+The build generates `sitemap.xml` from canonical, indexable pages. `robots.txt` declares the sitemap. Run `npm run check:launch` after the build to check generated internal links, anchors, headings, locale alternates, robots, and sitemap coverage. Run `npm test` for the site’s unit tests.
 
 ### Checkout and payment flow
 
@@ -55,7 +55,9 @@ All commands are run from the root of the project, from a terminal:
 | `npm ci`                  | Installs locked dependencies                     |
 | `npm audit --json`        | Checks npm dependencies for known advisories     |
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run build`           | Build your production site and generate its sitemap |
+| `npm run check:launch`    | Check generated routes, metadata, language links, robots and sitemap |
+| `npm test`                | Run the site’s unit tests                        |
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |

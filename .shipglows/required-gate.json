@@ -1,0 +1,46 @@
+{
+  "production_branch": "main",
+  "lanes": [
+    {
+      "id": "app",
+      "runtime": "node",
+      "node_version": "24.0.0",
+      "root": ".",
+      "paths": [
+        "src/**",
+        "src-tauri/**",
+        "convex/**",
+        "package.json",
+        "pnpm-lock.yaml",
+        "design/**",
+        "vite.*.config.ts",
+        "tsconfig*.json",
+        ".shipglows/**"
+      ],
+      "commands": [
+        "corepack enable && pnpm install --frozen-lockfile --force",
+        "pnpm run test:once",
+        "pnpm run design:tokens:check",
+        "pnpm run typecheck",
+        "pnpm exec tsc -p convex/tsconfig.json --noEmit",
+        "pnpm run lint:check"
+      ]
+    },
+    {
+      "id": "site",
+      "runtime": "node",
+      "node_version": "24.0.0",
+      "root": "site",
+      "paths": [
+        "site/**",
+        ".shipglows/**"
+      ],
+      "commands": [
+        "npm ci",
+        "npm run build",
+        "npm run check:launch",
+        "npm test"
+      ]
+    }
+  ]
+}
