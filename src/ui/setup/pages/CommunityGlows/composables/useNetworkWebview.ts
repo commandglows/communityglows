@@ -1,7 +1,8 @@
 import { nextTick, ref, watch, onUnmounted, type Ref } from "vue"
-import { useElementBounding } from "@vueuse/core"
+import { useDevicePixelRatio, useElementBounding } from "@vueuse/core"
 import { getNetworkIsolationOrigins } from "@/config/socialNetworks"
 import { recordDiagnosticEvent } from "@/lib/buildDiagnostics"
+import { isDesktopTauri } from "@/platform/capabilities"
 
 const isTauri = () =>
   typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
@@ -13,6 +14,22 @@ const isDarkMode = () =>
 async function invoke(cmd: string, args?: Record<string, unknown>) {
   if (!isTauri()) return
   const { invoke: tauriInvoke } = await import("@tauri-apps/api/core")
+  if (
+    isDesktopTauri() && args &&
+    (cmd === "open_webview" || cmd === "show_webview" || cmd === "resize_webview")
+  ) {
+    const devicePixelRatio = window.devicePixelRatio
+    const { getCurrentWindow } = await import("@tauri-apps/api/window")
+    const nativeScale = await getCurrentWindow().scaleFactor()
+    args = {
+      ...args,
+      ...toNativeLogicalBounds(
+        args as WebviewHostBounds,
+        devicePixelRatio,
+        nativeScale,
+      ),
+    }
+  }
   return tauriInvoke(cmd, args)
 }
 
@@ -33,6 +50,26 @@ type WebviewHostBounds = {
   y: number
   width: number
   height: number
+}
+
+export function toNativeLogicalBounds(
+  bounds: WebviewHostBounds,
+  devicePixelRatio: number,
+  nativeScale: number,
+): WebviewHostBounds {
+  if (!Number.isFinite(devicePixelRatio) || devicePixelRatio <= 0 ||
+      !Number.isFinite(nativeScale) || nativeScale <= 0) {
+    throw new Error("Invalid WebView coordinate scale")
+  }
+  // DOM rects use CSS pixels. DPR includes main-WebView zoom and OS DPI;
+  // Tauri Logical bounds already apply OS DPI, so remove it exactly once.
+  const scale = devicePixelRatio / nativeScale
+  return {
+    x: bounds.x * scale,
+    y: bounds.y * scale,
+    width: bounds.width * scale,
+    height: bounds.height * scale,
+  }
 }
 
 export type NetworkWebviewDiagnostic = {
@@ -144,6 +181,7 @@ export function useNetworkWebview(
   onDiagnostic: (entry: NetworkWebviewDiagnostic) => void = () => undefined,
 ) {
   const { x, y, width, height } = useElementBounding(hostEl)
+  const { pixelRatio } = useDevicePixelRatio()
 
   // Track what's currently open as "profileId:networkId"
   const activeKey = ref<string | null>(null)
@@ -209,7 +247,7 @@ export function useNetworkWebview(
   )
 
   // Keep bounds in sync without flooding the native bridge while a sash moves.
-  watch([x, y, width, height], ([nx, ny, nw, nh]) => {
+  watch([x, y, width, height, pixelRatio, isOpen], ([nx, ny, nw, nh, ratio]) => {
     if (!isOpen.value || !activeKey.value || nw <= 0 || nh <= 0) return
     const bounds = {
       x: Math.round(nx * 100) / 100,
@@ -217,7 +255,7 @@ export function useNetworkWebview(
       width: Math.round(nw * 100) / 100,
       height: Math.round(nh * 100) / 100,
     }
-    const signature = `${bounds.x}:${bounds.y}:${bounds.width}:${bounds.height}`
+    const signature = `${bounds.x}:${bounds.y}:${bounds.width}:${bounds.height}:${ratio}`
     if (signature === lastScheduledBounds) return
     lastScheduledBounds = signature
     resizeTask.schedule(bounds)
