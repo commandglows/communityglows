@@ -237,7 +237,7 @@
             </ContextMenuItem>
             <ContextMenuItem
               v-if="activeTabGroup"
-              @select="startGroupRename"
+              @select="() => startGroupRename()"
             >
               Renommer le groupe
             </ContextMenuItem>
@@ -261,7 +261,7 @@
             >
               Déplacer le groupe vers la droite
             </ContextMenuItem>
-            <ContextMenuItem @select="startGroupRename">
+            <ContextMenuItem @select="() => startGroupRename()">
               Renommer le groupe
             </ContextMenuItem>
             <ContextMenuItem @select="dissolveActiveGroup">

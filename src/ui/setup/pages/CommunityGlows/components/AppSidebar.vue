@@ -1609,7 +1609,7 @@ const sidebarGroupSurfaces = computed(() => {
   const fill = (id: string) =>
     `var(--sg-sidebar-group-depth-${sidebarGroupAncestors(groupPreferences.value, id).length + 1}${sidebarGroupTones.value.get(id) === "alternate" ? "-alternate" : ""})`
   const rootId = (id: string) =>
-    sidebarGroupAncestors(groupPreferences.value, id).at(-1) ?? id
+    sidebarGroupAncestors(groupPreferences.value, id).slice(-1)[0] ?? id
   return new Map(
     visible
       .filter((section) => section.id !== "other")

@@ -9,6 +9,7 @@ const sidebarTabs = readFileSync(
   new URL("./BentoSidebarTabs.vue", import.meta.url),
   "utf8",
 )
+const sidebar = readFileSync(new URL("./AppSidebar.vue", import.meta.url), "utf8")
 
 describe("Bento browser-style organisation", () => {
   it("exposes pin, group, rename, ungroup and smooth drag reordering", () => {
@@ -26,36 +27,35 @@ describe("Bento browser-style organisation", () => {
     expect(workspace).toContain('event.key === "Enter"')
   })
 
-  it("keeps global, contextual and editing controls in separate responsive rows", () => {
+  it("keeps scene controls and editors in responsive toolbar rows", () => {
     expect(workspace).toContain("desktop-workspace__primary-controls")
-    expect(workspace).toContain("desktop-workspace__context-controls")
     expect(workspace).toContain("desktop-workspace__editor")
     expect(workspace).toContain("flex: 1 1 var(--sg-size-200px)")
-    expect(workspace).toContain("width: var(--sg-size-full)")
+    expect(workspace).toContain("flex-wrap: wrap")
   })
 
-  it("identifies the active Bento with its icon and name, without a redundant prefix", () => {
-    expect(workspace).toContain("activeLayout")
-    expect(workspace).toContain("{{ activeLayout.name }}")
-    expect(workspace).toContain(
-      "{{ activeLayout.icon ?? DEFAULT_DESKTOP_SCENE_ICON }}",
-    )
-    expect(workspace).not.toContain("<span>Bento</span>")
+  it("identifies the selected Bento with its icon and name in the sidebar", () => {
+    expect(sidebar).toContain(":label=\"selectedBento?.name ?? 'Bento'\"")
+    expect(sidebar).toContain("{{ selectedBento.icon }}")
+    expect(sidebar).toContain('class="sidebar-bento-scene__name"')
+    expect(sidebar).toContain("{{ scene.name }}")
   })
 
-  it("focuses the rename field and restores focus after save or cancellation", () => {
+  it("focuses the group rename field and closes the editor after save or cancellation", () => {
     expect(workspace).toContain('ref="groupNameInput"')
-    expect(workspace).toContain('ref="groupRenameTrigger"')
     expect(workspace).toContain("input?.focus()")
+    expect(workspace).toContain("input?.select()")
     expect(workspace).toContain('@keydown.esc="cancelGroupRename"')
-    expect(workspace).toContain("groupRenameTrigger.value?.$el")
+    expect(workspace).toContain("groupRenameVisible.value = false")
+    expect(workspace).toContain("groupNameInput.value?.$el")
+    expect(workspace).toContain("group.setLabel(name)")
   })
 
-  it("exposes active-tab removal directly instead of hiding one action in overflow", () => {
-    expect(workspace).toContain('label="Sortir du groupe"')
-    expect(workspace).toContain("`Sortir ${activePanelLabel} du groupe`")
-    expect(workspace).toContain('@click="removeActivePanelFromGroup"')
-    expect(workspace).not.toContain('DropdownMenuRoot v-if="activeTabGroup"')
+  it("exposes active-tab removal in its contextual action menu", () => {
+    expect(workspace).toContain('v-if="activeTabGroup"')
+    expect(workspace).toContain('@select="removeActivePanelFromGroup"')
+    expect(workspace).toContain("Sortir du groupe")
+    expect(workspace).toContain("function removeActivePanelFromGroup()")
   })
 
   it("opens the existing group and tab action menus from right click or Shift+F10", () => {

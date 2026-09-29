@@ -18,7 +18,8 @@
     "types": [
       "unplugin-icons/types/vue",
       "chrome-types",
-      "@intlify/unplugin-vue-i18n/messages"
+      "@intlify/unplugin-vue-i18n/messages",
+      "vitest/globals"
     ],
     "strict": true,
     "noEmit": true,

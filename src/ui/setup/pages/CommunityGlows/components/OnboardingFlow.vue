@@ -2,10 +2,17 @@
   <div class="onboarding-backdrop">
     <div class="onboarding-card">
       <div class="onboarding-brand">
-        <img :src="logoUrl" alt="CommunityGlows" class="onboarding-logo" />
+        <img
+          :src="logoUrl"
+          alt="CommunityGlows"
+          class="onboarding-logo"
+        />
       </div>
       <!-- Progress dots -->
-      <nav class="onboarding-dots" :aria-label="$t('onboarding.progress')">
+      <nav
+        class="onboarding-dots"
+        :aria-label="$t('onboarding.progress')"
+      >
         <button
           v-for="i in TOTAL_STEPS"
           :key="i"
@@ -57,8 +64,14 @@
         </div>
         <h1 class="step-title">{{ $t('onboarding.welcome_title') }}</h1>
         <p class="step-desc">{{ $t('onboarding.welcome_desc') }}</p>
-        <section class="onboarding-access" aria-labelledby="onboarding-access-title">
-          <h2 id="onboarding-access-title" class="onboarding-access-title">
+        <section
+          class="onboarding-access"
+          aria-labelledby="onboarding-access-title"
+        >
+          <h2
+            id="onboarding-access-title"
+            class="onboarding-access-title"
+          >
             {{ $t('onboarding.access_title') }}
           </h2>
           <p class="onboarding-access-copy">{{ $t('onboarding.access_terms') }}</p>

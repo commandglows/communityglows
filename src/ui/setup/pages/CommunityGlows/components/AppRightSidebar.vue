@@ -152,7 +152,7 @@
                 :aria-label="
                   isKanbanCollapsed ? 'Ouvrir Kanban' : 'Replier Kanban'
                 "
-                :aria-expanded="String(!isKanbanCollapsed)"
+                :aria-expanded="!isKanbanCollapsed"
                 @click="isKanbanCollapsed = !isKanbanCollapsed"
               >
                 <span class="sidebar-widget__icon"><SgIcon icon="pi pi-table" /></span>

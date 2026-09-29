@@ -49,7 +49,7 @@
           class="avatar-editor__emoji"
           :class="{ 'avatar-editor__emoji--selected': !draftAvatar && draftEmoji === emoji }"
           :aria-label="`Utiliser l’emoji ${emoji}`"
-          :aria-pressed="String(!draftAvatar && draftEmoji === emoji)"
+          :aria-pressed="!draftAvatar && draftEmoji === emoji"
           @click="selectEmoji(emoji)"
         >
           {{ emoji }}

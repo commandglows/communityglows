@@ -76,7 +76,7 @@ describe("DesktopWorkspace Dockview registration", () => {
     )
     expect(source).toContain("DOCK_GROUP_RENAME_LONG_PRESS_MS = 600")
     expect(source).toContain("panel.api.close()")
-    expect(source).toContain('@select="startGroupRename"')
+    expect(source).toContain('@select="() => startGroupRename()"')
     expect(source).toContain('@contextmenu.capture="prepareDockContextMenu"')
   })
 

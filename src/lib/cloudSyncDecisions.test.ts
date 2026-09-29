@@ -15,6 +15,7 @@ describe("cloud sync decisions", () => {
         friendsFilters: [],
         socialAccounts: [],
         activeAccounts: [],
+        workspaceState: null,
       }),
     ).toBe(true);
 
@@ -26,6 +27,7 @@ describe("cloud sync decisions", () => {
         friendsFilters: [],
         socialAccounts: [],
         activeAccounts: [],
+        workspaceState: null,
       }),
     ).toBe(false);
   });

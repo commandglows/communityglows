@@ -63,7 +63,10 @@ describe("Bento sidebar scene menu", () => {
 
   it("keeps Kanban fixed immediately below Bento and always opens its dedicated route", () => {
     expect(sidebar).toContain('class="sidebar-kanban-entry"')
-    expect(sidebar).toContain("@click=\"emit('open-tasks')\"")
+    expect(sidebar).toContain(
+      '<KanbanDropdown class="sidebar-kanban-entry"',
+    )
+    expect(sidebar).toContain('@open="emit(\'open-tasks\', $event)"')
     expect(sidebar).toContain(
       "const menuItems = ref<MenuItem[]>(builtinMenuItems)",
     )

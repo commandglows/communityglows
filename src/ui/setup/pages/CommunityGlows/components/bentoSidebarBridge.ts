@@ -233,7 +233,7 @@ export function applyBentoSidebarCommand(
     const serializedTargetGroup = group
       ? targetPane.tabGroups?.find((item) => item.id === group.id)
       : undefined
-    const lastTargetMember = serializedTargetGroup?.panelIds.at(-1)
+    const lastTargetMember = serializedTargetGroup?.panelIds.slice(-1)[0]
     const index = before
       ? targetViews.indexOf(before.id)
       : lastTargetMember
