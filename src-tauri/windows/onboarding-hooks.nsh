@@ -10,6 +10,9 @@
   ${EndIf}
 !macroend
 
-!macro NSIS_HOOK_PREUNINSTALL
+; Tauri invokes POSTUNINSTALL only after its running-app cancellation check.
+; The unlisted witness keeps $INSTDIR non-empty until this final cleanup.
+!macro NSIS_HOOK_POSTUNINSTALL
   Delete "$INSTDIR\communityglows-onboarding-installation-v1"
+  RMDir "$INSTDIR"
 !macroend
