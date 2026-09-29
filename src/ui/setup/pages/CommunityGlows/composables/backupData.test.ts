@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { communityGlowsInstallationStorageKey } from '@/lib/communityGlowsInstallation'
 import {
   collectPortableLocalStorage,
   PORTABLE_LOCAL_STORAGE_KEYS,
@@ -54,7 +55,7 @@ describe('portable backup data', () => {
   })
 
   it('never exports or imports installation scope, local completion, auth or billing identities', () => {
-    const privateKeys = ['onboarding', 'communityglows_onboarding_installation_v1', 'communityglows_installation_id', 'convexAuthToken']
+    const privateKeys = ['onboarding', 'communityglows_onboarding_installation_v1', communityGlowsInstallationStorageKey, 'convexAuthToken']
     const snapshot = collectPortableLocalStorage({ getItem: key => privateKeys.includes(key) ? 'must-stay-local' : null })
     privateKeys.forEach(key => expect(snapshot).not.toHaveProperty(key))
     const setItem = vi.fn()

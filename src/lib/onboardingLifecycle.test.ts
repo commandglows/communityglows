@@ -5,6 +5,7 @@ vi.mock('@/platform/capabilities', () => fixtures)
 vi.mock('@tauri-apps/api/core', () => ({ invoke: fixtures.invoke }))
 
 import { ONBOARDING_INSTALLATION_KEY, recordExtensionOnboardingInstallation, resolveOnboardingLifecycleScope } from './onboardingLifecycle'
+import { communityGlowsInstallationStorageKey } from './communityGlowsInstallation'
 
 describe('onboarding installation/build scope', () => {
   beforeEach(() => {
@@ -12,7 +13,7 @@ describe('onboarding installation/build scope', () => {
     vi.stubGlobal('__VERSION__', '0.1.0')
     vi.stubGlobal('__BUILD_ID__', 'build-a')
     vi.stubGlobal('navigator', { userAgent: 'Windows' })
-    const values = new Map<string, string>([['communityglows_installation_id', 'billing-device-unchanged']])
+    const values = new Map<string, string>([[communityGlowsInstallationStorageKey, 'billing-device-unchanged']])
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => values.get(key) ?? null,
       setItem: (key: string, value: string) => { values.set(key, value) },
@@ -29,7 +30,7 @@ describe('onboarding installation/build scope', () => {
     expect(await resolveOnboardingLifecycleScope()).toEqual({ installation: 'a'.repeat(64), build: '0.1.0:build-a' })
     expect(await resolveOnboardingLifecycleScope()).toEqual({ installation: 'b'.repeat(64), build: '0.1.0:build-a' })
     expect(fixtures.invoke).toHaveBeenCalledWith('get_onboarding_installation_generation')
-    expect(localStorage.getItem('communityglows_installation_id')).toBe('billing-device-unchanged')
+    expect(localStorage.getItem(communityGlowsInstallationStorageKey)).toBe('billing-device-unchanged')
     expect(localStorage.getItem(ONBOARDING_INSTALLATION_KEY)).toBeNull()
   })
 
@@ -62,7 +63,7 @@ describe('onboarding installation/build scope', () => {
     const updated = await resolveOnboardingLifecycleScope()
     expect(updated.installation).toBe(first.installation)
     expect(updated.build).toBe('0.1.0:build-b')
-    expect(localStorage.getItem('communityglows_installation_id')).toBe('billing-device-unchanged')
+    expect(localStorage.getItem(communityGlowsInstallationStorageKey)).toBe('billing-device-unchanged')
   })
 
   it('uses the existing extension install/update event to rotate only its onboarding witness', async () => {
