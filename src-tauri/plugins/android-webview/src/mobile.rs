@@ -32,6 +32,10 @@ struct ShowResponse {
     shown: bool,
 }
 
+// Commands with no value still resolve with a JSON object from Android.
+#[derive(Deserialize)]
+struct CommandResponse {}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PoolStatsResponse {
@@ -106,6 +110,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     storage_origins,
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -118,6 +123,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     network_id: network_id.to_string(),
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -129,6 +135,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     account_id: account_id.to_string(),
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -153,6 +160,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     account_id: account_id.to_string(),
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -165,18 +173,21 @@ impl<R: Runtime> AndroidWebview<R> {
     pub fn set_grayscale(&self, enabled: bool) -> Result<()> {
         self.0
             .run_mobile_plugin("setGrayscale", GrayscaleRequest { enabled })
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
     pub fn set_dark_mode(&self, enabled: bool) -> Result<()> {
         self.0
             .run_mobile_plugin("setDarkMode", DarkModeRequest { enabled })
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
     pub fn set_text_zoom(&self, level: i32) -> Result<()> {
         self.0
             .run_mobile_plugin("setTextZoom", TextZoomRequest { level })
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -196,6 +207,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     storage_origins_by_network_json,
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -208,12 +220,14 @@ impl<R: Runtime> AndroidWebview<R> {
                     active_profile_id,
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
     pub fn set_locale(&self, locale: String) -> Result<()> {
         self.0
             .run_mobile_plugin("setLocale", SetLocaleRequest { locale })
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -226,6 +240,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     network_id: network_id.to_string(),
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 
@@ -238,6 +253,7 @@ impl<R: Runtime> AndroidWebview<R> {
                     network_id: String::new(),
                 },
             )
+            .map(|_: CommandResponse| ())
             .map_err(|e| Error::PluginInvoke(e.to_string()))
     }
 }
