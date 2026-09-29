@@ -1,46 +1,22 @@
 import { sanitizeContextualUrl, type UrlSanitizationResult } from '@/services/contextualTasksService'
+import { queryExtensionTabs } from '@/platform/webExtensionApi'
 
 export type ExtensionTaskCaptureResult =
   | UrlSanitizationResult & { ok: true }
-  | { ok: false; code: 'tabs_api_unavailable' | 'active_tab_unavailable' | UrlSanitizationResult['code'] }
-
-type BrowserTabsApi = {
-  query?: (queryInfo: { active: boolean; currentWindow?: boolean; lastFocusedWindow?: boolean }) => Promise<Array<{ url?: string }>>
-}
-
-function queryChromeActiveTab(): Promise<string | undefined> {
-  return new Promise((resolve, reject) => {
-    const chromeApi = globalThis.chrome
-    if (!chromeApi?.tabs?.query) {
-      reject(new Error('tabs_api_unavailable'))
-      return
-    }
-    chromeApi.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const runtimeError = chromeApi.runtime?.lastError
-      if (runtimeError) {
-        reject(new Error(runtimeError.message))
-        return
-      }
-      resolve(tabs?.[0]?.url)
-    })
-  })
-}
+  | { ok: false; code: 'tabs_api_unavailable' | 'active_tab_unavailable' | Extract<UrlSanitizationResult, { ok: false }>['code'] }
 
 export async function captureActiveTabUrl(): Promise<ExtensionTaskCaptureResult> {
   let rawUrl: string | undefined
   try {
-    if (globalThis.chrome?.tabs?.query) {
-      rawUrl = await queryChromeActiveTab()
-    } else {
-      const browserApi = (globalThis as { browser?: { tabs?: BrowserTabsApi } }).browser
-      if (!browserApi?.tabs?.query) return { ok: false, code: 'tabs_api_unavailable' }
-      rawUrl = (await browserApi.tabs.query({ active: true, currentWindow: true }))?.[0]?.url
+    rawUrl = (await queryExtensionTabs({ active: true, currentWindow: true }))?.[0]?.url
+  } catch (error) {
+    if (error instanceof Error && error.message === 'tabs_api_unavailable') {
+      return { ok: false, code: 'tabs_api_unavailable' }
     }
-  } catch {
     return { ok: false, code: 'active_tab_unavailable' }
   }
 
   if (!rawUrl) return { ok: false, code: 'active_tab_unavailable' }
   const sanitized = sanitizeContextualUrl(rawUrl)
-  return sanitized.ok ? sanitized : sanitized
+  return sanitized
 }

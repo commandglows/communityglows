@@ -204,6 +204,20 @@ export const useProfilesStore = defineStore("profiles", {
       this.syncProfileToCloud(profile)
     },
 
+    /** Apply a catalogue selection as one profile update, preserving unrelated visibility. */
+    setNetworksHidden(profileId: string, networkIds: readonly string[], hidden: boolean) {
+      const profile = this.profiles.find((p) => p.id === profileId)
+      if (!profile || !networkIds.length) return
+      const next = new Set(resolveHiddenNetworkIds(profile.hiddenNetworks))
+      for (const id of networkIds) {
+        if (hidden) next.add(id)
+        else next.delete(id)
+      }
+      profile.hiddenNetworks = [...next]
+      this.materializeProfile(profile)
+      this.syncProfileToCloud(profile)
+    },
+
     /** Check if a network is hidden for a profile. */
     isNetworkHidden(profileId: string, networkId: string): boolean {
       const profile = this.profiles.find((p) => p.id === profileId)

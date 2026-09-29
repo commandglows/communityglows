@@ -1,0 +1,118 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+vite v8.2.2 building client environment for production...
+Duplicated imports "useMediaQuery", the one from "@vueuse/core" has been ignored and "C:/Users/Diane/ShipGlows/communityglows/src/composables/useMediaQuery.ts" is used
+transforming...
+Duplicated imports "useMediaQuery", the one from "@vueuse/core" has been ignored and "C:/Users/Diane/ShipGlows/communityglows/src/composables/useMediaQuery.ts" is used
+/*! 🌼 daisyUI 5.7.22 */
+✓ 1145 modules transformed.
+
+(!) outDir C:\Users\Diane\ShipGlows\communityglows\dist\tauri is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+dist/tauri/index.html                                    4.61 kB │ gzip:   1.24 kB
+dist/tauri/assets/logo-BHyT7H8D.png                     32.87 kB
+dist/tauri/assets/SgIcon-DusM60v7.css                    0.37 kB │ gzip:   0.20 kB
+dist/tauri/assets/NetworkTwoColumnLayout-x_hS0SPF.css    0.55 kB │ gzip:   0.21 kB
+dist/tauri/assets/InstagramView-sse3z9yJ.css             0.77 kB │ gzip:   0.34 kB
+dist/tauri/assets/SgTextarea-CKIk9cE5.css                0.77 kB │ gzip:   0.33 kB
+dist/tauri/assets/common-DC9wQSbS.css                    0.81 kB │ gzip:   0.25 kB
+dist/tauri/assets/SessionLockView-Budbhjl1.css           0.91 kB │ gzip:   0.33 kB
+dist/tauri/assets/SnapchatView-D7NoLh7t.css              0.94 kB │ gzip:   0.39 kB
+dist/tauri/assets/TikTokView-C3k3oHex.css                0.94 kB │ gzip:   0.39 kB
+dist/tauri/assets/ThreadsView-BXTP7Tr0.css               0.97 kB │ gzip:   0.36 kB
+dist/tauri/assets/SgAvatar-I19_jkks.css                  1.00 kB │ gzip:   0.30 kB
+dist/tauri/assets/DiscordView-CM3ceqKW.css               1.70 kB │ gzip:   0.52 kB
+dist/tauri/assets/LoginView-EvMp3xEx.css                 2.03 kB │ gzip:   0.57 kB
+dist/tauri/assets/SgPassword-CzGDrGsF.css                2.07 kB │ gzip:   0.46 kB
+dist/tauri/assets/RedditView-DqMzdteY.css                2.20 kB │ gzip:   0.53 kB
+dist/tauri/assets/SgDialog-CJ8gWqbH.css                  2.45 kB │ gzip:   0.63 kB
+dist/tauri/assets/TwitterView-JJNhoEUQ.css               3.69 kB │ gzip:   0.79 kB
+dist/tauri/assets/LinkedInView-BL1NQBtu.css              4.55 kB │ gzip:   0.88 kB
+dist/tauri/assets/FacebookView-GnbCED8t.css             12.24 kB │ gzip:   2.29 kB
+dist/tauri/assets/index-D8zF4e7W.css                   541.39 kB │ gzip:  63.16 kB
+dist/tauri/assets/rolldown-runtime-BQ-_32WO.js           0.16 kB │ gzip:   0.16 kB
+dist/tauri/assets/dist-js-DHj1FBVY.js                    0.28 kB │ gzip:   0.18 kB
+dist/tauri/assets/SgTextarea-C6S9dvgu.js                 0.55 kB │ gzip:   0.38 kB
+dist/tauri/assets/InstagramView-DPtHwG4v.js              0.68 kB │ gzip:   0.43 kB
+dist/tauri/assets/SnapchatView-n5aC13Or.js               0.84 kB │ gzip:   0.47 kB
+dist/tauri/assets/TikTokView-BNvc3Gae.js                 0.86 kB │ gzip:   0.49 kB
+dist/tauri/assets/NetworkTwoColumnLayout-B4nxy-kB.js     0.87 kB │ gzip:   0.47 kB
+dist/tauri/assets/SgPassword-nMI0wQU6.js                 1.18 kB │ gzip:   0.68 kB
+dist/tauri/assets/design-tokens-BIMBr1Vl.js              1.20 kB │ gzip:   0.66 kB
+dist/tauri/assets/ThreadsView-BBkpROQ-.js                1.22 kB │ gzip:   0.69 kB
+dist/tauri/assets/common-CmXvclwm.js                     1.28 kB │ gzip:   0.73 kB
+dist/tauri/assets/SessionLockView-90_g6psy.js            1.91 kB │ gzip:   0.94 kB
+dist/tauri/assets/DiscordView-Ca744bO8.js                1.94 kB │ gzip:   0.93 kB
+dist/tauri/assets/core-BGM5vV-D.js                       2.03 kB │ gzip:   0.87 kB
+dist/tauri/assets/dist-js-C_R1IZjd.js                    2.79 kB │ gzip:   1.17 kB
+dist/tauri/assets/RedditView-Bzlsh2mU.js                 3.35 kB │ gzip:   1.52 kB
+dist/tauri/assets/LoginView-DYnyYCpx.js                  3.43 kB │ gzip:   1.44 kB
+dist/tauri/assets/socialNetworks-CqJx58v2.js             4.39 kB │ gzip:   1.68 kB
+dist/tauri/assets/SgAvatar-Dj1BOPy_.js                   5.21 kB │ gzip:   2.21 kB
+dist/tauri/assets/TwitterView-Do13O1mv.js                5.39 kB │ gzip:   2.17 kB
+dist/tauri/assets/LinkedInView-BG9_zmNs.js               7.24 kB │ gzip:   2.67 kB
+dist/tauri/assets/webview-B9vw3krA.js                   16.22 kB │ gzip:   3.53 kB
+dist/tauri/assets/FacebookView-mBZwcFyz.js              22.57 kB │ gzip:   7.85 kB
+dist/tauri/assets/convexAuth-DDjGJxTm.js                23.26 kB │ gzip:   8.00 kB
+dist/tauri/assets/SgDialog-0xPtTMbg.js                  28.59 kB │ gzip:   9.25 kB
+dist/tauri/assets/vue-i18n.runtime-CUmOdSxP.js          52.95 kB │ gzip:  18.58 kB
+dist/tauri/assets/SgIcon-CfW2k0YN.js                    61.65 kB │ gzip:  17.33 kB
+dist/tauri/assets/vendor-vue-CQUjRlFE.js               172.45 kB │ gzip:  67.48 kB
+dist/tauri/assets/contextualTasks-ByQY-8rC.js          389.34 kB │ gzip:  94.75 kB
+dist/tauri/assets/index-om7CXFKW.js                    602.16 kB │ gzip: 174.91 kB
+
+[TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
+    ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:81:30 ]
+    │
+ 81 │     const v1Sign = (v1Bits & 0x8000000000000000n) !== 0n;
+    │                              ─────────┬─────────
+    │                                       ╰───────────
+────╯
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
+    ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:81:55 ]
+    │
+ 81 │     const v1Sign = (v1Bits & 0x8000000000000000n) !== 0n;
+    │                                                       ─┬
+    │                                                        ╰──
+────╯
+
+[TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
+    ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:82:30 ]
+    │
+ 82 │     const v2Sign = (v2Bits & 0x8000000000000000n) !== 0n;
+    │                              ─────────┬─────────
+    │                                       ╰───────────
+────╯
+
+[TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
+    ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:82:55 ]
+    │
+ 82 │     const v2Sign = (v2Bits & 0x8000000000000000n) !== 0n;
+    │                                                       ─┬
+    │                                                        ╰──
+────╯
+
+[INEFFECTIVE_DYNAMIC_IMPORT] node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/event.js is dynamically imported by src/ui/setup/pages/CommunityGlows/App.vue?vue&type=script&setup=true&lang.ts but also statically imported by node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/webview.js, node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/window.js, src/ui/setup/pages/CommunityGlows/main.ts, dynamic import will not move module into another chunk.
+
+[INEFFECTIVE_DYNAMIC_IMPORT] src/ui/setup/pages/CommunityGlows/views/TasksView.vue is dynamically imported by src/ui/setup/pages/CommunityGlows/router/index.ts but also statically imported by src/ui/setup/pages/CommunityGlows/App.vue?vue&type=script&setup=true&lang.ts, src/ui/setup/pages/CommunityGlows/components/TasksWorkspacePanel.vue?vue&type=script&setup=true&lang.ts, dynamic import will not move module into another chunk.
+
+✓ built in 19.75s
+[PLUGIN_TIMINGS] Your build spent 81% of 19.7s inside plugin hooks (15.9s).
+Measured inside the callback, so queue time is excluded and time the callback itself awaited is not:
+  - vite:build-html transform (26%, 5.1s, 1 call)
+  - vite:vue transform (6%, 1.1s, 207 calls)
+Those rows are 32% of the build; the rest of the 81% is below.
+Not measurable — 4 hooks whose calls overlap, so elapsed time covers work other calls were doing. Profile with `node --cpu-prof`:
+  - unplugin-icons load (1134 calls)
+  - vite:esbuild-transpile renderChunk (30 calls)
+  - unplugin-vue-i18n:resource load (1136 calls)
+  … and 1 more
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.

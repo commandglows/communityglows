@@ -38,7 +38,7 @@ depends_on:
   - artifact: "CLAUDE.md"
     artifact_version: "1.0.0"
     required_status: "active"
-  - artifact: "shipglows_data/workflow/specs/socialflow-dependency-hygiene-and-major-line-migration.md"
+  - artifact: "shipglows_data/workflow/specs/communityglows-dependency-hygiene-and-major-line-migration.md"
     artifact_version: "1.0.0"
     required_status: "ready"
   - artifact: "docs/dependency-risk-register.md"

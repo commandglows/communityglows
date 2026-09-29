@@ -20,7 +20,7 @@ export interface KanbanColumn {
 }
 
 export class KanbanService {
-  private columns: Map<KanbanColumnId, KanbanColumn>
+  private columns = new Map<KanbanColumnId, KanbanColumn>()
 
   constructor() {
     this.resetState()

@@ -1,7 +1,10 @@
 <template>
   <div
     class="twitter-view"
-    :class="{ 'is-tablet': isTwitterCompact }"
+    :class="{
+      'is-tablet': isTwitterCompact,
+      'is-disconnected': !isConnected,
+    }"
   >
     <template v-if="isConnected">
       <div class="header">
@@ -168,6 +171,7 @@
         />
         <h3>{{ $t('twitter.connect_title') }}</h3>
         <p>{{ $t('twitter.connect_message') }}</p>
+        <p class="connect-privacy">{{ $t('network_connection.profile_isolation') }}</p>
         <Button
           icon="pi pi-twitter"
           :label="$t('twitter.connect_button')"
@@ -263,9 +267,19 @@ const connectTwitter = () => {
   padding: var(--sg-space-1rem);
 }
 
+.twitter-view.is-disconnected {
+  align-self: stretch;
+  box-sizing: border-box;
+  display: grid;
+  inline-size: 100%;
+  min-height: 100%;
+  min-width: 0;
+  place-items: center;
+}
+
 .connect-prompt {
   max-width: var(--sg-size-400px);
-  margin: var(--sg-space-2rem-auto);
+  margin: 0;
   text-align: center;
   padding: var(--sg-space-2rem);
   background: var(--sg-color-surface-raised);
@@ -279,6 +293,11 @@ const connectTwitter = () => {
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
   color: var(--sg-color-text-muted);
+}
+
+.connect-prompt .connect-privacy {
+  margin-top: calc(var(--sg-space-1rem) * -1);
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .twitter-content {

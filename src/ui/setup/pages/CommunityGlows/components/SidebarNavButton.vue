@@ -12,14 +12,19 @@
       :tooltip="tooltip"
       :aria-label="label"
       :aria-pressed="ariaPressed"
+      :aria-expanded="ariaExpanded"
+      :aria-haspopup="ariaHaspopup"
       text
       @click="emit('click')"
     >
+      <template v-if="$slots.label" #label><slot name="label" /></template>
       <template
-        v-if="$slots.icon"
+        v-if="$slots.icon || icon"
         #icon
       >
-        <slot name="icon" />
+        <span class="sidebar-nav-button__icon-column">
+          <slot name="icon"><SgIcon :icon="icon!" /></slot>
+        </span>
       </template>
     </SgButton>
   </div>
@@ -27,6 +32,7 @@
 
 <script setup lang="ts">
 import SgButton from './ui/SgButton.vue'
+import SgIcon from './ui/SgIcon.vue'
 
 withDefaults(defineProps<{
   label: string
@@ -36,6 +42,8 @@ withDefaults(defineProps<{
   compact?: boolean
   active?: boolean
   ariaPressed?: boolean
+  ariaExpanded?: boolean
+  ariaHaspopup?: 'menu' | 'listbox'
 }>(), {
   icon: undefined,
   badge: undefined,
@@ -43,6 +51,8 @@ withDefaults(defineProps<{
   compact: false,
   active: false,
   ariaPressed: undefined,
+  ariaExpanded: undefined,
+  ariaHaspopup: undefined,
 })
 
 const emit = defineEmits<{ click: [] }>()
@@ -51,6 +61,14 @@ const emit = defineEmits<{ click: [] }>()
 <style scoped>
 .sidebar-nav-button {
   width: var(--sg-sidebar-fill-size);
+}
+
+.sidebar-nav-button__icon-column {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 calc(var(--sg-sidebar-effective-icon-size) + 2 * var(--sg-space-1));
+  width: calc(var(--sg-sidebar-effective-icon-size) + 2 * var(--sg-space-1));
 }
 
 .sidebar-nav-button :deep(.sg-button) {
@@ -62,9 +80,7 @@ const emit = defineEmits<{ click: [] }>()
   justify-content: flex-start;
   padding-inline: var(--sg-sidebar-network-row-padding-inline);
   overflow: hidden;
-  transition:
-    background-color 180ms ease,
-    color 180ms ease;
+  transition: var(--sg-motion-colors);
 }
 
 .sidebar-nav-button :deep(.sg-button)::before {

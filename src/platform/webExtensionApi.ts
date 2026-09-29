@@ -12,7 +12,10 @@ type BrowserApi = {
     create?: (properties: { active?: boolean; url: string }) => Promise<CreatedTab>
     query?: (query: TabQuery) => Promise<TabSummary[]>
   }
-  windows?: { getCurrent?: () => Promise<WindowSummary> }
+  windows?: {
+    getCurrent?: () => Promise<WindowSummary>
+    create?: (properties: { focused?: boolean; type?: string; url: string }) => Promise<WindowSummary>
+  }
   sidePanel?: { open?: (options: { windowId: number }) => Promise<void> }
   storage?: {
     local?: BrowserStorageArea
@@ -62,6 +65,31 @@ export async function createExtensionTab(
       const error = chromeLastError()
       if (error) reject(new Error(error))
       else resolve(tab ?? {})
+    })
+  })
+}
+
+export async function createExtensionWindow(
+  properties: { focused?: boolean; url: string },
+): Promise<WindowSummary> {
+  const createProperties = {
+    focused: properties.focused ?? true,
+    type: "normal" as const,
+    url: properties.url,
+  }
+  const browserCreate = browserApi()?.windows?.create?.bind(browserApi()?.windows)
+  if (browserCreate) return browserCreate(createProperties)
+
+  const chromeCreate = globalThis.chrome?.windows?.create?.bind(globalThis.chrome?.windows)
+  if (!chromeCreate) {
+    const tab = await createExtensionTab({ active: properties.focused, url: properties.url })
+    return { id: tab.id }
+  }
+  return new Promise((resolve, reject) => {
+    chromeCreate(createProperties, (window?: WindowSummary) => {
+      const error = chromeLastError()
+      if (error) reject(new Error(error))
+      else resolve(window ?? {})
     })
   })
 }

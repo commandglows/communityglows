@@ -1,1 +1,121 @@
-body { width: var(--sg-size-24rem); max-width: 100vw; }
+
+html,
+body {
+  width: var(--sg-size-800px);
+  height: var(--sg-size-600px);
+}
+
+body {
+  min-width: var(--sg-size-800px);
+  min-height: var(--sg-size-600px);
+  overflow: hidden !important;
+}
+
+#app,
+.ext-root-shell {
+  height: 100%;
+  min-height: 0;
+}
+
+.ext-root-shell {
+  overflow: hidden;
+}
+
+.ext-parity-root {
+  height: 100%;
+  max-width: none;
+  justify-content: flex-start;
+  gap: var(--sg-space-0d75rem);
+  padding: var(--sg-space-0d75rem) var(--sg-space-1rem);
+  overflow: hidden;
+}
+
+.ext-parity-root--task-entry .ext-parity-header {
+  display: none;
+}
+
+.ext-parity-root--task-entry {
+  justify-content: flex-start;
+}
+
+.ext-parity-header {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ext-parity-title {
+  font-size: var(--sg-font-size-1d25rem);
+}
+
+.ext-parity-description,
+.ext-parity-grid--settings .ext-field small {
+  display: none;
+}
+
+.ext-parity-grid--settings {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--sg-space-0d75rem);
+}
+
+.ext-parity-grid--settings .ext-field {
+  gap: var(--sg-space-0d25rem);
+}
+
+.ext-parity-grid--settings .ext-select,
+.ext-parity-grid--settings .ext-btn {
+  min-height: var(--sg-control-height-md);
+}
+
+.ext-parity-grid--popup-networks {
+  gap: var(--sg-space-0d25rem);
+}
+
+.ext-network-group {
+  min-width: 0;
+}
+
+.ext-network-grid--compact {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--sg-space-0d5rem);
+}
+
+.ext-network-grid--compact .ext-btn {
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.ext-actions {
+  display: flex;
+  margin-top: auto;
+  padding-top: var(--sg-space-0d75rem);
+  border-top: 1px solid var(--sg-color-border);
+  justify-content: flex-end;
+  gap: var(--sg-space-0d5rem);
+}
+
+.ext-task-capture-panel--compact {
+  gap: var(--sg-space-0d5rem);
+  padding: var(--sg-space-0d75rem);
+}
+
+.ext-task-capture-panel--compact .ext-task-capture-heading {
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--sg-space-0d5rem);
+}
+
+.ext-task-capture-panel--compact .ext-task-capture-heading > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.ext-task-capture-panel--compact .ext-task-capture-heading h2 {
+  font-size: var(--sg-font-size-1rem);
+  white-space: nowrap;
+}
+
+.ext-task-capture-panel--form-open .ext-task-capture-heading > button {
+  display: none;
+}

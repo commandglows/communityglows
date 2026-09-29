@@ -8,7 +8,8 @@ type Group = { id: number; windowId: number; title: string; collapsed: boolean }
 function browser() {
   const tabs = new Map<number, Tab>()
   const groups = new Map<number, Group>()
-  let tabId = 0, groupId = 100
+  const windows = new Set([1])
+  let tabId = 0, groupId = 100, windowId = 1
   const area = () => {
     const data: Record<string, unknown> = {}
     return { data, get: vi.fn(async (key: string) => structuredClone({ [key]: data[key] })), set: vi.fn(async (value: Record<string, unknown>) => { Object.assign(data, structuredClone(value)) }) }
@@ -17,6 +18,7 @@ function browser() {
   const getGroup = (id: number) => { const group = groups.get(id); if (!group) throw new Error('No group'); return group }
   const add = (overrides: Partial<Tab> = {}) => {
     const tab = { id: ++tabId, windowId: 1, groupId: -1, index: tabs.size, active: false, pinned: false, url: 'https://personal.example/', ...overrides }
+    windows.add(tab.windowId)
     tabs.set(tab.id, tab)
     return tab
   }
@@ -59,17 +61,29 @@ function browser() {
         return structuredClone(getGroup(id))
       }),
     },
-    windows: { update: vi.fn(async (id: number) => ({ id })) },
+    windows: {
+      get: vi.fn(async (id: number) => {
+        if (!windows.has(id)) throw new Error('No window')
+        return { id }
+      }),
+      create: vi.fn(async (props: { focused?: boolean; url?: string }) => {
+        const id = ++windowId
+        windows.add(id)
+        if (props.url) add({ windowId: id, url: props.url, active: Boolean(props.focused) })
+        return { id }
+      }),
+      update: vi.fn(async (id: number) => ({ id })),
+    },
   }
   const manager = () => createNetworkTabManager(api as unknown as typeof chrome)
-  return { tabs, groups, add, api, manager }
+  return { tabs, groups, windows, add, api, manager }
 }
 
 describe('managed Chrome network tabs', () => {
   it('rejects adoption conflicts without transferring another network ownership', async () => {
     const b = browser(), m = b.manager()
     const first = await m.execute({ action: 'open', target: target(), windowId: 1 })
-    await expect(m.execute({ action: 'adopt', target: target('two'), windowId: 1 })).rejects.toThrow('already_managed')
+    await expect(m.execute({ action: 'adopt', target: target('two'), windowId: first.homeWindowId! })).rejects.toThrow('already_managed')
     b.tabs.get(first.entries[0].tabId!)!.active = false
     const personal = b.add({ active: true })
     await expect(m.execute({ action: 'adopt', target: target(), windowId: 1 })).rejects.toThrow('already_managed')
@@ -91,8 +105,29 @@ describe('managed Chrome network tabs', () => {
   it('serializes rapid clicks without duplicates or URL updates', async () => {
     const b = browser(), m = b.manager()
     await Promise.all(Array.from({ length: 12 }, () => m.execute({ action: 'open', target: target(), windowId: 1 })))
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
+    expect(b.api.tabs.create).not.toHaveBeenCalled()
     expect(b.api.tabs.update.mock.calls.every(([, props]) => !('url' in props))).toBe(true)
+  })
+
+  it('creates and reuses a dedicated CommunityGlows window for new network tabs', async () => {
+    const b = browser(), m = b.manager()
+    const first = await m.execute({ action: 'open', target: target(), windowId: 1 })
+    const second = await m.execute({ action: 'open', target: target('two'), windowId: 9 })
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
+    expect(first.homeWindowId).toBe(2)
+    expect(second.homeWindowId).toBe(2)
+    expect(second.entries.every(entry => entry.windowId === 2)).toBe(true)
+  })
+
+  it('recreates the dedicated window when Chrome has closed it', async () => {
+    const b = browser(), m = b.manager()
+    const first = await m.execute({ action: 'open', target: target(), windowId: 1 })
+    b.windows.delete(first.homeWindowId!)
+    const state = await m.execute({ action: 'open', target: target('two'), windowId: 1 })
+    expect(state.homeWindowId).toBe(3)
+    expect(b.api.windows.create).toHaveBeenCalledTimes(2)
+    expect(state.entries.find(entry => entry.networkId === 'two')).toMatchObject({ windowId: 3 })
   })
 
   it('keeps the active group expanded and collapses inactive managed groups', async () => {
@@ -157,11 +192,11 @@ describe('managed Chrome network tabs', () => {
     const first = await m.execute({ action: 'open', target: target(), windowId: 1 })
     b.tabs.delete(first.entries[0].tabId!)
     expect((await m.execute({ action: 'snapshot' })).entries[0]).toMatchObject({ tabId: null, closed: true })
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
     const changed = { ...target(), label: 'New label', url: 'https://new.example/', groupKey: 'new' }
     const state = await m.execute({ action: 'open', target: changed, windowId: 1 })
     expect(state.entries[0]).toMatchObject({ ...changed, closed: false })
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(2)
+    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
   })
 
   it('retains ownership across worker restart', async () => {
@@ -169,20 +204,20 @@ describe('managed Chrome network tabs', () => {
     const first = await b.manager().execute({ action: 'open', target: target(), windowId: 1 })
     const next = await b.manager().execute({ action: 'open', target: target(), windowId: 1 })
     expect(next.entries[0].tabId).toBe(first.entries[0].tabId)
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
   })
 
   it('requires explicit recovery after browser restart even when a matching URL is restored', async () => {
     const b = browser()
-    await b.manager().execute({ action: 'open', target: target(), windowId: 1 })
+    const first = await b.manager().execute({ action: 'open', target: target(), windowId: 1 })
     delete b.api.storage.session.data[NETWORK_TABS_KEY]
     const restored = b.manager()
     expect((await restored.execute({ action: 'snapshot' })).entries[0]).toMatchObject({ tabId: null, recovery: true, closed: true })
     await expect(restored.execute({ action: 'open', target: target(), windowId: 1 })).rejects.toThrow('restore_required')
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
-    const state = await restored.execute({ action: 'adopt', target: target(), windowId: 1 })
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
+    const state = await restored.execute({ action: 'adopt', target: target(), windowId: first.homeWindowId! })
     expect(state.entries[0]).toMatchObject({ recovery: false, closed: false })
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.tabs.create).not.toHaveBeenCalled()
   })
 
   it('allows explicit reopen after browser restart without silently claiming restored tabs', async () => {
@@ -199,7 +234,7 @@ describe('managed Chrome network tabs', () => {
     b.api.tabs.group.mockRejectedValueOnce(new Error('temporary failure'))
     await expect(m.execute({ action: 'open', target: target(), windowId: 1 })).rejects.toThrow('temporary failure')
     const state = await m.execute({ action: 'open', target: target(), windowId: 1 })
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.windows.create).toHaveBeenCalledTimes(1)
     expect(state.entries[0].groupId).not.toBe(-1)
     expect(state.entries[0].pendingGroup).toBe(false)
   })
@@ -211,7 +246,7 @@ describe('managed Chrome network tabs', () => {
     const state = await b.manager().execute({ action: 'open', target: target(), windowId: 1 })
     expect(state.groups[0].title).toBe('social')
     expect(state.entries[0].pendingTitle).toBe(false)
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.tabs.create).not.toHaveBeenCalled()
   })
 
   it('reflects manual group rename, move and order and accepts panel rename', async () => {
@@ -231,10 +266,10 @@ describe('managed Chrome network tabs', () => {
     const two = await m.execute({ action: 'open', target: target('two'), windowId: 3 })
     const personal = b.add({ windowId: 2 })
     const state = await m.execute({ action: 'gather', windowId: 1 })
-    expect(state.groups.map(group => group.id).sort()).toEqual([one.entries[0].groupId, two.entries[1].groupId].sort())
-    expect(state.entries.every(entry => entry.windowId === 1)).toBe(true)
+    expect(state.groups.map(group => group.id).sort()).toEqual([...new Set([one.entries[0].groupId, two.entries[1].groupId])].sort())
+    expect(state.entries.every(entry => entry.windowId === one.homeWindowId)).toBe(true)
     expect(personal.windowId).toBe(2)
-    expect(b.api.tabGroups.move).toHaveBeenCalledTimes(2)
+    expect(b.api.tabGroups.move).not.toHaveBeenCalled()
   })
 
   it('moves only an owned member out of a mixed group when gathering', async () => {
@@ -242,7 +277,7 @@ describe('managed Chrome network tabs', () => {
     const first = await m.execute({ action: 'open', target: target(), windowId: 2 })
     const personal = b.add({ windowId: 2, groupId: first.entries[0].groupId })
     const state = await m.execute({ action: 'gather', windowId: 1 })
-    expect(state.entries[0].windowId).toBe(1)
+    expect(state.entries[0].windowId).toBe(first.homeWindowId)
     expect(personal).toMatchObject({ windowId: 2, groupId: first.entries[0].groupId })
     expect(b.api.tabGroups.move).not.toHaveBeenCalled()
   })
@@ -256,6 +291,6 @@ describe('managed Chrome network tabs', () => {
     await m.execute({ action: 'replace', oldId, newId: replacement.id })
     const state = await m.execute({ action: 'open', target: target(), windowId: 1 })
     expect(state.entries[0].tabId).toBe(999)
-    expect(b.api.tabs.create).toHaveBeenCalledTimes(1)
+    expect(b.api.tabs.create).not.toHaveBeenCalled()
   })
 })

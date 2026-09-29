@@ -1,0 +1,9 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+
+ RUN  v4.1.11 C:/Users/Diane/ShipGlows/communityglows
+
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  14:31:26
+   Duration  1.31s (transform 491ms, setup 0ms, import 1.54s, tests 167ms, environment 1ms)

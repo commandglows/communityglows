@@ -1,4 +1,99 @@
 {
+  "crm": {
+    "contacts": "Contacts",
+    "description": "Find your contacts, their cards and your next conversation.",
+    "new_contact": "New contact",
+    "edit_contact": "Edit contact",
+    "name": "Contact name",
+    "profile_url": "Profile link",
+    "profile_url_placeholder": "{'@'}handle or https://…",
+    "avatar_url": "Contact photo",
+    "profile_links": "Linked profiles",
+    "profile_links_hint": "Add the networks where you can find this person.",
+    "profile_network": "Network",
+    "add_profile_link": "Add profile",
+    "remove_profile_link": "Remove this profile",
+    "no_profile_links": "Add a profile link to quickly open this person in their networks.",
+    "profile_links_count": "{count} linked profile | {count} linked profiles",
+    "next_follow_up": "Next follow-up",
+    "follow_up_notes": "Follow-up notes",
+    "save": "Save",
+    "load_failed": "Contacts could not be loaded. Your stored data has not been replaced.",
+    "save_failed": "Could not save. Check the name, profile link or handle, and date, then try again. Your input is preserved.",
+    "search": "Search contacts",
+    "empty": "Add your first contact to find their cards and plan your follow-ups.",
+    "no_results": "No contacts match your search.",
+    "open_profile": "Open profile",
+    "view_cards": "View cards",
+    "delete_contact": "Delete contact",
+    "linked_contacts": "Linked contacts",
+    "create_contact_hint": "Add a contact in the Contacts panel to link them to this card.",
+    "edit_card": "Edit card",
+    "card_saved": "Card saved.",
+    "cards_for": "Cards for {name}",
+      "open_contact_sheet": "Open {name}’s contact sheet",
+      "contact_context_hint": "Right-click to filter, create a task or open the profile",
+      "filter_tasks": "View this contact’s tasks",
+      "create_task_for_contact": "Create linked task",
+      "open_profile_in": "Open in {network}",
+      "show_all": "Show all cards",
+      "pin_contact": "Pin contact",
+      "unpin_contact": "Unpin contact",
+      "pinned_contacts": "Pinned contacts",
+      "dialog": {
+        "new_contact_description": "Create a contact profile you can reuse in tasks and follow-ups.",
+        "edit_contact_description": "Update this contact’s follow-up details.",
+        "contact_choice_hint": "Create a person profile to find them again in cards and follow-ups.",
+        "danger_zone_description": "Deleting this contact also removes it from linked tasks.",
+        "delete_contact_confirmation": "This contact will be deleted and removed from linked tasks.",
+        "confirm_delete_contact": "Delete permanently"
+      }
+  },
+  "login_value": {
+    "title": "Your workspace goes with you.",
+    "description": "Create an account to find your CommunityGlows workspace across your devices.",
+    "tasks": "Keep your Kanban and its tasks available with account synchronization.",
+    "workspaces": "Keep your profiles and saved Bento workspaces within reach.",
+    "preferences": "Find your preferences and custom links without configuring everything again.",
+    "account_cta": "Create my account",
+    "try_local": "Try Kanban locally",
+    "local_title": "Local Kanban · No synchronization",
+    "local_warning": "Cards and contacts stay in this browser or installation without synchronization. Clearing its data or losing this device may cause their loss.",
+    "local_retained": "Local tasks remain after signing in. You can copy them into your account from Kanban.",
+    "import_hint": "You have local Kanban tasks. Add them to this account to include them in its synchronization while keeping the local originals.",
+    "import_cta": "Copy my local Kanban into this account",
+    "copied": "Tasks added to this workspace. Local originals are preserved."
+  },
+  "network_connection": {
+    "profile_isolation": "This network’s cookies and session stay isolated within this CommunityGlows profile."
+  },
+  "right_panel_guide": {
+    "title": "Your shortcuts, two ways to navigate",
+    "choose": "Select a network in the left sidebar to use its shortcuts.",
+    "planned": "This centralized view is planned for a later stage. It is not available yet.",
+    "left_title": "Left click · Selected network",
+    "left_description": "Open the corresponding section on the active network’s website: its feed, your profile, notifications, saved items or events.",
+    "right_title": "Right click · All your networks",
+    "right_description": "Access the future CommunityGlows view for this section, bringing together information from your different apps: notifications, saved items, events… These centralized views are still to be built.",
+    "back": "Back to my workspace"
+  },
+  "sidebarTabs": {
+    "title": "Open tabs",
+    "empty": "No open tabs",
+    "name": "Group name",
+    "save": "Save",
+    "cancel": "Cancel",
+    "ungrouped": "Ungrouped",
+    "actions": "Actions for {name}",
+    "up": "Move up",
+    "down": "Move down",
+    "rename": "Rename",
+    "dissolve": "Dissolve group",
+    "create": "New group",
+    "ungroup": "Remove from group",
+    "moveTo": "Move to {name}",
+    "error": "The move could not be applied."
+  },
   "networkGroups": {
     "social": "Social networks",
     "communities": "Messaging and communities",
@@ -36,6 +131,7 @@
     "cancel": "Cancel",
     "add": "Add",
     "delete": "Delete",
+    "danger_zone": "Danger zone",
     "save": "Save",
     "publish": "Publish",
     "share": "Share",
@@ -107,7 +203,33 @@
     "disable_error": "Bitwarden could not be disabled.",
     "restart_error": "CommunityGlows could not restart automatically. Close and reopen the application."
   },
+  "native_workspace": {
+    "android": "Explore the Android app",
+    "coming_soon": "Coming soon",
+    "unavailable": "A browser limitation 🔒 Websites can prevent other pages from embedding them in an iframe, and browsers restrict sign-ins within embedded content. When a site enforces this restriction, a web page cannot lift it. This version therefore opens your networks in separate tabs.",
+    "eyebrow": "Your CommunityGlows workspace",
+    "title": "Your networks, together in one workspace",
+    "network_title": "{network}, in your CommunityGlows workspace",
+    "description": "Good news 🙂 The Windows app uses dedicated browser views instead of iframes: open your networks side by side with Bento and keep separate sessions for each of your profiles.",
+    "bento": "Networks side by side",
+    "profiles": "Separate sessions per profile",
+    "download": "Explore the Windows app",
+    "open_network": "Open {network} in a tab",
+    "optional": "Installation is optional. Links open in a new tab."
+  },
   "theme": {
+    "menu_label": "Theme",
+    "palette_label": "Color palette",
+    "palettes": {
+      "blue": "Blue",
+      "neutral": "Neutral",
+      "yellow": "Yellow",
+      "teal": "Teal",
+      "green": "Green",
+      "apricot": "Apricot",
+      "rose": "Rose",
+      "violet": "Violet"
+    },
     "dark_mode": "Dark mode",
     "focus_mode": "Focus mode (grayscale)",
     "mode_label": "Appearance",
@@ -212,7 +334,7 @@
     "trial_reminder_value_workspace": "All your networks together in one workspace",
     "trial_reminder_value_profiles": "Organized profiles with separate sessions",
     "trial_reminder_value_flow": "Fast navigation without juggling separate tools",
-    "trial_reminder_price": "Keep everything for a one-time €149 payment — no subscription.",
+    "trial_reminder_price": "Keep everything for a one-time €149 payment incl. VAT — no subscription.",
     "trial_reminder_keep_access": "Keep lifetime access",
     "trial_reminder_snooze": "Decide tomorrow",
     "restarts_remaining": "{count} trial restart remaining | {count} trial restarts remaining",
@@ -236,7 +358,7 @@
     "gate_trial_exhausted_title": "Your social cockpit remains paused",
     "gate_trial_exhausted_message": "Your data stays safe. Your three 30-day cycles have ended, so lifetime access is now required to restore every protected action.",
     "gate_value_title": "What you get back immediately:",
-    "gate_lifetime_price": "All of CommunityGlows for a one-time €149 payment — no subscription.",
+    "gate_lifetime_price": "All of CommunityGlows for a one-time €149 payment incl. VAT — no subscription.",
     "gate_keep_lifetime": "Restore my lifetime access",
     "gate_founder_note": "I have worked for a very long time, with all my heart, to make CommunityGlows the best possible home for your networks. Your support lets me keep improving it every day — thank you for being part of this journey.",
     "gate_access_required_title": "Access is required",
@@ -279,6 +401,44 @@
     "title": "Profiles"
   },
   "sidebar": {
+    "duplicate": "Duplicate",
+    "close_copy": "Close copy",
+    "network_search": {
+      "label": "Search networks",
+      "placeholder": "Search networks…",
+      "clear": "Clear search",
+      "no_results": "No networks found"
+    },
+    "bento_display": {
+      "title": "Bento display",
+      "grouped": "Grouped at the top",
+      "tabs": "As tabs",
+      "create": "Create Bento",
+      "rename": "Edit Bento",
+      "delete": "Delete Bento"
+    },
+    "organization": {
+      "networks": "Networks",
+      "ungrouped": "Ungrouped",
+      "new_group": "New group",
+      "create": "Create group",
+      "move_up": "Move up",
+      "move_down": "Move down",
+      "move_to": "Move to",
+      "root": "At root",
+      "drop_root": "Drop at root",
+      "drag_hint": "Drag to move · Alt + ↑ / ↓ to reorder · Shift + F10 for actions",
+      "saved": "Organization saved",
+      "save_error": "Could not save the organization. Please try again."
+    },
+    "rename_group": "Rename group",
+    "rename_network": "Rename network",
+    "delete_group": "Delete group",
+    "group_name": "Group name",
+    "edit_displayed_networks": "Edit displayed networks",
+    "finish_editing_networks": "Finish editing displayed networks",
+    "expand_all": "Expand all",
+    "collapse_all": "Collapse all",
     "networks_section": "Social networks",
     "friends_section": "Friends",
     "custom_links_section": "Custom links",
@@ -435,7 +595,12 @@
     "access_required": "To open {destination}, sign in or create your CommunityGlows account.",
     "access_loading": "We are checking your session. Try again in a moment.",
     "access_unavailable": "Sign-in is currently unavailable. Check your network connection and try again.",
-    "sign_in_failed": "Sign-in failed."
+    "sign_in_failed": "Unable to sign in. Check your email address and password. If this is your first visit, choose “Create an account”. If the problem persists, try again in a moment.",
+    "sign_up_failed": "Unable to create your account. Check your email address and use a password with at least 8 characters. If you already have an account, choose “Already have an account?”. Otherwise, try again in a moment.",
+    "credentials_failed": "Incorrect email address or password. Check your credentials. If this is your first visit, choose “Create an account”.",
+    "network_failed": "The sign-in service could not be reached. Check your internet connection and try again.",
+    "too_many_attempts": "Too many sign-in attempts. Wait a few minutes before trying again.",
+    "sync_failed": "You are signed in, but synchronization did not finish. Check your internet connection and restart CommunityGlows."
   },
   "session_lock": {
     "title": "Session locked",
@@ -467,7 +632,7 @@
     "auth_hint": "Sign in with an existing account or create one to sync your data across devices.",
     "sync_more": "More info",
     "sync_less": "Less info",
-    "sync_info": "The cloud syncs your CommunityGlows profiles, settings, accounts, custom links, and per-profile Bento Scenes across your other devices.",
+    "sync_info": "The cloud syncs your CommunityGlows profiles, settings, accounts, custom links, and per-profile Bentos across your other devices.",
     "cookies_info": "We would also like to sync your logged-in sessions, but browsers and social networks forbid sending those cookies to third-party servers. To move your sessions to a new device, use the encrypted export below.",
     "sign_in_hint": "Sign in with your existing account to restore your synced data.",
     "already_exists_error": "An account already exists for this email. Use “Sign in” instead.",
@@ -491,7 +656,7 @@
   "extension": {
     "managed": {
       "title": "CommunityGlows tabs",
-      "sessions": "In the extension, your spaces share the sign-ins of your Chrome profile. Use the apps for separate sessions.",
+      "sessions": "In Chrome, CommunityGlows opens your networks in its own dedicated window. Sign-ins still come from your Chrome profile; use the apps for separate sessions.",
       "restart": "After restarting Chrome, use “Add to CommunityGlows” to resume a restored tab, or explicitly open a new tab.",
       "target": "Network for the active tab",
       "choose": "Choose a network or link",
@@ -514,7 +679,6 @@
         "restore_required": "Add the restored tab or choose “Open a new tab” in the companion."
       }
     },
-    "repair": { "edit": "Edit" },
     "surface": {
       "popup_title": "Quick Launcher",
       "popup_description": "Open your social networks quickly from the toolbar popup.",
@@ -533,7 +697,8 @@
       "label": "Active profile"
     },
     "networks": {
-      "title": "Network Launcher"
+      "title": "Network catalog",
+      "quick_title": "Quick networks"
     },
     "custom_links": {
       "title": "Custom links",
@@ -542,7 +707,17 @@
     },
     "actions": {
       "open_dashboard": "Open full dashboard",
-      "open_side_panel": "Open side panel"
+      "open_side_panel": "Open side panel",
+      "configure": "Configure"
+    },
+    "flow": {
+      "title": "First steps in the extension",
+      "profile_title": "Choose the right profile",
+      "profile_body": "The profile organizes your networks and links in this browser.",
+      "network_title": "Open a first network",
+      "network_body": "Networks open in real Chrome tabs, then the side panel can find them again.",
+      "task_title": "Capture a task",
+      "task_body": "From the popup, save the active URL as a local task without reading page content."
     },
     "launch": {
       "opened": "Opened in a browser tab.",
@@ -566,6 +741,62 @@
       "session_isolation": "Extension mode uses regular browser tabs. It cannot isolate cookies and localStorage per CommunityGlows profile like native Tauri WebViews.",
       "native_backup": "Native backup and restore workflows are unavailable in extension mode.",
       "native_haptics": "Haptics and Android bottom-bar controls are unavailable in extension mode."
+    },
+    "repair": {
+      "storage_error": "Unable to save or read data. Your input has been kept. Check browser storage and try again.",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleted": "Link deleted.",
+      "view_tasks": "Kanban",
+      "capture_title": "Create a task",
+      "new_contact": "Create a contact",
+      "create": "Create",
+      "task_indefinite": "a task",
+      "contact_indefinite": "a contact",
+      "change_create_type": "Choose what to create",
+      "contact_name": "Contact name",
+      "contact_url": "Profile or website",
+      "contact_note": "Note (optional)",
+      "attach_task": "Also create a task for this contact",
+      "task_title": "Task title",
+      "save_contact": "Create contact",
+      "save_contact_task": "Create contact and task",
+      "contact_created": "Contact created. Find it in Kanban.",
+      "contact_and_task_created": "Contact and task created and linked in Kanban.",
+      "contact_saved_task_error": "The contact was created, but the task could not be saved. Retry; the contact will not be duplicated.",
+      "capture_description": "Only the HTTPS URL is captured after your click. No page content is read.",
+      "capture": "Use active tab",
+      "manual": "Enter manually",
+      "capture_error": "This tab has no usable link. You can enter a link in the form.",
+      "cleaned": "Sensitive URL parts were removed before display.",
+      "captured": "URL captured at your request. No page content was read.",
+      "created": "Task created. Find it in Kanban.",
+      "tasks_local": "Tasks stay in this browser and are shared between extension windows.",
+      "saved": "Changes saved.",
+      "new_task": "New task",
+      "upcoming": "Upcoming tasks",
+      "no_tasks": "No tasks yet.",
+      "status_todo": "To do",
+      "status_waiting": "Waiting",
+      "status_done": "Done"
+    },
+    "native_guide": {
+      "title": "When should I use the native app?",
+      "intro": "The extension opens your networks in tabs. For the uses below, explore the Windows app on the official download page.",
+      "details": "Understand the differences",
+      "workspace_title": "Several networks in one workspace",
+      "workspace": "The Bento workspace is available in the Windows app. Sites can refuse embedding inside an extension page; here, they open in separate tabs.",
+      "sessions_title": "Separate social sessions for each profile",
+      "sessions": "This extension uses your browser sessions. Its profiles organize your links but do not separate social logins. Use native profiles for separate sessions, then sign in to your networks in the app.",
+      "backup_title": "Native backup and restore",
+      "backup": "App backup import and export are not offered in this version of the extension. These commands are available in the native app; they do not automatically retrieve extension data.",
+      "data_notice": "Your tasks and links stay in this browser. Installing the app does not transfer them automatically. Sync with the app is not yet available in this extension.",
+      "action": "View official downloads",
+      "new_tab": "(new tab)",
+      "optional": "You can keep using the extension. The official page lists the platforms currently available.",
+      "profile_hint": "This profile organizes your links; your social logins remain those of your browser.",
+      "pending_input": "You have input in progress. Save or cancel your task and finish your links before leaving: opening another tab can close the popup."
     }
   },
   "auth_sync": {
@@ -594,9 +825,23 @@
   },
   "tasks": {
     "eyebrow": "Community organization",
-    "title": "Contextual tasks",
-    "description": "Write down what you want to do and keep a link to where you need to act. CommunityGlows does not read the page.",
+    "title": "Kanban",
+    "description": "Organize tasks and follow-ups with notes, due dates, associated people and links to your networks.",
     "new_task": "New task",
+    "search_all": "Search tasks or contacts",
+    "dialog": {
+      "title": "Add to Kanban",
+      "edit_task": "Edit task",
+      "delete_task": "Delete task",
+      "description": "Choose what you want to add to your community organization.",
+      "choice_hint": "One shortcut, two actions: capture a task or create a contact profile.",
+      "task_choice_hint": "Create a follow-up card with notes, due dates, links and linked contacts.",
+      "new_task_description": "Capture an action to follow up with its context and contacts.",
+      "edit_task_description": "Edit the card, its status and its associations.",
+      "danger_zone_description": "Deleting this task removes it from the Kanban.",
+      "delete_task_confirmation": "This task will be removed from the local Kanban.",
+      "confirm_delete_task": "Delete permanently"
+    },
     "notices": {
       "https_required": "Only HTTPS URLs are accepted.",
       "create_failed": "Unable to create the task.",

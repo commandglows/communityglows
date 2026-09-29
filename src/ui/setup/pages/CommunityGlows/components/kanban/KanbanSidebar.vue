@@ -5,6 +5,9 @@
         v-for="column in store.columns" 
         :key="column.id"
         class="kanban-section"
+        tabindex="0"
+        role="group"
+        :aria-label="`${$t(column.title)} (${getColumnItems(column.id).length})`"
         @dragover.prevent
         @drop="handleDrop($event, column.id)"
       >
@@ -22,6 +25,9 @@
               v-for="item in getColumnItems(column.id)"
               :key="item.id"
               class="kanban-item"
+              tabindex="0"
+              role="group"
+              :aria-label="item.title"
               :class="[
                 `type-${item.type}`,
                 { 'is-dragging': isDragging(item) }
@@ -124,6 +130,13 @@ const deleteItem = (itemId: string) => {
 
 .kanban-section {
   margin-bottom: var(--sg-space-1rem);
+}
+
+.kanban-section:focus-visible,
+.kanban-item:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: calc(-1 * var(--sg-focus-offset));
+  border-radius: var(--sg-radius-6px);
 }
 
 .section-header {

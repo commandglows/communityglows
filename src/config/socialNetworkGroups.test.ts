@@ -19,7 +19,7 @@ describe('network catalogue groups', () => {
     ])
     const assignedIds = networkGroups.flatMap(group => group.networkIds)
     expect(new Set(assignedIds).size).toBe(assignedIds.length)
-    expect(assignedIds).toEqual(expect.arrayContaining(builtInSocialNetworks.map(item => item.id)))
+    expect([...assignedIds].sort()).toEqual(builtInSocialNetworks.map(item => item.id).sort())
     expect(networkGroups.every(group => group.labelKey === `networkGroups.${group.id}`)).toBe(true)
     expect(['breakcold', 'clarkup', 'clay', 'dex'].map(getNetworkGroupId)).toEqual([
       'crm', 'crm', 'crm', 'crm',

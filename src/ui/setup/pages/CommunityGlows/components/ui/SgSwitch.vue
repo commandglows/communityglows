@@ -1,10 +1,10 @@
 <template>
   <SwitchRoot
-    :checked="modelValue"
+    :model-value="modelValue"
     :disabled="disabled"
     class="sg-switch"
     :aria-label="label"
-    @update:checked="emit('update:modelValue', $event)"
+    @update:model-value="emit('update:modelValue', $event)"
   >
     <SwitchThumb class="sg-switch__thumb" />
   </SwitchRoot>

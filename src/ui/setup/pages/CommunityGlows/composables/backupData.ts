@@ -18,6 +18,11 @@ export const PORTABLE_LOCAL_STORAGE_KEYS = [
   'contextual-task-stage-labels-v1',
   'kanban-state',
   'contextual-tasks-v1',
+  'communityglows.kanban-contacts.v1',
+  'communityglows.guest-kanban-contacts.v1',
+  'communityglows.guest-tasks.v1',
+  'communityglows.guest-task-labels.v1',
+  'communityglows-prefer-local-kanban',
   'communityglows.desktop-workspaces.v2',
   'communityglows.desktop-workspaces.v1',
 ] as const

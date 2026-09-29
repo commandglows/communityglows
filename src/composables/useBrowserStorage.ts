@@ -1,4 +1,9 @@
-import { ref, watch, nextTick } from "vue"
+import { ref, watch, nextTick, onScopeDispose, toRaw } from "vue"
+import {
+	getExtensionStorage,
+	setExtensionStorage,
+	subscribeExtensionStorage,
+} from "@/platform/webExtensionApi"
 
 type JsonValue = string | number | boolean | null | undefined | JsonObject | JsonArray
 type JsonObject = { [key: string]: JsonValue }
@@ -12,7 +17,7 @@ function mergeDeep(defaults: JsonObject, source: JsonObject): JsonObject {
 		const defaultValue = defaults[key]
 		const sourceValue = source?.[key]
 
-		if (isObject(defaultValue) && sourceValue != null) {
+		if (isObject(defaultValue) && isObject(sourceValue)) {
 			// Recursively merge nested objects
 			output[key] = mergeDeep(defaultValue, sourceValue)
 		} else if (checkType(defaultValue, sourceValue)) {
@@ -27,7 +32,7 @@ function mergeDeep(defaults: JsonObject, source: JsonObject): JsonObject {
 	return output
 }
 
-function checkType(defaultValue: JsonValue, value: unknown): value is JsonValue {
+function checkType(defaultValue: unknown, value: unknown): value is JsonValue {
 	// Check if the value type is the same type as the default value or null
 	// there are only strings, booleans, nulls and arrays as types left
 	return (
@@ -37,7 +42,7 @@ function checkType(defaultValue: JsonValue, value: unknown): value is JsonValue 
 			Array.isArray(value) === Array.isArray(defaultValue))
 	)
 }
-function isObject(value: JsonValue): value is JsonObject {
+function isObject(value: unknown): value is JsonObject {
 	return value !== null && typeof value === "object" && !Array.isArray(value)
 }
 
@@ -51,25 +56,27 @@ export function useBrowserLocalStorage<T>(key: string, defaultValue: T) {
 
 function useBrowserStorage<T>(key: string, defaultValue: T, storageType: "sync" | "local" = "sync") {
 	const data = ref<T>(defaultValue)
-	// Blocking setting storage if it is updating from storage
 	let isUpdatingFromStorage = true
+	let writeQueue = Promise.resolve()
 	const defaultIsObject = isObject(defaultValue)
-	// Initialize storage with the value from chrome.storage
-	const promise = new Promise((resolve) => {
-		chrome.storage[storageType].get(key, async (result: Record<string, unknown>) => {
-			const storedValue = result?.[key]
+	const promise = (async () => {
+		try {
+			const storedValue = await getExtensionStorage(storageType, key)
 			if (storedValue !== undefined) {
 				if (defaultIsObject && isObject(storedValue as JsonValue)) {
 					data.value = mergeDeep(defaultValue as JsonObject, storedValue as JsonObject) as T
-				} else if (checkType(defaultValue as JsonValue, storedValue)) {
+				} else if (checkType(defaultValue, storedValue)) {
 					data.value = storedValue as T
 				}
 			}
+		} catch (error) {
+			console.error(`[CommunityGlows] Unable to read ${storageType} storage key ${key}`, error)
+		} finally {
 			await nextTick()
 			isUpdatingFromStorage = false
-			resolve(true)
-		})
-	})
+		}
+		return true
+	})()
 
 	// Watch for changes in the storage and update chrome.storage
 	watch(
@@ -77,7 +84,16 @@ function useBrowserStorage<T>(key: string, defaultValue: T, storageType: "sync" 
 		(newValue) => {
 			if (!isUpdatingFromStorage) {
 				if (checkType(defaultValue, newValue)) {
-					chrome.storage[storageType].set({ [key]: toRaw(newValue) })
+					const rawValue = toRaw(newValue)
+					const snapshot = rawValue === undefined
+						? undefined
+						: JSON.parse(JSON.stringify(rawValue)) as unknown
+					writeQueue = writeQueue
+						.catch(() => undefined)
+						.then(() => setExtensionStorage(storageType, key, snapshot))
+						.catch((error) => {
+							console.error(`[CommunityGlows] Unable to write ${storageType} storage key ${key}`, error)
+						})
 				} else {
 					console.error("not updating " + key + ": type mismatch")
 				}
@@ -85,15 +101,14 @@ function useBrowserStorage<T>(key: string, defaultValue: T, storageType: "sync" 
 		},
 		{ deep: true, flush: "post" },
 	)
-	// Add the onChanged listener here
-	chrome.storage[storageType].onChanged.addListener(async function (changes) {
-		if (changes?.[key]) {
+	const unsubscribe = subscribeExtensionStorage(storageType, key, async (newValue) => {
+		if (newValue !== undefined && checkType(defaultValue, newValue)) {
 			isUpdatingFromStorage = true
-			const { oldValue, newValue } = changes[key]
-			data.value = newValue
+			data.value = newValue as T
 			await nextTick()
 			isUpdatingFromStorage = false
 		}
 	})
+	onScopeDispose(unsubscribe, true)
 	return { data, promise }
 }

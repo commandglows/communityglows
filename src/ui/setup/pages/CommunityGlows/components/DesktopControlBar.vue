@@ -291,14 +291,13 @@ watch(
   height: var(--sg-control-bar-current-height, var(--sg-control-bar-height));
   padding-inline: var(--sg-control-bar-padding-inline);
   border-color: var(--sg-color-border);
-  background: var(--sg-color-translucent-surface);
-  backdrop-filter: blur(var(--sg-control-bar-blur));
+  background: var(--sg-color-surface-raised);
 }
 
 .desktop-control-bar--with-leading {
   grid-template-columns: minmax(0, max-content) minmax(0, 1fr) var(--sg-control-bar-edge-column);
 }
-.desktop-control-bar--top { border-bottom: 1px solid var(--sg-color-border); }
+.desktop-control-bar--top { border-bottom: 0; }
 .desktop-control-bar--bottom { border-top: 1px solid var(--sg-color-border); }
 .desktop-control-bar__leading,
 .desktop-control-bar__trailing {

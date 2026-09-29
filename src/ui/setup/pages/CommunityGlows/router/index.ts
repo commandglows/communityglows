@@ -119,13 +119,19 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/local-kanban',
+    name: 'LocalKanban',
+    component: () => import('../views/TasksView.vue'),
+    props: { localOnly: true },
+  },
+  {
     path: '/tasks',
     name: 'Tasks',
     component: () => import('../views/TasksView.vue'),
     meta: {
       auth: true,
       requiresAuth: true,
-      title: 'Tâches',
+      title: 'Kanban',
     }
   },
 ]

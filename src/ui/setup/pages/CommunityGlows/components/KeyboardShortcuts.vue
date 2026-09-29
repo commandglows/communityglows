@@ -26,7 +26,6 @@
       >
         <div class="shortcut-label">
           <span>{{ shortcut.label }}</span>
-          <small>{{ shortcut.enabled ? 'Actif' : 'Désactivé' }}</small>
         </div>
         <div class="shortcut-controls">
           <p
@@ -41,6 +40,7 @@
             class="shortcut-capture"
             :class="{ recording: recordingId === shortcut.id }"
             @click="startRecording(shortcut.id)"
+            @blur="stopRecording"
           >
             {{ recordingId === shortcut.id ? 'Appuyez sur les touches...' : shortcut.keys || 'Non défini' }}
           </button>
@@ -124,7 +124,16 @@ function onKeydown(event: KeyboardEvent) {
   if (!recordingId.value) return
   event.preventDefault()
   event.stopImmediatePropagation()
+  if (event.key === 'Escape') {
+    stopRecording()
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+    return
+  }
   if (['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) return
+  if (!event.ctrlKey && !event.altKey && !event.metaKey) {
+    conflictMessage.value = 'Ajoutez Ctrl, Alt ou Cmd à la touche choisie.'
+    return
+  }
   const keys = normalizeShortcutEvent(event)
   const success = shortcutsStore.setKeys(recordingId.value, keys)
   if (!success) {
@@ -132,6 +141,12 @@ function onKeydown(event: KeyboardEvent) {
     window.setTimeout(hideConflict, 1500)
   }
   recordingId.value = null
+  window.removeEventListener('keydown', onKeydown, true)
+}
+
+function stopRecording() {
+  recordingId.value = null
+  conflictMessage.value = null
   window.removeEventListener('keydown', onKeydown, true)
 }
 
@@ -175,12 +190,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown, true))
 .shortcuts-heading, .shortcut-row { justify-content: space-between; gap: var(--sg-shortcuts-row-gap); }
 .shortcuts-heading h3 { margin: 0; font-size: var(--sg-shortcuts-title-size); }
 .shortcuts-heading h3 i { margin-right: var(--sg-shortcuts-icon-gap); }
-.shortcuts-heading p, .shortcut-label small { color: var(--sg-color-text-muted); }
+.shortcuts-heading p { color: var(--sg-color-text-muted); }
 .shortcuts-heading p { margin: var(--sg-shortcuts-description-margin-block-start) 0 0; font-size: var(--sg-shortcuts-description-size); }
 .shortcut-list { display: grid; gap: var(--sg-shortcuts-list-gap); margin-top: var(--sg-shortcuts-list-margin-block-start); }
 .shortcut-row { padding: var(--sg-shortcuts-row-padding-block) 0; border-bottom: 1px solid var(--sg-color-border); }
 .shortcut-label { display: grid; gap: var(--sg-shortcuts-label-gap); }
-.shortcut-label small { font-size: var(--sg-shortcuts-label-size); }
 .shortcut-controls { gap: var(--sg-shortcuts-controls-gap); }
 .shortcut-capture { min-width: var(--sg-shortcuts-capture-min-width); padding: var(--sg-shortcuts-capture-padding-block) var(--sg-shortcuts-capture-padding-inline); border: 1px solid var(--sg-color-border); border-radius: var(--sg-radius-sm); background: var(--sg-color-surface-muted); color: var(--sg-color-text); cursor: pointer; }
 .shortcut-capture.recording { border-color: var(--sg-color-action); color: var(--sg-color-action); }

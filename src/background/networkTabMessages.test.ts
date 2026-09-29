@@ -22,6 +22,8 @@ describe('network tab message boundary', () => {
     expect(parseNetworkCommand({ ...valid, target: { ...valid.target, groupTitle: '' } })).toMatchObject({ target: { groupTitle: '' } })
   })
   it('parses group operations and explicit single-tab gather', () => {
+    expect(parseNetworkCommand({ action: 'home', windowId: 3 })).toEqual({ action: 'home', windowId: 3 })
+    expect(parseNetworkCommand({ action: 'home', windowId: -1 })).toBeNull()
     expect(parseNetworkCommand({ action: 'rename', groupId: 2, title: ' New ' })).toEqual({ action: 'rename', groupId: 2, title: 'New' })
     expect(parseNetworkCommand({ action: 'collapse', groupId: 2, collapsed: false })).toEqual({ action: 'collapse', groupId: 2, collapsed: false })
     expect(parseNetworkCommand({ action: 'gather', windowId: 3, tabId: 4 })).toEqual({ action: 'gather', windowId: 3, tabId: 4 })

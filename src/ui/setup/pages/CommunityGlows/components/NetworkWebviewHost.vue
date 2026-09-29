@@ -33,41 +33,35 @@
       v-if="!isTauri"
       class="dev-placeholder"
     >
-      <div class="placeholder-content">
-        <SgIcon icon="pi pi-desktop placeholder-icon" />
-        <p>
-          <strong>{{ activeNetworkId }}</strong>
-        </p>
-        <p>
-          {{ profilesStore.activeProfile?.emoji }}
-          {{ profilesStore.activeProfile?.name ?? 'No profile' }}
-        </p>
-        <p class="hint">
-          Native webview renders here in the Tauri desktop app.
-        </p>
-      </div>
+      <NativeWorkspaceCard
+        :network-name="networkDisplayName"
+        :network-url="activeUrl"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import Button from './ui/SgButton.vue'
-import { buildIdentityHeader } from '@/lib/buildDiagnostics'
-import { useWebviewStore, WEBVIEW_URLS } from '@/stores/webviewState'
-import { useProfilesStore } from '@/stores/profiles'
-import { getNetworkIsolationOriginsByNetwork } from '@/config/socialNetworks'
+import { ref, computed, watch } from "vue"
+import Button from "./ui/SgButton.vue"
+import NativeWorkspaceCard from "./NativeWorkspaceCard.vue"
+import { builtInSocialNetworks } from "@/config/socialNetworks"
+import { buildIdentityHeader } from "@/lib/buildDiagnostics"
+import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
+import { useProfilesStore } from "@/stores/profiles"
+import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
 import {
   useNetworkWebview,
   createSerialTaskQueue,
   type NetworkWebviewDiagnostic,
-} from '../composables/useNetworkWebview'
+} from "../composables/useNetworkWebview"
 
 const webviewStore = useWebviewStore()
 const profilesStore = useProfilesStore()
 const props = withDefaults(
   defineProps<{
     networkId?: string | null
+    instanceId?: string | null
     url?: string | null
     suspended?: boolean
   }>(),
@@ -78,7 +72,7 @@ const props = withDefaults(
   },
 )
 const hostEl = ref<HTMLElement | null>(null)
-const isTauri = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
+const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
 const launchError = ref<string | null>(null)
 const diagnosticsCopied = ref(false)
 const diagnostics = ref<NetworkWebviewDiagnostic[]>([])
@@ -96,29 +90,41 @@ const { open, switchTo, suspend, resume, close } = useNetworkWebview(
 // Back/close sends 'communityglows-webview-back' CustomEvent → App.vue calls clearNetwork().
 
 const activeUrl = computed(() => props.url ?? webviewStore.activeUrl)
+const networkDisplayName = computed(
+  () =>
+    builtInSocialNetworks.find((item) => item.id === activeNetworkId.value)
+      ?.label ??
+    activeNetworkId.value ??
+    "",
+)
 const activeNetworkId = computed(
   () => props.networkId ?? webviewStore.activeNetworkId,
+)
+const activeInstanceId = computed(() =>
+  props.networkId
+    ? (props.instanceId ?? undefined)
+    : (webviewStore.activeInstanceId ?? undefined),
 )
 const activeProfileId = computed(() => profilesStore.activeProfileId)
 
 function diagnosticsReport(): string {
   const lines = [
-    'CommunityGlows Windows WebView diagnostic',
+    "CommunityGlows Windows WebView diagnostic",
     ...buildIdentityHeader(),
     `captured_at: ${new Date().toISOString()}`,
-    `tauri: ${isTauri ? 'yes' : 'no'}`,
-    `platform: ${navigator.platform || 'unknown'}`,
-    `user_agent: ${navigator.userAgent || 'unknown'}`,
-    `network: ${activeNetworkId.value ?? 'none'}`,
-    `profile_selected: ${activeProfileId.value ? 'yes' : 'no'}`,
-    `error: ${launchError.value ?? 'none'}`,
-    'events:',
+    `tauri: ${isTauri ? "yes" : "no"}`,
+    `platform: ${navigator.platform || "unknown"}`,
+    `user_agent: ${navigator.userAgent || "unknown"}`,
+    `network: ${activeNetworkId.value ?? "none"}`,
+    `profile_selected: ${activeProfileId.value ? "yes" : "no"}`,
+    `error: ${launchError.value ?? "none"}`,
+    "events:",
     ...diagnostics.value.map(
       (entry) =>
-        `- ${entry.at} ${entry.stage} ${entry.status}${entry.detail ? ` | ${entry.detail}` : ''}`,
+        `- ${entry.at} ${entry.stage} ${entry.status}${entry.detail ? ` | ${entry.detail}` : ""}`,
     ),
   ]
-  return lines.join('\n')
+  return lines.join("\n")
 }
 
 async function copyDiagnostics() {
@@ -126,11 +132,11 @@ async function copyDiagnostics() {
   try {
     await navigator.clipboard.writeText(report)
   } catch {
-    const textarea = document.createElement('textarea')
+    const textarea = document.createElement("textarea")
     textarea.value = report
     document.body.appendChild(textarea)
     textarea.select()
-    document.execCommand('copy')
+    document.execCommand("copy")
     document.body.removeChild(textarea)
   }
   diagnosticsCopied.value = true
@@ -143,15 +149,18 @@ async function launchActiveNetwork() {
   const url = activeUrl.value
   const networkId = activeNetworkId.value
   const profileId = activeProfileId.value
+  const instanceId = activeInstanceId.value
   if (!url || !networkId || !profileId) return
 
   launchError.value = null
   try {
-    await enqueueTransition(() => open(url, profileId, networkId))
+    await enqueueTransition(() =>
+      open(url, profileId, networkId, instanceId),
+    )
   } catch (error) {
     launchError.value = error instanceof Error ? error.message : String(error)
     console.error(
-      '[CommunityGlows] Failed to open network WebView:',
+      "[CommunityGlows] Failed to open network WebView:",
       launchError.value,
     )
   }
@@ -167,8 +176,8 @@ async function syncBarNetworks() {
     (id) => !profilesStore.isNetworkHidden(profileId, id),
   )
   try {
-    const { invoke } = await import('@tauri-apps/api/core')
-    await invoke('set_bar_networks', {
+    const { invoke } = await import("@tauri-apps/api/core")
+    await invoke("set_bar_networks", {
       networkIds: visibleIds,
       storageOriginsByNetwork: getNetworkIsolationOriginsByNetwork(visibleIds),
     })
@@ -179,14 +188,28 @@ async function syncBarNetworks() {
 
 // React to network or profile changes — open or switch the webview
 watch(
-  [activeUrl, activeNetworkId, activeProfileId, () => props.suspended],
-  async ([url, networkId, profileId, isSuspended], previousValues) => {
-    const [prevUrl, prevNetworkId, prevProfileId, wasSuspended] =
-      previousValues ?? []
+  [
+    activeUrl,
+    activeNetworkId,
+    activeProfileId,
+    () => props.suspended,
+    activeInstanceId,
+  ],
+  async (
+    [url, networkId, profileId, isSuspended, instanceId],
+    previousValues,
+  ) => {
+    const [
+      prevUrl,
+      prevNetworkId,
+      prevProfileId,
+      wasSuspended,
+      prevInstanceId,
+    ] = previousValues ?? []
     if (isSuspended) {
       await enqueueTransition(suspend).catch((error) => {
         console.error(
-          '[CommunityGlows] Failed to hide network WebView for an overlay:',
+          "[CommunityGlows] Failed to hide network WebView for an overlay:",
           error,
         )
       })
@@ -196,7 +219,7 @@ watch(
       launchError.value = null
       await enqueueTransition(close).catch((error) => {
         console.error(
-          '[CommunityGlows] Failed to close network WebView:',
+          "[CommunityGlows] Failed to close network WebView:",
           error,
         )
       })
@@ -205,22 +228,29 @@ watch(
     launchError.value = null
     try {
       if (wasSuspended) {
-        await enqueueTransition(() => resume(url, profileId, networkId))
+        await enqueueTransition(() =>
+          resume(url, profileId, networkId, instanceId),
+        )
         return
       }
       const keyChanged =
         networkId !== prevNetworkId ||
+        instanceId !== prevInstanceId ||
         profileId !== prevProfileId ||
         url !== prevUrl
       if (keyChanged && (prevNetworkId || prevProfileId)) {
-        await enqueueTransition(() => switchTo(url, profileId, networkId))
+        await enqueueTransition(() =>
+          switchTo(url, profileId, networkId, instanceId),
+        )
       } else if (!prevNetworkId && !prevProfileId) {
-        await enqueueTransition(() => open(url, profileId, networkId))
+        await enqueueTransition(() =>
+          open(url, profileId, networkId, instanceId),
+        )
       }
     } catch (error) {
       launchError.value = error instanceof Error ? error.message : String(error)
       console.error(
-        '[CommunityGlows] Failed to switch network WebView:',
+        "[CommunityGlows] Failed to switch network WebView:",
         launchError.value,
       )
     }
@@ -268,8 +298,11 @@ watch(
 }
 
 .dev-placeholder {
+  box-sizing: border-box;
+  padding: var(--sg-space-4);
+  overflow-y: auto;
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   height: var(--sg-size-100pct);
   color: var(--sg-color-text-muted);

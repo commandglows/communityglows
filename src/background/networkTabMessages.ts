@@ -8,6 +8,8 @@ export function parseNetworkCommand(value: unknown): NetworkCommand | null {
   const text = (v: unknown): v is string =>
     typeof v === "string" && v.trim().length > 0 && v.length <= 2048
   if (item.action === "snapshot") return { action: "snapshot" }
+  if (item.action === "home" && integer(item.windowId))
+    return { action: "home", windowId: item.windowId }
   if (
     item.action === "gather" &&
     integer(item.windowId) &&

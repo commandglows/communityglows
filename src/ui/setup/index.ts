@@ -6,9 +6,7 @@ import { createApp } from "vue"
 import App from "./app.vue"
 import "@/ui/extension-tokens.css"
 import "./index.scss"
-import { applyDisableCopyProtection } from "@/utils/disableCopyProtection"
 
-applyDisableCopyProtection()
 
 appRouter.addRoute({
   path: "/",

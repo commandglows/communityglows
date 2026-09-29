@@ -1,10 +1,15 @@
 <template>
-  <SelectRoot v-model="model">
+  <SelectRoot
+    v-model="model"
+    v-model:open="open"
+  >
     <SelectTrigger
       v-bind="safeAttrs"
-      class="sg-select__trigger"
+      :class="triggerClasses"
       :aria-label="ariaLabel || (attrs['aria-label'] as string)"
       :disabled="disabled"
+      @mouseenter="openFromHover"
+      @mouseleave="scheduleHoverClose"
     >
       <SelectValue :placeholder="placeholder">
         <span
@@ -29,6 +34,8 @@
         class="sg-select__content"
         position="popper"
         :side-offset="4"
+        @mouseenter="cancelHoverClose"
+        @mouseleave="scheduleHoverClose"
       >
         <SelectViewport>
           <SelectItem
@@ -37,7 +44,7 @@
             :value="option.value"
             class="sg-select__item"
           >
-            <SelectItemText>
+            <SelectItemText class="sg-select__item-text">
               <span class="sg-select__value">
                 <SgIcon
                   v-if="option.icon"
@@ -61,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, onUnmounted, ref, useAttrs } from 'vue'
 import {
   SelectContent,
   SelectIcon,
@@ -75,6 +82,7 @@ import {
   SelectViewport,
 } from 'reka-ui'
 import SgIcon from './SgIcon.vue'
+import { componentClasses, forwardedComponentAttrs } from './componentAttrs'
 
 defineOptions({ inheritAttrs: false })
 
@@ -84,23 +92,57 @@ export interface SgSelectOption {
   icon?: string
 }
 
-const props = withDefaults(defineProps<{
-  options: SgSelectOption[]
-  placeholder?: string
-  ariaLabel?: string
-  disabled?: boolean
-}>(), {
-  placeholder: '',
-  ariaLabel: '',
-  disabled: false,
-})
+const props = withDefaults(
+  defineProps<{
+    options: SgSelectOption[]
+    placeholder?: string
+    ariaLabel?: string
+    disabled?: boolean
+    openOnHover?: boolean
+  }>(),
+  {
+    placeholder: '',
+    ariaLabel: '',
+    disabled: false,
+    openOnHover: false,
+  },
+)
 
 const model = defineModel<string>({ default: '' })
+const open = ref(false)
 const attrs = useAttrs()
-const safeAttrs = computed(() => Object.fromEntries(
-  Object.entries(attrs).filter(([name]) => name !== 'class' && name !== 'style'),
-))
-const selectedOption = computed(() => props.options.find(option => option.value === model.value))
+const safeAttrs = computed(() => forwardedComponentAttrs(attrs))
+const triggerClasses = computed(() =>
+  componentClasses('sg-select__trigger', attrs),
+)
+const selectedOption = computed(() =>
+  props.options.find((option) => option.value === model.value),
+)
+
+const HOVER_CLOSE_DELAY_MS = 120
+let hoverCloseTimer: number | undefined
+
+function cancelHoverClose() {
+  window.clearTimeout(hoverCloseTimer)
+  hoverCloseTimer = undefined
+}
+
+function openFromHover() {
+  if (!props.openOnHover || props.disabled) return
+  cancelHoverClose()
+  open.value = true
+}
+
+function scheduleHoverClose() {
+  if (!props.openOnHover) return
+  cancelHoverClose()
+  hoverCloseTimer = window.setTimeout(() => {
+    open.value = false
+    hoverCloseTimer = undefined
+  }, HOVER_CLOSE_DELAY_MS)
+}
+
+onUnmounted(cancelHoverClose)
 </script>
 
 <style scoped>
@@ -119,12 +161,60 @@ const selectedOption = computed(() => props.options.find(option => option.value 
   cursor: pointer;
 }
 
-.sg-select__trigger:hover { border-color: var(--sg-color-border-strong); }
-.sg-select__trigger:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
-.sg-select__trigger[data-disabled] { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
-.sg-select__value { display: inline-flex; align-items: center; gap: var(--sg-space-2); }
-.sg-select__content { z-index: calc(var(--sg-layer-modal) + 2); max-height: var(--sg-select-content-max-height); overflow: hidden; border: 1px solid var(--sg-color-border); border-radius: var(--sg-radius-sm); background: var(--sg-color-surface-raised); box-shadow: var(--sg-shadow-control); color: var(--sg-color-text); }
-.sg-select__item { position: relative; display: flex; align-items: center; padding: var(--sg-select-item-padding); padding-right: var(--sg-space-6); cursor: pointer; user-select: none; }
-.sg-select__item[data-highlighted] { outline: none; background: var(--sg-color-surface-hover); }
-.sg-select__indicator { position: absolute; right: var(--sg-space-2); }
+.sg-select__trigger:hover {
+  border-color: var(--sg-color-border-strong);
+}
+.sg-select__trigger:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
+.sg-select__trigger[data-disabled] {
+  cursor: not-allowed;
+  opacity: var(--sg-opacity-disabled);
+}
+.sg-select__value {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sg-space-2);
+}
+:global(.sg-select__content) {
+  box-sizing: border-box;
+  width: var(--reka-select-trigger-width);
+  min-width: var(--reka-select-trigger-width);
+  max-width: var(--reka-select-trigger-width);
+  z-index: calc(var(--sg-layer-modal) + 2);
+  max-height: var(--sg-select-content-max-height);
+  overflow: hidden;
+  border: 1px solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-raised);
+  box-shadow: var(--sg-shadow-control);
+  color: var(--sg-color-text);
+}
+:global(.sg-select__item) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--sg-select-item-padding);
+  padding-right: var(--sg-space-6);
+  cursor: pointer;
+  user-select: none;
+}
+:global(.sg-select__item[data-highlighted]) {
+  outline: none;
+  background: var(--sg-color-surface-hover);
+}
+:global(.sg-select__item-text) {
+  min-width: 0;
+  white-space: normal;
+}
+:global(.sg-select__indicator) {
+  position: absolute;
+  right: var(--sg-space-2);
+}
 </style>

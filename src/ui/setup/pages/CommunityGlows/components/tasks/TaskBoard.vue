@@ -1,16 +1,20 @@
 <script setup lang="ts">
+import { navigateHierarchy } from '../../utils/keyboardHierarchy'
 import type { ContextualTask, ContextualTaskStatus } from '@/services/contextualTasksService'
 import SgButton from '../ui/SgButton.vue'
+import type { KanbanContact } from '@/stores/kanbanContacts'
 
 defineProps<{
   tasksByStatus: Record<ContextualTaskStatus, ContextualTask[]>
   stageLabels: Record<ContextualTaskStatus, string>
+  contacts?: KanbanContact[]
 }>()
 
 const emit = defineEmits<{
   move: [taskId: string, status: ContextualTaskStatus]
   open: [task: ContextualTask]
   remove: [taskId: string]
+  edit: [task: ContextualTask]
   'rename-stage': [status: ContextualTaskStatus, label: string]
 }>()
 
@@ -27,11 +31,15 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 </script>
 
 <template>
-  <div class="task-board">
+  <div class="task-board" data-keyboard-node="board" tabindex="0" role="group" aria-label="Kanban" @keydown="navigateHierarchy">
     <section
       v-for="column in columns"
       :key="column.id"
       class="task-column"
+      :data-keyboard-node="`column:${column.id}`"
+      :aria-label="stageLabels[column.id]"
+      tabindex="-1"
+      role="group"
       @dragover.prevent
       @drop="handleDrop($event, column.id)"
     >
@@ -49,6 +57,10 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
           v-for="task in tasksByStatus[column.id]"
           :key="task.id"
           class="task-card"
+          :data-keyboard-node="`card:${task.id}`"
+          :aria-label="task.title"
+          tabindex="-1"
+          role="group"
           draggable="true"
           @dragstart="(event) => event.dataTransfer?.setData('text/plain', task.id)"
         >
@@ -67,6 +79,10 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
             </button>
           </div>
           <h4>{{ task.title }}</h4>
+          <div v-if="task.contactIds?.length" class="task-tags">
+            <span v-for="contact in (contacts ?? []).filter(c => task.contactIds?.includes(c.id))" :key="contact.id">{{ contact.name }}</span>
+          </div>
+          <SgButton :label="$t('crm.edit_card')" text @click="emit('edit', task)" />
           <p v-if="task.note">{{ task.note }}</p>
           <div class="task-card-meta">
             <span v-if="task.host">{{ task.host }}</span>
@@ -127,6 +143,7 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 .task-column-header {
   display: flex;
   align-items: center;
+  gap: var(--sg-space-2);
   justify-content: space-between;
   padding: var(--sg-crm-toolbar-padding);
   background: var(--sg-color-surface-raised);
@@ -139,7 +156,8 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
 }
 
 .task-column-header input {
-  width: 100%;
+  flex: 1;
+  width: 0;
   min-width: 0;
   border: 0;
   background: transparent;
@@ -153,7 +171,24 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
   outline-offset: var(--sg-focus-offset);
 }
 
-.task-count,
+.task-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  min-width: var(--sg-badge-size);
+  min-height: var(--sg-badge-size);
+  padding: var(--sg-badge-padding);
+  border-radius: var(--sg-sidebar-kanban-count-radius);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-action);
+  font-size: var(--sg-badge-font-size);
+  font-weight: var(--sg-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: normal;
+}
+
 .task-tags span {
   color: var(--sg-color-action);
   font-size: var(--sg-crm-secondary-copy-size);

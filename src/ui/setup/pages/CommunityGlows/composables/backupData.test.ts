@@ -6,6 +6,18 @@ import {
 } from './backupData'
 
 describe('portable backup data', () => {
+  it('round-trips guest contact associations, column names and local choice together', () => {
+    const values = new Map([
+      ['communityglows.guest-kanban-contacts.v1', '[{"id":"contact-a","name":"Alex"}]'],
+      ['communityglows.guest-tasks.v1', '[{"id":"card-a","contactIds":["contact-a"]}]'],
+      ['communityglows.guest-task-labels.v1', '{"todo":"À relancer"}'],
+      ['communityglows-prefer-local-kanban', '1'],
+    ])
+    const snapshot = collectPortableLocalStorage({ getItem: key => values.get(key) ?? null })
+    const restored = new Map<string, string>()
+    restorePortableLocalStorage(snapshot, { setItem: (key, value) => { restored.set(key, value) }, removeItem: key => { restored.delete(key) } })
+    expect(restored).toEqual(values)
+  })
   it('captures every declared portable preference, including empty values', () => {
     const getItem = vi.fn((key: string) => key === 'communityglows_keyboard_shortcuts' ? '[]' : null)
 

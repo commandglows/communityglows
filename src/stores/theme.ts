@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
+import { applyPalette, normalizePalette, type ThemePalette } from '@/utils/themePalette'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
 import { resolveAutoTheme, type AutoThemeSource, type ThemeMode } from '@/utils/themeAuto'
 
 export const useThemeStore = defineStore('theme', {
   state: () => ({
     themeMode: 'dark' as ThemeMode,
+    palette: 'blue' as ThemePalette,
     isDarkMode: false,
     autoThemeSource: null as AutoThemeSource | null,
     grayscaleEnabled: false,
@@ -12,6 +14,11 @@ export const useThemeStore = defineStore('theme', {
   }),
 
   actions: {
+    setPalette(value: ThemePalette) {
+      this.palette = normalizePalette(value)
+      localStorage.setItem('communityglows-theme-palette', this.palette)
+      this.applyTheme()
+    },
     toggleTheme() {
       const nextMode: ThemeMode = this.isDarkMode ? 'light' : 'dark'
       void this.setThemeMode(nextMode, { allowPrompt: false })
@@ -37,6 +44,7 @@ export const useThemeStore = defineStore('theme', {
 
     applyTheme() {
       document.documentElement.classList.toggle('dark', this.isDarkMode)
+      applyPalette(this.palette, this.isDarkMode)
     },
 
     persistResolvedTheme() {
@@ -151,6 +159,7 @@ export const useThemeStore = defineStore('theme', {
     },
 
     initTheme() {
+      this.palette = normalizePalette(localStorage.getItem('communityglows-theme-palette'))
       const savedTheme = localStorage.getItem('theme')
       if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
         this.themeMode = savedTheme

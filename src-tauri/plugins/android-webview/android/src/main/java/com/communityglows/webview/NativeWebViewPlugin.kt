@@ -256,6 +256,11 @@ private val NETWORKS = listOf(
     NetworkInfo("gmail", "\ue976", Color.parseColor("#EA4335"), "https://mail.google.com"),
     NetworkInfo("medium", "\uea18", Color.parseColor("#000000"), "https://medium.com"),
     NetworkInfo("luma", "\ue927", Color.parseColor("#7C3AED"), "https://luma.com"),
+    // CommunityGlows presentation fallbacks, matching the frontend sales-tool entries.
+    NetworkInfo("breakcold", "\ue97d", Color.parseColor("#2563EB"), "https://us.breakcold.com/login"),
+    NetworkInfo("clarkup", "\ue941", Color.parseColor("#7C3AED"), "https://app.clarkup.com/"),
+    NetworkInfo("clay", "\ue969", Color.parseColor("#16A34A"), "https://app.clay.com/"),
+    NetworkInfo("dex", "\uea2a", Color.parseColor("#2563EB"), "https://getdex.com/"),
 )
 
 // Official SVG path data from Simple Icons (24x24 viewBox) for networks without PrimeIcons glyphs

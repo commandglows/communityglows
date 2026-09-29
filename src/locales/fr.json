@@ -1,4 +1,99 @@
 {
+  "crm": {
+    "contacts": "Contacts",
+    "description": "Retrouvez vos contacts, leurs cartes et votre prochain échange.",
+    "new_contact": "Nouveau contact",
+    "edit_contact": "Modifier le contact",
+    "name": "Nom du contact",
+    "profile_url": "Lien du profil",
+    "profile_url_placeholder": "{'@'}handle ou https://…",
+    "avatar_url": "Photo du contact",
+    "profile_links": "Profils associés",
+    "profile_links_hint": "Ajoutez les réseaux où retrouver cette personne.",
+    "profile_network": "Réseau",
+    "add_profile_link": "Ajouter un profil",
+    "remove_profile_link": "Retirer ce profil",
+    "no_profile_links": "Ajoutez un lien de profil pour ouvrir rapidement cette personne dans ses réseaux.",
+    "profile_links_count": "{count} profil lié | {count} profils liés",
+    "next_follow_up": "Prochaine relance",
+    "follow_up_notes": "Notes de suivi",
+    "save": "Enregistrer",
+    "load_failed": "Impossible de charger les contacts. Les données conservées n’ont pas été remplacées.",
+    "save_failed": "L’enregistrement a échoué. Vérifiez le nom, le lien ou handle de profil et la date, puis réessayez. Votre saisie est conservée.",
+    "search": "Rechercher un contact",
+    "empty": "Ajoutez votre premier contact pour retrouver ses cartes et préparer vos relances.",
+    "no_results": "Aucun contact ne correspond à cette recherche.",
+    "open_profile": "Ouvrir le profil",
+    "view_cards": "Voir les cartes",
+    "delete_contact": "Supprimer le contact",
+    "linked_contacts": "Contacts associés",
+    "create_contact_hint": "Ajoutez un contact dans le volet Contacts pour l’associer à cette carte.",
+    "edit_card": "Modifier la carte",
+    "card_saved": "Carte enregistrée.",
+    "cards_for": "Cartes de {name}",
+      "open_contact_sheet": "Ouvrir la fiche de {name}",
+      "contact_context_hint": "Clic droit pour filtrer, créer une tâche ou ouvrir le profil",
+      "filter_tasks": "Voir les tâches de ce contact",
+      "create_task_for_contact": "Créer une tâche liée",
+      "open_profile_in": "Ouvrir dans {network}",
+      "show_all": "Voir toutes les cartes",
+      "pin_contact": "Épingler le contact",
+      "unpin_contact": "Désépingler le contact",
+      "pinned_contacts": "Contacts épinglés",
+      "dialog": {
+        "new_contact_description": "Créez une fiche contact utilisable dans vos tâches et relances.",
+        "edit_contact_description": "Mettez à jour les informations de suivi de ce contact.",
+        "contact_choice_hint": "Créez une fiche personne pour la retrouver dans vos cartes et relances.",
+        "danger_zone_description": "Supprimer ce contact le retirera aussi des tâches associées.",
+        "delete_contact_confirmation": "Ce contact sera supprimé et retiré des tâches associées.",
+        "confirm_delete_contact": "Supprimer définitivement"
+      }
+  },
+  "login_value": {
+    "title": "Votre organisation vous suit.",
+    "description": "Créez votre compte pour retrouver votre espace CommunityGlows sur vos appareils.",
+    "tasks": "Retrouvez votre Kanban et ses tâches grâce à la synchronisation du compte.",
+    "workspaces": "Gardez vos profils et vos espaces Bento enregistrés à portée de main.",
+    "preferences": "Retrouvez vos préférences et vos liens personnalisés, sans tout reconfigurer.",
+    "account_cta": "Créer mon compte",
+    "try_local": "Essayer le Kanban en local",
+    "local_title": "Kanban local · Sans synchronisation",
+    "local_warning": "Vos cartes et contacts restent dans ce navigateur ou cette installation, sans synchronisation. Effacer ses données ou perdre cet appareil peut entraîner leur perte.",
+    "local_retained": "Vos tâches locales restent conservées après connexion. Vous pourrez les copier dans votre compte depuis le Kanban.",
+    "import_hint": "Vous avez des tâches dans votre Kanban local. Ajoutez-les à ce compte pour les inclure dans sa synchronisation, en conservant les originaux locaux.",
+    "import_cta": "Copier mon Kanban local dans ce compte",
+    "copied": "Tâches ajoutées à cet espace. Les originaux locaux sont conservés."
+  },
+  "network_connection": {
+    "profile_isolation": "Les cookies et la session de ce réseau restent isolés dans ce profil CommunityGlows."
+  },
+  "right_panel_guide": {
+    "title": "Vos raccourcis, deux façons de naviguer",
+    "choose": "Sélectionnez un réseau dans le panneau gauche pour utiliser ses raccourcis.",
+    "planned": "Cette vue centralisée est prévue pour une prochaine étape. Elle n’est pas encore disponible.",
+    "left_title": "Clic gauche · Sur le réseau sélectionné",
+    "left_description": "Ouvrez la rubrique correspondante sur le site du réseau actif : son fil, votre profil, ses notifications, vos enregistrements ou ses événements.",
+    "right_title": "Clic droit · Tous vos réseaux",
+    "right_description": "Accédez à la future vue CommunityGlows de cette rubrique, qui réunira les informations de vos différentes applications : notifications, enregistrements, événements… Ces vues centralisées restent à construire.",
+    "back": "Revenir à mon espace"
+  },
+  "sidebarTabs": {
+    "title": "Onglets ouverts",
+    "empty": "Aucun onglet ouvert",
+    "name": "Nom du groupe",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "ungrouped": "Sans groupe",
+    "actions": "Actions pour {name}",
+    "up": "Monter",
+    "down": "Descendre",
+    "rename": "Renommer",
+    "dissolve": "Dissoudre le groupe",
+    "create": "Nouveau groupe",
+    "ungroup": "Sortir du groupe",
+    "moveTo": "Déplacer vers {name}",
+    "error": "Le déplacement n’a pas pu être appliqué."
+  },
   "networkGroups": {
     "social": "Réseaux sociaux",
     "communities": "Messageries et communautés",
@@ -36,6 +131,7 @@
     "cancel": "Annuler",
     "add": "Ajouter",
     "delete": "Supprimer",
+    "danger_zone": "Zone dangereuse",
     "save": "Enregistrer",
     "publish": "Publier",
     "share": "Partager",
@@ -107,7 +203,33 @@
     "disable_error": "Bitwarden n’a pas pu être désactivé.",
     "restart_error": "CommunityGlows n’a pas pu redémarrer automatiquement. Fermez puis relancez l’application."
   },
+  "native_workspace": {
+    "android": "Découvrir l’application Android",
+    "coming_soon": "Bientôt disponible",
+    "unavailable": "Un petit obstacle côté navigateur 🔒 Les sites peuvent interdire leur affichage dans une autre page (une iframe), et le navigateur limite les connexions dans ces contenus intégrés. Lorsqu’un site impose ce blocage, une page web ne peut pas le lever. Cette version ouvre donc vos réseaux dans des onglets séparés.",
+    "eyebrow": "L’espace de travail CommunityGlows",
+    "title": "Vos réseaux, réunis dans un même espace",
+    "network_title": "{network}, dans votre espace CommunityGlows",
+    "description": "Bonne nouvelle 🙂 L’application Windows utilise des vues de navigateur dédiées plutôt que des iframes : ouvrez vos réseaux côte à côte avec Bento et gardez des sessions distinctes pour vos différents profils.",
+    "bento": "Plusieurs réseaux côte à côte",
+    "profiles": "Des sessions séparées par profil",
+    "download": "Découvrir l’application Windows",
+    "open_network": "Ouvrir {network} dans un onglet",
+    "optional": "L’installation reste facultative. Les liens s’ouvrent dans un nouvel onglet."
+  },
   "theme": {
+    "menu_label": "Thème",
+    "palette_label": "Palette de couleurs",
+    "palettes": {
+      "blue": "Bleu",
+      "neutral": "Neutre",
+      "yellow": "Jaune",
+      "teal": "Turquoise",
+      "green": "Vert",
+      "apricot": "Abricot",
+      "rose": "Rose",
+      "violet": "Violet"
+    },
     "dark_mode": "Mode sombre",
     "focus_mode": "Mode concentration (niveaux de gris)",
     "mode_label": "Apparence",
@@ -212,7 +334,7 @@
     "trial_reminder_value_workspace": "Tous vos réseaux réunis dans le même espace de travail",
     "trial_reminder_value_profiles": "Vos profils organisés et vos sessions séparées",
     "trial_reminder_value_flow": "Votre navigation rapide sans jongler entre les outils",
-    "trial_reminder_price": "Gardez tout pour 149 € une seule fois — aucun abonnement.",
+    "trial_reminder_price": "Gardez tout pour 149 € TTC une seule fois — aucun abonnement.",
     "trial_reminder_keep_access": "Garder mon accès à vie",
     "trial_reminder_snooze": "Décider demain",
     "restarts_remaining": "{count} relance d’essai restante | {count} relances d’essai restantes",
@@ -236,7 +358,7 @@
     "gate_trial_exhausted_title": "Votre cockpit social reste en pause",
     "gate_trial_exhausted_message": "Vos données restent en sécurité. Vos trois périodes de 30 jours sont terminées : l’accès à vie est désormais nécessaire pour retrouver toutes les actions protégées.",
     "gate_value_title": "Ce que vous retrouvez immédiatement :",
-    "gate_lifetime_price": "Tout CommunityGlows pour 149 € une seule fois — aucun abonnement.",
+    "gate_lifetime_price": "Tout CommunityGlows pour 149 € TTC une seule fois — aucun abonnement.",
     "gate_keep_lifetime": "Retrouver mon accès à vie",
     "gate_founder_note": "Je travaille depuis très longtemps, avec tout mon cœur, pour faire de CommunityGlows le meilleur espace possible pour vos réseaux. Votre soutien me permet de continuer à l’améliorer chaque jour — merci de faire partie de cette aventure.",
     "gate_access_required_title": "Un accès est requis",
@@ -279,6 +401,44 @@
     "title": "Profils"
   },
   "sidebar": {
+    "duplicate": "Dupliquer",
+    "close_copy": "Fermer la copie",
+    "network_search": {
+      "label": "Rechercher un réseau",
+      "placeholder": "Rechercher un réseau…",
+      "clear": "Effacer la recherche",
+      "no_results": "Aucun réseau trouvé"
+    },
+    "bento_display": {
+      "title": "Affichage des Bentos",
+      "grouped": "Regroupés en haut",
+      "tabs": "Comme des onglets",
+      "create": "Créer un Bento",
+      "rename": "Modifier le Bento",
+      "delete": "Supprimer le Bento"
+    },
+    "organization": {
+      "networks": "Réseaux",
+      "ungrouped": "Sans groupe",
+      "new_group": "Nouveau groupe",
+      "create": "Créer un groupe",
+      "move_up": "Monter",
+      "move_down": "Descendre",
+      "move_to": "Déplacer vers",
+      "root": "À la racine",
+      "drop_root": "Déposer à la racine",
+      "drag_hint": "Glisser pour déplacer · Alt + ↑ / ↓ pour réordonner · Maj + F10 pour les actions",
+      "saved": "Organisation enregistrée",
+      "save_error": "Impossible d’enregistrer le rangement. Réessayez."
+    },
+    "rename_group": "Renommer le groupe",
+    "rename_network": "Renommer le réseau",
+    "delete_group": "Supprimer le groupe",
+    "group_name": "Nom du groupe",
+    "edit_displayed_networks": "Modifier les réseaux affichés",
+    "finish_editing_networks": "Terminer la modification des réseaux affichés",
+    "expand_all": "Déplier tous",
+    "collapse_all": "Replier tous",
     "networks_section": "Réseaux sociaux",
     "friends_section": "Amis",
     "custom_links_section": "Liens personnalisés",
@@ -435,7 +595,12 @@
     "access_required": "Pour ouvrir {destination}, connectez-vous ou créez votre compte CommunityGlows.",
     "access_loading": "Nous vérifions votre session. Réessayez dans un instant.",
     "access_unavailable": "La connexion n’est pas disponible pour le moment. Vérifiez votre réseau puis réessayez.",
-    "sign_in_failed": "La connexion a échoué."
+    "sign_in_failed": "Connexion impossible. Vérifiez votre adresse e-mail et votre mot de passe. Pour une première utilisation, choisissez « Créer un compte ». Si le problème persiste, réessayez dans quelques instants.",
+    "sign_up_failed": "Impossible de créer le compte. Vérifiez votre adresse e-mail et utilisez un mot de passe d’au moins 8 caractères. Si vous avez déjà un compte, choisissez « Vous avez déjà un compte ? ». Sinon, réessayez dans quelques instants.",
+    "credentials_failed": "Adresse e-mail ou mot de passe incorrect. Vérifiez vos identifiants. Pour une première utilisation, choisissez « Créer un compte ».",
+    "network_failed": "Le service de connexion est injoignable. Vérifiez votre connexion Internet, puis réessayez.",
+    "too_many_attempts": "Trop de tentatives de connexion. Patientez quelques minutes avant de réessayer.",
+    "sync_failed": "Vous êtes connecté, mais la synchronisation n’a pas abouti. Vérifiez votre connexion Internet, puis relancez CommunityGlows."
   },
   "session_lock": {
     "title": "Session verrouillée",
@@ -467,7 +632,7 @@
     "auth_hint": "Connectez-vous avec un compte existant ou créez-en un pour synchroniser vos données entre vos appareils.",
     "sync_more": "Plus d’infos",
     "sync_less": "Moins d’infos",
-    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes CommunityGlows, liens personnalisés et Scènes Bento propres à chaque profil sur vos autres appareils.",
+    "sync_info": "Le cloud synchronise vos profils, paramètres, comptes CommunityGlows, liens personnalisés et Bentos propres à chaque profil sur vos autres appareils.",
     "cookies_info": "Nous aimerions synchroniser aussi vos sessions connectées, mais les navigateurs et réseaux sociaux interdisent l’envoi de ces cookies vers des serveurs tiers. Pour transférer vos sessions sur un nouvel appareil, utilisez l’export chiffré ci-dessous.",
     "sign_in_hint": "Connectez-vous avec votre compte existant pour retrouver vos données synchronisées.",
     "already_exists_error": "Un compte existe déjà pour cet e-mail. Utilisez « Se connecter » à la place.",
@@ -491,7 +656,7 @@
   "extension": {
     "managed": {
       "title": "Onglets CommunityGlows",
-      "sessions": "Dans l’extension, vos espaces partagent les connexions de votre profil Chrome. Utilisez les applications pour des sessions séparées.",
+      "sessions": "Dans Chrome, CommunityGlows ouvre vos réseaux dans sa propre fenêtre dédiée. Les connexions restent celles de votre profil Chrome ; utilisez les applications pour des sessions séparées.",
       "restart": "Après un redémarrage de Chrome, utilisez « Ajouter à CommunityGlows » pour reprendre un onglet restauré, ou ouvrez explicitement un nouvel onglet.",
       "target": "Réseau de l’onglet actif",
       "choose": "Choisir un réseau ou un lien",
@@ -514,7 +679,6 @@
         "restore_required": "Ajoutez l’onglet restauré ou choisissez « Ouvrir un nouvel onglet » dans le compagnon."
       }
     },
-    "repair": { "edit": "Modifier" },
     "surface": {
       "popup_title": "Lanceur rapide",
       "popup_description": "Ouvrez rapidement vos réseaux sociaux depuis la fenêtre contextuelle de la barre d’outils.",
@@ -533,7 +697,8 @@
       "label": "Profil actif"
     },
     "networks": {
-      "title": "Lanceur de réseaux"
+      "title": "Catalogue des réseaux",
+      "quick_title": "Réseaux rapides"
     },
     "custom_links": {
       "title": "Liens personnalisés",
@@ -541,8 +706,18 @@
       "url_placeholder": "https://example.com"
     },
     "actions": {
-      "open_dashboard": "Ouvrir le tableau de bord",
-      "open_side_panel": "Ouvrir le panneau latéral"
+      "open_dashboard": "Tableau de bord",
+      "open_side_panel": "Panneau latéral",
+      "configure": "Configurer"
+    },
+    "flow": {
+      "title": "Premiers pas dans l’extension",
+      "profile_title": "Choisir le bon profil",
+      "profile_body": "Le profil organise vos réseaux et vos liens dans ce navigateur.",
+      "network_title": "Ouvrir un premier réseau",
+      "network_body": "Les réseaux s’ouvrent dans de vrais onglets Chrome, puis le panneau latéral peut les retrouver.",
+      "task_title": "Capturer une tâche",
+      "task_body": "Depuis la popup, enregistrez l’URL active en tâche locale sans lire le contenu de la page."
     },
     "launch": {
       "opened": "Ouvert dans un nouvel onglet.",
@@ -566,6 +741,62 @@
       "session_isolation": "L’extension utilise des onglets de navigateur classiques. Elle ne peut pas isoler les cookies et le stockage local pour chaque profil CommunityGlows comme les vues web natives de Tauri.",
       "native_backup": "Les parcours natifs de sauvegarde et de restauration ne sont pas disponibles dans l’extension.",
       "native_haptics": "Les vibrations et la barre Android native ne sont pas disponibles dans l’extension."
+    },
+    "repair": {
+      "storage_error": "Impossible d’enregistrer ou de lire les données. Ta saisie est conservée. Réessaie après avoir vérifié le stockage.",
+      "save": "Enregistrer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleted": "Lien supprimé.",
+      "view_tasks": "Kanban",
+      "capture_title": "Créer une tâche",
+      "new_contact": "Créer un contact",
+      "create": "Créer",
+      "task_indefinite": "une tâche",
+      "contact_indefinite": "un contact",
+      "change_create_type": "Choisir quoi créer",
+      "contact_name": "Nom du contact",
+      "contact_url": "Profil ou site web",
+      "contact_note": "Note (facultatif)",
+      "attach_task": "Créer aussi une tâche pour ce contact",
+      "task_title": "Titre de la tâche",
+      "save_contact": "Créer le contact",
+      "save_contact_task": "Créer le contact et la tâche",
+      "contact_created": "Contact créé. Retrouvez-le dans le Kanban.",
+      "contact_and_task_created": "Contact et tâche créés et associés dans le Kanban.",
+      "contact_saved_task_error": "Le contact est créé, mais la tâche n’a pas pu être enregistrée. Réessayez : le contact ne sera pas créé en double.",
+      "capture_description": "Seule l’URL HTTPS est capturée après ton clic. Aucun contenu de page n’est lu.",
+      "capture": "Utiliser l’onglet actif",
+      "manual": "Saisir manuellement",
+      "capture_error": "Cet onglet ne fournit pas de lien utilisable. Tu peux saisir un lien dans le formulaire.",
+      "cleaned": "Le lien a été nettoyé avant affichage.",
+      "captured": "URL capturée à ta demande. La page n’a pas été lue.",
+      "created": "Tâche créée. Retrouve-la dans le Kanban.",
+      "tasks_local": "Les tâches sont conservées dans ce navigateur et partagées entre les fenêtres de l’extension.",
+      "saved": "Modification enregistrée.",
+      "new_task": "Nouvelle tâche",
+      "upcoming": "Prochaines tâches",
+      "no_tasks": "Aucune tâche pour le moment.",
+      "status_todo": "À faire",
+      "status_waiting": "En attente",
+      "status_done": "Terminé"
+    },
+    "native_guide": {
+      "title": "Quand utiliser l’app native ?",
+      "intro": "L’extension ouvre vos réseaux dans des onglets. Pour les usages ci-dessous, découvrez l’app Windows sur la page officielle.",
+      "details": "Comprendre les différences",
+      "workspace_title": "Plusieurs réseaux dans un même espace",
+      "workspace": "Le workspace Bento s’utilise dans l’app Windows. Les sites peuvent refuser leur intégration dans une page d’extension ; ici, ils s’ouvrent dans des onglets séparés.",
+      "sessions_title": "Des sessions sociales séparées par profil",
+      "sessions": "Cette extension utilise les sessions de votre navigateur. Ses profils organisent vos liens, mais ne séparent pas les connexions aux réseaux. Utilisez les profils natifs pour gérer des sessions distinctes, puis connectez-vous à vos réseaux dans l’app.",
+      "backup_title": "Sauvegarde et restauration natives",
+      "backup": "L’import et l’export des sauvegardes de l’app ne sont pas proposés dans cette version de l’extension. Ces commandes sont disponibles dans l’app native ; elles ne récupèrent pas automatiquement les données de l’extension.",
+      "data_notice": "Vos tâches et liens restent dans ce navigateur. Installer l’app ne les transfère pas automatiquement. La synchronisation avec l’app n’est pas encore disponible dans cette extension.",
+      "action": "Voir les téléchargements officiels",
+      "new_tab": "(nouvel onglet)",
+      "optional": "Vous pouvez continuer à utiliser l’extension. La page officielle indique les plateformes actuellement disponibles.",
+      "profile_hint": "Ce profil organise vos liens ; vos connexions aux réseaux restent celles du navigateur.",
+      "pending_input": "Une saisie est en cours. Enregistrez ou annulez votre tâche et terminez vos liens avant de partir : ouvrir un autre onglet peut fermer la popup."
     }
   },
   "auth_sync": {
@@ -594,9 +825,23 @@
   },
   "tasks": {
     "eyebrow": "Organisation communautaire",
-    "title": "Tâches contextuelles",
-    "description": "Note ce que tu veux faire et garde le lien vers l’endroit où agir. CommunityGlows ne lit pas la page.",
+    "title": "Kanban",
+    "description": "Organisez vos tâches et vos suivis avec des notes, des échéances, des personnes associées et des liens vers vos réseaux.",
     "new_task": "Nouvelle tâche",
+    "search_all": "Rechercher une tâche ou un contact",
+    "dialog": {
+      "title": "Ajouter au Kanban",
+      "edit_task": "Modifier la tâche",
+      "delete_task": "Supprimer la tâche",
+      "description": "Choisissez ce que vous voulez ajouter à votre organisation communautaire.",
+      "choice_hint": "Un seul raccourci, deux actions : capturez une tâche ou créez une fiche contact.",
+      "task_choice_hint": "Créez une carte de suivi avec note, échéance, liens et contacts associés.",
+      "new_task_description": "Capturez une action à suivre avec son contexte et ses contacts.",
+      "edit_task_description": "Modifiez la carte, son statut et ses associations.",
+      "danger_zone_description": "Supprimer cette tâche la retire du Kanban.",
+      "delete_task_confirmation": "Cette tâche sera supprimée du Kanban local.",
+      "confirm_delete_task": "Supprimer définitivement"
+    },
     "notices": {
       "https_required": "Seules les URL HTTPS sont acceptées.",
       "create_failed": "Impossible de créer la tâche.",

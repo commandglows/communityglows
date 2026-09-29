@@ -3,12 +3,22 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ContextualTaskInput, ContextualTaskPriority, ContextualTaskStatus } from '@/services/contextualTasksService'
 import SgButton from '../ui/SgButton.vue'
+import type { KanbanContact } from '@/stores/kanbanContacts'
 
 const props = withDefaults(defineProps<{
+  initialTask?: ContextualTaskInput
+  busy?: boolean
   initialUrl?: string
   submitLabel?: string
+  contacts?: KanbanContact[]
+  compact?: boolean
 }>(), {
   initialUrl: '',
+  initialTask: undefined,
+  submitLabel: undefined,
+  busy: false,
+  contacts: () => [],
+  compact: false,
 })
 
 const { t } = useI18n()
@@ -18,28 +28,30 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-const title = ref('')
-const url = ref(props.initialUrl)
-const note = ref('')
-const tags = ref('')
-const people = ref('')
-const links = ref('')
-const priority = ref<ContextualTaskPriority>('normal')
-const status = ref<ContextualTaskStatus>('todo')
-const dueDate = ref('')
+const titleInput = ref<HTMLInputElement | null>(null)
+const title = ref(props.initialTask?.title ?? '')
+const url = ref(props.initialTask?.url ?? props.initialUrl)
+const note = ref(props.initialTask?.note ?? '')
+const tags = ref(props.initialTask?.tags?.join(', ') ?? '')
+const people = ref(props.initialTask?.people?.map(p => p.name).join(', ') ?? '')
+const links = ref(props.initialTask?.links?.join('\n') ?? '')
+const priority = ref<ContextualTaskPriority>(props.initialTask?.priority ?? 'normal')
+const status = ref<ContextualTaskStatus>(props.initialTask?.status ?? 'todo')
+const dueDate = ref(props.initialTask?.dueDate ?? '')
+const contactIds = ref<string[]>([...(props.initialTask?.contactIds ?? [])])
 
 watch(() => props.initialUrl, (value) => {
-  if (value) url.value = value
-}, { immediate: true })
+  url.value = value
+})
 
 const canSubmit = computed(() => title.value.trim().length > 0)
 const resolvedSubmitLabel = computed(() => props.submitLabel ?? t('tasks.form.create'))
 
 function submit() {
-  if (!canSubmit.value) return
+  if (!canSubmit.value || props.busy) return
   emit('submit', {
     title: title.value,
-    url: url.value || undefined,
+    url: url.value,
     note: note.value,
     tags: tags.value.split(',').map((tag) => tag.trim()).filter(Boolean),
     people: people.value.split(',').map((name) => ({ name })).filter((person) => person.name.trim()),
@@ -47,19 +59,28 @@ function submit() {
     priority: priority.value,
     status: status.value,
     dueDate: dueDate.value || undefined,
+    contactIds: [...contactIds.value],
   })
 }
+
+function focusFirstField() {
+  titleInput.value?.focus()
+}
+
+defineExpose({ focusFirstField })
 </script>
 
 <template>
   <form
     class="task-form"
+    :class="{ 'task-form--compact': compact }"
     @submit.prevent="submit"
   >
     <div class="task-form-grid">
       <label>
         <span>{{ $t('tasks.form.title') }}</span>
         <input
+          ref="titleInput"
           v-model="title"
           type="text"
           maxlength="160"
@@ -83,7 +104,7 @@ function submit() {
       <textarea
         v-model="note"
         maxlength="4000"
-        rows="3"
+        :rows="compact ? 2 : 3"
         :placeholder="$t('tasks.form.note_placeholder')"
       />
     </label>
@@ -101,11 +122,20 @@ function submit() {
         <span>{{ $t('tasks.form.links') }}</span>
         <textarea
           v-model="links"
-          rows="2"
+          :rows="compact ? 1 : 2"
           :placeholder="$t('tasks.form.links_placeholder')"
         />
       </label>
     </div>
+
+    <fieldset v-if="contacts.length" class="task-contacts">
+      <legend>{{ $t('crm.linked_contacts') }}</legend>
+      <label v-for="contact in contacts" :key="contact.id" class="task-contact-choice">
+        <input v-model="contactIds" type="checkbox" :value="contact.id" />
+        <span>{{ contact.name }}</span>
+      </label>
+    </fieldset>
+    <p v-else>{{ $t('crm.create_contact_hint') }}</p>
 
     <div class="task-form-grid task-form-grid--details">
       <label>
@@ -145,33 +175,45 @@ function submit() {
       <SgButton
         :label="$t('common.cancel')"
         text
+        :disabled="busy"
         type="button"
         @click="emit('cancel')"
       />
       <SgButton
         :label="resolvedSubmitLabel"
         type="submit"
-        :disabled="!canSubmit"
+        :disabled="!canSubmit || busy"
       />
     </div>
   </form>
 </template>
 
 <style scoped>
+.task-contacts { border: 1px solid var(--sg-color-border); border-radius: var(--sg-radius-sm); padding: var(--sg-space-3); }
+.task-form .task-contact-choice { display: flex; align-items: center; gap: var(--sg-space-2); }
+.task-form .task-contact-choice input { width: auto; }
 .task-form {
   display: flex;
   flex-direction: column;
   gap: var(--sg-sidebar-form-gap);
 }
 
+.task-form--compact {
+  gap: var(--sg-space-0d375rem);
+}
+
+.task-form--compact .task-form-grid {
+  gap: var(--sg-space-0d375rem);
+}
+
 .task-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--sg-tasks-form-column-min-width), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sg-tasks-form-column-min-width)), 1fr));
   gap: var(--sg-sidebar-form-gap);
 }
 
 .task-form-grid--details {
-  grid-template-columns: repeat(auto-fit, minmax(var(--sg-tasks-form-column-min-width), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sg-tasks-form-column-min-width)), 1fr));
 }
 
 .task-form label {

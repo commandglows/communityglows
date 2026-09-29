@@ -21,7 +21,6 @@ declare module 'vue' {
     FeedSocialAvatar: typeof import('./../components/feed/SocialAvatar.vue')['default']
     FeedSocialComment: typeof import('./../components/feed/SocialComment.vue')['default']
     FeedSocialPost: typeof import('./../components/feed/SocialPost.vue')['default']
-    IPhArrowLeft: typeof import('~icons/ph/arrow-left')['default']
     LoadingSpinner: typeof import('./../components/state/LoadingSpinner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterLinkUp: typeof import('./../components/RouterLinkUp.vue')['default']
