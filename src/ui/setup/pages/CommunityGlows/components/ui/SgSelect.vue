@@ -165,6 +165,8 @@ onUnmounted(cancelHoverClose)
   border-color: var(--sg-color-border-strong);
 }
 .sg-select__trigger:focus-visible {
+  position: relative;
+  z-index: 1;
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
 }

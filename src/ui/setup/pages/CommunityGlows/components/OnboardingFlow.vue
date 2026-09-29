@@ -1,15 +1,22 @@
 <template>
   <div class="onboarding-backdrop">
     <div class="onboarding-card">
+      <div class="onboarding-brand">
+        <img :src="logoUrl" alt="CommunityGlows" class="onboarding-logo" />
+      </div>
       <!-- Progress dots -->
-      <div class="onboarding-dots">
-        <span
+      <nav class="onboarding-dots" :aria-label="$t('onboarding.progress')">
+        <button
           v-for="i in TOTAL_STEPS"
           :key="i"
           class="dot"
           :class="{ active: i === step, done: i < step }"
+          type="button"
+          :aria-label="$t('onboarding.go_to_step', { step: i })"
+          :aria-current="i === step ? 'step' : undefined"
+          @click="step = i"
         />
-      </div>
+      </nav>
 
       <!-- Step 1: Language selection -->
       <div
@@ -403,12 +410,32 @@ function finish() {
   gap: var(--sg-space-0d5rem);
 }
 
+.onboarding-brand {
+  align-self: stretch;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.onboarding-logo {
+  width: var(--sg-size-32px);
+  height: var(--sg-size-32px);
+  object-fit: contain;
+}
+
 .dot {
   width: var(--sg-size-8px);
   height: var(--sg-size-8px);
   border-radius: var(--sg-radius-50pct);
   background: var(--sg-color-border);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   transition: var(--sg-motion-background-0d15s), var(--sg-motion-transform-0d15s);
+}
+
+.dot:focus-visible {
+  outline: var(--sg-border-2px) solid var(--sg-color-action);
+  outline-offset: var(--sg-border-2px);
 }
 
 .dot.active {

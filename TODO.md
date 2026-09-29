@@ -51,3 +51,18 @@ Oui, le centre global doit être **limité au profil CommunityGlows actif**, ave
 Tu valides ce périmètre et ces réglages par défaut ?
 
 Cette validation suit la règle de ton `AGENTS.md` : cette fonctionnalité touche plusieurs parties de l’app et nécessite des choix techniques avant modification.on remplace le comportement : clic gauche pour site actuel, et clic droit pour notification du centre communityglows. Ca me parait pas mal. Sinon oui validé le plan !!
+
+---
+
+🧱 CHANTIER : Lancement CommunityGlows  
+🎯 VERDICT : Correctif livré, validation Windows attendue.
+
+J’ai réutilisé l’existant : **langue → compte → état réel de l’essai/licence**. Les contrôles d’accès restent actifs et les préférences sont préservées.
+
+**452 tests passent**, le build Windows réussit, les changements sont commités et poussés.
+
+[Installer le candidat corrigé](C:/Users/Diane/.codex/worktrees/communityglows-launch-20260929/release-acceptance/f69b472d/nsis/CommunityGlows_0.1.0_x64-setup.exe), sans effacer tes données.
+
+La production reste à valider : parcours Windows réel, OAuth Google CommandGlows, diagnostics TypeScript et dépendances consignés dans l’audit.
+
+![Écran de compte après le choix de langue](C:/Users/Diane/.codex/worktrees/communityglows-launch-20260929/release-acceptance/onboarding-20260929/08-account-offer-fr-final.png)

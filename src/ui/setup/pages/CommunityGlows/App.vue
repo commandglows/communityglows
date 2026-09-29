@@ -1483,4 +1483,8 @@ html.dark body {
 .sg-error {
   color: var(--sg-color-danger-text);
 }
+
+html.dark .sg-error {
+  color: #fca5a5;
+}
 </style>

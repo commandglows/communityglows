@@ -553,6 +553,8 @@
     "dismiss": "Not now"
   },
   "onboarding": {
+    "progress": "Onboarding progress",
+    "go_to_step": "Go to step {step}",
     "language_title": "Choose your language",
     "language_desc": "You can change this choice at any time in settings.",
     "welcome_title": "Welcome to CommunityGlows",
