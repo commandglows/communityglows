@@ -1,5 +1,15 @@
 # Test Log
 
+## 2026-09-29 - English copy before language choice
+
+- Scope: first page of `OnboardingFlow.vue`, candidate commit `65fcff3e4baacf7f1a0a98fe20aaa03e12d9697e`.
+- User feedback: language choice appeared and the interface was liked; its title and explanatory copy were French before the user had selected a language. User reports account access has already been validated for ten days; this was not retested.
+- Change: language-choice title/description now use the existing English locale explicitly (`lang="en"`). Selecting Français/English still applies the chosen locale to the rest of the existing journey.
+- Doppler checks: `pnpm typecheck:core` passed; production Tauri build and scoped ESLint passed.
+- Windows [run 36577196278](https://github.com/commandglows/communityglows/actions/runs/36577196278) passed build and existing NSIS/MSI onboarding lifecycle checks on the exact commit. Stable/public publication skipped on the candidate branch.
+- Exact private artifacts: NSIS `release-acceptance/65fcff3-language-copy/communityglows-windows-65fcff3e4baacf7f1a0a98fe20aaa03e12d9697e/nsis/CommunityGlows_0.1.0_x64-setup.exe` (3,194,182 bytes; `B0D8A0E652E8E3B1CC9C9FBB8F3137AF6F681710F86A56C87B8192F43AD244CE`); MSI `release-acceptance/65fcff3-language-copy/communityglows-windows-65fcff3e4baacf7f1a0a98fe20aaa03e12d9697e/msi/CommunityGlows_0.1.0_x64_en-US.msi` (4,530,176 bytes; `5C7F097101EEEBCE51CBF278B13EA578ACA10B331AE904D99013371E658D0420`).
+- Result: packaged lifecycle passes. The new installed candidate still needs a visual check of the English first screen and the next screen in the selected language; no additional sign-in or access test is requested.
+
 ## 2026-09-29 - Onboarding lifetime and installed Windows lifecycle
 
 - Scope: BUG-2026-09-29-002; private candidate branch `codex/community-prod-readiness`, draft PR #67.
