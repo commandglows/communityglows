@@ -12,6 +12,7 @@
 - Local technical retest after bounded frontend patch: 428 tests pass in 64 files under Doppler dev; core TypeScript, focused ESLint (zero errors, 14 existing warnings) and changed-file design drift scan (zero findings) pass.
 - Real browser retest: `http://localhost:3016/#/login` renders empty email/password and Sign in after toggling to sign-in; no access-failure gate, account submitted or injected authentication. Capture `release-acceptance/240afc0/login-recovery-patch.png` inspected. Initial/HMR state unknown; full fresh installation and native behavior not proven.
 - Native acceptance: not run. Browser/automated checks do not substitute for the current installed app's sign-in/reconnect, session-lock, export/privacy recovery and denied-rights proof. Windows run `36556811536` builds exact code commit `37495179e44d784907ad0c978bf617499faa699c` and is in progress at this documentation checkpoint.
+- Subsequent packaging checkpoint: Windows run `36556811536` completed successfully at exact code commit `37495179e44d784907ad0c978bf617499faa699c`; NSIS/MSI downloaded and user sent the new installer link. All PR #67 provider checks pass. Candidate available for acceptance; no successful actual Windows billing response observed yet.
 - Durable record: `shipglows_data/workflow/bugs/BUG-2026-09-29-001.md`, `fix-attempted`.
 - Next owner: root review/browser verification and current Windows acceptance before public release.
 
