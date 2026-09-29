@@ -12,7 +12,7 @@
       type="button"
       class="sg-password__toggle"
       :disabled="disabled"
-      :aria-label="visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+      :aria-label="$t(visible ? 'login.hide_password' : 'login.show_password')"
       :aria-pressed="visible"
       @click="visible = !visible"
     >

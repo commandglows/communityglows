@@ -196,29 +196,30 @@
 
     <!-- Desktop signup nudge (Dialog mode) -->
     <SignupNudge
+      v-if="appAccessSurface === 'workspace'"
       v-model="nudgeVisible"
       @dismiss="nudge.dismiss()"
       @account-created="nudge.onAccountCreated()"
     />
 
-    <PostAuthSyncOverlay />
+    <PostAuthSyncOverlay v-if="onboardingStore.languageSelected" />
     <ProfileManagerDialog
-      v-if="onboardingStore.completed && !isMobile && appAccessSurface === 'workspace'"
+      v-if="onboardingStore.journeyCompleted && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileManagerVisible"
     />
     <MobileSettingsSheet
-      v-if="onboardingStore.completed && (!isMobile || shouldBlockProductAccess) && !isAuthLoading && !isSessionLocked"
+      v-if="onboardingStore.journeyCompleted && (!isMobile || shouldBlockProductAccess) && !isAuthLoading && !isSessionLocked"
       v-model="settingsVisible"
       @edit-profile-avatar="openProfileAvatarFromSettings"
     />
     <ProfileAvatarDialog
-      v-if="onboardingStore.completed && !isMobile && appAccessSurface === 'workspace'"
+      v-if="onboardingStore.journeyCompleted && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileAvatarVisible"
       :avatar="profilesStore.activeProfile?.avatar"
       :emoji="profilesStore.activeProfile?.emoji ?? '🟦'"
       @save="saveActiveProfileAvatar"
     />
-    <KanbanItemDialog v-if="onboardingStore.completed && appAccessSurface === 'workspace'" />
+    <KanbanItemDialog v-if="onboardingStore.journeyCompleted && appAccessSurface === 'workspace'" />
   </div>
 </template>
 
@@ -231,12 +232,12 @@ import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import { useThemeStore } from "@/stores/theme"
 import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
 import { resolveDesktopSurface } from "./desktopSurface"
-import { resolveAppAccessSurface } from "./appAccessSurface"
+import { canPreloadProtectedNetworks, resolveAppAccessSurface } from "./appAccessSurface"
 import { useProfilesStore, type Profile } from "@/stores/profiles"
 import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
 import { isAuthenticated, isAuthLoading, isSessionLocked } from "@/lib/convexAuth"
 import { prefersLocalKanban } from "@/lib/localKanbanPreference"
-import { hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
+import { cloudHydrationUnavailable, currentCloudAccount, hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
 import { syncSettingsPatch } from "@/lib/cloudSettings"
 import { restorePostAuthReadyFeedback } from "@/lib/postAuthSyncFeedback"
 import {
@@ -456,8 +457,12 @@ const lastHandledSharedUrl = ref<string | null>(null)
 const isMobile = useMediaQuery(
   `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
 )
-const appAccessSurface = computed(() => resolveAppAccessSurface({
-  onboardingCompleted: onboardingStore.completed,
+const appAccessState = computed(() => ({
+  languageSelected: onboardingStore.languageSelected,
+  onboardingCompleted: onboardingStore.journeyCompleted,
+  localOnly: onboardingStore.localOnly,
+  accountVerified: currentCloudAccount.value?.id === onboardingStore.confirmedAccountId,
+  accountUnavailable: cloudHydrationUnavailable.value,
   authLoading: isAuthLoading.value,
   authenticated: isAuthenticated.value,
   sessionLocked: isSessionLocked.value,
@@ -466,13 +471,28 @@ const appAccessSurface = computed(() => resolveAppAccessSurface({
   activeNetworkUrl: webviewStore.activeUrl,
   bentoActive: desktopBentoActive.value,
 }))
+const appAccessSurface = computed(() => resolveAppAccessSurface(appAccessState.value))
 const shouldBlockProductAccess = computed(() => appAccessSurface.value === 'access-gate')
+const canPreloadNetworks = computed(() => canPreloadProtectedNetworks(appAccessState.value))
+let preloadStarted = false
+
+watch(canPreloadNetworks, (allowed) => {
+  if (!allowed || preloadStarted) return
+  preloadStarted = true
+  void preloadWebviews(() => canPreloadNetworks.value)
+})
 
 watch(appAccessSurface, (surface) => {
-  if (surface === 'loading' || surface === 'authentication' || surface === 'session-lock') {
+  if (surface !== 'workspace' && surface !== 'access-gate') {
     settingsVisible.value = false
     profileManagerVisible.value = false
     profileAvatarVisible.value = false
+  }
+  if (surface === 'workspace' && !isMobile.value) {
+    nudge.recordFirstLaunch()
+    void nudge.check().then(() => {
+      if (appAccessSurface.value === 'workspace' && nudge.showNudge.value) nudgeVisible.value = true
+    })
   }
 })
 
@@ -990,7 +1010,7 @@ function onWebviewOverlayState(event: Event) {
 }
 
 function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
-  if (!onboardingStore.completed) {
+  if (!onboardingStore.journeyCompleted) {
     queuedDeepLinkAction.value = action
     return
   }
@@ -1054,19 +1074,32 @@ watch(
   () => isAuthenticated.value,
   async (authenticated, wasAuthenticated) => {
     if (authenticated) {
-      await hydrateCloudState()
+      try {
+        await hydrateCloudState()
+      } catch {
+        // cloudHydrationUnavailable exposes retry instead of mounting an unverified account.
+      }
       return
     }
 
     if (wasAuthenticated) {
+      onboardingStore.resetAccountConfirmation()
       resetCloudSyncState()
     }
   },
-  { immediate: true },
+  { immediate: true, flush: 'sync' },
 )
 
 watch(
-  () => onboardingStore.completed,
+  currentCloudAccount,
+  (account) => {
+    if (account) onboardingStore.reconcileAccount(account.id)
+  },
+  { immediate: true, flush: 'sync' },
+)
+
+watch(
+  () => onboardingStore.journeyCompleted,
   (completed) => {
     if (!completed || !queuedDeepLinkAction.value) return
     const action = queuedDeepLinkAction.value
@@ -1195,7 +1228,11 @@ onMounted(async () => {
   themeStore.initTheme()
   profilesStore.ensureDefault()
   if (isAuthenticated.value) {
-    await hydrateCloudState()
+    try {
+      await hydrateCloudState()
+    } catch {
+      // Keep the current account behind its reactive hydration/retry boundary.
+    }
   }
 
   if (queuedDeepLinkAction.value) {
@@ -1207,19 +1244,6 @@ onMounted(async () => {
   uiScaleLevel.value = persistUiScaleLevel(readUiScaleLevel())
   await applyUiScaleLevel(uiScaleLevel.value).catch(() => {})
   iconScaleLevel.value = persistIconScaleLevel(readIconScaleLevel())
-
-  // Preload top networks off-screen so first click is instant (non-blocking)
-  void preloadWebviews(() => isAuthenticated.value && !isAuthLoading.value &&
-    !isSessionLocked.value && billingAccess.canAccessProtected.value)
-
-  // Signup nudge (desktop only — mobile uses MobileLayout's own nudge)
-  if (!isMobile.value) {
-    nudge.recordFirstLaunch()
-    await nudge.check()
-    if (nudge.showNudge.value) {
-      nudgeVisible.value = true
-    }
-  }
 
   window.addEventListener(
     "communityglows-network-webview-ready",

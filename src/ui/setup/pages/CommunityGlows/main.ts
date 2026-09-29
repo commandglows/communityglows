@@ -1,16 +1,17 @@
-import { createApp } from 'vue'
+import { createApp, watch } from 'vue'
 import { invoke } from '@tauri-apps/api/core'
 import { listen, type UnlistenFn } from '@tauri-apps/api/event'
 import App from './App.vue'
 import { router } from './router'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-import { i18n } from '@/utils/i18n'
+import { i18n, setLocale } from '@/utils/i18n'
+import { useOnboardingStore } from '@/stores/onboarding'
 import { notivue } from '@/utils/notifications'
 import { sgTooltip } from './directives/tooltip'
 import { getConvexClient } from '@/lib/convex'
 import {
-  authBootstrapError,
+  isAuthLoading,
   initializeSessionLock,
   markAuthBootstrapError,
   setupConvexAuth,
@@ -25,53 +26,6 @@ import '@/assets/base.css'
 import './assets/main.css'
 import './assets/generated/tokens.css'
 import 'dockview-vue/dist/styles/dockview.css'
-
-function renderAuthBootstrapError(message: string) {
-  const root = document.getElementById('app')
-  if (!root) return
-
-  const main = document.createElement('main')
-  const panel = document.createElement('section')
-  const title = document.createElement('h1')
-  const description = document.createElement('p')
-  const actions = document.createElement('div')
-  const retryButton = document.createElement('button')
-  const loginButton = document.createElement('button')
-
-  main.style.cssText =
-    'font-family:var(--sg-font-family);min-height: var(--sg-size-100vh);display:grid;place-items:center;padding: var(--sg-space-24px);background:var(--sg-color-background);color:var(--sg-color-text);'
-  panel.style.cssText =
-    'max-width: var(--sg-size-520px);width: var(--sg-size-100pct);background:var(--sg-color-surface-raised);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-lg);padding: var(--sg-space-24px);box-shadow: var(--sg-shadow-modal);'
-  title.style.cssText =
-    'margin: var(--sg-space-0-0-8px);font-size: var(--sg-font-size-20px);'
-  description.style.cssText =
-    'margin: var(--sg-space-0-0-16px);line-height: var(--sg-line-height-1d45);'
-  actions.style.cssText =
-    'display:flex;gap: var(--sg-space-12px);flex-wrap:wrap;'
-  retryButton.style.cssText =
-    'padding: var(--sg-space-10px-14px);border:none;border-radius: var(--sg-radius-sm);background:var(--sg-color-action);color:var(--sg-color-text-on-action);cursor:pointer;'
-  loginButton.style.cssText =
-    'padding: var(--sg-space-10px-14px);border:1px solid var(--sg-color-border);border-radius: var(--sg-radius-sm);background:var(--sg-color-surface-raised);color:var(--sg-color-text);cursor:pointer;'
-
-  title.textContent = 'Connexion indisponible'
-  description.textContent = message
-  retryButton.textContent = 'Réessayer la connexion'
-  loginButton.textContent = 'Retour à login'
-  retryButton.id = 'sf-auth-retry'
-  loginButton.id = 'sf-auth-login'
-
-  actions.append(retryButton, loginButton)
-  panel.append(title, description, actions)
-  main.append(panel)
-  root.replaceChildren(main)
-
-  retryButton.addEventListener('click', () => {
-    window.location.reload()
-  })
-  loginButton.addEventListener('click', () => {
-    window.location.hash = '#/login'
-  })
-}
 
 type DeepLinkPayload = string[] | null
 type AndroidOAuthPendingRequest = {
@@ -241,11 +195,7 @@ async function setupAndroidOAuthDeepLinkValidation() {
   }
 }
 
-// Bootstrap Convex Auth (anonymous auto-login) before mounting — skip if not configured
-async function bootstrap() {
-  setupAndroidOAuthPendingRegistration()
-  await setupAndroidOAuthDeepLinkValidation()
-
+async function restoreAuthentication() {
   const convexUrl = import.meta.env.VITE_CONVEX_URL as string
   if (convexUrl) {
     try {
@@ -259,13 +209,12 @@ async function bootstrap() {
         `Impossible d'initialiser l'authentification (${reason}). Vérifiez la connexion réseau puis réessayez.`,
       )
     }
+  } else {
+    isAuthLoading.value = false
   }
+}
 
-  if (authBootstrapError.value) {
-    renderAuthBootstrapError(authBootstrapError.value)
-    return
-  }
-
+function bootstrap() {
   const app = createApp(App)
   const pinia = createPinia()
 
@@ -273,12 +222,26 @@ async function bootstrap() {
 
   app.use(notivue)
   app.use(i18n)
-  app.use(router)
   app.use(pinia)
+  app.use(router)
 
   app.directive('sg-tooltip', sgTooltip)
 
   app.mount('#app')
+
+  // An old cloud/local completed flag cannot restore a session before language choice.
+  const onboardingStore = useOnboardingStore(pinia)
+  if (onboardingStore.selectedLanguage && !['fr', 'en'].includes(localStorage.getItem('user-locale') ?? '')) {
+    setLocale(onboardingStore.selectedLanguage, false)
+  }
+  let authenticationStarted = false
+  watch(() => onboardingStore.languageSelected, (selected) => {
+    if (!selected || authenticationStarted) return
+    authenticationStarted = true
+    setupAndroidOAuthPendingRegistration()
+    void setupAndroidOAuthDeepLinkValidation()
+    void restoreAuthentication()
+  }, { immediate: true })
 }
 
 bootstrap()

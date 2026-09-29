@@ -1,7 +1,7 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.8.2"
+artifact_version: "1.8.3"
 project: "communityglows"
 created: "2026-04-26"
 updated: "2026-09-29"
@@ -100,9 +100,10 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 
 1. Vite démarre une entrée UI.
 2. `src/ui/setup/pages/CommunityGlows/main.ts` initialise Pinia, i18n, router, Notivue et `v-sg-tooltip`; PrimeVue, Aura et les services/directives PrimeVue ne sont plus chargés par cette entrée.
-3. Si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` chargent les jetons persistés avant de configurer Convex Auth.
+3. L'application est montée avant la restauration de session. `OnboardingFlow.vue` demande d'abord une langue explicite, même si l'ancien booléen local/cloud `completed` est vrai. Une fois ce choix enregistré, si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` restaurent les jetons existants; les contrôles de confirmation et de verrouillage restent obligatoires.
 4. Après une connexion par mot de passe, `signIn` et `signOut` passent par le client Convex temps réel comme dans l'adaptateur officiel; seul le renouvellement du jeton utilise un client HTTP non authentifié avec retry réseau. Le client attend ensuite la confirmation de session Convex avant d'exposer l'état authentifié et d'hydrater les données cloud. L'action d'authentification et chaque lecture cloud ont un délai terminal de 15 secondes et une étape diagnostique dédiée; un utilisateur cloud absent ou une lecture bloquée devient une erreur visible et aucun rechargement n'est lancé.
-5. App bootstrap puis montage de l'application.
+5. Le parcours reprend les étapes existantes de profil/réseaux/features, puis `LoginView.vue` pour proposer création/connexion ou continuation de la session restaurée, et `BillingAccessPanel.vue` pour expliquer les seuls droits et dates réels. Les préférences non modifiées sont conservées. Le mode tâches locales annonce qu'il n'accorde ni essai ni réseaux protégés.
+6. Des marqueurs locaux versionnés (`selectedLanguage`, `setupCompleted`, `accountConfirmed`, `confirmedAccountId`, `localOnly`, `accessConfirmed`, `completionVersion`) acquittent ce parcours; le booléen cloud historique ne suffit plus. Une identité hydratée identique au compte confirmé, puis les contrôles auth/lock/droits existants sont nécessaires avant workspace, deep links et préchargement natif. Un changement de compte invalide seulement l'acquittement compte/accès. Les réponses cloud/billing d'une ancienne session ne peuvent pas s'appliquer à la nouvelle; le choix de compte attend la fin d'une hydratation active et reste récupérable après échec terminal.
 
 #### Couche UI Windows/Tauri
 

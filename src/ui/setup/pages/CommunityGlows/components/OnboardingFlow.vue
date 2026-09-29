@@ -72,7 +72,7 @@
               :key="emoji"
               class="emoji-btn"
               :class="{ selected: selectedEmoji === emoji }"
-              @click="selectedEmoji = emoji"
+              @click="selectedEmoji = emoji; profileEdited = true"
             >
               {{ emoji }}
             </button>
@@ -82,6 +82,7 @@
             class="profile-input"
             :placeholder="$t('onboarding.profile_name_placeholder')"
             maxlength="30"
+            @input="profileEdited = true"
             @keydown.enter="step = 4"
           />
         </div>
@@ -215,18 +216,71 @@
           </button>
           <button
             class="btn-primary"
-            @click="finish"
+            @click="finishSetup"
           >
-            {{ $t('onboarding.finish_button') }}
+            {{ $t('onboarding.next') }}
           </button>
         </div>
+      </div>
+
+      <div
+        v-if="step === 6"
+        class="onboarding-step"
+      >
+        <LoginView
+          onboarding
+          @account-confirmed="confirmAccount"
+          @local-selected="chooseLocalTasks"
+        />
+      </div>
+
+      <div
+        v-if="step === 7"
+        class="onboarding-step"
+      >
+        <h2 class="step-title">{{ $t('onboarding.access_title') }}</h2>
+        <p
+          v-if="onboardingStore.localOnly"
+          class="step-desc"
+        >
+          {{ $t('login_value.local_warning') }}
+        </p>
+        <BillingAccessPanel v-else />
+        <p
+          v-if="onboardingStore.localOnly"
+          class="step-desc"
+        >
+          {{ $t('onboarding.local_no_trial') }}
+        </p>
+        <div class="step-actions">
+          <button
+            class="btn-ghost"
+            @click="step = 6"
+          >
+            {{ $t('onboarding.back') }}
+          </button>
+          <button
+            class="btn-primary"
+            :disabled="!canFinish"
+            @click="finish"
+          >
+            {{ $t(onboardingStore.localOnly ? 'onboarding.finish_local' : billingAccess.canAccessProtected.value ? 'onboarding.finish_button' : 'onboarding.view_access_options') }}
+          </button>
+        </div>
+        <button
+          v-if="!onboardingStore.localOnly && ['error', 'unconfigured'].includes(billingAccess.status.value)"
+          class="btn-ghost"
+          @click="billingAccess.refreshAccess()"
+        >
+          {{ $t('billing.retry_access') }}
+        </button>
       </div>
 
       <!-- Skip link -->
       <button
         v-if="step > 1 && step < 5"
         class="skip-link"
-        @click="finish"
+        @click="finishSetup"
       >
         {{ $t('onboarding.skip') }}
       </button>
@@ -235,27 +289,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useProfilesStore } from '@/stores/profiles'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 import { groupNetworks, networkGroupSelection, toggleNetworkGroupSelection } from '@/config/socialNetworkGroups'
 import NetworkGroupHeader from './NetworkGroupHeader.vue'
+import LoginView from '../views/LoginView.vue'
+import BillingAccessPanel from './BillingAccessPanel.vue'
+import { onboardingProfileDraft } from './onboardingPreferences'
+import { canAcknowledgeBillingAccess, useBillingAccess } from '@/composables/useBillingAccess'
+import { isAuthLoading } from '@/lib/convexAuth'
+import { currentCloudAccount } from '@/lib/cloudSync'
 import { setLocale } from '@/utils/i18n'
 import logoUrl from '@/assets/logo.png'
 
 const profilesStore = useProfilesStore()
 const onboardingStore = useOnboardingStore()
+const billingAccess = useBillingAccess()
+const router = useRouter()
+const { locale } = useI18n()
+profilesStore.ensureDefault()
+const canFinish = computed(() => !isAuthLoading.value && onboardingStore.accountConfirmed &&
+  (onboardingStore.localOnly || (currentCloudAccount.value?.id === onboardingStore.confirmedAccountId &&
+    canAcknowledgeBillingAccess(billingAccess.status.value, billingAccess.canAccessProtected.value))))
 
-const TOTAL_STEPS = 5
-const step = ref(1)
+const TOTAL_STEPS = 7
+const step = ref(!onboardingStore.languageSelected ? 1 :
+  !onboardingStore.setupCompleted ? 2 : !onboardingStore.accountConfirmed ? 6 : 7)
 
 const EMOJIS = ['🟦', '🔵', '🟣', '🟢', '🔴', '🟡', '🟠', '⚫', '🌊', '🔥', '⚡', '🎯']
 const selectedEmoji = ref('🟦')
 const profileName = ref('')
+const profileEdited = ref(false)
+const networksEdited = ref(false)
+
+watch(() => onboardingStore.accountConfirmed, (confirmed) => {
+  if (!confirmed && step.value >= 6) step.value = 6
+}, { flush: 'sync' })
 
 function selectLanguage(locale: 'fr' | 'en') {
   setLocale(locale)
+  onboardingStore.selectLanguage(locale)
   step.value = 2
 }
 
@@ -272,6 +349,7 @@ function toggleGroupExpanded(id: string) {
   else collapsedNetworkGroups.value.add(id)
 }
 function toggleGroup(ids: string[]) {
+  networksEdited.value = true
   const next = toggleNetworkGroupSelection(ids, [...selectedNetworks])
   selectedNetworks.clear()
   next.forEach(id => selectedNetworks.add(id))
@@ -286,6 +364,19 @@ const selectedNetworks = reactive(
   ),
 )
 
+watch(() => profilesStore.activeProfile, (profile) => {
+  if (!profile) return
+  if (!profileEdited.value) {
+    profileName.value = profile.name
+    selectedEmoji.value = profile.emoji
+  }
+  if (!networksEdited.value) {
+    selectedNetworks.clear()
+    NETWORKS.value.filter(network => !profile.hiddenNetworks?.includes(network.id))
+      .forEach(network => selectedNetworks.add(network.id))
+  }
+}, { immediate: true, deep: true })
+
 type OnboardingNetwork = {
   id: string
   color: string
@@ -296,7 +387,7 @@ function getReadableChipTextColor(backgroundColor: string): string {
   const hex = normalized.startsWith('#') ? normalized.slice(1) : ''
 
   if (hex.length !== 3 && hex.length !== 6) {
-    return '#ffffff'
+    return 'var(--sg-color-white)'
   }
 
   const expanded =
@@ -312,7 +403,7 @@ function getReadableChipTextColor(backgroundColor: string): string {
   const blue = Number.parseInt(expanded.slice(4, 6), 16)
 
   if (Number.isNaN(red) || Number.isNaN(green) || Number.isNaN(blue)) {
-    return '#ffffff'
+    return 'var(--sg-color-white)'
   }
 
   const r = red / 255
@@ -323,7 +414,7 @@ function getReadableChipTextColor(backgroundColor: string): string {
     channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
   const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b)
 
-  return luminance > 0.53 ? '#0f172a' : '#ffffff'
+  return luminance > 0.53 ? 'var(--sg-palette-slate-900)' : 'var(--sg-color-white)'
 }
 
 function getNetworkChipStyle(network: OnboardingNetwork & { color: string }) {
@@ -340,6 +431,7 @@ function getNetworkChipStyle(network: OnboardingNetwork & { color: string }) {
 }
 
 function toggleNetwork(id: string) {
+  networksEdited.value = true
   if (selectedNetworks.has(id)) {
     selectedNetworks.delete(id)
   } else {
@@ -347,27 +439,34 @@ function toggleNetwork(id: string) {
   }
 }
 
-function finish() {
-  // Update profile
-  profilesStore.ensureDefault()
+function finishSetup() {
   const profile = profilesStore.activeProfile
   if (profile) {
-    if (profileName.value.trim()) {
-      profilesStore.rename(profile.id, profileName.value.trim())
-    }
-    profilesStore.setEmoji(profile.id, selectedEmoji.value)
-
-    // Hide unselected networks
-    const allIds = NETWORKS.value.map(n => n.id)
-    for (const id of allIds) {
-      const isHidden = !selectedNetworks.has(id)
-      const currentlyHidden = profilesStore.isNetworkHidden(profile.id, id)
-      if (isHidden !== currentlyHidden) {
-        profilesStore.toggleNetworkHidden(profile.id, id)
-      }
-    }
+    const draft = onboardingProfileDraft(profile, {
+      name: profileName.value, emoji: selectedEmoji.value,
+      profileEdited: profileEdited.value, networksEdited: networksEdited.value,
+      networkIds: NETWORKS.value.map(network => network.id), selectedNetworks,
+    })
+    if (draft) profilesStore.update(profile.id, draft)
   }
+  onboardingStore.finishSetup()
+  step.value = 6
+}
 
+function confirmAccount(accountId: string) {
+  onboardingStore.confirmAccount(accountId)
+  step.value = 7
+}
+
+function chooseLocalTasks() {
+  onboardingStore.confirmAccount(null)
+  step.value = 7
+}
+
+async function finish() {
+  if (!canFinish.value) return
+  await router.push(onboardingStore.localOnly ? '/local-kanban' : '/twitter')
+  if (locale.value === 'fr' || locale.value === 'en') onboardingStore.selectLanguage(locale.value)
   onboardingStore.complete()
 }
 </script>
@@ -378,10 +477,12 @@ function finish() {
   inset: 0;
   z-index: var(--sg-layer-10000);
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   background: var(--sg-color-background);
   padding: var(--sg-space-1rem);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .onboarding-card {
@@ -396,7 +497,11 @@ function finish() {
   border-radius: var(--sg-radius-lg);
   background: var(--sg-color-surface-raised);
   box-shadow: var(--sg-shadow-modal);
+  box-sizing: border-box;
 }
+
+.onboarding-step > :deep(.billing-panel) { width: var(--sg-size-full); box-sizing: border-box; }
+.btn-primary:disabled { opacity: 0.5; cursor: wait; }
 
 .onboarding-dots {
   display: flex;

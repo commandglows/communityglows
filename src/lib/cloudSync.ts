@@ -1,4 +1,5 @@
 import { getConvexClient } from "@/lib/convex";
+import { ref } from "vue";
 import { isAuthenticated } from "@/lib/convexAuth";
 import { syncSettingsPatch } from "@/lib/cloudSettings";
 import {
@@ -36,8 +37,14 @@ import {
   shouldKeepLocalWhenCloudEmpty,
   type CloudSnapshotShape,
 } from "@/lib/cloudSyncDecisions";
+
 import type { CloudSettingsPatch } from "@/lib/cloudSettings";
 import { recordDiagnosticEvent } from "@/lib/buildDiagnostics";
+
+/** Minimal identity from the existing authenticated getMe read; never an access grant. */
+export const currentCloudAccount = ref<{ id: string; email?: string; anonymous: boolean } | null>(null);
+export const cloudHydrationUnavailable = ref(false);
+export const isCloudHydrating = ref(false);
 
 type CloudSnapshot = CloudSnapshotShape & {
   settings: CloudSettings | null;
@@ -388,6 +395,8 @@ export function asCloudActiveAccounts(value: unknown): CloudActiveAccount[] {
 
 let hydratedUserId: string | null = null;
 let hydratePromise: Promise<void> | null = null;
+let hydrateVersion = 0;
+let activeHydrations = 0;
 const REOPEN_SETTINGS_AFTER_AUTH_KEY = "communityglows_reopen_settings_after_auth";
 const CLOUD_SYNC_USER_ID_KEY = "communityglows_cloud_sync_user_id";
 const AUTH_RELOAD_DELAY_MS = 3000;
@@ -497,7 +506,8 @@ function applyCloudSettings(settings: CloudSettings | null) {
 
   themeStore.applyCloudPreferences(settings);
 
-  if (typeof settings.language === "string") {
+  if (typeof settings.language === "string" &&
+    (!onboardingStore.languageSelected || onboardingStore.journeyCompleted)) {
     setLocale(settings.language, false);
   }
 
@@ -531,6 +541,7 @@ function clearCloudBackedLocalState() {
   const themeStore = useThemeStore();
   const onboardingStore = useOnboardingStore();
   const desktopWorkspacesStore = useDesktopWorkspacesStore();
+  const deviceLanguage = onboardingStore.languageSelected ? localStorage.getItem("user-locale") : null;
 
   profilesStore.clearLocal();
   accountsStore.clearLocal();
@@ -544,6 +555,12 @@ function clearCloudBackedLocalState() {
   desktopWorkspacesStore.clearLocal();
 
   localStorage.removeItem("user-locale");
+  // Account hydration must not erase the language just chosen on this device.
+  if (deviceLanguage === "fr" || deviceLanguage === "en") {
+    setLocale(deviceLanguage, false);
+  } else if (onboardingStore.selectedLanguage) {
+    setLocale(onboardingStore.selectedLanguage, false);
+  }
   localStorage.removeItem("theme");
   localStorage.removeItem("grayscale");
   localStorage.removeItem("communityglows_haptic");
@@ -607,7 +624,8 @@ function applyCloudSnapshot(snapshot: CloudSnapshot) {
   }
 }
 
-async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
+async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot, assertCurrentSession: () => void) {
+  assertCurrentSession();
   const profilesStore = useProfilesStore();
   const customLinksStore = useCustomLinksStore();
   const friendsStore = useFriendsFilterStore();
@@ -636,22 +654,27 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
       onboardingCompleted: onboardingStore.completed,
       friendsFilterEnabled: friendsStore.enabled,
     });
+    assertCurrentSession();
   }
 
   if (snapshot.profiles.length === 0 && profilesStore.profiles.length > 0) {
     await profilesStore.seedCloud();
+    assertCurrentSession();
   }
 
   if (snapshot.customLinks.length === 0 && Object.keys(customLinksStore.links).length > 0) {
     await customLinksStore.seedCloud();
+    assertCurrentSession();
   }
 
   if (snapshot.friendsFilters.length === 0 && Object.keys(friendsStore.friends).length > 0) {
     await friendsStore.seedCloud();
+    assertCurrentSession();
   }
 
   if (snapshot.socialAccounts.length === 0 && accountsStore.accounts.length > 0) {
     await accountsStore.seedCloud();
+    assertCurrentSession();
   }
 
   if (!snapshot.workspaceState) {
@@ -676,6 +699,7 @@ async function seedCloudFromLocalIfEmpty(snapshot: CloudSnapshot) {
     );
     desktopWorkspacesStore.syncToCloud();
     await Promise.all([tasksStore.syncToCloud(), contactsStore.syncToCloud(), kanbanStore.syncToCloud()]);
+    assertCurrentSession();
   }
 }
 
@@ -684,10 +708,20 @@ export async function hydrateCloudState(options?: {
 }) {
   if (!isAuthenticated.value) return;
   if (hydratePromise) return hydratePromise;
+  const requestVersion = hydrateVersion;
+  activeHydrations += 1;
+  isCloudHydrating.value = true;
+  cloudHydrationUnavailable.value = false;
+  const assertCurrentSession = () => {
+    if (requestVersion !== hydrateVersion || !isAuthenticated.value) {
+      throw new Error("La session a changé pendant le chargement. Réessayez avec votre compte actuel.");
+    }
+  };
 
   hydratePromise = (async () => {
     const client = getConvexClient();
     const user = await waitForCloudQuery("current-user", client.query(api.users.getMe, {}));
+    assertCurrentSession();
     if (!user?._id) {
       recordDiagnosticEvent({
         area: "cloud-sync",
@@ -696,18 +730,27 @@ export async function hydrateCloudState(options?: {
       });
       throw new Error("La session cloud n’est pas disponible. Reconnectez-vous puis réessayez.");
     }
+    const account = {
+      id: user._id,
+      email: user.email,
+      anonymous: user.isAnonymous === true && !user.email,
+    };
     try {
       await client.action(api.billing.relinkRetainedAccount, {});
       recordDiagnosticEvent({ area: "cloud-auth", stage: "license-relink", status: "checked" });
     } catch {
       recordDiagnosticEvent({ area: "cloud-auth", stage: "license-relink", status: "deferred" });
     }
+    assertCurrentSession();
     recordDiagnosticEvent({
       area: "cloud-sync",
       stage: "authenticated-user",
       status: "confirmed",
     });
-    if (hydratedUserId === user._id) return;
+    if (hydratedUserId === user._id) {
+      currentCloudAccount.value = account;
+      return;
+    }
 
     const rememberedUserId = getRememberedCloudUserId();
     const isAnonymousUser = user.isAnonymous === true;
@@ -722,8 +765,10 @@ export async function hydrateCloudState(options?: {
     }
 
     let snapshot = await fetchCloudSnapshot(client);
+    assertCurrentSession();
 
     await advancePostAuthSyncStage("dataReceived");
+    assertCurrentSession();
 
     const shouldKeepLocalIfCloudEmpty = shouldKeepLocalWhenCloudEmpty({
       canReuseLocalState,
@@ -733,11 +778,14 @@ export async function hydrateCloudState(options?: {
     if (isCloudSnapshotEmpty(snapshot) && shouldKeepLocalIfCloudEmpty) {
       if (canReuseLocalState && hasPendingCloudSync()) {
         await flushCloudSyncQueue();
+        assertCurrentSession();
         snapshot = await fetchCloudSnapshot(client);
+        assertCurrentSession();
       }
 
       if (isCloudSnapshotEmpty(snapshot)) {
-        await seedCloudFromLocalIfEmpty(snapshot);
+        await seedCloudFromLocalIfEmpty(snapshot, assertCurrentSession);
+        assertCurrentSession();
       } else {
         clearCloudSyncQueue();
         applyCloudSnapshot(snapshot);
@@ -753,24 +801,36 @@ export async function hydrateCloudState(options?: {
       applyCloudSnapshot(snapshot);
     }
     await advancePostAuthSyncStage("dataApplied");
+    assertCurrentSession();
 
     hydratedUserId = user._id;
     rememberCloudUserId(user._id);
+    currentCloudAccount.value = account;
     recordDiagnosticEvent({ area: "cloud-sync", stage: "snapshot", status: "applied" });
-  })().finally(() => {
-    hydratePromise = null;
+  })().catch((error) => {
+    if (requestVersion === hydrateVersion && isAuthenticated.value) cloudHydrationUnavailable.value = true;
+    throw error;
+  }).finally(() => {
+    activeHydrations -= 1;
+    isCloudHydrating.value = activeHydrations > 0;
+    if (requestVersion === hydrateVersion) hydratePromise = null;
   });
 
   return hydratePromise;
 }
 
 export function resetCloudSyncState() {
+  hydrateVersion += 1;
+  currentCloudAccount.value = null;
+  cloudHydrationUnavailable.value = false;
   hydratedUserId = null;
   hydratePromise = null;
   resetPostAuthSyncFeedback();
 }
 
 export function resetSyncedLocalState() {
+  resetCloudSyncState();
+  useOnboardingStore().resetAccountConfirmation();
   clearCloudBackedLocalState();
 
   localStorage.removeItem("communityglows_email");

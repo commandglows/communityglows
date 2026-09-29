@@ -240,7 +240,7 @@ function configureClientAuth(options?: { waitForConfirmation?: boolean }) {
 // --------------- Bootstrap ---------------
 
 /**
- * Call once at app startup (before mounting Vue).
+ * Call once after the local language choice; mounted UI stays gated during confirmation.
  * - Restores a previous session from localStorage
  * - Does not auto-create an anonymous session when no token exists
  */

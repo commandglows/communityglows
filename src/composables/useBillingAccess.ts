@@ -30,6 +30,11 @@ export type BillingAccessStatus =
 
 export const BILLING_ACCESS_GRACE_MS = 15 * 60 * 1000
 
+/** Unknown service state cannot be presented as a completed onboarding result. */
+export function canAcknowledgeBillingAccess(status: BillingAccessStatus, canAccessProtected: boolean): boolean {
+  return canAccessProtected || status === 'free' || status === 'trial_expired' || status === 'trial_exhausted'
+}
+
 export function isLifetimePurchaseDecision(status: BillingAccessStatus): boolean {
   return status === 'free' || status === 'trial_expired' || status === 'trial_exhausted'
 }
@@ -124,11 +129,13 @@ export const useBillingAccess = createSharedComposable(() => {
   const successKey = ref<string | null>(null)
   const lastVerifiedAt = ref<number | null>(null)
   let accessRequestVersion = 0
-  onScopeDispose(() => { accessRequestVersion += 1 })
+  let sessionVersion = 0
+  onScopeDispose(() => { accessRequestVersion += 1; sessionVersion += 1 })
 
   const canLoadAccess = computed(
     () => isConvexConfigured.value && isAuthenticated.value && !isAuthLoading.value,
   )
+  const isCurrentSession = (version: number) => version === sessionVersion && canLoadAccess.value
   const canRedeem = computed(
     () => canLoadAccess.value && !isAuthLoading.value && !isRedeeming.value,
   )
@@ -214,18 +221,23 @@ export const useBillingAccess = createSharedComposable(() => {
     }
 
     isRestarting.value = true
+    const requestSession = sessionVersion
     try {
       const installationHash = await getCommunityGlowsInstallationHash()
+      if (!isCurrentSession(requestSession)) return null
       const result = await getConvexClient().action(api.billing.restartTrial, { installationHash })
+      if (!isCurrentSession(requestSession)) return null
+      accessRequestVersion += 1
+      isLoading.value = false
       access.value = result
       lastVerifiedAt.value = Date.now()
       successKey.value = 'billing.restart_success'
       return result
     } catch (error) {
-      errorKey.value = getSafeBillingError(error)
+      if (isCurrentSession(requestSession)) errorKey.value = getSafeBillingError(error)
       return null
     } finally {
-      isRestarting.value = false
+      if (isCurrentSession(requestSession)) isRestarting.value = false
     }
   }
 
@@ -250,9 +262,12 @@ export const useBillingAccess = createSharedComposable(() => {
     }
 
     isStartingCheckout.value = true
+    const requestSession = sessionVersion
     try {
       const installationHash = await getCommunityGlowsInstallationHash()
+      if (!isCurrentSession(requestSession)) { browserCheckoutWindow?.close(); return null }
       const result = await getConvexClient().action(api.billing.startCheckout, { installationHash })
+      if (!isCurrentSession(requestSession)) { browserCheckoutWindow?.close(); return null }
       const checkoutUrl = new URL(result.checkoutUrl)
       if (!isTrustedStripeCheckoutUrl(checkoutUrl)) throw new Error('checkout_malformed_response')
       if (isTauri) {
@@ -260,14 +275,15 @@ export const useBillingAccess = createSharedComposable(() => {
       } else {
         browserCheckoutWindow?.location.replace(checkoutUrl.toString())
       }
+      if (!isCurrentSession(requestSession)) return null
       successKey.value = 'billing.checkout_opened'
       return checkoutUrl.toString()
     } catch (error) {
       browserCheckoutWindow?.close()
-      errorKey.value = getSafeBillingError(error)
+      if (isCurrentSession(requestSession)) errorKey.value = getSafeBillingError(error)
       return null
     } finally {
-      isStartingCheckout.value = false
+      if (isCurrentSession(requestSession)) isStartingCheckout.value = false
     }
   }
 
@@ -289,12 +305,15 @@ export const useBillingAccess = createSharedComposable(() => {
     }
 
     isRedeeming.value = true
+    const requestSession = sessionVersion
     try {
       const result = await getConvexClient().action(api.billing.redeemCode, {
         code,
       })
+      if (!isCurrentSession(requestSession)) return null
       redeemResult.value = result
       await refreshAccess()
+      if (!isCurrentSession(requestSession)) return null
       if (
         result.status !== 'active' ||
         errorKey.value ||
@@ -309,16 +328,20 @@ export const useBillingAccess = createSharedComposable(() => {
         : 'billing.redeem_success'
       return result
     } catch (error) {
-      errorKey.value = getSafeBillingError(error)
+      if (isCurrentSession(requestSession)) errorKey.value = getSafeBillingError(error)
       return null
     } finally {
-      isRedeeming.value = false
+      if (isCurrentSession(requestSession)) isRedeeming.value = false
     }
   }
 
   watch(
     [isConvexConfigured, isAuthenticated, isAuthLoading],
     () => {
+      sessionVersion += 1
+      isRedeeming.value = false
+      isRestarting.value = false
+      isStartingCheckout.value = false
       void refreshAccess()
     },
     { immediate: true, flush: 'sync' },
