@@ -367,20 +367,14 @@ function finish() {
   profilesStore.ensureDefault()
   const profile = profilesStore.activeProfile
   if (profile) {
-    if (profileName.value.trim()) {
-      profilesStore.rename(profile.id, profileName.value.trim())
-    }
-    profilesStore.setEmoji(profile.id, selectedEmoji.value)
-
-    // Hide unselected networks
+    // Save profile details and the full selection in one profile update and cloud sync.
     const allIds = NETWORKS.value.map(n => n.id)
-    for (const id of allIds) {
-      const isHidden = !selectedNetworks.has(id)
-      const currentlyHidden = profilesStore.isNetworkHidden(profile.id, id)
-      if (isHidden !== currentlyHidden) {
-        profilesStore.toggleNetworkHidden(profile.id, id)
-      }
-    }
+    profilesStore.applyOnboardingSetup(profile.id, {
+      name: profileName.value.trim() || undefined,
+      emoji: selectedEmoji.value,
+      networkIds: allIds,
+      selectedNetworkIds: [...selectedNetworks],
+    })
   }
 
   onboardingStore.complete()

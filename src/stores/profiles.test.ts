@@ -44,6 +44,36 @@ describe("profiles store atomic drafts", () => {
     expect(syncProfile).toHaveBeenCalledTimes(2)
   })
 
+  it("applies onboarding details and network selection in one cloud upsert", () => {
+    const store = useProfilesStore()
+    const profile = store.create({
+      name: "Travail",
+      hiddenNetworks: ["reddit", "bento", "unrelated-network"],
+    })
+    vi.clearAllMocks()
+
+    store.applyOnboardingSetup(profile.id, {
+      name: "Personnel",
+      emoji: "🟣",
+      networkIds: ["twitter", "facebook", "instagram"],
+      selectedNetworkIds: ["twitter", "instagram"],
+    })
+
+    expect(profile.name).toBe("Personnel")
+    expect(profile.emoji).toBe("🟣")
+    expect(profile.hiddenNetworks).toEqual([
+      "reddit",
+      "bento",
+      "unrelated-network",
+      "facebook",
+    ])
+    expect(syncProfile).toHaveBeenCalledTimes(1)
+    expect(syncProfile).toHaveBeenCalledWith(expect.objectContaining({
+      profileId: profile.id,
+      hiddenNetworks: ["reddit", "bento", "unrelated-network", "facebook"],
+    }))
+  })
+
   it("creates exactly one complete profile from one draft", () => {
     const store = useProfilesStore()
     const profile = store.create({
