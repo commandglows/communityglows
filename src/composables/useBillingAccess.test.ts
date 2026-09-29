@@ -5,10 +5,25 @@ import {
   getSafeAccessCheckError,
   getSafeBillingError,
   isAccessWithinGrace,
+  isLifetimePurchaseDecision,
   isTrialRestartAllowed,
   isTrustedStripeCheckoutUrl,
   useBillingAccess,
 } from './useBillingAccess'
+
+describe('access failure recovery', () => {
+  it.each(['loading', 'bridge_unavailable', 'error', 'signed_out', 'unconfigured', 'lifetime_active'] as const)(
+    'does not turn %s into a request to purchase again', status => {
+      expect(isLifetimePurchaseDecision(status)).toBe(false)
+    },
+  )
+
+  it.each(['free', 'trial_expired', 'trial_exhausted'] as const)(
+    'retains lifetime conversion for the authoritative %s decision', status => {
+      expect(isLifetimePurchaseDecision(status)).toBe(true)
+    },
+  )
+})
 
 const billingAction = vi.hoisted(() => vi.fn())
 vi.mock('@/lib/convex', () => ({ getConvexClient: () => ({ action: billingAction }) }))

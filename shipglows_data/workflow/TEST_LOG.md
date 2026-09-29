@@ -1,5 +1,17 @@
 # Test Log
 
+## 2026-09-29 - Windows startup access failure and recovery
+
+- Scope: `BUG-2026-09-29-001`; current Windows launch candidate, production Convex.
+- Tester / evidence: Diane's supplied screenshot and report of no deliberate sign-in during this launch.
+- Observed: “Accès impossible à vérifier”, retry/purchase/support only; promised sign-out, account, export and privacy recovery have no visible controls.
+- Result: failed. Exact restored session state remains unknown from the screenshot.
+- Root diagnostic evidence: Community access action `bridge_not_configured`; CommandGlows Convex next-hop `bridge_secret_mismatch`. Existing Vercel secret alignment attempted with unchanged canonical Doppler/Convex value and existing immutable production redeployed READY. Actual calls at 10:32:35 UTC still failed with mismatch; hosted diagnosis continues.
+- Local technical retest after bounded frontend patch: 428 tests pass in 64 files under Doppler dev; core TypeScript, focused ESLint (zero errors, 14 existing warnings) and changed-file design drift scan (zero findings) pass.
+- Native/rendered acceptance: not run. Automated tests do not substitute for the current installed app's sign-in/reconnect, session-lock, export/privacy recovery and denied-rights proof.
+- Durable record: `shipglows_data/workflow/bugs/BUG-2026-09-29-001.md`, `fix-attempted`.
+- Next owner: root review/browser verification and current Windows acceptance before public release.
+
 ## 2026-05-23 - CinderReels Android Session Isolation
 
 - Scope: spec `shipglows_data/workflow/specs/android-webview-storage-isolation.md`

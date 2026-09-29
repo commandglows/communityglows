@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { effectScope, nextTick, type EffectScope } from 'vue'
-import { isAuthenticated } from '@/lib/convexAuth'
+import { isAuthenticated, isAuthLoading } from '@/lib/convexAuth'
 import { useBillingAccess } from './useBillingAccess'
 import { openUrl } from '@tauri-apps/plugin-opener'
 
@@ -32,8 +32,24 @@ describe('shared billing access lifecycle', () => {
   afterEach(() => {
     scopes.splice(0).forEach(scope => scope.stop())
     isAuthenticated.value = true
+    isAuthLoading.value = false
     billingAction.mockReset()
     vi.stubGlobal('window', {})
+  })
+
+  it('waits for restored authentication confirmation before checking entitlements', async () => {
+    isAuthLoading.value = true
+    billingAction.mockRejectedValue(new Error('not authenticated'))
+    const { billing } = consumer()
+    await nextTick()
+    expect(billing.status.value).toBe('loading')
+    expect(billingAction.mock.calls.length).toBe(0)
+    expect(billing.canAccessProtected.value).toBe(false)
+
+    billingAction.mockResolvedValueOnce(lifetime)
+    isAuthLoading.value = false
+    await vi.waitFor(() => expect(billing.canAccessProtected.value).toBe(true))
+    expect(billingAction).toHaveBeenCalledTimes(1)
   })
 
   it('unlocks the app when the gate retries successfully after an outage', async () => {

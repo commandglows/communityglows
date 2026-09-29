@@ -30,6 +30,10 @@ export type BillingAccessStatus =
 
 export const BILLING_ACCESS_GRACE_MS = 15 * 60 * 1000
 
+export function isLifetimePurchaseDecision(status: BillingAccessStatus): boolean {
+  return status === 'free' || status === 'trial_expired' || status === 'trial_exhausted'
+}
+
 export function isAccessWithinGrace(
   access: ProductAccess | null,
   verifiedAt: number | null,
@@ -123,7 +127,7 @@ export const useBillingAccess = createSharedComposable(() => {
   onScopeDispose(() => { accessRequestVersion += 1 })
 
   const canLoadAccess = computed(
-    () => isConvexConfigured.value && isAuthenticated.value,
+    () => isConvexConfigured.value && isAuthenticated.value && !isAuthLoading.value,
   )
   const canRedeem = computed(
     () => canLoadAccess.value && !isAuthLoading.value && !isRedeeming.value,

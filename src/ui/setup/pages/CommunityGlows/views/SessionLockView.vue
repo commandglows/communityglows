@@ -58,7 +58,7 @@ import { useI18n } from 'vue-i18n'
 import SgButton from '../components/ui/SgButton.vue'
 import SgPassword from '../components/ui/SgPassword.vue'
 import {
-  clearSessionPin,
+  signOut,
   hasSessionPin,
   unlockSessionWithPin,
 } from '@/lib/convexAuth'
@@ -94,7 +94,7 @@ async function submitPin() {
 }
 
 async function returnToLogin() {
-  clearSessionPin()
+  await signOut()
   await router.replace('/login')
 }
 </script>

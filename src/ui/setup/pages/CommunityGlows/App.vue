@@ -4,10 +4,23 @@
       <Notification :item="item" />
     </Notivue>
     <!-- Onboarding (first launch) -->
-    <OnboardingFlow v-if="!onboardingStore.completed" />
+    <OnboardingFlow v-if="appAccessSurface === 'onboarding'" />
+
+    <main
+      v-else-if="appAccessSurface === 'loading'"
+      class="app-auth-loading"
+      role="status"
+    >
+      {{ $t('login.access_loading') }}
+    </main>
+    <SessionLockView v-else-if="appAccessSurface === 'session-lock'" />
+    <LoginView v-else-if="appAccessSurface === 'authentication'" />
 
     <!-- Product access gate: recovery remains available while protected work is paused. -->
-    <ProductAccessGate v-else-if="shouldBlockProductAccess" />
+    <ProductAccessGate
+      v-else-if="shouldBlockProductAccess"
+      @open-recovery="settingsVisible = true"
+    />
 
     <!-- Mobile layout (≤768px): single-column, no panels -->
     <MobileLayout v-else-if="isMobile" />
@@ -190,22 +203,22 @@
 
     <PostAuthSyncOverlay />
     <ProfileManagerDialog
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.completed && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileManagerVisible"
     />
     <MobileSettingsSheet
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.completed && (!isMobile || shouldBlockProductAccess) && !isAuthLoading && !isSessionLocked"
       v-model="settingsVisible"
       @edit-profile-avatar="openProfileAvatarFromSettings"
     />
     <ProfileAvatarDialog
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.completed && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileAvatarVisible"
       :avatar="profilesStore.activeProfile?.avatar"
       :emoji="profilesStore.activeProfile?.emoji ?? '🟦'"
       @save="saveActiveProfileAvatar"
     />
-    <KanbanItemDialog v-if="onboardingStore.completed" />
+    <KanbanItemDialog v-if="onboardingStore.completed && appAccessSurface === 'workspace'" />
   </div>
 </template>
 
@@ -218,9 +231,10 @@ import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import { useThemeStore } from "@/stores/theme"
 import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
 import { resolveDesktopSurface } from "./desktopSurface"
+import { resolveAppAccessSurface } from "./appAccessSurface"
 import { useProfilesStore, type Profile } from "@/stores/profiles"
 import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
-import { isAuthenticated } from "@/lib/convexAuth"
+import { isAuthenticated, isAuthLoading, isSessionLocked } from "@/lib/convexAuth"
 import { prefersLocalKanban } from "@/lib/localKanbanPreference"
 import { hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
 import { syncSettingsPatch } from "@/lib/cloudSettings"
@@ -293,6 +307,8 @@ import PostAuthSyncOverlay from "./components/PostAuthSyncOverlay.vue"
 import SignupNudge from "./components/SignupNudge.vue"
 import OnboardingFlow from "./components/OnboardingFlow.vue"
 import ProductAccessGate from "./components/ProductAccessGate.vue"
+import LoginView from "./views/LoginView.vue"
+import SessionLockView from "./views/SessionLockView.vue"
 import ProfileManagerDialog from "./components/ProfileManagerDialog.vue"
 import ProfileAvatarDialog from "./components/ProfileAvatarDialog.vue"
 import KanbanItemDialog from "./components/tasks/KanbanItemDialog.vue"
@@ -440,16 +456,24 @@ const lastHandledSharedUrl = ref<string | null>(null)
 const isMobile = useMediaQuery(
   `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
 )
-const shouldBlockProductAccess = computed(() => {
-  // This public route only reads the isolated local task store.
-  if (
-    route.path === "/local-kanban" &&
-    !webviewStore.activeUrl &&
-    !desktopBentoActive.value
-  )
-    return false
-  if (!onboardingStore.completed || !isAuthenticated.value) return false
-  return !billingAccess.canAccessProtected.value
+const appAccessSurface = computed(() => resolveAppAccessSurface({
+  onboardingCompleted: onboardingStore.completed,
+  authLoading: isAuthLoading.value,
+  authenticated: isAuthenticated.value,
+  sessionLocked: isSessionLocked.value,
+  canAccessProtected: billingAccess.canAccessProtected.value,
+  routePath: route.path,
+  activeNetworkUrl: webviewStore.activeUrl,
+  bentoActive: desktopBentoActive.value,
+}))
+const shouldBlockProductAccess = computed(() => appAccessSurface.value === 'access-gate')
+
+watch(appAccessSurface, (surface) => {
+  if (surface === 'loading' || surface === 'authentication' || surface === 'session-lock') {
+    settingsVisible.value = false
+    profileManagerVisible.value = false
+    profileAvatarVisible.value = false
+  }
 })
 
 let unlistenTray: (() => void) | undefined
@@ -1185,7 +1209,8 @@ onMounted(async () => {
   iconScaleLevel.value = persistIconScaleLevel(readIconScaleLevel())
 
   // Preload top networks off-screen so first click is instant (non-blocking)
-  preloadWebviews()
+  void preloadWebviews(() => isAuthenticated.value && !isAuthLoading.value &&
+    !isSessionLocked.value && billingAccess.canAccessProtected.value)
 
   // Signup nudge (desktop only — mobile uses MobileLayout's own nudge)
   if (!isMobile.value) {
@@ -1369,12 +1394,21 @@ onUnmounted(() => {
 </script>
 
 <style>
+.app-auth-loading {
+  min-height: var(--sg-size-100vh);
+  display: grid;
+  place-items: center;
+  padding: var(--sg-space-2rem);
+  background: var(--sg-color-background);
+  color: var(--sg-color-text);
+}
+
 .right-panel-guide {
   flex: 1;
   min-width: 0;
   display: grid;
   place-items: center;
-  min-height: 100%;
+  min-height: var(--sg-size-100pct);
   padding: var(--sg-space-4);
   box-sizing: border-box;
   overflow: auto;

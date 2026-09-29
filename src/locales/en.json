@@ -347,6 +347,8 @@
     "opening_checkout": "Opening Stripe checkout...",
     "checkout_opened": "Secure Stripe checkout opened in your browser.",
     "retry_access": "Check access again",
+    "reconnect_account": "Sign out and reconnect",
+    "open_recovery_settings": "Account, access, export and privacy",
     "contact_support": "Contact support",
     "recovery_paths_available": "Export, privacy controls, account recovery, purchase recovery, and sign-out remain available.",
     "grace_title": "Using recently verified access",

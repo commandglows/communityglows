@@ -347,6 +347,8 @@
     "opening_checkout": "Ouverture du paiement Stripe...",
     "checkout_opened": "Le paiement Stripe sécurisé s’est ouvert dans votre navigateur.",
     "retry_access": "Vérifier à nouveau",
+    "reconnect_account": "Me déconnecter et me reconnecter",
+    "open_recovery_settings": "Compte, accès, export et confidentialité",
     "contact_support": "Contacter le support",
     "recovery_paths_available": "L’export, les réglages de confidentialité, la récupération du compte ou de l’achat et la déconnexion restent disponibles.",
     "grace_title": "Accès récemment vérifié conservé",
