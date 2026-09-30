@@ -1,25 +1,46 @@
-import { nextTick, ref, watch, onUnmounted, type Ref } from 'vue'
-import { useElementBounding } from '@vueuse/core'
-import { getNetworkIsolationOrigins } from '@/config/socialNetworks'
-import { recordDiagnosticEvent } from '@/lib/buildDiagnostics'
+import { nextTick, ref, watch, onUnmounted, type Ref } from "vue"
+import { useDevicePixelRatio, useElementBounding } from "@vueuse/core"
+import { getNetworkIsolationOrigins } from "@/config/socialNetworks"
+import { recordDiagnosticEvent } from "@/lib/buildDiagnostics"
+import { isDesktopTauri } from "@/platform/capabilities"
 
 const isTauri = () =>
-  typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window
+  typeof window !== "undefined" && "__TAURI_INTERNALS__" in window
 
 const isDarkMode = () =>
-  typeof document !== 'undefined' &&
-  document.documentElement.classList.contains('dark')
+  typeof document !== "undefined" &&
+  document.documentElement.classList.contains("dark")
 
 async function invoke(cmd: string, args?: Record<string, unknown>) {
   if (!isTauri()) return
-  const { invoke: tauriInvoke } = await import('@tauri-apps/api/core')
+  const { invoke: tauriInvoke } = await import("@tauri-apps/api/core")
+  if (
+    isDesktopTauri() && args &&
+    (cmd === "open_webview" || cmd === "show_webview" || cmd === "resize_webview")
+  ) {
+    const devicePixelRatio = window.devicePixelRatio
+    const { getCurrentWindow } = await import("@tauri-apps/api/window")
+    const nativeScale = await getCurrentWindow().scaleFactor()
+    args = {
+      ...args,
+      ...toNativeLogicalBounds(
+        args as WebviewHostBounds,
+        devicePixelRatio,
+        nativeScale,
+      ),
+    }
+  }
   return tauriInvoke(cmd, args)
 }
 
-function notifyWebviewReady(profileId: string, networkId: string) {
+function notifyWebviewReady(
+  profileId: string,
+  networkId: string,
+  instanceId?: string,
+) {
   window.dispatchEvent(
-    new CustomEvent('communityglows-network-webview-ready', {
-      detail: { profileId, networkId },
+    new CustomEvent("communityglows-network-webview-ready", {
+      detail: { profileId, networkId, instanceId },
     }),
   )
 }
@@ -31,10 +52,30 @@ type WebviewHostBounds = {
   height: number
 }
 
+export function toNativeLogicalBounds(
+  bounds: WebviewHostBounds,
+  devicePixelRatio: number,
+  nativeScale: number,
+): WebviewHostBounds {
+  if (!Number.isFinite(devicePixelRatio) || devicePixelRatio <= 0 ||
+      !Number.isFinite(nativeScale) || nativeScale <= 0) {
+    throw new Error("Invalid WebView coordinate scale")
+  }
+  // DOM rects use CSS pixels. DPR includes main-WebView zoom and OS DPI;
+  // Tauri Logical bounds already apply OS DPI, so remove it exactly once.
+  const scale = devicePixelRatio / nativeScale
+  return {
+    x: bounds.x * scale,
+    y: bounds.y * scale,
+    width: bounds.width * scale,
+    height: bounds.height * scale,
+  }
+}
+
 export type NetworkWebviewDiagnostic = {
   at: string
   stage: string
-  status: 'start' | 'success' | 'error'
+  status: "start" | "success" | "error"
   detail?: string
 }
 
@@ -118,7 +159,7 @@ export async function measureWebviewHost(
 
   const bounds = hostEl.value?.getBoundingClientRect()
   if (!bounds || bounds.width <= 0 || bounds.height <= 0) {
-    throw new Error('Network WebView host is not visible')
+    throw new Error("Network WebView host is not visible")
   }
 
   return {
@@ -140,35 +181,36 @@ export function useNetworkWebview(
   onDiagnostic: (entry: NetworkWebviewDiagnostic) => void = () => undefined,
 ) {
   const { x, y, width, height } = useElementBounding(hostEl)
+  const { pixelRatio } = useDevicePixelRatio()
 
   // Track what's currently open as "profileId:networkId"
   const activeKey = ref<string | null>(null)
   const isOpen = ref(false)
-  let lastScheduledBounds = ''
+  let lastScheduledBounds = ""
 
   const record = (
     stage: string,
-    status: NetworkWebviewDiagnostic['status'],
+    status: NetworkWebviewDiagnostic["status"],
     detail?: string,
   ) => {
     onDiagnostic({ at: new Date().toISOString(), stage, status, detail })
-    recordDiagnosticEvent({ area: 'windows-webview', stage, status, detail })
+    recordDiagnosticEvent({ area: "windows-webview", stage, status, detail })
   }
 
   const recordPoolStats = async () => {
     try {
-      const stats = (await invoke('get_desktop_webview_pool_stats')) as
+      const stats = (await invoke("get_desktop_webview_pool_stats")) as
         DesktopWebviewPoolStats | undefined
       if (!stats) return
       record(
-        'webview-pool',
-        'success',
-        `total=${stats.total} visible=${stats.visible} hidden=${stats.hidden}${stats.poolingEnabled === undefined ? '' : ` enabled=${stats.poolingEnabled}`}`,
+        "webview-pool",
+        "success",
+        `total=${stats.total} visible=${stats.visible} hidden=${stats.hidden}${stats.poolingEnabled === undefined ? "" : ` enabled=${stats.poolingEnabled}`}`,
       )
     } catch (error) {
       record(
-        'webview-pool',
-        'error',
+        "webview-pool",
+        "error",
         error instanceof Error ? error.message : String(error),
       )
     }
@@ -177,26 +219,27 @@ export function useNetworkWebview(
   const resizeTask = createFrameCoalescedTask<WebviewHostBounds>(
     async ({ x: nx, y: ny, width: nw, height: nh }) => {
       if (!isOpen.value || !activeKey.value) return
-      const [profileId, networkId] = activeKey.value.split(':')
-      record('resize-webview', 'start', `${Math.round(nw)}x${Math.round(nh)}`)
+      const [profileId, networkId, instanceId] = activeKey.value.split(":")
+      record("resize-webview", "start", `${Math.round(nw)}x${Math.round(nh)}`)
       try {
-        await invoke('resize_webview', {
+        await invoke("resize_webview", {
           profileId,
           networkId,
+          instanceId,
           x: nx,
           y: ny,
           width: nw,
           height: nh,
         })
         record(
-          'resize-webview',
-          'success',
+          "resize-webview",
+          "success",
           `${Math.round(nw)}x${Math.round(nh)}`,
         )
       } catch (error) {
         record(
-          'resize-webview',
-          'error',
+          "resize-webview",
+          "error",
           error instanceof Error ? error.message : String(error),
         )
       }
@@ -204,7 +247,7 @@ export function useNetworkWebview(
   )
 
   // Keep bounds in sync without flooding the native bridge while a sash moves.
-  watch([x, y, width, height], ([nx, ny, nw, nh]) => {
+  watch([x, y, width, height, pixelRatio, isOpen], ([nx, ny, nw, nh, ratio]) => {
     if (!isOpen.value || !activeKey.value || nw <= 0 || nh <= 0) return
     const bounds = {
       x: Math.round(nx * 100) / 100,
@@ -212,40 +255,46 @@ export function useNetworkWebview(
       width: Math.round(nw * 100) / 100,
       height: Math.round(nh * 100) / 100,
     }
-    const signature = `${bounds.x}:${bounds.y}:${bounds.width}:${bounds.height}`
+    const signature = `${bounds.x}:${bounds.y}:${bounds.width}:${bounds.height}:${ratio}`
     if (signature === lastScheduledBounds) return
     lastScheduledBounds = signature
     resizeTask.schedule(bounds)
   })
 
-  async function open(url: string, profileId: string, networkId: string) {
-    record('measure-host', 'start')
+  async function open(
+    url: string,
+    profileId: string,
+    networkId: string,
+    instanceId?: string,
+  ) {
+    record("measure-host", "start")
     try {
       const bounds = await measureWebviewHost(hostEl)
       record(
-        'measure-host',
-        'success',
+        "measure-host",
+        "success",
         `${Math.round(bounds.width)}x${Math.round(bounds.height)} at ${Math.round(bounds.x)},${Math.round(bounds.y)}`,
       )
       const storageOrigins = getNetworkIsolationOrigins(networkId)
-      record('open-webview', 'start', `network=${networkId}`)
-      await invoke('open_webview', {
+      record("open-webview", "start", `network=${networkId}`)
+      await invoke("open_webview", {
         url,
         profileId,
         networkId,
+        instanceId,
         darkMode: isDarkMode(),
         storageOrigins,
         ...bounds,
       })
-      record('open-webview', 'success', `network=${networkId}`)
-      activeKey.value = `${profileId}:${networkId}`
+      record("open-webview", "success", `network=${networkId}`)
+      activeKey.value = `${profileId}:${networkId}${instanceId ? `:${instanceId}` : ""}`
       isOpen.value = true
       await recordPoolStats()
-      notifyWebviewReady(profileId, networkId)
+      notifyWebviewReady(profileId, networkId, instanceId)
     } catch (error) {
       record(
-        'open-webview',
-        'error',
+        "open-webview",
+        "error",
         error instanceof Error ? error.message : String(error),
       )
       throw error
@@ -257,49 +306,58 @@ export function useNetworkWebview(
    * alive in the pool) and show/create the new one. Preserves page state,
    * scroll position, and cookies across switches.
    */
-  async function switchTo(url: string, profileId: string, networkId: string) {
-    record('switch-webview', 'start', `network=${networkId}`)
+  async function switchTo(
+    url: string,
+    profileId: string,
+    networkId: string,
+    instanceId?: string,
+  ) {
+    record("switch-webview", "start", `network=${networkId}`)
     try {
       const bounds = await measureWebviewHost(hostEl)
 
       // Hide the currently visible webview while preserving its page state.
       if (isOpen.value && activeKey.value) {
-        const [oldProfileId, oldNetworkId] = activeKey.value.split(':')
-        await invoke('hide_webview', {
+        const [oldProfileId, oldNetworkId, oldInstanceId] =
+          activeKey.value.split(":")
+        await invoke("hide_webview", {
           profileId: oldProfileId,
           networkId: oldNetworkId,
+          instanceId: oldInstanceId,
         })
       }
 
       // Try to show an existing pooled webview (instant — no page reload)
-      const shown = await invoke('show_webview', {
+      const shown = await invoke("show_webview", {
         profileId,
         networkId,
+        instanceId,
         ...bounds,
       })
 
       if (!shown) {
         // First time opening this network — create a fresh webview
         const storageOrigins = getNetworkIsolationOrigins(networkId)
-        await invoke('open_webview', {
+        await invoke("open_webview", {
           url,
           profileId,
           networkId,
+          instanceId,
           darkMode: isDarkMode(),
           storageOrigins,
           ...bounds,
         })
       }
 
-      activeKey.value = `${profileId}:${networkId}`
+      activeKey.value = `${profileId}:${networkId}${instanceId ? `:${instanceId}` : ""}`
       isOpen.value = true
       await recordPoolStats()
-      notifyWebviewReady(profileId, networkId)
-      record('switch-webview', 'success', `network=${networkId}`)
+      notifyWebviewReady(profileId, networkId, instanceId)
+      record("switch-webview", "success", `network=${networkId}`)
     } catch (error) {
       record(
-        'switch-webview',
-        'error',
+        "switch-webview",
+        "error",
         error instanceof Error ? error.message : String(error),
       )
       throw error
@@ -309,17 +367,17 @@ export function useNetworkWebview(
   /** Hide the active WebView while keeping its pool key for an instant restore. */
   async function suspend() {
     if (isOpen.value && activeKey.value) {
-      const [profileId, networkId] = activeKey.value.split(':')
-      record('hide-webview', 'start', `network=${networkId}`)
+      const [profileId, networkId, instanceId] = activeKey.value.split(":")
+      record("hide-webview", "start", `network=${networkId}`)
       try {
-        await invoke('hide_webview', { profileId, networkId })
+        await invoke("hide_webview", { profileId, networkId, instanceId })
         isOpen.value = false
         await recordPoolStats()
-        record('hide-webview', 'success', `network=${networkId}`)
+        record("hide-webview", "success", `network=${networkId}`)
       } catch (error) {
         record(
-          'hide-webview',
-          'error',
+          "hide-webview",
+          "error",
           error instanceof Error ? error.message : String(error),
         )
         throw error
@@ -328,33 +386,39 @@ export function useNetworkWebview(
   }
 
   /** Restore the current pool entry after a Vue overlay is dismissed. */
-  async function resume(url: string, profileId: string, networkId: string) {
-    const key = `${profileId}:${networkId}`
+  async function resume(
+    url: string,
+    profileId: string,
+    networkId: string,
+    instanceId?: string,
+  ) {
+    const key = `${profileId}:${networkId}${instanceId ? `:${instanceId}` : ""}`
     if (activeKey.value !== key) {
-      await switchTo(url, profileId, networkId)
+      await switchTo(url, profileId, networkId, instanceId)
       return
     }
 
-    record('show-webview', 'start', `network=${networkId}`)
+    record("show-webview", "start", `network=${networkId}`)
     try {
       const bounds = await measureWebviewHost(hostEl)
-      const shown = await invoke('show_webview', {
+      const shown = await invoke("show_webview", {
         profileId,
         networkId,
+        instanceId,
         ...bounds,
       })
       if (!shown) {
-        await open(url, profileId, networkId)
+        await open(url, profileId, networkId, instanceId)
         return
       }
       isOpen.value = true
       await recordPoolStats()
-      notifyWebviewReady(profileId, networkId)
-      record('show-webview', 'success', `network=${networkId}`)
+      notifyWebviewReady(profileId, networkId, instanceId)
+      record("show-webview", "success", `network=${networkId}`)
     } catch (error) {
       record(
-        'show-webview',
-        'error',
+        "show-webview",
+        "error",
         error instanceof Error ? error.message : String(error),
       )
       throw error
@@ -369,7 +433,9 @@ export function useNetworkWebview(
 
   onUnmounted(() => {
     resizeTask.dispose()
-    void close()
+    // Dockview also unmounts hosts while restoring layouts. Actual tab removal
+    // closes its instance explicitly; a host unmount only returns it to the pool.
+    void close().catch((error) => record('hide-webview', 'error', String(error)))
   })
 
   return { open, switchTo, suspend, resume, close, isOpen, activeKey }

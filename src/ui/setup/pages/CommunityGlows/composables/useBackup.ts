@@ -28,7 +28,6 @@ async function collectStoreData(): Promise<string> {
   const friends = useFriendsFilterStore()
   const theme = useThemeStore()
   const customLinks = useCustomLinksStore()
-  const onboarding = useOnboardingStore()
   let androidCookieSnapshot = ''
   let androidLocalStorageSnapshot = ''
   let desktopCookieSnapshot = ''
@@ -82,9 +81,6 @@ async function collectStoreData(): Promise<string> {
     },
     customLinks: {
       links: customLinks.links,
-    },
-    onboarding: {
-      completed: onboarding.completed,
     },
     localStorage: collectPortableLocalStorage(localStorage),
     android: {
@@ -188,7 +184,6 @@ async function syncRestoredDataToCloud() {
   const friends = useFriendsFilterStore()
   const theme = useThemeStore()
   const customLinks = useCustomLinksStore()
-  const onboarding = useOnboardingStore()
   const desktopWorkspaces = useDesktopWorkspacesStore()
 
   await syncSettingsPatch({
@@ -202,7 +197,6 @@ async function syncRestoredDataToCloud() {
     tapSoundEnabled: localStorage.getItem('communityglows_tap_sound') === 'true',
     tapSoundVariant: normalizeTapSoundVariant(localStorage.getItem('communityglows_tap_sound_variant')),
     activeProfileId: profiles.activeProfileId || undefined,
-    onboardingCompleted: onboarding.completed,
     friendsFilterEnabled: friends.enabled,
   })
 

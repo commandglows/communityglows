@@ -11,7 +11,10 @@
         aria-label="Toggle left sidebar"
         @click="toggleLeftSidebar"
       />
-      <h1 class="app-title">CommunityGlows</h1>
+      <div class="app-brand">
+        <img class="app-logo" :src="logoUrl" alt="" />
+        <h1 class="app-title">CommunityGlows</h1>
+      </div>
     </div>
 
     <div class="header-center">
@@ -72,6 +75,7 @@ import { buildDiagnosticsReport } from '@/lib/buildDiagnostics'
 import { getPlatformCapabilities } from '@/platform/capabilities'
 import { useProfilesStore } from '@/stores/profiles'
 import { useWebviewStore } from '@/stores/webviewState'
+import logoUrl from '@/assets/logo.png'
 
 const props = defineProps<{
   sidebarVisible: boolean
@@ -176,6 +180,19 @@ async function copyDiagnostics() {
   display: flex;
   align-items: center;
   gap: var(--sg-space-1rem);
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-0d5rem);
+}
+
+.app-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 .header-center {

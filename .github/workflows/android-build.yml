@@ -63,9 +63,12 @@ jobs:
       - name: Initialize Android target
         run: pnpm exec tauri android init --ci
 
+      - name: Configure EU production runtime
+        uses: ./.github/actions/production-runtime
+        with:
+          doppler-token: ${{ secrets.DOPPLER_TOKEN }}
+
       - name: Build Android APK
-        env:
-          VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
         run: pnpm exec tauri android build --ci --${{ inputs.build_type }} --apk -t aarch64
 
       - name: Upload Android APK

@@ -35,6 +35,7 @@ export type NetworkTabsState = {
 export type NetworkCommand =
   | { action: "snapshot"; applyPolicy?: boolean }
   | { action: "replace"; oldId: number; newId: number }
+  | { action: "home"; windowId: number }
   | {
       action: "open"
       target: NetworkTarget
@@ -143,6 +144,28 @@ export function createNetworkTabManager(api: typeof chrome) {
       .sort((a, b) => a.windowId - b.windowId || a.index - b.index)
     return tabs
   }
+  async function resolveHomeWindow(
+    state: NetworkTabsState,
+    fallbackWindowId: number,
+    createUrl?: string,
+  ) {
+    if (state.homeWindowId !== undefined) {
+      try {
+        await api.windows.get(state.homeWindowId)
+        return { id: state.homeWindowId, created: false }
+      } catch {
+        state.homeWindowId = undefined
+      }
+    }
+    const created = await api.windows.create({
+      focused: true,
+      ...(createUrl ? { url: createUrl } : {}),
+    })
+    state.homeWindowId =
+      typeof created?.id === "number" ? created.id : fallbackWindowId
+    await save(state)
+    return { id: state.homeWindowId, created: true }
+  }
   async function collapseInactive(state: NetworkTabsState) {
     for (const group of state.groups) {
       // Mixed groups belong to Chrome's user too. Never hide their personal tabs.
@@ -208,6 +231,9 @@ export function createNetworkTabManager(api: typeof chrome) {
         if (entry) entry.tabId = command.newId
       }
       const tabs = await reconcile(state)
+      if (command.action === "home") {
+        await resolveHomeWindow(state, command.windowId)
+      }
       if (command.action === "open" || command.action === "adopt") {
         const target = command.target
         let entry = state.entries.find(
@@ -252,12 +278,23 @@ export function createNetworkTabManager(api: typeof chrome) {
         } else {
           if (entry?.recovery && !command.reopen)
             throw new Error("restore_required")
+          const homeWindow = await resolveHomeWindow(
+            state,
+            command.windowId,
+            !entry || entry.closed ? target.url : undefined,
+          )
+          const homeWindowId = homeWindow.id
           if (!entry || entry.closed) {
-            const tab = await api.tabs.create({
-              windowId: command.windowId,
-              url: target.url,
-              active: false,
-            })
+            const createdTabs = homeWindow.created
+              ? await api.tabs.query({ windowId: homeWindowId })
+              : []
+            const tab =
+              createdTabs.find((candidate) => candidate.url === target.url) ??
+              (await api.tabs.create({
+                windowId: homeWindowId,
+                url: target.url,
+                active: false,
+              }))
             if (tab.id === undefined) throw new Error("tab_creation_failed")
             if (!entry) {
               entry = {
@@ -298,8 +335,10 @@ export function createNetworkTabManager(api: typeof chrome) {
           await api.tabs.update(live.id!, { active: true })
           await api.windows.update(live.windowId, { focused: true })
         }
-        state.homeWindowId ??= command.windowId
       } else if (command.action === "gather") {
+        const homeWindowId = (
+          await resolveHomeWindow(state, command.windowId)
+        ).id
         const moving = state.entries.filter(
           (entry) =>
             !entry.closed &&
@@ -308,7 +347,7 @@ export function createNetworkTabManager(api: typeof chrome) {
         if (command.tabId !== undefined && !moving.length)
           throw new Error("invalid")
         for (const entry of moving) {
-          if (entry.windowId === command.windowId) continue
+          if (entry.windowId === homeWindowId) continue
           const group = state.groups.find((group) => group.id === entry.groupId)
           const groupMembers = group
             ? await api.tabs.query({ groupId: group.id })
@@ -323,14 +362,14 @@ export function createNetworkTabManager(api: typeof chrome) {
             exclusivelyOwned
           ) {
             await api.tabGroups.move(group.id, {
-              windowId: command.windowId,
+              windowId: homeWindowId,
               index: -1,
             })
             await reconcile(state)
             continue
           }
           await api.tabs.move(entry.tabId!, {
-            windowId: command.windowId,
+            windowId: homeWindowId,
             index: -1,
           })
           await reconcile(state)
@@ -338,7 +377,6 @@ export function createNetworkTabManager(api: typeof chrome) {
           if (!tab.pinned) await groupEntry(state, entry)
           await reconcile(state)
         }
-        state.homeWindowId = command.windowId
       } else if (command.action === "rename" || command.action === "collapse") {
         const group = state.groups.find((group) => group.id === command.groupId)
         if (!group || group.mixed) throw new Error("mixed_group")

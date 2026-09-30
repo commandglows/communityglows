@@ -16,6 +16,13 @@
 import { computed } from 'vue'
 import type { Component } from 'vue'
 import IconPhArchive from '~icons/ph/archive'
+import IconPhAddressBook from '~icons/ph/address-book'
+import IconPhTable from '~icons/ph/table'
+import IconPhWrench from '~icons/ph/wrench'
+import IconPhCode from '~icons/ph/code'
+import IconPhMinus from '~icons/ph/minus'
+import IconPhFolder from '~icons/ph/folder'
+import IconPhFolderPlus from '~icons/ph/folder-plus'
 import IconPhArrowLeft from '~icons/ph/arrow-left'
 import IconPhArrowRight from '~icons/ph/arrow-right'
 import IconPhArrowsClockwise from '~icons/ph/arrows-clockwise'
@@ -45,6 +52,7 @@ import IconPhLightning from '~icons/ph/lightning'
 import IconPhMegaphone from '~icons/ph/megaphone'
 import IconPhQuestion from '~icons/ph/question'
 import IconPhSparkle from '~icons/ph/sparkle'
+import IconPhSun from '~icons/ph/sun'
 import IconPhInstagramLogo from '~icons/ph/instagram-logo'
 import IconPhDiscordLogo from '~icons/ph/discord-logo'
 import IconPhTiktokLogo from '~icons/ph/tiktok-logo'
@@ -123,6 +131,12 @@ const props = defineProps<{ icon?: IconInput }>()
 const legacyToIconMap: Record<string, Component> = {
   'pi': IconPhHandWithdraw,
   'pi-at': IconPhAt,
+  'pi-address-book': IconPhAddressBook,
+  'pi-table': IconPhTable,
+  'pi-wrench': IconPhWrench,
+  'pi-minus': IconPhMinus,
+  'pi-folder': IconPhFolder,
+  'pi-folder-plus': IconPhFolderPlus,
   'pi-arrow-left': IconPhArrowLeft,
   'pi-arrow-right': IconPhArrowRight,
   'pi-archive': IconPhArchive,
@@ -145,7 +159,7 @@ const legacyToIconMap: Record<string, Component> = {
   'pi-chevron-right': IconPhCaretRight,
   'pi-chevron-up': IconPhCaretUp,
   'pi-cloud': IconPhGlobe,
-  'pi-code': IconPhPencil,
+  'pi-code': IconPhCode,
   'pi-comment': IconPhChat,
   'pi-comments': IconPhChatCentered,
   'pi-copy': IconPhCopy,
@@ -205,6 +219,7 @@ const legacyToIconMap: Record<string, Component> = {
   'pi-search': IconPhMagnifyingGlass,
   'pi-search-plus': IconPhMagnifyingGlassPlus,
   'pi-sparkles': IconPhSparkle,
+  'pi-sun': IconPhSun,
   'pi-shield': IconPhShieldCheck,
   'pi-spinner': IconPhSpinner,
   'pi-send': IconPhPaperPlaneRight,

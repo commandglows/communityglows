@@ -4,6 +4,8 @@ Dashboard unifié pour gérer tous vos réseaux sociaux depuis une seule interfa
 
 Sur desktop, le workspace Bento peut afficher plusieurs réseaux en même temps. Les panneaux se déplacent par glisser-déposer, se divisent horizontalement ou verticalement et se redimensionnent. Les dispositions Colonnes, Lignes, Focus et Grille réorganisent instantanément les cartes ouvertes sans recréer leurs WebViews. Un bento nommé devient une Scène synchronisée propre au profil actif ; chaque profil conserve aussi son brouillon local et ses sessions isolées.
 
+Le catalogue de sites est organisé par catégories, notamment Développement web et tech, Création, et CRM (Breakcold, ClarkUp, Clay et Dex). Dans l'onboarding et les sélecteurs de l'application, cliquer sur un groupe sélectionne tous ses sites ; si tous sont sélectionnés, le clic les désélectionne. Les contrôles individuels restent disponibles. Cette sélection rend les sites accessibles sans tous les ouvrir. Dans le Bento, la destination des prochains onglets peut être leur catégorie, un groupe personnel ou des onglets sans groupe ; les onglets déjà ouverts conservent leur organisation.
+
 ## Product Registry
 
 CommunityGlows is a declared product and should always be documented as such in this repo.
@@ -180,6 +182,10 @@ CommunityGlows affiche des réseaux sociaux dans des WebViews natives. Les préf
 
 ## Variables d'environnement
 
+Le développement local utilise le projet Doppler `communityglows`, configuration
+`dev`, déclaré dans `doppler.yaml`. Les scripts de développement injectent cette
+configuration de façon éphémère : aucune valeur secrète n'est écrite dans le dépôt.
+
 ```env
 VITE_CONVEX_URL=              # URL Convex (obligatoire en runtime front)
 CONVEX_DEPLOYMENT=            # Déploiement Convex (local/dev), si utilisé
@@ -200,11 +206,19 @@ exclusivement côté serveur CommandGlows.
 
 ## Scripts
 
+Sous Windows, `s start -ProjectPath .` lance la cible déclarée dans
+`.shipglows.runtime.json` : `tauri` pour l'application native, ou
+`browser-extension` pour Chrome. Arrêter la session avec `s stop -ProjectPath .`
+avant de changer la cible, puis réenregistrer le projet. Les deux cibles utilisent
+le port attribué à la racine (3006), jamais deux serveurs simultanés.
+Le navigateur peut consulter le frontend Tauri sur ce même port avec HMR.
+Le site Astro est un projet séparé dans `site`, avec son propre port déclaré.
+
 ```bash
 # Développement
 pnpm dev:chrome              # Dev extension Chrome
 pnpm dev:firefox             # Dev extension Firefox
-pnpm tauri:dev               # Dev desktop Tauri
+pnpm tauri:dev               # Serveur frontend Tauri uniquement
 
 # Build
 pnpm build:chrome            # Build extension Chrome
@@ -265,3 +279,26 @@ La dernière version de test Windows est disponible directement ici :
 Ce fichier est remplacé automatiquement après chaque exécution réussie du workflow manuel Windows.
 
 Avant de lancer ce workflow, configurer le secret GitHub Actions `VITE_CONVEX_URL` avec l'URL du déploiement Convex. Le workflow refuse désormais de publier un installeur si cette configuration est absente.
+
+## Extension navigateur : fonctionnement et vérification
+
+Le paquet Chrome se charge depuis `dist/chrome` via « Charger l'extension non empaquetée » dans `chrome://extensions`. Après une reconstruction, utiliser « Recharger » sur la fiche existante pour conserver les données de ce navigateur. Le ZIP est `dist/chrome-0.0.1.zip`.
+
+La popup, les options et le panneau latéral partagent les profils et liens locaux. Dans Chrome, les réseaux s'ouvrent dans une fenêtre CommunityGlows dédiée : le worker la crée ou la retrouve, y ouvre les onglets réseau, et « Ramener » / « Réunir » l'utilisent comme cible. Un onglet déplacé manuellement reste suivi là où il est jusqu'à action explicite. Les mutations sont sérialisées par Web Locks et relisent la dernière valeur enregistrée avant écriture. La création de tâches propose la capture volontaire de l'URL HTTPS de l'onglet actif et une saisie manuelle. « Mes tâches » permet la modification et la suppression. Aucun contenu de page n'est lu. Les erreurs de stockage conservent les formulaires.
+
+Les routes publiques sont déclarées dans `src/utils/router/index.ts` : popup, options, panneau latéral, installation, mise à jour, tableau de bord et tâches. Les composants desktop ne sont pas des routes d'extension. Authentification, synchronisation cloud et gestion complète des profils restent à cadrer pour cette surface.
+
+Vérification reproductible avec Node 24 et pnpm 8.11.0 :
+
+```sh
+corepack pnpm install --frozen-lockfile
+corepack pnpm test:once
+corepack pnpm typecheck:extension
+corepack pnpm build:chrome
+corepack pnpm exec playwright install chromium
+corepack pnpm test:extension
+corepack pnpm build:firefox
+corepack pnpm lint:manifest
+```
+
+Le test Chromium utilise un profil temporaire isolé, publie les preuves dans son répertoire de sortie et ferme ce profil. Il ne modifie pas le profil personnel. Les overrides de dépendances sont définis uniquement dans `package.json#pnpm.overrides` pour la version pnpm déclarée. L'audit du 5 septembre 2026 conserve deux alertes élevées sans correctif publié sur `image-size`, dépendance de l'outil `web-ext`, absente du paquet exécuté dans Chrome.

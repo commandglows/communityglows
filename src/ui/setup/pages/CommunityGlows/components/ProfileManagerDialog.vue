@@ -88,35 +88,56 @@
         </section>
         <fieldset class="profile-manager__networks">
           <legend>Réseaux visibles</legend>
-          <label
-            v-for="network in builtInSocialNetworks"
-            :key="network.id"
-            class="profile-manager__network-card"
-            :class="{
-              'profile-manager__network-card--selected':
-                draft.visibleNetworks.includes(network.id),
-            }"
+          <section
+            v-for="group in networkGroups"
+            :key="group.id"
+            class="profile-manager__network-group"
           >
-            <input
-              v-model="draft.visibleNetworks"
-              type="checkbox"
-              :value="network.id"
+            <NetworkGroupHeader
+              :label="$t(group.labelKey)"
+              :icon="group.icon"
+              :selection="networkGroupSelection(group.items.map(network => network.id), draft.visibleNetworks)"
+              :count="group.items.filter(network => draft.visibleNetworks.includes(network.id)).length"
+              :total="group.items.length"
+              :expanded="!collapsedNetworkGroups.has(group.id)"
+              @toggle="draft.visibleNetworks = toggleNetworkGroupSelection(group.items.map(network => network.id), draft.visibleNetworks)"
+              @collapse="toggleGroupExpanded(group.id)"
             />
-            <span class="profile-manager__network-icon">
-              <NetworkBrandIcon
-                :network-id="network.id"
-                :fallback-icon="network.icon"
-              />
-            </span>
-            <span class="profile-manager__network-name">
-              {{ network.label }}
-            </span>
-            <SgIcon
-              v-if="draft.visibleNetworks.includes(network.id)"
-              icon="pi pi-check"
-              class="profile-manager__network-check"
-            />
-          </label>
+            <div
+              v-if="!collapsedNetworkGroups.has(group.id)"
+              class="profile-manager__network-grid"
+            >
+              <label
+                v-for="network in group.items"
+                :key="network.id"
+                class="profile-manager__network-card"
+                :class="{
+                  'profile-manager__network-card--selected':
+                    draft.visibleNetworks.includes(network.id),
+                }"
+              >
+                <input
+                  v-model="draft.visibleNetworks"
+                  type="checkbox"
+                  :value="network.id"
+                />
+                <span class="profile-manager__network-icon">
+                  <NetworkBrandIcon
+                    :network-id="network.id"
+                    :fallback-icon="network.icon"
+                  />
+                </span>
+                <span class="profile-manager__network-name">
+                  {{ network.label }}
+                </span>
+                <SgIcon
+                  v-if="draft.visibleNetworks.includes(network.id)"
+                  icon="pi pi-check"
+                  class="profile-manager__network-check"
+                />
+              </label>
+            </div>
+          </section>
         </fieldset>
 
         <p
@@ -209,6 +230,8 @@ import Button from "./ui/SgButton.vue"
 import SgIcon from "./ui/SgIcon.vue"
 import ProfileAvatarEditor from "./ProfileAvatarEditor.vue"
 import NetworkBrandIcon from "./NetworkBrandIcon.vue"
+import NetworkGroupHeader from "./NetworkGroupHeader.vue"
+import { groupNetworks, networkGroupSelection, toggleNetworkGroupSelection } from "@/config/socialNetworkGroups"
 
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{ "update:modelValue": [value: boolean] }>()
@@ -236,6 +259,13 @@ const draft = reactive<EditableDraft>({
   emoji: DEFAULT_EMOJI,
   visibleNetworks: [],
 })
+
+const networkGroups = computed(() => groupNetworks(builtInSocialNetworks, network => network.id))
+const collapsedNetworkGroups = ref(new Set<string>())
+function toggleGroupExpanded(id: string) {
+  if (collapsedNetworkGroups.value.has(id)) collapsedNetworkGroups.value.delete(id)
+  else collapsedNetworkGroups.value.add(id)
+}
 
 const selectedProfile = computed(() =>
   profilesStore.profiles.find(
@@ -453,12 +483,19 @@ watch(
 }
 .profile-manager__networks {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sg-space-2);
   margin: 0;
   padding: var(--sg-space-3);
   border: 1px solid var(--sg-color-border);
   border-radius: var(--sg-radius-sm);
+}
+.profile-manager__network-group {
+  min-width: 0;
+}
+.profile-manager__network-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sg-space-2);
 }
 .profile-manager__networks legend {
   padding: 0 var(--sg-space-1);

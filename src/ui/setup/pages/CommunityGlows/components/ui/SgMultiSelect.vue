@@ -29,6 +29,6 @@ const safeAttrs = computed(() => Object.fromEntries(
 
 <style scoped>
 .sg-multiselect { min-height: var(--sg-field-min-height); padding: var(--sg-field-padding); border: 1px solid var(--sg-color-border); border-radius: var(--sg-radius-sm); background: var(--sg-color-surface-raised); color: var(--sg-color-text); font: inherit; }
-.sg-multiselect:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sg-multiselect:focus-visible { position: relative; z-index: 1; outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sg-multiselect:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 </style>

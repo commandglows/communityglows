@@ -28,6 +28,6 @@ const attrs = useAttrs()
 
 .sg-input::placeholder { color: var(--sg-field-placeholder); }
 .sg-input:hover { border-color: var(--sg-color-border-strong); }
-.sg-input:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sg-input:focus-visible { position: relative; z-index: 1; outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sg-input:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 </style>

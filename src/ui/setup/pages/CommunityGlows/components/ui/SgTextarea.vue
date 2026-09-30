@@ -33,6 +33,6 @@ const model = defineModel<string>({ default: '' })
 .sg-textarea--auto-resize { field-sizing: content; resize: none; }
 .sg-textarea::placeholder { color: var(--sg-field-placeholder); }
 .sg-textarea:hover { border-color: var(--sg-color-border-strong); }
-.sg-textarea:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sg-textarea:focus-visible { position: relative; z-index: 1; outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sg-textarea:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 </style>

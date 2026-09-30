@@ -12,7 +12,7 @@
       type="button"
       class="sg-password__toggle"
       :disabled="disabled"
-      :aria-label="visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+      :aria-label="$t(visible ? 'login.hide_password' : 'login.show_password')"
       :aria-pressed="visible"
       @click="visible = !visible"
     >
@@ -45,7 +45,7 @@ const disabled = computed(() => attrs.disabled === '' || attrs.disabled === true
 <style scoped>
 .sg-password { position: relative; display: inline-flex; width: var(--sg-size-full); }
 .sg-password__input { width: var(--sg-size-full); min-height: var(--sg-field-min-height); padding: var(--sg-field-padding); padding-inline-end: var(--sg-password-toggle-space); border: 1px solid var(--sg-color-border); border-radius: var(--sg-radius-sm); background: var(--sg-color-surface-raised); color: var(--sg-color-text); font: inherit; }
-.sg-password__input:focus-visible, .sg-password__toggle:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sg-password__input:focus-visible, .sg-password__toggle:focus-visible { position: relative; z-index: 1; outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
 .sg-password__input:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 .sg-password__toggle { position: absolute; inset-block: 0; inset-inline-end: 0; width: var(--sg-password-toggle-space); border: 0; background: transparent; color: var(--sg-color-text-muted); cursor: pointer; }
 .sg-password__toggle:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }

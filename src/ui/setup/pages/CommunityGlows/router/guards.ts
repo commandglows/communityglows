@@ -1,4 +1,5 @@
 import type { NavigationGuard } from "vue-router";
+import { prefersLocalKanban, rememberLocalKanban } from '@/lib/localKanbanPreference';
 import {
   authBootstrapError,
   isAuthenticated,
@@ -14,10 +15,20 @@ export const authGuard: NavigationGuard = async (to, _from, next) => {
     return next();
   }
 
+  // Isolated guest storage only; existing account routes keep their guards.
+  if (to.path === "/local-kanban") {
+    rememberLocalKanban();
+    return next();
+  }
+  if (to.path === '/tasks' && !isAuthenticated.value && prefersLocalKanban()) {
+    return next({ path: '/local-kanban', query: to.query, hash: to.hash });
+  }
+
   // Public routes — always allow
   if (to.path === "/login" || to.path === "/sign-up") {
     // If already signed in, skip the login page
-    if (isAuthenticated.value && !isAuthLoading.value && !isSessionLocked.value) {
+    const recoveryRequested = to.query?.access === 'reconnect' || to.query?.access === 'unavailable';
+    if (isAuthenticated.value && !isAuthLoading.value && !isSessionLocked.value && !recoveryRequested) {
       return next("/twitter");
     }
     return next();

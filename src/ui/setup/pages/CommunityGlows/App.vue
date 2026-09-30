@@ -3,11 +3,25 @@
     <Notivue v-slot="item">
       <Notification :item="item" />
     </Notivue>
+    <AccountDeletionSuccessDialog @continue="router.replace('/')" />
     <!-- Onboarding (first launch) -->
-    <OnboardingFlow v-if="!onboardingStore.completed" />
+    <OnboardingFlow v-if="appAccessSurface === 'onboarding'" />
+
+    <main
+      v-else-if="appAccessSurface === 'loading'"
+      class="app-auth-loading"
+      role="status"
+    >
+      {{ $t('login.access_loading') }}
+    </main>
+    <SessionLockView v-else-if="appAccessSurface === 'session-lock'" />
+    <LoginView v-else-if="appAccessSurface === 'authentication'" />
 
     <!-- Product access gate: recovery remains available while protected work is paused. -->
-    <ProductAccessGate v-else-if="shouldBlockProductAccess" />
+    <ProductAccessGate
+      v-else-if="shouldBlockProductAccess"
+      @open-recovery="settingsVisible = true"
+    />
 
     <!-- Mobile layout (≤768px): single-column, no panels -->
     <MobileLayout v-else-if="isMobile" />
@@ -19,18 +33,48 @@
           <AppSidebar
             v-model="sidebarVisible"
             :control-bar-position="controlBarStore.position"
+            :bento-active="desktopBentoActive"
+            @toggle-bento="toggleDesktopBento"
+            @close-network-instance="closeSidebarInstance"
+            @duplicate-network-instance="
+              (networkId, instanceId, sourceInstanceId) =>
+                desktopWorkspaceRef?.duplicateNetworkInstance(
+                  networkId,
+                  instanceId,
+                  sourceInstanceId,
+                )
+            "
             @manage-profiles="profileManagerVisible = true"
             @open-settings="settingsVisible = true"
+            @open-tasks="openSidebarTasks"
           >
+            <template #organization="{ compact }">
+              <BentoSidebarTabs
+                v-if="desktopBentoActive && bentoSidebarSnapshot"
+                :snapshot="bentoSidebarSnapshot"
+                :compact="compact"
+                @command="desktopWorkspaceRef?.organizeFromSidebar($event)"
+              />
+            </template>
             <AppRightSidebar
               v-model="rightSidebarVisible"
               :control-bar-position="controlBarStore.position"
               @open-settings="settingsVisible = true"
               @open-rightpanel-section="openRightPanelSection"
+              @open-rightpanel-general="
+                (section) => (rightPanelGuide = { section, centralized: true })
+              "
+              @open-tasks="openSidebarTasks"
               @manage-profiles="profileManagerVisible = true"
               @edit-profile-avatar="profileAvatarVisible = true"
             >
-              <div class="desktop-main">
+              <div
+                class="desktop-main"
+                :class="{
+                  'desktop-main--left-hidden':
+                    !sidebarVisible && controlBarStore.position === 'top',
+                }"
+              >
                 <DesktopControlBar
                   v-if="
                     showDesktopControlBar && controlBarStore.position === 'top'
@@ -63,24 +107,59 @@
                   />
                 </DesktopControlBar>
                 <div class="desktop-main__content">
+                  <div
+                    v-if="rightPanelGuide"
+                    class="right-panel-guide"
+                  >
+                    <NativeWorkspaceCard
+                      navigation-guide
+                      :section-title="rightPanelGuideTitle"
+                      :centralized="rightPanelGuide.centralized"
+                    >
+                      <button
+                        type="button"
+                        class="right-panel-guide__back"
+                        @click="rightPanelGuide = null"
+                      >
+                        {{ $t("right_panel_guide.back") }}
+                      </button>
+                    </NativeWorkspaceCard>
+                  </div>
                   <!-- Dockable desktop workspace: each panel owns one isolated native WebView. -->
                   <DesktopWorkspace
-                    v-if="showDesktopWorkspace"
+                    v-if="desktopSurface === 'bento'"
+                    v-show="!rightPanelGuide"
+                    ref="desktopWorkspaceRef"
                     :suspended="
+                      !!rightPanelGuide ||
                       settingsVisible ||
-                        profileManagerVisible ||
-                        profileAvatarVisible ||
-                        webviewOverlayActive > 0
+                      profileManagerVisible ||
+                      profileAvatarVisible ||
+                      webviewOverlayActive > 0
                     "
-                    @content-change="workspaceHasContent = $event"
+                    @organization-change="bentoSidebarSnapshot = $event"
+                  />
+                  <NetworkWebviewHost
+                    v-else-if="desktopSurface === 'network'"
+                    v-show="!rightPanelGuide"
+                    :suspended="
+                      !!rightPanelGuide ||
+                      settingsVisible ||
+                      profileManagerVisible ||
+                      profileAvatarVisible ||
+                      webviewOverlayActive > 0
+                    "
                   />
                   <!-- Router-view for tasks, login, and other non-webview pages -->
-                  <router-view v-else />
+                  <router-view
+                    v-else
+                    v-show="!rightPanelGuide"
+                  />
                 </div>
                 <DesktopControlBar
                   v-if="
                     showDesktopControlBar &&
-                      controlBarStore.position === 'bottom'
+                    controlBarStore.position === 'bottom'
                   "
                   :left-hidden="!sidebarVisible"
                   :right-hidden="!rightSidebarVisible"
@@ -118,44 +197,49 @@
 
     <!-- Desktop signup nudge (Dialog mode) -->
     <SignupNudge
+      v-if="appAccessSurface === 'workspace'"
       v-model="nudgeVisible"
       @dismiss="nudge.dismiss()"
       @account-created="nudge.onAccountCreated()"
     />
 
-    <PostAuthSyncOverlay />
+    <PostAuthSyncOverlay v-if="onboardingStore.languageSelected" />
     <ProfileManagerDialog
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.journeyCompleted && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileManagerVisible"
     />
     <MobileSettingsSheet
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.journeyCompleted && (!isMobile || shouldBlockProductAccess) && !isAuthLoading && !isSessionLocked"
       v-model="settingsVisible"
       @edit-profile-avatar="openProfileAvatarFromSettings"
     />
     <ProfileAvatarDialog
-      v-if="onboardingStore.completed && !isMobile"
+      v-if="onboardingStore.journeyCompleted && !isMobile && appAccessSurface === 'workspace'"
       v-model="profileAvatarVisible"
       :avatar="profilesStore.activeProfile?.avatar"
       :emoji="profilesStore.activeProfile?.emoji ?? '🟦'"
       @save="saveActiveProfileAvatar"
     />
+    <KanbanItemDialog v-if="onboardingStore.journeyCompleted && appAccessSurface === 'workspace'" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { Notification, Notivue, push } from "notivue"
+import AccountDeletionSuccessDialog from "./components/AccountDeletionSuccessDialog.vue"
 import { useI18n } from "vue-i18n"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
 import { useThemeStore } from "@/stores/theme"
 import { useWebviewStore, WEBVIEW_URLS } from "@/stores/webviewState"
-import { DESKTOP_WORKSPACE_AUTOSAVE_KEY } from "@/lib/desktopWorkspaceLayouts"
-import { useProfilesStore } from "@/stores/profiles"
+import { resolveDesktopSurface } from "./desktopSurface"
+import { canPreloadProtectedNetworks, resolveAppAccessSurface } from "./appAccessSurface"
+import { useProfilesStore, type Profile } from "@/stores/profiles"
 import { getNetworkIsolationOriginsByNetwork } from "@/config/socialNetworks"
-import { isAuthenticated } from "@/lib/convexAuth"
-import { hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
+import { isAuthenticated, isAuthLoading, isSessionLocked } from "@/lib/convexAuth"
+import { prefersLocalKanban } from "@/lib/localKanbanPreference"
+import { cloudHydrationUnavailable, currentCloudAccount, hydrateCloudState, resetCloudSyncState } from "@/lib/cloudSync"
 import { syncSettingsPatch } from "@/lib/cloudSettings"
 import { restorePostAuthReadyFeedback } from "@/lib/postAuthSyncFeedback"
 import {
@@ -172,7 +256,8 @@ import {
   normalizeShortcutEvent,
   useShortcutsStore,
 } from "@/stores/shortcuts"
-import { useRouter } from "vue-router"
+import { useKanbanItemDialogStore } from "@/stores/kanbanItemDialog"
+import { useRoute, useRouter } from "vue-router"
 import {
   DEFAULT_TAP_SOUND_VARIANT,
   TAP_SOUND_STORAGE_KEY,
@@ -191,31 +276,72 @@ import { persistIconScaleLevel, readIconScaleLevel } from "./utils/iconScale"
 import { useSignupNudge } from "@/composables/useSignupNudge"
 import { isDesktopTauri, supportsHaptics } from "@/platform/capabilities"
 import AppSidebar from "./components/AppSidebar.vue"
+import type { KanbanDropdownTarget } from "./components/KanbanDropdown.vue"
+import NativeWorkspaceCard from "./components/NativeWorkspaceCard.vue"
 import AppRightSidebar from "./components/AppRightSidebar.vue"
 import DesktopControlBar from "./components/DesktopControlBar.vue"
 import DesktopQuickNavigation from "./components/DesktopQuickNavigation.vue"
 import ProfileSwitcher from "./components/ProfileSwitcher.vue"
 import DesktopWorkspace from "./components/DesktopWorkspace.vue"
+import BentoSidebarTabs from "./components/BentoSidebarTabs.vue"
+import type { BentoSidebarSnapshot } from "./components/bentoSidebarBridge"
+const desktopWorkspaceRef = ref<InstanceType<typeof DesktopWorkspace> | null>(
+  null,
+)
+const bentoSidebarSnapshot = ref<BentoSidebarSnapshot | null>(null)
+async function closeSidebarInstance(instanceId: string, networkId: string) {
+  if (desktopWorkspaceRef.value) {
+    desktopWorkspaceRef.value.closeNetworkInstance(instanceId)
+    return
+  }
+  if (!isTauri) return
+  const { invoke } = await import("@tauri-apps/api/core")
+  await invoke("close_webview", {
+    profileId: profilesStore.activeProfileId,
+    networkId,
+    instanceId,
+  }).catch(() => {})
+}
+
+import NetworkWebviewHost from "./components/NetworkWebviewHost.vue"
 import MobileLayout from "./components/MobileLayout.vue"
 import MobileSettingsSheet from "./components/MobileSettingsSheet.vue"
 import PostAuthSyncOverlay from "./components/PostAuthSyncOverlay.vue"
 import SignupNudge from "./components/SignupNudge.vue"
 import OnboardingFlow from "./components/OnboardingFlow.vue"
 import ProductAccessGate from "./components/ProductAccessGate.vue"
+import LoginView from "./views/LoginView.vue"
+import SessionLockView from "./views/SessionLockView.vue"
 import ProfileManagerDialog from "./components/ProfileManagerDialog.vue"
 import ProfileAvatarDialog from "./components/ProfileAvatarDialog.vue"
+import KanbanItemDialog from "./components/tasks/KanbanItemDialog.vue"
 import { useDesktopControlBarStore } from "@/stores/desktopControlBar"
 import { useBillingAccess } from "@/composables/useBillingAccess"
 
 const sidebarVisible = ref(true)
+const kanbanItemDialog = useKanbanItemDialogStore()
 const rightSidebarVisible = ref(true)
+const rightPanelGuide = ref<{ section: string; centralized: boolean } | null>(
+  null,
+)
+const rightPanelGuideTitle = computed(() =>
+  t(
+    (
+      {
+        feed: "sidebar.feed_button",
+        profile: "sidebar.profile_button",
+        notifications: "common.notifications",
+        saved: "sidebar.saved_button",
+        events: "sidebar.events_button",
+      } as Record<string, string>
+    )[rightPanelGuide.value?.section ?? ""] ?? "right_panel_guide.title",
+  ),
+)
 const settingsVisible = ref(false)
 const profileManagerVisible = ref(false)
 const profileAvatarVisible = ref(false)
 const webviewOverlayActive = ref(0)
-const workspaceHasContent = ref(
-  localStorage.getItem(DESKTOP_WORKSPACE_AUTOSAVE_KEY) !== null,
-)
+const desktopBentoActive = ref(false)
 
 // Signup nudge (desktop only — mobile has its own in MobileLayout)
 const nudge = useSignupNudge()
@@ -231,15 +357,67 @@ const billingAccess = useBillingAccess()
 const shortcutsStore = useShortcutsStore()
 const controlBarStore = useDesktopControlBarStore()
 const router = useRouter()
+const route = useRoute()
+
+function syncLocalPreferences(event: StorageEvent) {
+  if (event.key === "user-locale" && (event.newValue === "fr" || event.newValue === "en")) {
+    locale.value = event.newValue
+  }
+
+  if (["theme", "theme-resolved", "communityglows-theme-palette", "grayscale"].includes(event.key ?? "")) {
+    themeStore.initTheme()
+  }
+
+  if (event.key !== "profiles" || !event.newValue) return
+  try {
+    const value: unknown = JSON.parse(event.newValue)
+    if (!value || typeof value !== "object") return
+    const stored = value as { profiles?: unknown; activeProfileId?: unknown }
+    if (
+      !Array.isArray(stored.profiles) ||
+      !stored.profiles.every(
+        (profile) =>
+          profile &&
+          typeof profile.id === "string" &&
+          typeof profile.name === "string",
+      )
+    ) return
+
+    profilesStore.$patch({
+      profiles: stored.profiles as Profile[],
+      activeProfileId:
+        typeof stored.activeProfileId === "string"
+          ? stored.activeProfileId
+          : profilesStore.activeProfileId,
+    })
+  } catch {
+    // Ignore malformed cross-window state and keep the last valid snapshot.
+  }
+}
 const showDesktopControlBar = computed(
   () => !sidebarVisible.value || !rightSidebarVisible.value,
 )
 const bothSidebarsHidden = computed(
   () => !sidebarVisible.value && !rightSidebarVisible.value,
 )
-const showDesktopWorkspace = computed(
-  () => Boolean(webviewStore.activeUrl) || workspaceHasContent.value,
+const desktopSurface = computed(() =>
+  resolveDesktopSurface(desktopBentoActive.value, webviewStore.activeUrl),
 )
+
+watch(
+  () => route.path,
+  (path) => {
+    if (path !== "/local-kanban" && path !== "/tasks") return
+    webviewStore.clearNetwork()
+    desktopBentoActive.value = false
+  },
+  { immediate: true },
+)
+
+function toggleDesktopBento() {
+  rightPanelGuide.value = null
+  desktopBentoActive.value = !desktopBentoActive.value
+}
 
 function openProfileAvatarFromSettings() {
   settingsVisible.value = false
@@ -281,9 +459,43 @@ const lastHandledSharedUrl = ref<string | null>(null)
 const isMobile = useMediaQuery(
   `(max-width: ${RESPONSIVE_BREAKPOINTS.sidebarTablet}px)`,
 )
-const shouldBlockProductAccess = computed(() => {
-  if (!onboardingStore.completed || !isAuthenticated.value) return false
-  return !billingAccess.canAccessProtected.value
+const appAccessState = computed(() => ({
+  languageSelected: onboardingStore.languageSelected,
+  onboardingCompleted: onboardingStore.journeyCompleted,
+  localOnly: onboardingStore.localOnly,
+  accountVerified: currentCloudAccount.value?.id === onboardingStore.confirmedAccountId,
+  accountUnavailable: cloudHydrationUnavailable.value,
+  authLoading: isAuthLoading.value,
+  authenticated: isAuthenticated.value,
+  sessionLocked: isSessionLocked.value,
+  canAccessProtected: billingAccess.canAccessProtected.value,
+  routePath: route.path,
+  activeNetworkUrl: webviewStore.activeUrl,
+  bentoActive: desktopBentoActive.value,
+}))
+const appAccessSurface = computed(() => resolveAppAccessSurface(appAccessState.value))
+const shouldBlockProductAccess = computed(() => appAccessSurface.value === 'access-gate')
+const canPreloadNetworks = computed(() => canPreloadProtectedNetworks(appAccessState.value))
+let preloadStarted = false
+
+watch(canPreloadNetworks, (allowed) => {
+  if (!allowed || preloadStarted) return
+  preloadStarted = true
+  void preloadWebviews(() => canPreloadNetworks.value)
+})
+
+watch(appAccessSurface, (surface) => {
+  if (surface !== 'workspace' && surface !== 'access-gate') {
+    settingsVisible.value = false
+    profileManagerVisible.value = false
+    profileAvatarVisible.value = false
+  }
+  if (surface === 'workspace' && !isMobile.value) {
+    nudge.recordFirstLaunch()
+    void nudge.check().then(() => {
+      if (appAccessSurface.value === 'workspace' && nudge.showNudge.value) nudgeVisible.value = true
+    })
+  }
 })
 
 let unlistenTray: (() => void) | undefined
@@ -431,7 +643,10 @@ function updateIconScale(level: number) {
   )
 }
 
-const onUiScaleWheel = createUiScaleWheelHandler(() => uiScaleLevel.value, updateUiScale)
+const onUiScaleWheel = createUiScaleWheelHandler(
+  () => uiScaleLevel.value,
+  updateUiScale,
+)
 
 const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (event.type === "keyup") return
@@ -447,7 +662,9 @@ const onKeyboardShortcut = (event: KeyboardEvent) => {
   if (shortcut.action === "toggle-right-sidebar")
     rightSidebarVisible.value = !rightSidebarVisible.value
   if (shortcut.action === "open-settings") settingsVisible.value = true
-  if (shortcut.action === "open-tasks") router.push("/tasks")
+  if (shortcut.action === "open-tasks") openSidebarTasks()
+  if (shortcut.action === "open-kanban-item-dialog") kanbanItemDialog.openChoice()
+  if (shortcut.action === "new-kanban-task") kanbanItemDialog.createTask()
   if (shortcut.action === "decrease-ui-scale") {
     updateUiScale(uiScaleLevel.value - 5)
   }
@@ -673,11 +890,37 @@ function resolveRightPanelSectionPath(
   return byNetwork[section] ?? defaultSectionPaths[section] ?? ""
 }
 
+watch(
+  () => [
+    webviewStore.activeNetworkId,
+    webviewStore.activeUrl,
+    webviewStore.activeInstanceId,
+    profilesStore.activeProfileId,
+    route.fullPath,
+  ],
+  () => {
+    rightPanelGuide.value = null
+  },
+)
+function openSidebarTasks(target: KanbanDropdownTarget | 'task' | 'contact' = {}) {
+  const destination = typeof target === 'string' ? { action: target } : target
+  rightPanelGuide.value = null
+  webviewStore.clearNetwork()
+  desktopBentoActive.value = false
+  void router.push(
+    {
+      path: route.path === "/local-kanban" || (!isAuthenticated.value && prefersLocalKanban()) ? "/local-kanban" : "/tasks",
+      query: destination.action ? { create: destination.action } : destination.taskId ? { task: destination.taskId } : destination.contactId ? { contact: destination.contactId } : {},
+    },
+  )
+}
+
 async function openRightPanelSection(sectionId: string) {
+  rightPanelGuide.value = null
   const networkId = webviewStore.activeNetworkId
   if (!networkId || !WEBVIEW_URLS[networkId]) {
     sidebarVisible.value = true
-    push.info({ message: t("sidebar.select_network_hint"), duration: 3600 })
+    rightPanelGuide.value = { section: sectionId, centralized: false }
     return
   }
 
@@ -691,12 +934,21 @@ async function openRightPanelSection(sectionId: string) {
 
   // Update the visible app state first: native navigation can legitimately be a
   // no-op when this network webview has not been created yet.
-  webviewStore.selectNetwork(networkId, url)
+  webviewStore.selectNetwork(
+    networkId,
+    url,
+    webviewStore.activeInstanceId ?? undefined,
+  )
 
   if (isTauri) {
     const { invoke } = await import("@tauri-apps/api/core")
     try {
-      await invoke("navigate_webview", { profileId, networkId, url })
+      await invoke("navigate_webview", {
+        profileId,
+        networkId,
+        url,
+        instanceId: webviewStore.activeInstanceId ?? undefined,
+      })
       return
     } catch {
       // The store update above remains the fallback for older desktop builds.
@@ -760,7 +1012,7 @@ function onWebviewOverlayState(event: Event) {
 }
 
 function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
-  if (!onboardingStore.completed) {
+  if (!onboardingStore.journeyCompleted) {
     queuedDeepLinkAction.value = action
     return
   }
@@ -773,6 +1025,7 @@ function applyDeepLinkAction(action: CommunityGlowsDeepLinkAction) {
 
   if (action.type === "create-task") {
     webviewStore.clearNetwork()
+    desktopBentoActive.value = false
     router.push({ path: "/tasks", query: { url: action.urlOverride ?? "" } })
     return
   }
@@ -823,19 +1076,32 @@ watch(
   () => isAuthenticated.value,
   async (authenticated, wasAuthenticated) => {
     if (authenticated) {
-      await hydrateCloudState()
+      try {
+        await hydrateCloudState()
+      } catch {
+        // cloudHydrationUnavailable exposes retry instead of mounting an unverified account.
+      }
       return
     }
 
     if (wasAuthenticated) {
+      onboardingStore.resetAccountConfirmation()
       resetCloudSyncState()
     }
   },
-  { immediate: true },
+  { immediate: true, flush: 'sync' },
 )
 
 watch(
-  () => onboardingStore.completed,
+  currentCloudAccount,
+  (account) => {
+    if (account) onboardingStore.reconcileAccount(account.id)
+  },
+  { immediate: true, flush: 'sync' },
+)
+
+watch(
+  () => onboardingStore.journeyCompleted,
   (completed) => {
     if (!completed || !queuedDeepLinkAction.value) return
     const action = queuedDeepLinkAction.value
@@ -872,6 +1138,7 @@ const syncDesktopWebviewPreferences = async () => {
   invoke("set_webview_preferences", {
     profileId: profilesStore.activeProfileId,
     networkId: webviewStore.activeNetworkId,
+    instanceId: webviewStore.activeInstanceId ?? undefined,
     grayscale: themeStore.grayscaleEnabled,
     darkMode: themeStore.isDarkMode,
     textZoom: textZoomLevel.value,
@@ -884,6 +1151,7 @@ watch(
     () => themeStore.isDarkMode,
     () => textZoomLevel.value,
     () => webviewStore.activeNetworkId,
+    () => webviewStore.activeInstanceId,
     () => profilesStore.activeProfileId,
     () => webviewReadyVersion.value,
   ],
@@ -958,10 +1226,15 @@ watch(
 )
 
 onMounted(async () => {
+  window.addEventListener("storage", syncLocalPreferences)
   themeStore.initTheme()
   profilesStore.ensureDefault()
   if (isAuthenticated.value) {
-    await hydrateCloudState()
+    try {
+      await hydrateCloudState()
+    } catch {
+      // Keep the current account behind its reactive hydration/retry boundary.
+    }
   }
 
   if (queuedDeepLinkAction.value) {
@@ -973,18 +1246,6 @@ onMounted(async () => {
   uiScaleLevel.value = persistUiScaleLevel(readUiScaleLevel())
   await applyUiScaleLevel(uiScaleLevel.value).catch(() => {})
   iconScaleLevel.value = persistIconScaleLevel(readIconScaleLevel())
-
-  // Preload top networks off-screen so first click is instant (non-blocking)
-  preloadWebviews()
-
-  // Signup nudge (desktop only — mobile uses MobileLayout's own nudge)
-  if (!isMobile.value) {
-    nudge.recordFirstLaunch()
-    await nudge.check()
-    if (nudge.showNudge.value) {
-      nudgeVisible.value = true
-    }
-  }
 
   window.addEventListener(
     "communityglows-network-webview-ready",
@@ -1105,6 +1366,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener("storage", syncLocalPreferences)
   window.removeEventListener(
     "communityglows-network-webview-ready",
     onWebviewReady,
@@ -1158,6 +1420,38 @@ onUnmounted(() => {
 </script>
 
 <style>
+.app-auth-loading {
+  min-height: var(--sg-size-100vh);
+  display: grid;
+  place-items: center;
+  padding: var(--sg-space-2rem);
+  background: var(--sg-color-background);
+  color: var(--sg-color-text);
+}
+
+.right-panel-guide {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: var(--sg-size-100pct);
+  padding: var(--sg-space-4);
+  box-sizing: border-box;
+  overflow: auto;
+}
+.right-panel-guide__back {
+  padding: var(--sg-button-padding);
+  min-height: var(--sg-button-min-height);
+  border: var(--sg-border-1px) solid var(--sg-color-border);
+  border-radius: var(--sg-radius-sm);
+  background: var(--sg-color-surface-hover);
+  color: var(--sg-color-text);
+  cursor: pointer;
+}
+.right-panel-guide__back:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: var(--sg-focus-offset);
+}
 * {
   -webkit-user-select: none;
   user-select: none;
@@ -1191,6 +1485,7 @@ textarea,
 }
 
 .desktop-main {
+  background: var(--sg-color-surface-raised);
   display: flex;
   flex-direction: column;
   width: var(--sg-size-full);
@@ -1201,11 +1496,32 @@ textarea,
 }
 
 .desktop-main__content {
+  background: var(--sg-color-background);
+  border-radius: var(--sg-radius-lg) var(--sg-radius-lg) 0 0;
   display: flex;
   flex: 1;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+.desktop-main--left-hidden .desktop-main__content {
+  border-top-left-radius: 0;
+}
+
+.desktop-main--left-hidden .desktop-control-bar--top::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--sg-radius-lg);
+  height: var(--sg-radius-lg);
+  background: radial-gradient(
+    circle at top right,
+    transparent var(--sg-radius-lg),
+    var(--sg-color-background) var(--sg-radius-lg)
+  );
+  pointer-events: none;
 }
 
 html.dark {
@@ -1219,6 +1535,13 @@ body {
   background: var(--sg-color-background);
 }
 
+:global(button),
+:global(input),
+:global(select),
+:global(textarea) {
+  font: inherit;
+}
+
 html.dark body {
   background: var(--sg-color-background);
   color: var(--sg-color-text);
@@ -1226,5 +1549,9 @@ html.dark body {
 
 .sg-error {
   color: var(--sg-color-danger-text);
+}
+
+html.dark .sg-error {
+  color: #fca5a5;
 }
 </style>

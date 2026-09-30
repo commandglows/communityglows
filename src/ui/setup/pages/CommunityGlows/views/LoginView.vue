@@ -1,9 +1,12 @@
 <template>
-  <div class="login-screen">
+  <div
+    class="login-screen"
+    :class="{ 'login-screen--embedded': onboarding }"
+  >
     <div class="login-card">
       <div class="login-header">
         <h1>CommunityGlows</h1>
-        <p>{{ $t('login.tagline') }}</p>
+        <h2>{{ $t('login_value.title') }}</h2><p>{{ $t('login_value.description') }}</p>
       </div>
 
       <p
@@ -14,6 +17,56 @@
         {{ accessMessage }}
       </p>
 
+      <p
+        v-if="onboarding && isAuthenticated"
+        class="login-access-message"
+        role="status"
+      >
+        {{ currentCloudAccount?.email
+          ? $t('onboarding.restored_account', { email: currentCloudAccount.email })
+          : currentCloudAccount ? $t('onboarding.restored_anonymous') : $t('login.access_loading') }}
+      </p>
+      <p
+        v-if="authBootstrapError || cloudHydrationUnavailable"
+        class="sg-error"
+        role="alert"
+      >
+        {{ $t('login.access_unavailable') }}
+      </p>
+      <p
+        v-if="error && !showEmailForm"
+        class="sg-error"
+        role="alert"
+      >
+        {{ error }}
+      </p>
+      <SgButton
+        v-if="authBootstrapError || cloudHydrationUnavailable"
+        :label="$t('billing.retry_access')"
+        @click="retryBootstrap"
+      />
+
+      <SgButton
+        v-if="onboarding && isAuthenticated && currentCloudAccount"
+        :label="currentCloudAccount.email ? $t('onboarding.continue_account') : $t('onboarding.continue_session')"
+        :disabled="!canChooseAccount || loading"
+        @click="continueRestoredAccount"
+      />
+      <SgButton
+        v-if="onboarding && isAuthenticated && !currentCloudAccount && canChooseAccount"
+        :label="$t('billing.retry_access')"
+        :loading="loading"
+        @click="retryAccountRead"
+      />
+
+      <ul
+        v-if="!showEmailForm"
+        class="login-benefits"
+      >
+        <li>{{ $t('login_value.tasks') }}</li>
+        <li>{{ $t('login_value.workspaces') }}</li>
+        <li>{{ $t('login_value.preferences') }}</li>
+      </ul>
       <!-- Email/password upgrade form -->
       <form
         v-if="showEmailForm"
@@ -45,12 +98,14 @@
         <small
           v-if="error"
           class="sg-error"
+          role="alert"
         >{{ error }}</small>
         <SgButton
           :label="isSignUp ? $t('login.create_account') : $t('login.sign_in')"
           type="submit"
           class="w-full"
           :loading="loading"
+          :disabled="!canChooseAccount || !!authBootstrapError"
         />
         <SgButton
           :label="isSignUp ? $t('login.already_have_account') : $t('login.create_an_account')"
@@ -58,24 +113,40 @@
           class="w-full"
           @click="isSignUp = !isSignUp"
         />
+        <SgButton
+          :label="$t('onboarding.back')"
+          text
+          :disabled="loading"
+          @click="backToAccountChoices"
+        />
       </form>
 
-      <!-- Default: anonymous sign-in (auto) -->
+      <!-- Explicit account choices; a restored anonymous session is never a new account. -->
       <div
         v-else
         class="login-actions"
       >
         <SgButton
-          v-if="!accessMessage"
-          :label="$t('login.get_started')"
+          :label="$t('login_value.account_cta')"
           icon="pi pi-arrow-right"
-          @click="handleGetStarted"
+          :disabled="!canChooseAccount"
+          @click="isSignUp = true; showEmailForm = true"
         />
         <SgButton
-          :label="accessMessage ? $t('login.access_sign_in_with_email') : $t('login.sign_in_with_email')"
-          :text="!accessMessage"
-          @click="showEmailForm = true"
+          :label="$t('login.already_have_account')"
+          text
+          :disabled="!canChooseAccount"
+          @click="isSignUp = false; showEmailForm = true"
         />
+        <div class="login-local-option">
+          <RouterLink
+            to="/local-kanban"
+            @click="chooseLocalTasks"
+          >
+            {{ $t('login_value.try_local') }}
+          </RouterLink>
+          <p>{{ $t('login_value.local_warning') }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -85,14 +156,19 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { signIn } from '@/lib/convexAuth'
-import { finalizePasswordSignIn } from '@/lib/cloudSync'
-import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
+import { authBootstrapError, isAuthenticated, isAuthLoading, signIn } from '@/lib/convexAuth'
+import { loginErrorKey } from '@/lib/loginError'
+import { cloudHydrationUnavailable, currentCloudAccount, finalizePasswordSignIn, hydrateCloudState, isCloudHydrating } from '@/lib/cloudSync'
 import { useOnboardingStore } from '@/stores/onboarding'
+import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
+
 import SgInput from '../components/ui/SgInput.vue'
 import SgButton from '../components/ui/SgButton.vue'
 import SgPassword from '../components/ui/SgPassword.vue'
 
+
+const props = defineProps<{ onboarding?: boolean }>()
+const emit = defineEmits<{ 'account-confirmed': [accountId: string]; 'local-selected': [] }>()
 const onboardingStore = useOnboardingStore()
 const route = useRoute()
 const { t } = useI18n()
@@ -102,9 +178,16 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
+const canChooseAccount = computed(() => !isAuthLoading.value && !isCloudHydrating.value)
 const passwordAutocomplete = computed(() =>
   isSignUp.value ? 'new-password' : 'current-password',
 )
+
+function backToAccountChoices() {
+  showEmailForm.value = false
+  password.value = ''
+  error.value = ''
+}
 
 const accessMessage = computed(() => {
   if (route.query.access === 'required') {
@@ -113,7 +196,7 @@ const accessMessage = computed(() => {
       : t('login.default_destination')
     return t('login.access_required', { destination })
   }
-  if (route.query.access === 'loading') {
+  if (route.query.access === 'loading' && isAuthLoading.value) {
     return t('login.access_loading')
   }
   if (route.query.access === 'unavailable') {
@@ -122,13 +205,13 @@ const accessMessage = computed(() => {
   return null
 })
 
-function handleGetStarted() {
-  onboardingStore.reset()
-}
+
 
 async function handleSignIn() {
+  if (loading.value || !canChooseAccount.value || authBootstrapError.value) return
   loading.value = true
   error.value = ''
+  let authenticated = false
   try {
     const normalizedEmail = email.value.trim().toLowerCase()
     email.value = normalizedEmail
@@ -138,14 +221,57 @@ async function handleSignIn() {
       password: password.value,
       flow: isSignUp.value ? 'signUp' : 'signIn',
     })
+    authenticated = true
     await finalizePasswordSignIn({
       email: normalizedEmail,
       flow: isSignUp.value ? 'signUp' : 'signIn',
+      reload: !props.onboarding,
     })
+    password.value = ''
+    const accountId = currentCloudAccount.value?.id
+    if (accountId) {
+      if (props.onboarding) emit('account-confirmed', accountId)
+      else onboardingStore.confirmAccount(accountId)
+    }
   } catch (err: unknown) {
     resetPostAuthSyncFeedback()
-    error.value =
-      err instanceof Error ? err.message : t('login.sign_in_failed')
+    error.value = t(loginErrorKey(err, isSignUp.value ? 'signUp' : 'signIn', authenticated))
+  } finally {
+    loading.value = false
+  }
+}
+
+async function continueRestoredAccount() {
+  if (!canChooseAccount.value || loading.value || !currentCloudAccount.value) return
+  loading.value = true
+  error.value = ''
+  try {
+    await hydrateCloudState()
+    if (currentCloudAccount.value) emit('account-confirmed', currentCloudAccount.value.id)
+  } catch {
+    error.value = t('login.access_unavailable')
+  } finally {
+    loading.value = false
+  }
+}
+
+function chooseLocalTasks(event: MouseEvent) {
+  if (!props.onboarding) return
+  event.preventDefault()
+  emit('local-selected')
+}
+
+function retryBootstrap() {
+  window.location.reload()
+}
+
+async function retryAccountRead() {
+  loading.value = true
+  error.value = ''
+  try {
+    await hydrateCloudState()
+  } catch {
+    error.value = t('login.access_unavailable')
   } finally {
     loading.value = false
   }
@@ -153,12 +279,20 @@ async function handleSignIn() {
 </script>
 
 <style scoped>
+.login-screen.login-screen--embedded { padding: 0; min-height: 0; background: transparent; }
+.login-screen--embedded .login-card { padding: 0; border: 0; box-shadow: var(--sg-shadow-none); background: transparent; }
+.login-benefits { margin: 0; padding-inline-start: var(--sg-space-4); display: grid; gap: var(--sg-space-3); color: var(--sg-color-text); }
+.login-header h2 { font-size: var(--sg-font-size-1d25rem); color: var(--sg-color-text); }
+.login-local-option { border-top: var(--sg-border-1px) solid var(--sg-color-border); padding-top: var(--sg-space-3); text-align: center; }
+.login-local-option a { color: var(--sg-color-action); }
+.login-local-option p { color: var(--sg-color-text-muted); font-size: var(--sg-font-size-0d875rem); }
 .login-screen {
   display: flex;
-  align-items: center;
+  align-items: safe center;
   justify-content: center;
   width: var(--sg-size-full);
-  min-height: var(--sg-size-100vh);
+  min-height: var(--sg-size-100pct);
+  padding: var(--sg-space-4); box-sizing: border-box; overflow: auto;
   background: var(--sg-color-background);
 }
 
@@ -170,6 +304,7 @@ async function handleSignIn() {
   padding: var(--sg-space-2rem);
   max-width: var(--sg-size-480px);
   width: var(--sg-size-100pct);
+  box-sizing: border-box;
   border: var(--sg-border-1px) solid var(--sg-color-border);
   border-radius: var(--sg-radius-lg);
   background: var(--sg-color-surface-raised);

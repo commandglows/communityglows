@@ -204,6 +204,45 @@ export const useProfilesStore = defineStore("profiles", {
       this.syncProfileToCloud(profile)
     },
 
+    /** Apply a catalogue selection as one profile update, preserving unrelated visibility. */
+    setNetworksHidden(profileId: string, networkIds: readonly string[], hidden: boolean) {
+      const profile = this.profiles.find((p) => p.id === profileId)
+      if (!profile || !networkIds.length) return
+      const next = new Set(resolveHiddenNetworkIds(profile.hiddenNetworks))
+      for (const id of networkIds) {
+        if (hidden) next.add(id)
+        else next.delete(id)
+      }
+      profile.hiddenNetworks = [...next]
+      this.materializeProfile(profile)
+      this.syncProfileToCloud(profile)
+    },
+
+    /** Save onboarding profile details and its catalogue selection in one profile update. */
+    applyOnboardingSetup(
+      profileId: string,
+      setup: {
+        name?: string
+        emoji: string
+        networkIds: readonly string[]
+        selectedNetworkIds: readonly string[]
+      },
+    ) {
+      const profile = this.profiles.find((p) => p.id === profileId)
+      if (!profile) return
+
+      const catalogue = new Set(setup.networkIds)
+      const selected = new Set(setup.selectedNetworkIds)
+      if (setup.name?.trim()) profile.name = setup.name.trim()
+      profile.emoji = setup.emoji
+      profile.hiddenNetworks = [
+        ...resolveHiddenNetworkIds(profile.hiddenNetworks).filter((id) => !catalogue.has(id)),
+        ...setup.networkIds.filter((id) => !selected.has(id)),
+      ]
+      this.materializeProfile(profile)
+      this.syncProfileToCloud(profile)
+    },
+
     /** Check if a network is hidden for a profile. */
     isNetworkHidden(profileId: string, networkId: string): boolean {
       const profile = this.profiles.find((p) => p.id === profileId)

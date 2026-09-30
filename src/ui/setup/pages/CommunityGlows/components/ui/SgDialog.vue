@@ -7,18 +7,21 @@
         :class="[
           `sg-dialog__content--${variant}`,
           {
-            'sg-dialog__content--settings-mobile': isSettingsMedium,
-            'sg-dialog__content--settings-small': isSettingsSmall,
+            'sg-dialog__content--settings-mobile': variant === 'settings' && isSettingsMedium,
+            'sg-dialog__content--settings-small': variant === 'settings' && isSettingsSmall,
           },
         ]"
         v-bind="description ? {} : { 'aria-describedby': undefined }"
         @close-auto-focus="restoreFocus"
+        @escape-key-down="preventDismissal"
+        @pointer-down-outside="preventDismissal"
       >
         <header class="sg-dialog__header">
           <DialogTitle class="sg-dialog__title">{{ title }}</DialogTitle>
           <DialogClose
             class="sg-dialog__close"
-            aria-label="Fermer"
+            :aria-label="closeLabel"
+            :disabled="!dismissible"
           >
             <SgIcon icon="pi pi-times" />
           </DialogClose>
@@ -54,9 +57,13 @@ const props = withDefaults(defineProps<{
   modelValue: boolean
   title: string
   description?: string
+  closeLabel?: string
+  dismissible?: boolean
   variant?: 'default' | 'settings' | 'nudge' | 'sidebar' | 'friends' | 'post' | 'post-wide'
 }>(), {
   description: '',
+  closeLabel: 'Fermer',
+  dismissible: true,
   variant: 'default',
 })
 
@@ -69,7 +76,7 @@ const isSettingsSmall = useMediaQuery(`(max-width: ${RESPONSIVE_BREAKPOINTS.dial
 const lastFocusedElement = ref<HTMLElement | null>(null)
 const open = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value),
+  set: value => { if (props.dismissible) emit('update:modelValue', value) },
 })
 
 watch(open, (isOpen) => {
@@ -82,6 +89,10 @@ function restoreFocus(event: Event) {
   if (!lastFocusedElement.value?.isConnected) return
   event.preventDefault()
   lastFocusedElement.value.focus()
+}
+
+function preventDismissal(event: Event) {
+  if (!props.dismissible) event.preventDefault()
 }
 </script>
 
@@ -138,7 +149,8 @@ function restoreFocus(event: Event) {
 
 .sg-dialog__title { margin: 0; font-size: var(--sg-font-size-lg); }
 .sg-dialog__description { margin: 0; padding: 0 var(--sg-space-5); color: var(--sg-color-text-muted); }
-.sg-dialog__close { border: 0; border-radius: var(--sg-radius-sm); background: transparent; color: var(--sg-color-text-muted); cursor: pointer; }
+.sg-dialog__close { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: var(--sg-button-min-height); min-height: var(--sg-button-min-height); border: 0; border-radius: var(--sg-radius-sm); background: transparent; color: var(--sg-color-text-muted); cursor: pointer; }
 .sg-dialog__close:hover { background: var(--sg-color-surface-hover); color: var(--sg-color-text); }
 .sg-dialog__close:focus-visible { outline: var(--sg-focus-ring); outline-offset: var(--sg-focus-offset); }
+.sg-dialog__close:disabled { cursor: not-allowed; opacity: var(--sg-opacity-disabled); }
 </style>

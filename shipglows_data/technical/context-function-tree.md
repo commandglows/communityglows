@@ -1,10 +1,10 @@
-﻿---
+---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.2.3"
+artifact_version: "1.2.4"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-08-13"
+updated: "2026-09-29"
 status: reviewed
 source_skill: 300-sg-docs
 scope: function_tree
@@ -53,7 +53,7 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
   - Bootstrap Vue + Pinia + i18n + router + Notivue.
   - Enregistre `v-sg-tooltip`; ne charge plus PrimeVue dans le runtime Windows/Tauri.
   - Appelle `setupConvexAuth()` si `VITE_CONVEX_URL` est configurÃ©.
-  - Monte `App.vue`.
+  - Monte `App.vue` avant la restauration auth; le choix explicite de langue déclenche ensuite le bootstrap de session existant.
 - `src/ui/setup/index.ts`
   - EntrÃ©e page setup de l'extension.
   - Route par dÃ©faut vers `/setup/install`.
@@ -82,6 +82,10 @@ Vue fonctionnelle du cÅ“ur de CommunityGlows sans lire tout le projet.
 ## App Lifecycle (CommunityGlows)
 
 - `src/ui/setup/pages/CommunityGlows/main.ts`
+- `src/stores/onboarding.ts` + `components/OnboardingFlow.vue`
+  - Reprennent langue/welcome/profil/réseaux/features puis le LoginView et BillingAccessPanel existants; acquittement local versionné, préférences non modifiées conservées.
+- `src/ui/setup/pages/CommunityGlows/appAccessSurface.ts`
+  - Ordonne langue, verrouillage, parcours, identité hydratée et droits; même frontière pour le shell et le préchargement natif, avec Kanban local isolé.
 - `src/ui/setup/pages/CommunityGlows/App.vue`
   - GÃ¨re onboarding, thÃ¨mes, synchronisation cloud, nudge, Ã©vÃ©nements Tauri.
 - `src/ui/setup/pages/CommunityGlows/components/DesktopWorkspace.vue`

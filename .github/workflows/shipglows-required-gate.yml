@@ -89,7 +89,7 @@ jobs:
       - name: Report no impact for app
         if: steps.impact.outputs['app'] == 'false'
         shell: bash
-        run: echo "No app impact; lane intentionally skipped." 
+        run: echo "No app impact; lane intentionally skipped."
 
       - name: Set up Node for site
         if: steps.impact.outputs['site'] == 'true'

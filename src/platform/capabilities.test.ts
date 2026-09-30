@@ -93,7 +93,10 @@ describe("platform capabilities", () => {
   })
 
   it("detects tauri when __TAURI_INTERNALS__ is present on window", () => {
-    ;(globalThis as { window?: Record<string, unknown> }).window = { __TAURI_INTERNALS__: {} }
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: { __TAURI_INTERNALS__: {} },
+    })
     expect(isTauri()).toBe(true)
     expect(isAndroidTauri()).toBe(false)
     expect(isDesktopTauri()).toBe(true)
@@ -102,7 +105,10 @@ describe("platform capabilities", () => {
 
   it("distinguishes Android Tauri from desktop Tauri", () => {
     setUserAgent("Mozilla/5.0 Android 14")
-    ;(globalThis as { window?: Record<string, unknown> }).window = { __TAURI_INTERNALS__: {} }
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: { __TAURI_INTERNALS__: {} },
+    })
 
     expect(isAndroidTauri()).toBe(true)
     expect(isDesktopTauri()).toBe(false)

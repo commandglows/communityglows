@@ -5,9 +5,9 @@
   "identifier": "com.communityglows.desktop",
   "build": {
     "frontendDist": "../dist/tauri",
-    "devUrl": "http://localhost:1420",
-    "beforeDevCommand": "pnpm tauri:dev",
-    "beforeBuildCommand": "pnpm tauri:build"
+    "devUrl": "http://127.0.0.1:3006",
+    "beforeDevCommand": "corepack pnpm run tauri:dev",
+    "beforeBuildCommand": "corepack pnpm run tauri:build"
   },
   "app": {
     "windows": [
@@ -65,6 +65,13 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "windows": {
+      "nsis": { "installerHooks": "windows/onboarding-hooks.nsh" },
+      "wix": {
+        "fragmentPaths": ["windows/onboarding.wxs"],
+        "componentRefs": ["OnboardingInstallationWitness"]
+      }
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

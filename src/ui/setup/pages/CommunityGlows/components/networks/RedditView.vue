@@ -94,6 +94,7 @@
         />
         <h3>{{ $t('reddit.connect_title') }}</h3>
         <p>{{ $t('reddit.connect_message') }}</p>
+        <p class="connect-privacy">{{ $t('network_connection.profile_isolation') }}</p>
         <Button
           icon="pi pi-reddit"
           :label="$t('reddit.connect_button')"
@@ -167,6 +168,11 @@ const connectReddit = () => {
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
   color: var(--sg-color-text-muted);
+}
+
+.connect-prompt .connect-privacy {
+  margin-top: calc(var(--sg-space-1rem) * -1);
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .reddit-content {

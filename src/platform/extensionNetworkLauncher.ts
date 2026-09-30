@@ -155,12 +155,20 @@ export async function launchManagedNetwork(
 }
 
 export async function openExtensionDashboard(
-  route = "/setup/CommunityGlows",
+  route = "",
 ): Promise<ExtensionLaunchResult> {
-  const runtimeUrl = extensionUrl(`src/ui/setup/index.html#${route}`)
+  const runtimeUrl = route
+    ? extensionUrl(`src/ui/setup/index.html#${route}`)
+    : extensionUrl("src/ui/setup/pages/CommunityGlows/extension-dashboard.html")
   if (!runtimeUrl) {
     return { ok: false, code: "runtime_url_unavailable" }
   }
+  return openInNewTab(runtimeUrl)
+}
+
+export async function openExtensionOptions(): Promise<ExtensionLaunchResult> {
+  const runtimeUrl = extensionUrl("src/ui/options-page/index.html")
+  if (!runtimeUrl) return { ok: false, code: "runtime_url_unavailable" }
   return openInNewTab(runtimeUrl)
 }
 
@@ -171,7 +179,10 @@ export async function openExtensionSidePanel(): Promise<ExtensionLaunchResult> {
 
   try {
     const windowId = await currentExtensionWindowId()
-    await openSidePanelApi(windowId)
+    const state = hasManagedNetworkTabs()
+      ? await managedNetworkCommand({ action: "home", windowId })
+      : undefined
+    await openSidePanelApi(state?.homeWindowId ?? windowId)
     return { ok: true }
   } catch {
     return { ok: false, code: "side_panel_failed" }

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { communityGlowsInstallationStorageKey } from '@/lib/communityGlowsInstallation'
 import {
   collectPortableLocalStorage,
   PORTABLE_LOCAL_STORAGE_KEYS,
@@ -6,6 +7,18 @@ import {
 } from './backupData'
 
 describe('portable backup data', () => {
+  it('round-trips guest contact associations, column names and local choice together', () => {
+    const values = new Map([
+      ['communityglows.guest-kanban-contacts.v1', '[{"id":"contact-a","name":"Alex"}]'],
+      ['communityglows.guest-tasks.v1', '[{"id":"card-a","contactIds":["contact-a"]}]'],
+      ['communityglows.guest-task-labels.v1', '{"todo":"À relancer"}'],
+      ['communityglows-prefer-local-kanban', '1'],
+    ])
+    const snapshot = collectPortableLocalStorage({ getItem: key => values.get(key) ?? null })
+    const restored = new Map<string, string>()
+    restorePortableLocalStorage(snapshot, { setItem: (key, value) => { restored.set(key, value) }, removeItem: key => { restored.delete(key) } })
+    expect(restored).toEqual(values)
+  })
   it('captures every declared portable preference, including empty values', () => {
     const getItem = vi.fn((key: string) => key === 'communityglows_keyboard_shortcuts' ? '[]' : null)
 
@@ -38,6 +51,17 @@ describe('portable backup data', () => {
     restorePortableLocalStorage({ theme: 'dark' }, { setItem, removeItem })
 
     expect(setItem).toHaveBeenCalledTimes(1)
+    expect(removeItem).not.toHaveBeenCalled()
+  })
+
+  it('never exports or imports installation scope, local completion, auth or billing identities', () => {
+    const privateKeys = ['onboarding', 'communityglows_onboarding_installation_v1', communityGlowsInstallationStorageKey, 'convexAuthToken']
+    const snapshot = collectPortableLocalStorage({ getItem: key => privateKeys.includes(key) ? 'must-stay-local' : null })
+    privateKeys.forEach(key => expect(snapshot).not.toHaveProperty(key))
+    const setItem = vi.fn()
+    const removeItem = vi.fn()
+    restorePortableLocalStorage(Object.fromEntries(privateKeys.map(key => [key, 'foreign-installation'])), { setItem, removeItem })
+    expect(setItem).not.toHaveBeenCalled()
     expect(removeItem).not.toHaveBeenCalled()
   })
 })

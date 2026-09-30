@@ -51,9 +51,11 @@ export async function applyUiScaleLevel(level: number) {
     const { getCurrentWebview } = await import('@tauri-apps/api/webview')
     await getCurrentWebview().setZoom(normalized / 100)
     document.documentElement.style.removeProperty('zoom')
+    document.documentElement.style.removeProperty('--sg-ui-css-scale')
     return normalized
   }
 
   document.documentElement.style.zoom = String(normalized / 100)
+  document.documentElement.style.setProperty('--sg-ui-css-scale', String(normalized / 100))
   return normalized
 }

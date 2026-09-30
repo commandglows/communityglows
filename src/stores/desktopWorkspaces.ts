@@ -25,6 +25,12 @@ export type DesktopWorkspaceSyncResult = {
   cloud: WorkspacePersistenceResult
 }
 
+export type DesktopSceneCommand = {
+  revision: number
+  action: 'create' | 'load' | 'edit' | 'delete'
+  sceneId?: string
+}
+
 function serializeForCloud(
   state: DesktopWorkspaceState,
 ):
@@ -44,9 +50,20 @@ export const useDesktopWorkspacesStore = defineStore('desktopWorkspaces', {
   state: () => ({
     workspaceState: emptyDesktopWorkspaceState(),
     initialized: false,
+    sceneCommand: null as DesktopSceneCommand | null,
+    sceneCommandRevision: 0,
   }),
 
   actions: {
+    requestSceneCommand(action: DesktopSceneCommand['action'], sceneId?: string) {
+      this.sceneCommandRevision += 1
+      this.sceneCommand = {
+        revision: this.sceneCommandRevision,
+        action,
+        sceneId,
+      }
+    },
+
     initialize(catalog: WorkspaceNetworkCatalog, legacyProfileId = '') {
       if (this.initialized) return
       this.workspaceState = loadDesktopWorkspaceState(

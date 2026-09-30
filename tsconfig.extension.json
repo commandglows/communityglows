@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
+  },
+  "include": [
+    "src/types/**/*.d.ts",
+    "src/background/index.ts",
+    "src/ui/action-popup/index.ts",
+    "src/ui/options-page/index.ts",
+    "src/ui/side-panel/index.ts",
+    "src/ui/setup/index.ts",
+    "src/ui/setup/pages/tasks.vue"
+  ],
+  "exclude": ["**/*.test.ts"]
+}

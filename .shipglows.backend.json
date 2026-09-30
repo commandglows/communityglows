@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "shipglows.backend.v1",
+  "provider": "convex",
+  "mode": "remote",
+  "reason": null,
+  "command": null,
+  "dependencies": [
+    ".env.example",
+    "package.json",
+    "src/lib/convex.ts"
+  ],
+  "readiness": {
+    "url": "https://dependable-coyote-77.eu-west-1.convex.cloud/",
+    "statusCode": 200,
+    "timeoutSeconds": 15
+  }
+}

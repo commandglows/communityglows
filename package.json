@@ -21,7 +21,7 @@
     "vue-router": "^5.3.0",
     "webextension-polyfill": "^0.12.0"
   },
-  "description": "Un projet Vue 3 + Vite pour la construction d'extensions Chrome",
+  "description": "A unified social workspace for opening and managing your networks from the browser.",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.7.1",
     "@edge-runtime/vm": "^5.0.0",
@@ -50,6 +50,7 @@
     "eslint": "^10.9.1",
     "eslint-plugin-vue": "^10.10.0",
     "globals": "^17.11.0",
+    "playwright": "1.63.0",
     "postcss": "8.5.26",
     "prettier": "^3.9.6",
     "sass": "^1.103.1",
@@ -70,25 +71,25 @@
     "vue-tsc": "^3.3.11",
     "web-ext": "^10.6.0"
   },
-  "displayName": "Vite Vue 3 Chrome Extension",
+  "displayName": "CommunityGlows",
   "engines": {
     "node": ">=24.0.0 <25"
   },
   "license": "UNLICENSED",
-  "name": "vite-vue3-browser-extension-v3",
+  "name": "communityglows",
   "overrides": {
     "@crxjs/vite-plugin": "$@crxjs/vite-plugin"
   },
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/mubaidr/vite-vue3-browser-extension-v3"
+    "url": "https://github.com/commandglows/communityglows"
   },
   "scripts": {
     "tauri:info": "pnpm exec tauri info",
-    "tauri:dev": "vite -c vite.tauri.config.ts",
+    "tauri:dev": "doppler run -- vite -c vite.tauri.config.ts",
     "tauri:build": "vite build -c vite.tauri.config.ts",
-    "tauri:bundle": "pnpm exec tauri build",
+    "tauri:bundle": "corepack pnpm exec tauri build",
     "tauri:android:init": "pnpm exec tauri android init",
     "tauri:android:dev": "pnpm exec tauri android dev",
     "tauri:android:build": "pnpm exec tauri android build",
@@ -101,8 +102,8 @@
     "build:chrome": "cross-env NODE_ENV=production vite build -c vite.chrome.config.ts",
     "build:firefox": "cross-env NODE_ENV=production vite build -c vite.firefox.config.ts",
     "dev": "concurrently \"pnpm run dev:chrome\" \"pnpm run dev:firefox\"",
-    "dev:chrome": "cross-env NODE_ENV=development vite -c vite.chrome.config.ts",
-    "dev:firefox": "cross-env NODE_ENV=development vite build --mode development --watch -c vite.firefox.config.ts",
+    "dev:chrome": "doppler run -- cross-env NODE_ENV=development vite -c vite.chrome.config.ts",
+    "dev:firefox": "doppler run -- cross-env NODE_ENV=development vite build --mode development --watch -c vite.firefox.config.ts",
     "format": "prettier --write .",
     "launch": "tsx scripts/launch.ts",
     "launch:all": "tsx scripts/launch.ts --all",
@@ -119,7 +120,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.core.json",
     "typecheck:core": "tsc --noEmit -p tsconfig.typecheck.core.json",
     "typecheck:full": "vue-tsc --noEmit -p tsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck:extension": "vue-tsc --noEmit -p tsconfig.extension.json",
+    "test:extension": "node scripts/verifyChromeExtension.mjs"
   },
   "type": "module",
   "version": "0.0.1",
@@ -131,7 +134,7 @@
       "browserslist": "4.28.8",
       "shell-quote": "1.9.0",
       "immutable": "5.1.8",
-      "fast-uri": "3.1.5",
+      "fast-uri": "3.1.6",
       "undici": "7.29.0",
       "postcss": "8.5.26"
     }

@@ -54,6 +54,20 @@ beforeEach(() => {
 })
 
 describe('desktop workspace sync store', () => {
+  it('emits repeatable scene commands for the mounted Bento workspace', () => {
+    const store = useDesktopWorkspacesStore()
+
+    store.requestSceneCommand('load', 'scene-1')
+    const firstRevision = store.sceneCommand?.revision
+    store.requestSceneCommand('load', 'scene-1')
+
+    expect(store.sceneCommand).toEqual({
+      revision: (firstRevision ?? 0) + 1,
+      action: 'load',
+      sceneId: 'scene-1',
+    })
+  })
+
   it('persists locally before queuing the cloud snapshot', () => {
     const store = useDesktopWorkspacesStore()
     const state = emptyDesktopWorkspaceState()

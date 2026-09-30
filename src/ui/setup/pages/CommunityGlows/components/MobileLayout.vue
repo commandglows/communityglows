@@ -54,7 +54,6 @@
         <span class="quick-action-label">{{ $t('common.notifications') }}</span>
         <SgIcon icon="pi pi-chevron-right quick-action-arrow" />
       </button>
-
     </div>
 
     <!-- Notifications panel -->
@@ -78,9 +77,16 @@
     </div>
 
     <!-- Scrollable network grid -->
+    <MobileNetworkContextMenu :editing="networkEditMode"
+      @edit="networkEditMode = !networkEditMode"
+      @expand="collapsedNetworkGroups.clear()"
+      @collapse="collapsedNetworkGroups = new Set(networkGroups.map(group => group.id))"
+      @open="suppressNextNetworkClick = $event">
     <div class="mobile-home-scroll">
+      <router-view v-if="route.path === '/local-kanban'" />
       <!-- Network grid -->
       <div
+        v-else
         class="networks-section"
         @click.self="exitEditMode"
       >
@@ -96,72 +102,90 @@
             {{ $t('networks.finish_editing') }}
           </button>
         </div>
-        <div class="network-grid">
-          <button
-            v-for="item in visibleMenuItems"
-            :key="item.id"
-            class="network-tile"
-            :class="{ active: isNetworkActive(item), 'edit-mode': networkEditMode }"
-            :style="{ background: tileBg(item) }"
-            @click="onNetworkTileClick(item)"
-            @touchstart="startLongPress(item)"
-            @touchend="cancelLongPress"
-            @touchcancel="cancelLongPress"
-            @touchmove="cancelLongPress"
-            @contextmenu.prevent
+        <section
+          v-for="group in networkGroups"
+          :key="group.id"
+          class="network-group"
+        >
+          <NetworkGroupHeader
+            :label="$t(group.labelKey)"
+            :icon="group.icon"
+            :selection="networkGroupSelection(group.items.map(networkIdFromItem), selectedNetworkIds)"
+            :count="group.items.filter(item => !isNetworkHiddenForProfile(item)).length"
+            :total="group.items.length"
+            :selecting="networkEditMode && group.id !== 'other'"
+            :expanded="!collapsedNetworkGroups.has(group.id)"
+            @toggle="toggleGroup(group.id, group.items)"
+            @collapse="toggleGroupExpanded(group.id)"
+          />
+          <div
+            v-if="!collapsedNetworkGroups.has(group.id)"
+            class="network-grid"
           >
-            <span
-              class="network-icon-wrap"
-              :style="{ background: getNetworkColor(item) ?? `var(--sg-color-surface-hover)` }"
+            <button
+              v-for="item in group.items"
+              :key="item.id"
+              class="network-tile"
+              :class="{ active: isNetworkActive(item), 'edit-mode': networkEditMode }"
+              :style="{ background: tileBg(item) }"
+              @click="onNetworkTileClick(item)"
             >
-              <ThreadsIcon
-                v-if="item.route === '/threads'"
-                class="social-brand-icon"
-                size="var(--sg-font-size-1d25rem)"
-                :color="'var(--sg-color-text-on-action)'"
-              />
-              <SnapchatIcon
-                v-else-if="item.route === '/snapchat'"
-                class="social-brand-icon"
-                size="var(--sg-font-size-1d25rem)"
-                :color="'var(--sg-color-text-on-action)'"
-              />
-              <NextdoorIcon
-                v-else-if="item.route === '/nextdoor'"
-                class="social-brand-icon"
-                size="var(--sg-font-size-1d25rem)"
-                :color="'var(--sg-color-text-on-action)'"
-              />
-              <QuoraIcon
-                v-else-if="item.route === '/quora'"
-                class="social-brand-icon"
-                size="var(--sg-font-size-1d25rem)"
-                :color="'var(--sg-color-text-on-action)'"
-              />
-              <SgIcon
-                v-else
-                :icon="item.icon"
-              />
-            </span>
-            <span class="network-name">{{ item.label }}</span>
-            <span
-              v-if="networkEditMode && !item.route.startsWith('/custom-')"
-              class="network-toggle"
-              :class="{ hidden: isNetworkHiddenForProfile(item) }"
-            >
-              <span class="network-toggle-thumb" />
-            </span>
-            <span
-              v-if="networkEditMode && item.route.startsWith('/custom-')"
-              class="custom-delete-badge"
-            >
-              <SgIcon icon="pi pi-times" />
-            </span>
-          </button>
-
+              <span
+                class="network-icon-wrap"
+                :style="{ background: getNetworkColor(item) ?? `var(--sg-color-surface-hover)` }"
+              >
+                <ThreadsIcon
+                  v-if="item.route === '/threads'"
+                  class="social-brand-icon"
+                  size="var(--sg-font-size-1d25rem)"
+                  :color="'var(--sg-color-text-on-action)'"
+                />
+                <SnapchatIcon
+                  v-else-if="item.route === '/snapchat'"
+                  class="social-brand-icon"
+                  size="var(--sg-font-size-1d25rem)"
+                  :color="'var(--sg-color-text-on-action)'"
+                />
+                <NextdoorIcon
+                  v-else-if="item.route === '/nextdoor'"
+                  class="social-brand-icon"
+                  size="var(--sg-font-size-1d25rem)"
+                  :color="'var(--sg-color-text-on-action)'"
+                />
+                <QuoraIcon
+                  v-else-if="item.route === '/quora'"
+                  class="social-brand-icon"
+                  size="var(--sg-font-size-1d25rem)"
+                  :color="'var(--sg-color-text-on-action)'"
+                />
+                <SgIcon
+                  v-else
+                  :icon="item.icon"
+                />
+              </span>
+              <span class="network-name">{{ item.label }}</span>
+              <span
+                v-if="networkEditMode && !item.route.startsWith('/custom-')"
+                class="network-toggle"
+                :class="{ hidden: isNetworkHiddenForProfile(item) }"
+              >
+                <span class="network-toggle-thumb" />
+              </span>
+              <span
+                v-if="networkEditMode && item.route.startsWith('/custom-')"
+                class="custom-delete-badge"
+              >
+                <SgIcon icon="pi pi-times" />
+              </span>
+            </button>
+          </div>
+        </section>
+        <div
+          v-if="networkEditMode"
+          class="network-grid"
+        >
           <!-- Add custom link tile (only in edit mode) -->
           <button
-            v-if="networkEditMode"
             class="network-tile add-custom-tile edit-mode"
             @click="showAddLinkForm = true"
           >
@@ -219,6 +243,7 @@
         </div>
       </div>
     </div><!-- /.mobile-home-scroll -->
+    </MobileNetworkContextMenu>
 
     <!-- Profile switcher bar (sticky bottom) -->
     <div
@@ -273,6 +298,7 @@
 </template>
 
 <script setup lang="ts">
+import MobileNetworkContextMenu from './MobileNetworkContextMenu.vue'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWebviewStore } from '@/stores/webviewState'
@@ -281,6 +307,8 @@ import { useCustomLinksStore } from '@/stores/customLinks'
 import { builtInSocialNetworks } from '@/config/socialNetworks'
 import type { MenuItem } from '../types'
 import NetworkWebviewHost from './NetworkWebviewHost.vue'
+import NetworkGroupHeader from './NetworkGroupHeader.vue'
+import { groupNetworks, networkGroupSelection } from '@/config/socialNetworkGroups'
 import MobileProfileSheet from './MobileProfileSheet.vue'
 import MobileSettingsSheet from './MobileSettingsSheet.vue'
 import SignupNudge from './SignupNudge.vue'
@@ -331,35 +359,16 @@ const notificationCount = ref(3)
 
 // ─── Network edit mode (long press to show/hide networks) ────
 const networkEditMode = ref(false)
-let longPressTimer: ReturnType<typeof setTimeout> | null = null
-let suppressNextNetworkClick = false
-
-function startLongPress(_item: MenuItem) {
-  cancelLongPress()
-  suppressNextNetworkClick = false
-  longPressTimer = setTimeout(() => {
-    networkEditMode.value = true
-    suppressNextNetworkClick = true
-    longPressTimer = null
-  }, 500)
-}
-
-function cancelLongPress() {
-  if (longPressTimer) {
-    clearTimeout(longPressTimer)
-    longPressTimer = null
-  }
-}
+const suppressNextNetworkClick = ref(false)
 
 function exitEditMode() {
-  cancelLongPress()
-  suppressNextNetworkClick = false
+  suppressNextNetworkClick.value = false
   networkEditMode.value = false
 }
 
 function onNetworkTileClick(item: MenuItem) {
-  if (suppressNextNetworkClick) {
-    suppressNextNetworkClick = false
+  if (suppressNextNetworkClick.value) {
+    suppressNextNetworkClick.value = false
     return
   }
   if (networkEditMode.value) {
@@ -404,6 +413,28 @@ const visibleMenuItems = computed(() => {
   return allMenuItems.value.filter(item => !profilesStore.isNetworkHidden(profileId, networkIdFromItem(item)))
 })
 
+const networkGroups = computed(() => groupNetworks(visibleMenuItems.value, networkIdFromItem))
+const collapsedNetworkGroups = ref(new Set<string>())
+const selectedNetworkIds = computed(() => allMenuItems.value
+  .filter(item => !isNetworkHiddenForProfile(item))
+  .map(networkIdFromItem))
+function toggleGroupExpanded(id: string) {
+  if (collapsedNetworkGroups.value.has(id)) collapsedNetworkGroups.value.delete(id)
+  else collapsedNetworkGroups.value.add(id)
+}
+function toggleGroup(id: string, items: MenuItem[]) {
+  if (!networkEditMode.value || id === 'other') {
+    toggleGroupExpanded(id)
+    return
+  }
+  const profileId = profilesStore.activeProfileId
+  if (!profileId) return
+  const builtinIds = new Set(builtInSocialNetworks.map(network => network.id))
+  const ids = items.map(networkIdFromItem).filter(networkId => builtinIds.has(networkId))
+  const hidden = networkGroupSelection(ids, selectedNetworkIds.value) === 'all'
+  profilesStore.setNetworksHidden(profileId, ids, hidden)
+}
+
 // ─── Custom links ────────────────────────────────────────────
 const showAddLinkForm = ref(false)
 const newLinkLabel = ref('')
@@ -442,7 +473,7 @@ const builtinMenuItems = computed<MenuItem[]>(() =>
 // ─── Network list ─────────────────────────────────────────────
 const menuItems = computed<MenuItem[]>(() => [
   ...builtinMenuItems.value,
-  { id: builtinMenuItems.value.length + 1, label: 'Tâches', icon: 'pi pi-check-square', route: '/tasks' },
+  { id: builtinMenuItems.value.length + 1, label: 'Kanban', icon: 'pi pi-check-square', route: '/tasks' },
 ])
 
 const networkColors: Record<string, string> = builtInSocialNetworks.reduce((acc, network) => {
@@ -903,6 +934,10 @@ const navigateToNetwork = (network: MenuItem) => {
 .network-edit-complete:focus-visible {
   outline: var(--sg-focus-ring);
   outline-offset: var(--sg-focus-offset);
+}
+
+.network-group {
+  margin-bottom: var(--sg-space-3);
 }
 
 .network-grid {

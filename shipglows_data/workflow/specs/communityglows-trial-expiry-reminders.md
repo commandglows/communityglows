@@ -4,7 +4,7 @@ metadata_schema_version: "1.0"
 artifact_version: "1.0.0"
 project: communityglows
 created: "2026-08-22"
-updated: "2026-08-22"
+updated: "2026-09-29"
 status: ready
 source_skill: sg-development
 scope: trial-lifecycle-ux
@@ -28,6 +28,7 @@ supersedes: []
 evidence:
   - "The suite entitlement snapshot already exposes trusted trialStartedAt and trialEndsAt timestamps."
   - "The shared billing panel is rendered by desktop and mobile settings."
+  - "Operator confirmed on 2026-09-29 that the current lifetime offer is €149 incl. VAT, paid once."
 next_step: "Run the deferred focused tests, typecheck, token drift scan, and rendered desktop/mobile reminder smoke."
 ---
 
@@ -49,7 +50,7 @@ Surface one high-impact conversion reminder during the J-7, J-3 and J-1 windows 
 - Increase message intensity from J-7 to J-3 to J-1 while keeping the same factual product boundary.
 - Show only evidenced benefits: unified network workspace, organized profiles with separated sessions, and faster cross-network navigation.
 - State explicitly that user data remains safe; never imply deletion, irreversible loss, fake scarcity, or automatic billing.
-- Offer the existing authenticated Stripe purchase path at the confirmed one-time price of €79 with no subscription.
+- Offer the existing authenticated purchase path at the current €149 incl. VAT lifetime price with no subscription; preserve the app's availability state.
 - After expiry, recap the same evidenced value in the blocking gate while keeping data-safety, restart eligibility, export, support, purchase recovery and sign-out explicit.
 - Include a sincere founder note about the long-term care invested in CommunityGlows, framed as gratitude and continued product commitment rather than guilt or purchase pressure.
 
@@ -93,6 +94,7 @@ Deferred proof:
 |----------|-------|-------|--------|--------|-----------|
 | 2026-08-22 | sg-development | GPT-5 | Implemented milestone selection, cycle-scoped snooze, shared UI, translations and deferred tests under `#nolocal` | implemented — unverified | Run deferred proof contract |
 | 2026-08-22 | sg-marketing | GPT-5 | Reframed the reminder around evidenced workflow loss, the confirmed one-time offer, and ethical urgency | implemented — unverified | Validate copy and conversion hierarchy in rendered context |
+| 2026-09-29 | sg-experience | GPT-6 Codex | Aligned active trial-transition copy to the operator-confirmed €149 offer and calm decision language; retained historic run evidence | implemented — unverified | Inspect the rendered reminder and gate in French and English |
 | 2026-08-22 | sg-design | GPT-5 | Upgraded the reminder to a benefit-led conversion card using canonical tokens and the existing checkout action | implemented — unverified | Run token drift, accessibility and rendered responsive proof |
 | 2026-08-22 | sg-marketing | GPT-5 | Reframed the expired-access gate around recovered workflow value, the €79 lifetime offer and a sincere founder commitment without implying data loss | implemented — unverified | Validate tone and conversion comprehension with users |
 | 2026-08-22 | sg-design | GPT-5 | Structured the expired-access gate with a value recap, prominent lifetime action, visible restart option and preserved recovery paths | implemented — unverified | Run accessibility and rendered responsive proof |

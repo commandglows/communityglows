@@ -1,6 +1,10 @@
 <template>
   <div
+    ref="switcherElement"
     class="profile-switcher"
+    @pointerenter="openFromHover"
+    @pointerleave="scheduleHoverClose"
+    @keydown.esc.stop.prevent="closeMenu"
     :class="{
       'icons-only': iconsOnly,
       'menu-up': menuDirection === 'up',
@@ -55,13 +59,12 @@
     </button>
 
     <!-- Dropdown panel -->
-    <div
+    <SidebarDropdownPanel
       v-if="menuVisible"
       class="profile-menu"
       role="listbox"
       aria-label="Profiles"
     >
-      <div class="profile-menu-header">Profiles</div>
       <div
         v-for="profile in profilesStore.profiles"
         :key="profile.id"
@@ -112,7 +115,7 @@
           <span>Paramètres</span>
         </button>
       </div>
-    </div>
+    </SidebarDropdownPanel>
   </div>
 </template>
 
@@ -121,6 +124,7 @@ import { ref, watch, onMounted, onUnmounted, onBeforeUnmount } from "vue"
 import { COMMUNITYGLOWS_PROFILE_PICKED_EVENT } from "@/lib/communityGlowsDeepLinks"
 import { useProfilesStore } from "@/stores/profiles"
 import Avatar from "./ui/SgAvatar.vue"
+import SidebarDropdownPanel from './SidebarDropdownPanel.vue'
 
 const emit = defineEmits<{
   "manage-profiles": []
@@ -140,12 +144,38 @@ defineProps<{
 const profilesStore = useProfilesStore()
 
 const menuVisible = ref(false)
+const menuPinned = ref(false)
+const switcherElement = ref<HTMLElement | null>(null)
+let hoverCloseTimer: ReturnType<typeof setTimeout> | undefined
+
+function cancelHoverClose() {
+  clearTimeout(hoverCloseTimer)
+  hoverCloseTimer = undefined
+}
+
+function openFromHover(event: PointerEvent) {
+  if (event.pointerType !== 'mouse') return
+  cancelHoverClose()
+  menuVisible.value = true
+}
+
+function scheduleHoverClose(event: PointerEvent) {
+  if (event.pointerType !== 'mouse') return
+  cancelHoverClose()
+  hoverCloseTimer = setTimeout(() => {
+    if (!menuPinned.value && !switcherElement.value?.contains(document.activeElement)) closeMenu()
+  }, 120)
+}
 
 function toggleMenu() {
-  menuVisible.value = !menuVisible.value
+  cancelHoverClose()
+  menuPinned.value = !menuPinned.value
+  menuVisible.value = menuPinned.value
 }
 
 function closeMenu() {
+  cancelHoverClose()
+  menuPinned.value = false
   if (!menuVisible.value) return
   menuVisible.value = false
 }
@@ -186,11 +216,11 @@ function openSettings() {
 function handleOutsideClick(e: MouseEvent) {
   const target = e.target
   if (!(target instanceof Element)) return
-  const el = target.closest(".profile-switcher")
-  if (!el) closeMenu()
+  if (!switcherElement.value?.contains(target)) closeMenu()
 }
 
 function openProfileMenu() {
+  menuPinned.value = true
   menuVisible.value = true
 }
 
@@ -322,29 +352,14 @@ onUnmounted(() => {
   right: var(--sg-space-0d75rem);
 }
 
-.chevron {
+.profile-chevron {
   font-size: var(--sg-font-size-0d7rem);
   transition: var(--sg-motion-transform-0d2s);
   color: var(--sg-color-text-muted);
 }
 
-.chevron.rotated {
+.profile-chevron.rotated {
   transform: rotate(180deg);
-}
-
-/* Dropdown */
-.profile-menu {
-  position: absolute;
-  top: var(--sg-position-calc-100pct-4px);
-  left: var(--sg-position-0d5rem);
-  right: var(--sg-position-0d5rem);
-  background: var(--sg-color-surface-raised);
-  border: 1px solid var(--sg-color-border);
-  border-radius: var(--sg-radius-10px);
-  box-shadow: var(--sg-shadow-modal);
-  z-index: var(--sg-layer-modal);
-  overflow: hidden;
-  backdrop-filter: none;
 }
 
 .profile-option,
@@ -381,7 +396,7 @@ onUnmounted(() => {
 }
 
 .profile-option--active {
-  background-color: color-mix(in srgb, var(--sg-color-action) 10%, transparent);
+  background-color: var(--sg-sidebar-option-selected);
 }
 
 .profile-option--active .profile-option-name {

@@ -1,0 +1,54 @@
+module.exports = async (page) => {
+  const origin = 'http://127.0.0.1:3006';
+  const source = await (await page.request.get(origin + '/components/DesktopWorkspace.vue')).text();
+  const dep = name => source.match(new RegExp('"([^"\\n]*/' + name + '\\.js\\?[^"\\n]+)"'))[1];
+  const context = await page.context().browser().newContext({ viewport: { width: 1280, height: 900 } });
+  const fixture = await context.newPage();
+  const errors = [];
+  fixture.on('pageerror', e => errors.push(e.message));
+  const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/assets/generated/tokens.css"><style>body{margin:0;color:var(--sg-color-text);background:var(--sg-color-surface-raised);font-family:sans-serif}#app{height:900px}.fixture{display:flex;height:100%}.sidebar{width:290px;flex-shrink:0}.dock{flex:1;min-width:0}</style></head><body><div id="app"></div><script type="module">
+  import '/@fs/C:/Users/Diane/ShipGlows/communityglows/node_modules/dockview-vue/dist/styles/dockview.css';
+  import { createApp, h, ref, markRaw } from '${dep('vue')}';
+  import { createI18n } from '${dep('vue-i18n')}';
+  import { DockviewVue, themeLight } from '${dep('dockview-vue')}';
+  import Sidebar from '/components/BentoSidebarTabs.vue';
+  import { snapshotBentoSidebar, applyBentoSidebarCommand } from '/components/bentoSidebarBridge.ts';
+  const messages={sidebarTabs:{title:'Onglets ouverts',empty:'Aucun onglet ouvert',name:'Nom du groupe',save:'Enregistrer',cancel:'Annuler',ungrouped:'Sans groupe',actions:'Actions pour {name}',up:'Monter',down:'Descendre',rename:'Renommer',dissolve:'Dissoudre le groupe',create:'Nouveau groupe',ungroup:'Sortir du groupe',moveTo:'Déplacer vers {name}'}};
+  const snapshot=ref(null);let api; const refresh=()=>snapshot.value=snapshotBentoSidebar(api,'fixture','scene');
+  const command=c=>{ const result=applyBentoSidebarCommand(api,'fixture',c);refresh();return result };
+  const app=createApp({setup(){const components={fixture:markRaw({render:()=>h('p','Synthetic content')})};return()=>h('div',{class:'fixture'},[h('div',{class:'sidebar'},snapshot.value?h(Sidebar,{snapshot:snapshot.value,onCommand:command}):null),h(DockviewVue,{class:'dock',components,theme:themeLight,onReady:event=>{api=event.api; for(const id of ['a','b','c'])api.addPanel({id,component:'fixture',title:'Tab '+id,...(api.activePanel?{position:{referencePanel:api.activePanel,direction:'within'}}:{})});const pane=api.activePanel.group.id; const g=api.createTabGroup({groupId:pane,label:'Research'});api.addPanelToTabGroup({groupId:pane,tabGroupId:g.id,panelId:'a'});api.addPanelToTabGroup({groupId:pane,tabGroupId:g.id,panelId:'b'});refresh();api.onDidLayoutChange(refresh);window.bentoFixture={api,command,refresh,snapshot};}})])}});app.use(createI18n({legacy:false,locale:'fr',messages:{fr:messages}}));app.mount('#app');
+  </script></body></html>`;
+  await context.route('**/__bento_fixture.html', route => route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:html}));
+  await fixture.goto(origin + '/__bento_fixture.html');
+  await fixture.waitForFunction(()=>window.bentoFixture?.api.panels.length===3);
+  const results=await fixture.evaluate(()=>{
+    const f=window.bentoFixture, api=f.api; const assert=(value,message)=>{if(!value)throw new Error(message)};
+    let s=f.snapshot.value, g=s.groups.find(g=>g.id); const base={profileId:'fixture',sceneId:'scene'};
+    f.command({...base,action:'move',panelId:'a',paneId:g.paneId,groupId:g.id});
+    assert(api.getTabGroups({groupId:g.paneId})[0].panelIds.join()==='b,a','same-group reorder');
+    f.command({...base,action:'move',panelId:'c',paneId:g.paneId,groupId:g.id,beforeId:'a'});
+    assert(api.getTabGroups({groupId:g.paneId})[0].panelIds.join()==='b,c,a','join before member');
+    const saved=api.toJSON();api.fromJSON(saved,{reuseExistingPanels:true});f.refresh();
+    assert(api.getTabGroups({groupId:g.paneId})[0].panelIds.join()==='b,c,a','serialized order roundtrip');
+    f.command({...base,action:'create',panelId:'c',name:'Personal'});
+    assert(api.getTabGroups({groupId:g.paneId}).length===2,'create personal');
+    f.command({...base,action:'reorder-group',paneId:g.paneId,groupId:g.id,index:1});
+    assert(f.snapshot.value.groups.filter(g=>g.id)[0].title==='Personal','group reordered');
+    const personal=f.snapshot.value.groups.find(g=>g.title==='Personal');
+    f.command({...base,action:'ungroup',panelId:'c'}); assert(api.panels.length===3,'last member ungroup preserves tabs');
+    f.command({...base,action:'dissolve',paneId:g.paneId,groupId:g.id}); assert(api.panels.length===3 && api.getTabGroups({groupId:g.paneId}).length===0,'dissolve preserves tabs');
+    f.command({...base,action:'create',panelId:'a',name:'Research'});
+    return {sameGroupReorder:true,join:true,roundtrip:true,create:true,groupReorder:true,lastMemberUngroup:true,dissolve:true};
+  });
+  await fixture.evaluate(()=>{ window.overlayEvents=[]; window.addEventListener('communityglows-webview-overlay-state',e=>window.overlayEvents.push(e.detail.active)); });
+  await fixture.getByRole('button',{name:'Actions pour Tab a',exact:true}).click();
+  await fixture.getByRole('menuitem',{name:'Nouveau groupe',exact:true}).click();
+  await fixture.getByRole('textbox',{name:'Nom du groupe',exact:true}).fill('Keyboard group');
+  await fixture.getByRole('textbox',{name:'Nom du groupe',exact:true}).press('Enter');
+  await fixture.getByRole('button',{name:'Keyboard group',exact:false}).first().waitFor();
+  results.keyboardCreate=true;
+  results.overlayEvents=await fixture.evaluate(()=>window.overlayEvents);
+  if(results.overlayEvents.join()!=='true,false') throw new Error('Overlay transition unbalanced: '+results.overlayEvents);
+  await fixture.screenshot({path:'C:/Users/Diane/ShipGlows/communityglows/.playwright-mcp/bento-sidebar-fixture.png',fullPage:true});
+  return {results,errors,url:fixture.url(),screenshot:'.playwright-mcp/bento-sidebar-fixture.png'};
+}

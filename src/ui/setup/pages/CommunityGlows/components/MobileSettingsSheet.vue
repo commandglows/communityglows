@@ -246,6 +246,12 @@
           >
             {{ autoThemeHint }}
           </p>
+          <ThemePalettePicker />
+          <div class="settings-toggle-row"><span class="settings-toggle-label"><SgIcon icon="pi pi-th-large" />{{ $t('sidebar.bento_display.title') }}</span></div>
+          <div class="settings-theme-mode-group settings-control-bar-position" role="group" :aria-label="$t('sidebar.bento_display.title')">
+            <button v-for="mode in (['grouped', 'tabs'] as const)" :key="mode" type="button" class="settings-theme-mode-btn" :class="{ active: sidebarPreferences.bentoDisplay === mode }" :aria-pressed="sidebarPreferences.bentoDisplay === mode" @click="sidebarPreferences.setBentoDisplay(mode)">{{ $t(`sidebar.bento_display.${mode}`) }}</button>
+          </div>
+          <p v-if="sidebarPreferences.saveError" role="alert">{{ $t('sidebar.organization.save_error') }}</p>
 
           <div class="settings-toggle-row">
             <span class="settings-toggle-label">
@@ -308,7 +314,7 @@
             </button>
           </div>
           <div class="settings-sound-variant-row">
-            <span class="settings-label settings-sound-variant-label">
+            <span class="settings-toggle-label settings-sound-variant-label">
               <SgIcon icon="pi pi-sliders-h" />
               {{ $t('settings.tap_sound_variant') }}
             </span>
@@ -394,76 +400,32 @@
       </div>
     </div>
 
-    <SgDialog
+    <AccountDeletionDialog
       v-model="accountDeletionOpen"
-      :title="$t('account.delete_title')"
-      :description="$t('account.delete_description')"
-      variant="settings"
-    >
-      <form
-        class="account-delete-dialog"
-        @submit.prevent="handleAccountDeletion"
-      >
-        <p class="account-delete-warning">{{ $t('account.delete_warning') }}</p>
-        <ul class="account-delete-list">
-          <li>{{ $t('account.delete_cloud_data') }}</li>
-          <li>{{ $t('account.delete_social_accounts_untouched') }}</li>
-          <li>{{ $t('account.delete_license_retention') }}</li>
-        </ul>
-        <label class="settings-label" for="account-delete-confirmation">
-          {{ $t('account.delete_confirmation_label', { email: settingsEmail }) }}
-        </label>
-        <input
-          id="account-delete-confirmation"
-          v-model="accountDeletionConfirmation"
-          type="email"
-          class="settings-input"
-          autocomplete="off"
-          autocapitalize="none"
-          spellcheck="false"
-          :placeholder="settingsEmail"
-          :disabled="accountDeletionLoading"
-          required
-        />
-        <p v-if="accountDeletionError" class="nudge-error" role="alert">
-          {{ accountDeletionError }}
-        </p>
-        <div class="account-delete-actions">
-          <button
-            type="button"
-            class="nudge-cta secondary-auth-btn"
-            :disabled="accountDeletionLoading"
-            @click="accountDeletionOpen = false"
-          >
-            {{ $t('common.cancel') }}
-          </button>
-          <button
-            type="submit"
-            class="account-delete-confirm"
-            :disabled="!canDeleteAccount || accountDeletionLoading"
-          >
-            <SgIcon
-              v-if="accountDeletionLoading"
-              icon="pi pi-spin pi-spinner"
-            />
-            {{ accountDeletionLoading ? $t('account.delete_loading') : $t('account.delete_confirm') }}
-          </button>
-        </div>
-      </form>
-    </SgDialog>
+      v-model:confirmation="accountDeletionConfirmation"
+      :email="settingsEmail"
+      :can-confirm="canDeleteAccount"
+      :loading="accountDeletionLoading"
+      :error="accountDeletionError"
+      @confirm="handleAccountDeletion"
+    />
   </SgSheet>
 </template>
 
 <script setup lang="ts">
+import { useSidebarPreferencesStore } from '@/stores/sidebarPreferences'
+const sidebarPreferences = useSidebarPreferencesStore()
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useThemeStore } from '@/stores/theme'
+import ThemePalettePicker from './ThemePalettePicker.vue'
 import { useDesktopControlBarStore, type DesktopControlBarPosition } from '@/stores/desktopControlBar'
 import { useOnboardingStore } from '@/stores/onboarding'
 import { useSignupNudge } from '@/composables/useSignupNudge'
 import { clearDeletedAccountAuthState, signIn, signOut as convexSignOut, isAuthenticated, isConvexConfigured } from '@/lib/convexAuth'
 import { finalizePasswordSignIn, resetCloudSyncState, resetSyncedLocalState } from '@/lib/cloudSync'
 import { syncSettingsPatch } from '@/lib/cloudSettings'
+import { awaitAccountDeletionConfirmation } from '@/lib/accountDeletionFeedback'
 import { beginPostAuthSyncFeedback, resetPostAuthSyncFeedback } from '@/lib/postAuthSyncFeedback'
 import { buildDiagnosticsReport, buildIdentityHeader } from '@/lib/buildDiagnostics'
 import { getConvexClient } from '@/lib/convex'
@@ -503,7 +465,7 @@ import BitwardenExtensionSettings from './BitwardenExtensionSettings.vue'
 import BillingAccessPanel from './BillingAccessPanel.vue'
 import KeyboardShortcuts from './KeyboardShortcuts.vue'
 import SgSheet from './ui/SgSheet.vue'
-import SgDialog from './ui/SgDialog.vue'
+import AccountDeletionDialog from './AccountDeletionDialog.vue'
 import type { ThemeMode } from '@/utils/themeAuto'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 
@@ -701,9 +663,9 @@ async function handleAccountDeletion() {
   accountDeletionLoading.value = true
   accountDeletionError.value = ''
   try {
-    await getConvexClient().action((api as any).accountDeletion.deleteMyAccount, {
+    await awaitAccountDeletionConfirmation(() => getConvexClient().action(api.accountDeletion.deleteMyAccount, {
       confirmation: accountDeletionConfirmation.value,
-    })
+    }))
     clearDeletedAccountAuthState()
     resetCloudSyncState()
     resetSyncedLocalState()
@@ -712,7 +674,6 @@ async function handleAccountDeletion() {
     signupPassword.value = ''
     accountDeletionOpen.value = false
     emit('update:modelValue', false)
-    push.success({ message: t('account.delete_success'), duration: 4000 })
   } catch (error) {
     const message = error instanceof Error ? error.message : ''
     accountDeletionError.value = /confirmation_mismatch/i.test(message)
@@ -939,7 +900,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--sg-space-0d55rem);
-  margin: var(--sg-space-neg-0d2rem-0-0d8rem);
+  padding-block: var(--sg-space-3);
+  margin-bottom: var(--sg-space-2);
 }
 
 .settings-sound-variant-label {
@@ -953,6 +915,8 @@ onUnmounted(() => {
 }
 
 .settings-sound-variant-btn {
+  min-width: 0;
+  overflow-wrap: anywhere;
   min-height: var(--sg-size-2d4rem);
   padding: var(--sg-space-0d55rem-0d6rem);
   border-radius: var(--sg-radius-12px);
@@ -1160,57 +1124,6 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-.account-delete-dialog {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sg-space-0d9rem);
-}
-
-.account-delete-warning {
-  margin: 0;
-  padding: var(--sg-space-0d7rem-0d8rem);
-  border: var(--sg-border-1px) solid var(--settings-danger-border);
-  border-radius: var(--sg-radius-12px);
-  background: var(--settings-danger-bg);
-  color: var(--settings-danger-color);
-  font-size: var(--sg-font-size-0d82rem);
-  font-weight: 700;
-  line-height: var(--sg-line-height-1d45);
-}
-
-.account-delete-list {
-  margin: 0;
-  padding-left: var(--sg-space-1d5rem);
-  color: var(--sg-color-text-muted);
-  font-size: var(--sg-font-size-0d82rem);
-  line-height: var(--sg-line-height-1d45);
-}
-
-.account-delete-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sg-space-0d65rem);
-}
-
-.account-delete-confirm {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sg-space-0d4rem);
-  padding: var(--sg-space-0d65rem-0d8rem);
-  border: var(--sg-border-1px) solid var(--settings-danger-border);
-  border-radius: var(--sg-radius-10px);
-  background: var(--settings-danger-bg);
-  color: var(--settings-danger-color);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.account-delete-confirm:disabled {
-  opacity: var(--sg-opacity-disabled);
-  cursor: not-allowed;
-}
-
 .settings-signup-form .nudge-cta:disabled {
   opacity: var(--sg-opacity-muted);
 }
@@ -1345,9 +1258,11 @@ onUnmounted(() => {
   color: var(--sg-color-text);
 }
 
-.settings-toggle-label i {
+.settings-toggle-label :deep(.sg-icon) {
   font-size: var(--sg-font-size-1rem);
-  width: var(--sg-size-2rem);
+  width: 1em;
+  height: 1em;
+  flex: 0 0 1em;
   text-align: center;
 }
 

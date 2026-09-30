@@ -28,3 +28,13 @@ body {
 }
 
 /* ... existing styles ... */
+[data-sidebar-arrived] {
+  outline: var(--sg-border-2px) solid var(--sg-color-action);
+  outline-offset: calc(-1 * var(--sg-border-2px));
+  border-radius: var(--sg-radius-sm);
+}
+
+[data-keyboard-node]:focus-visible {
+  outline: var(--sg-focus-ring);
+  outline-offset: calc(-1 * var(--sg-focus-offset));
+}

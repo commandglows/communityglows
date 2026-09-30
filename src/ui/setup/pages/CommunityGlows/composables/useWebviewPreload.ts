@@ -7,6 +7,9 @@ const isTauri = () =>
 
 /** Max networks to preload hidden at startup. */
 const PRELOAD_COUNT = 3
+// Native WebView creation requires positive bounds even for hidden pool entries.
+// This is an IPC geometry constraint, not a visible layout/token dimension.
+const MINIMUM_NATIVE_HOST_SIZE = 1
 
 /**
  * Preload the user's top N visible networks as hidden webviews.
@@ -17,8 +20,8 @@ const PRELOAD_COUNT = 3
  *
  * Call once after the app is mounted and the profile store is ready.
  */
-export async function preloadWebviews() {
-  if (!isTauri()) return
+export async function preloadWebviews(isAccessAllowed: () => boolean) {
+  if (!isTauri() || !isAccessAllowed()) return
   // Skip on Android: the Kotlin plugin manages the visible host pool itself.
   // Calling open_webview here would show the social overlay on startup.
   if (/android/i.test(navigator.userAgent)) return
@@ -39,7 +42,7 @@ export async function preloadWebviews() {
 
   await Promise.allSettled(
     toPreload.map((networkId) =>
-      invoke('open_webview', {
+      isAccessAllowed() ? invoke('open_webview', {
         url: WEBVIEW_URLS[networkId],
         profileId,
         networkId,
@@ -48,9 +51,9 @@ export async function preloadWebviews() {
         hidden: true,
         x: -10000,
         y: -10000,
-        width: 1,
-        height: 1,
-      }),
+        width: MINIMUM_NATIVE_HOST_SIZE,
+        height: MINIMUM_NATIVE_HOST_SIZE,
+      }) : Promise.resolve(),
     ),
   )
 }

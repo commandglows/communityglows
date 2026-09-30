@@ -1,4 +1,5 @@
 import { Orientation, type SerializedDockview } from 'dockview-vue'
+import { isNetworkInstanceId } from './networkInstance'
 
 export const DESKTOP_WORKSPACE_STATE_KEY =
   'communityglows.desktop-workspaces.v2'
@@ -17,6 +18,19 @@ export const MAX_DESKTOP_WORKSPACE_LAYOUT_NODES = 4_096
 export const MAX_DESKTOP_WORKSPACE_AUTOSAVE_CHARS = 500_000
 export const MAX_DESKTOP_WORKSPACE_STATE_CHARS = 2_000_000
 export const MAX_DESKTOP_WORKSPACE_SYNC_CHARS = 500_000
+export const DESKTOP_SCENE_ICONS = ['🎯', '📊', '💬', '🚀', '✨', '🧭'] as const
+export const DESKTOP_SCENE_COLORS = [
+  'accent',
+  'success',
+  'warning',
+  'danger',
+  'info',
+  'neutral',
+] as const
+export const DEFAULT_DESKTOP_SCENE_ICON = DESKTOP_SCENE_ICONS[0]
+export const DEFAULT_DESKTOP_SCENE_COLOR = DESKTOP_SCENE_COLORS[0]
+export type DesktopSceneIcon = (typeof DESKTOP_SCENE_ICONS)[number]
+export type DesktopSceneColor = (typeof DESKTOP_SCENE_COLORS)[number]
 
 export type WorkspaceNetworkTarget = {
   canonicalUrl: string
@@ -29,8 +43,28 @@ export type WorkspaceNetworkCatalog = ReadonlyMap<
 >
 
 export type NetworkWorkspacePanelParams = {
+  type?: 'network'
   networkId: string
+  instanceId?: string
   url: string
+  bentoPinned?: boolean
+}
+
+export type TasksWorkspacePanelParams = {
+  type: 'tasks'
+  bentoPinned?: boolean
+}
+
+export type DesktopWorkspacePanelParams =
+  | NetworkWorkspacePanelParams
+  | TasksWorkspacePanelParams
+
+export function desktopWorkspacePanelId(
+  params: DesktopWorkspacePanelParams,
+): string {
+  return params.type === 'tasks'
+    ? 'tasks'
+    : `network:${encodeURIComponent(params.networkId)}${params.instanceId ? `:instance:${params.instanceId}` : ''}`
 }
 
 export const DESKTOP_WORKSPACE_PRESETS = [
@@ -50,6 +84,8 @@ export type SavedDesktopWorkspace = {
   createdAt: string
   updatedAt: string
   layout: SerializedDockview
+  icon?: DesktopSceneIcon
+  color?: DesktopSceneColor
 }
 
 export type DesktopWorkspaceState = {
@@ -271,7 +307,13 @@ export function createDesktopWorkspacePresetLayout(
   }
 }
 
-function isBoundedJsonStructure(value: unknown): boolean {
+/**
+ * Checks Dockview's live model before it crosses the JSON persistence boundary.
+ * Optional `undefined` object fields are the only non-JSON values accepted,
+ * because JSON.stringify deterministically omits them. Functions, symbols,
+ * non-finite numbers, cycles and over-budget structures remain invalid.
+ */
+function isBoundedPersistableStructure(value: unknown): boolean {
   const pending: Array<{ value: unknown; depth: number }> = [
     { value, depth: 0 },
   ]
@@ -284,6 +326,10 @@ function isBoundedJsonStructure(value: unknown): boolean {
       return false
 
     const candidate = current.value
+    // Dockview's live `toJSON()` result contains optional object fields set to
+    // undefined. JSON persistence omits those fields, so validate them with the
+    // same semantics instead of rejecting a structure that is safe once stored.
+    if (candidate === undefined) continue
     if (
       candidate === null ||
       typeof candidate === 'string' ||
@@ -396,10 +442,10 @@ function hasValidGridPanelReferences(
   if (
     typeof grid.width !== 'number' ||
     !Number.isFinite(grid.width) ||
-    grid.width <= 0 ||
+    grid.width < 0 ||
     typeof grid.height !== 'number' ||
     !Number.isFinite(grid.height) ||
-    grid.height <= 0 ||
+    grid.height < 0 ||
     (grid.orientation !== 'HORIZONTAL' && grid.orientation !== 'VERTICAL')
   ) {
     return false
@@ -482,7 +528,10 @@ export function isNetworkWorkspacePanelParams(
 ): value is NetworkWorkspacePanelParams {
   if (!isRecord(value)) return false
   return (
+    (value.type === undefined || value.type === 'network') &&
+    (value.bentoPinned === undefined || typeof value.bentoPinned === 'boolean') &&
     typeof value.networkId === 'string' &&
+    (value.instanceId === undefined || isNetworkInstanceId(value.instanceId)) &&
     isTrustedNetworkUrl(
       value.networkId,
       value.url,
@@ -492,12 +541,21 @@ export function isNetworkWorkspacePanelParams(
   )
 }
 
+export function isTasksWorkspacePanelParams(
+  value: unknown,
+): value is TasksWorkspacePanelParams {
+  return isRecord(value) &&
+    value.type === 'tasks' &&
+    (value.bentoPinned === undefined || typeof value.bentoPinned === 'boolean') &&
+    Object.keys(value).every((key) => key === 'type' || key === 'bentoPinned')
+}
+
 function validatesDesktopWorkspaceLayout(
   value: unknown,
   catalog: WorkspaceNetworkCatalog,
   allowUnregisteredCustom: boolean,
 ): value is SerializedDockview {
-  if (!isBoundedJsonStructure(value)) return false
+  if (!isBoundedPersistableStructure(value)) return false
   if (!isRecord(value) || !isRecord(value.grid) || !isRecord(value.panels))
     return false
   if (!isRecord(value.grid.root)) return false
@@ -510,12 +568,13 @@ function validatesDesktopWorkspaceLayout(
   const panelsAreSafe = panels.every(([panelId, panel]) => {
     if (!isRecord(panel)) return false
     const params = panel.params
-    return (
-      panel.contentComponent === 'network' &&
+    if (panel.id !== panelId) return false
+    if (panel.contentComponent === 'tasks') {
+      return panelId === 'tasks' && isTasksWorkspacePanelParams(params)
+    }
+    return panel.contentComponent === 'network' &&
       isNetworkWorkspacePanelParams(params, catalog, allowUnregisteredCustom) &&
-      panel.id === panelId &&
-      panelId === `network:${encodeURIComponent(params.networkId)}`
-    )
+      panelId === desktopWorkspacePanelId(params)
   })
   return (
     panelsAreSafe &&
@@ -562,6 +621,17 @@ function parseSavedLayout(
   ) {
     return null
   }
+  const icon = value.icon === undefined
+    ? DEFAULT_DESKTOP_SCENE_ICON
+    : DESKTOP_SCENE_ICONS.includes(value.icon as DesktopSceneIcon)
+      ? (value.icon as DesktopSceneIcon)
+      : null
+  const color = value.color === undefined
+    ? DEFAULT_DESKTOP_SCENE_COLOR
+    : DESKTOP_SCENE_COLORS.includes(value.color as DesktopSceneColor)
+      ? (value.color as DesktopSceneColor)
+      : null
+  if (!icon || !color) return null
 
   return {
     id: value.id,
@@ -570,6 +640,8 @@ function parseSavedLayout(
     createdAt: value.createdAt,
     updatedAt: value.updatedAt,
     layout: value.layout,
+    icon,
+    color,
   }
 }
 
@@ -767,6 +839,8 @@ export function saveDesktopWorkspaceLayout(
     profileId: string
     name: string
     layout: SerializedDockview
+    icon?: DesktopSceneIcon
+    color?: DesktopSceneColor
     now?: string
     createId?: () => string
   },
@@ -789,6 +863,12 @@ export function saveDesktopWorkspaceLayout(
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
     layout: input.layout,
+    icon: DESKTOP_SCENE_ICONS.includes(input.icon as DesktopSceneIcon)
+      ? input.icon
+      : existing?.icon ?? DEFAULT_DESKTOP_SCENE_ICON,
+    color: DESKTOP_SCENE_COLORS.includes(input.color as DesktopSceneColor)
+      ? input.color
+      : existing?.color ?? DEFAULT_DESKTOP_SCENE_COLOR,
   }
   const layouts = existing
     ? state.layouts.map((layout) => (layout.id === id ? nextLayout : layout))

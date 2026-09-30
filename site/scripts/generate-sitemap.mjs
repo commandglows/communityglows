@@ -38,4 +38,4 @@ if (urls.size === 0) throw new Error('No indexable canonical pages found for sit
 const body = [...urls].sort().map(url => `  <url><loc>${escapeXml(url)}</loc></url>`).join('\n')
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`
 await writeFile(join(output, 'sitemap.xml'), xml, 'utf8')
-console.log(`Generated sitemap.xml with ${urls.size} canonical indexable URLs.`)
+console.info(`Generated sitemap.xml with ${urls.size} canonical indexable URLs.`)

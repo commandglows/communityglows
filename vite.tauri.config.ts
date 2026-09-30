@@ -24,7 +24,8 @@ export default defineConfig({
   // Tauri expects a fixed port and no browser auto-open
   clearScreen: false,
   server: {
-    port: 1420,
+    host: '127.0.0.1',
+    port: 3006,
     strictPort: true,
     watch: {
       // Watch Tauri src-tauri folder for Rust changes

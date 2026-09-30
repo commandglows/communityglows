@@ -177,6 +177,7 @@
         />
         <h3>{{ $t('linkedin.connect_title') }}</h3>
         <p>{{ $t('linkedin.connect_message') }}</p>
+        <p class="connect-privacy">{{ $t('network_connection.profile_isolation') }}</p>
         <Button
           icon="pi pi-linkedin"
           :label="$t('linkedin.connect_button')"
@@ -367,6 +368,11 @@ const connectLinkedIn = () => {
 .connect-prompt p {
   margin-bottom: var(--sg-space-1d5rem);
   color: var(--sg-color-text-muted);
+}
+
+.connect-prompt .connect-privacy {
+  margin-top: calc(var(--sg-space-1rem) * -1);
+  font-size: var(--sg-font-size-0d85rem);
 }
 
 .profile-card {

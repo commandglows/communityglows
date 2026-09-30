@@ -45,7 +45,11 @@ try {
   const windowId = await panel.evaluate(
     async () => (await chrome.windows.getCurrent()).id,
   )
-  const profileId = await panel.locator("select").first().inputValue()
+  const profileId = await panel.evaluate(() => {
+    const raw = localStorage.getItem("profiles")
+    return raw ? JSON.parse(raw).activeProfileId : ""
+  })
+  assert.ok(profileId, "an active extension profile is initialized")
   const target = (networkId, groupKey = networkId) => ({
     profileId,
     networkId,
@@ -57,6 +61,8 @@ try {
   const a = target("twitter", "social"),
     b = target("reddit", "communities")
   let state = await command({ action: "open", target: a, windowId })
+  const homeWindowId = state.homeWindowId
+  assert.notEqual(homeWindowId, windowId)
   const aId = state.entries[0].tabId
   await Promise.all(
     Array.from({ length: 8 }, () =>
@@ -75,7 +81,7 @@ try {
     false,
   )
   checkpoint(
-    "Rapid clicks: one tab per identity; two groups; active expanded and inactive collapsed",
+    "Rapid clicks: dedicated CommunityGlows window; one tab per identity; two groups; active expanded and inactive collapsed",
   )
   const personal = await panel.evaluate(
     async (windowId) =>
@@ -124,7 +130,7 @@ try {
     "Manual cross-window movement remains tracked; click activates in place; personal tab untouched",
   )
   state = await command({ action: "gather", tabId: aId, windowId })
-  assert.equal(state.entries.find((e) => e.tabId === aId).windowId, windowId)
+  assert.equal(state.entries.find((e) => e.tabId === aId).windowId, homeWindowId)
   const groupId = state.entries.find((e) => e.tabId === aId).groupId
   await panel.evaluate(
     async ({ tabId, groupId }) =>
@@ -200,13 +206,24 @@ try {
     path: join(output, "panel-light-320.png"),
     fullPage: true,
   })
-  await panel.locator("select").nth(1).selectOption("en")
+  await panel.evaluate(() => {
+    localStorage.setItem("user-locale", "en")
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: "user-locale", newValue: "en" }),
+    )
+  })
   await panel.getByText("CommunityGlows tabs", { exact: true }).waitFor()
   await panel.screenshot({
     path: join(output, "panel-en-320.png"),
     fullPage: true,
   })
-  await panel.getByRole("button", { name: "Dark", exact: true }).click()
+  await panel.evaluate(() => {
+    localStorage.setItem("theme", "dark")
+    window.dispatchEvent(
+      new StorageEvent("storage", { key: "theme", newValue: "dark" }),
+    )
+  })
+  await panel.locator("html.dark").waitFor()
   await panel
     .locator('section[aria-label="CommunityGlows tabs"]')
     .screenshot({ path: join(output, "companion-dark-320.png") })
@@ -216,12 +233,15 @@ try {
     ),
   )
   checkpoint("FR/EN, light/dark rendered companion and 320px layout")
+  const optionsPage = await context.newPage()
+  await optionsPage.goto(base + "/src/ui/options-page/index.html")
+  const customLinksForm = optionsPage.locator("form.ext-parity-grid--links")
+  await customLinksForm.waitFor()
   for (const label of ['Same URL A', 'Same URL B']) {
-    const form = panel.locator('.ext-parity-grid--links')
-    await form.locator('input').nth(0).fill(label)
-    await form.locator('input').nth(1).fill('https://example.com/shared')
-    await form.locator('button').click()
-    const row = panel.locator('.ext-link-item').filter({hasText:label})
+    await customLinksForm.locator('input').nth(0).fill(label)
+    await customLinksForm.locator('input').nth(1).fill('https://example.com/shared')
+    await customLinksForm.locator('button').click()
+    const row = optionsPage.locator('.ext-link-item').filter({hasText:label})
     await row.getByRole('button',{name:'Open',exact:true}).click()
   }
   state = await command({action:'snapshot'})
