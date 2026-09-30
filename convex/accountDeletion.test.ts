@@ -39,7 +39,7 @@ describe("account deletion", () => {
     });
 
     const result = await t.mutation(
-      (internal as any).accountDeletion.deleteLocalAccountData,
+      internal.accountDeletion.deleteLocalAccountData,
       { userId: seeded.userId },
     );
 
@@ -64,7 +64,7 @@ describe("account deletion", () => {
     await t.run((ctx) => ctx.db.delete(userId));
 
     await expect(
-      t.mutation((internal as any).accountDeletion.deleteLocalAccountData, { userId }),
+      t.mutation(internal.accountDeletion.deleteLocalAccountData, { userId }),
     ).resolves.toEqual({ status: "already_deleted" });
   });
 });

@@ -97,8 +97,18 @@ function handleDrop(event: DragEvent, status: ContextualTaskStatus) {
               :key="tag"
             >#{{ tag }}</span>
           </div>
-          <p v-if="task.people?.length" class="task-people">{{ task.people.map((person) => person.name).join(', ') }}</p>
-          <p v-if="task.links?.length" class="task-links">{{ $t('tasks.board.links_count', { count: task.links.length }) }}</p>
+          <p
+            v-if="task.people?.length"
+            class="task-people"
+          >
+            {{ task.people.map((person) => person.name).join(', ') }}
+          </p>
+          <p
+            v-if="task.links?.length"
+            class="task-links"
+          >
+            {{ $t('tasks.board.links_count', { count: task.links.length }) }}
+          </p>
           <SgButton
             v-if="task.url"
             :label="$t('tasks.board.open_context')"

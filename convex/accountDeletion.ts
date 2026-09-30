@@ -1,4 +1,6 @@
 import { v } from "convex/values";
+import type { TableNames } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
 import { action, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { requireAuthUserId } from "./authHelpers";
@@ -16,10 +18,15 @@ const USER_TABLES = [
   "subscriptions",
 ] as const;
 
-async function collectByField(ctx: any, table: string, field: string, value: unknown) {
+async function collectByField(
+  ctx: MutationCtx,
+  table: TableNames,
+  field: string,
+  value: unknown,
+) {
   return await ctx.db
     .query(table)
-    .filter((q: any) => q.eq(q.field(field), value))
+    .filter((q) => q.eq(q.field(field as never), value as never))
     .collect();
 }
 
@@ -44,24 +51,24 @@ export const deleteLocalAccountData = internalMutation({
     }
 
     const sessions = await collectByField(ctx, "authSessions", "userId", userId);
-    const sessionIds = new Set(sessions.map((row: any) => String(row._id)));
+    const sessionIds = new Set(sessions.map((row) => String(row._id)));
     const refreshTokens = await ctx.db.query("authRefreshTokens").collect();
     for (const row of refreshTokens) {
-      if (sessionIds.has(String((row as any).sessionId))) await ctx.db.delete(row._id);
+      if (sessionIds.has(String(row.sessionId))) await ctx.db.delete(row._id);
     }
     const verifiers = await ctx.db.query("authVerifiers").collect();
     for (const row of verifiers) {
-      if ((row as any).sessionId && sessionIds.has(String((row as any).sessionId))) {
+      if (row.sessionId && sessionIds.has(String(row.sessionId))) {
         await ctx.db.delete(row._id);
       }
     }
     for (const row of sessions) await ctx.db.delete(row._id);
 
     const accounts = await collectByField(ctx, "authAccounts", "userId", userId);
-    const accountIds = new Set(accounts.map((row: any) => String(row._id)));
+    const accountIds = new Set(accounts.map((row) => String(row._id)));
     const verificationCodes = await ctx.db.query("authVerificationCodes").collect();
     for (const row of verificationCodes) {
-      if ((row as any).accountId && accountIds.has(String((row as any).accountId))) {
+      if (row.accountId && accountIds.has(String(row.accountId))) {
         await ctx.db.delete(row._id);
       }
     }

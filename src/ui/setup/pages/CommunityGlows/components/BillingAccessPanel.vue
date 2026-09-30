@@ -45,7 +45,10 @@
       aria-labelledby="billing-trial-reminder-title"
     >
       <div class="billing-trial-reminder-heading">
-        <span class="billing-trial-reminder-icon" aria-hidden="true">
+        <span
+          class="billing-trial-reminder-icon"
+          aria-hidden="true"
+        >
           <SgIcon icon="pi pi-bolt" />
         </span>
         <div>
@@ -62,15 +65,24 @@
         <span>{{ $t('billing.trial_reminder_value_title') }}</span>
         <ul>
           <li>
-            <SgIcon icon="pi pi-th-large" aria-hidden="true" />
+            <SgIcon
+              icon="pi pi-th-large"
+              aria-hidden="true"
+            />
             {{ $t('billing.trial_reminder_value_workspace') }}
           </li>
           <li>
-            <SgIcon icon="pi pi-users" aria-hidden="true" />
+            <SgIcon
+              icon="pi pi-users"
+              aria-hidden="true"
+            />
             {{ $t('billing.trial_reminder_value_profiles') }}
           </li>
           <li>
-            <SgIcon icon="pi pi-compass" aria-hidden="true" />
+            <SgIcon
+              icon="pi pi-compass"
+              aria-hidden="true"
+            />
             {{ $t('billing.trial_reminder_value_flow') }}
           </li>
         </ul>

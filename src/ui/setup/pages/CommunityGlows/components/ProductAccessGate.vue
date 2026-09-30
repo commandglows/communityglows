@@ -12,7 +12,10 @@
       <h1 id="product-access-gate-title">{{ $t(titleKey) }}</h1>
       <p class="product-access-copy">{{ $t(messageKey) }}</p>
 
-      <div v-if="isTrialDecision" class="product-access-value">
+      <div
+        v-if="isTrialDecision"
+        class="product-access-value"
+      >
         <p class="product-access-value-title">{{ $t('billing.gate_value_title') }}</p>
         <ul>
           <li><SgIcon icon="pi pi-check" />{{ $t('billing.trial_reminder_value_workspace') }}</li>
@@ -22,12 +25,20 @@
         <p class="product-access-price">{{ $t('billing.gate_lifetime_price') }}</p>
       </div>
 
-      <aside v-if="isTrialDecision" class="product-access-founder-note">
+      <aside
+        v-if="isTrialDecision"
+        class="product-access-founder-note"
+      >
         <SgIcon icon="pi pi-heart" />
         <p>{{ $t('billing.gate_founder_note') }}</p>
       </aside>
 
-      <p v-if="isTrialDecision" class="product-access-allowance">{{ restartAllowanceLabel }}</p>
+      <p
+        v-if="isTrialDecision"
+        class="product-access-allowance"
+      >
+        {{ restartAllowanceLabel }}
+      </p>
 
       <div class="product-access-actions">
         <button
@@ -49,7 +60,12 @@
           <SgIcon :icon="isRestarting ? 'pi pi-spin pi-spinner' : 'pi pi-replay'" />
           {{ isRestarting ? $t('billing.restarting_trial') : $t('billing.restart_trial') }}
         </button>
-        <button class="product-access-secondary" type="button" :disabled="isLoading" @click="retry">
+        <button
+          class="product-access-secondary"
+          type="button"
+          :disabled="isLoading"
+          @click="retry"
+        >
           <SgIcon :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
           {{ $t('billing.retry_access') }}
         </button>
@@ -62,8 +78,18 @@
       </div>
 
       <p class="product-access-recovery">{{ $t('billing.recovery_paths_available') }}</p>
-      <p v-if="successKey" class="product-access-feedback success">{{ $t(successKey) }}</p>
-      <p v-else-if="errorKey" class="product-access-feedback error">{{ $t(errorKey) }}</p>
+      <p
+        v-if="successKey"
+        class="product-access-feedback success"
+      >
+        {{ $t(successKey) }}
+      </p>
+      <p
+        v-else-if="errorKey"
+        class="product-access-feedback error"
+      >
+        {{ $t(errorKey) }}
+      </p>
     </section>
   </main>
 </template>

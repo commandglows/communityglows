@@ -588,7 +588,7 @@ async function bootstrap(): Promise<void> {
   };
 
   await writeFile(SOURCE_REFERENCE, `${JSON.stringify(asTokenSource(source), null, 2)}\n`, "utf8");
-  console.log(`wrote ${SOURCE_REFERENCE}`);
+  console.info(`wrote ${SOURCE_REFERENCE}`);
 }
 
 async function generate(): Promise<void> {
@@ -607,11 +607,11 @@ async function generate(): Promise<void> {
   ];
 
   if (changed.some(Boolean)) {
-    console.log("generated files updated");
+    console.info("generated files updated");
     return;
   }
 
-  console.log("generated files already up to date");
+  console.info("generated files already up to date");
 }
 
 async function check(): Promise<void> {
@@ -648,7 +648,7 @@ async function check(): Promise<void> {
     process.exit(1);
   }
 
-  console.log("tokens are up to date");
+  console.info("tokens are up to date");
 }
 
 async function main() {
@@ -662,7 +662,7 @@ async function main() {
   switch (mode) {
     case "validate": {
       const source = asTokenSource(await readJson<TokenSource>(SOURCE_REFERENCE));
-      console.log(`validated ${SOURCE_REFERENCE} (${source.tokens.windows.light.root["--sg-color-action"] ? "ok" : "ok"})`);
+      console.info(`validated ${SOURCE_REFERENCE} (${source.tokens.windows.light.root["--sg-color-action"] ? "ok" : "ok"})`);
       break;
     }
     case "bootstrap":

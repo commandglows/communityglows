@@ -416,7 +416,10 @@
           <li>{{ $t('account.delete_social_accounts_untouched') }}</li>
           <li>{{ $t('account.delete_license_retention') }}</li>
         </ul>
-        <label class="settings-label" for="account-delete-confirmation">
+        <label
+          class="settings-label"
+          for="account-delete-confirmation"
+        >
           {{ $t('account.delete_confirmation_label', { email: settingsEmail }) }}
         </label>
         <input
@@ -431,7 +434,11 @@
           :disabled="accountDeletionLoading"
           required
         />
-        <p v-if="accountDeletionError" class="nudge-error" role="alert">
+        <p
+          v-if="accountDeletionError"
+          class="nudge-error"
+          role="alert"
+        >
           {{ accountDeletionError }}
         </p>
         <div class="account-delete-actions">
@@ -710,7 +717,7 @@ async function handleAccountDeletion() {
   accountDeletionLoading.value = true
   accountDeletionError.value = ''
   try {
-    await getConvexClient().action((api as any).accountDeletion.deleteMyAccount, {
+    await getConvexClient().action(api.accountDeletion.deleteMyAccount, {
       confirmation: accountDeletionConfirmation.value,
     })
     clearDeletedAccountAuthState()
