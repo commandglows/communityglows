@@ -582,7 +582,7 @@
     "feature_privacy": "Sessions privées",
     "feature_privacy_desc": "Chaque profil conserve des sessions distinctes pour séparer vos connexions aux réseaux.",
     "finish_button": "C'est parti !",
-    "access_title": "Votre accès CommunityGlows",
+    "access_confirmation_title": "Votre accès CommunityGlows",
     "restored_account": "Vous êtes connecté avec {email}. Continuez avec ce compte ou utilisez un autre compte.",
     "restored_anonymous": "Une session précédente a été restaurée. Ce n’est pas un compte avec une adresse e-mail. Créez un compte pour retrouver votre espace sur un autre appareil, ou continuez cette session.",
     "continue_account": "Continuer avec ce compte",

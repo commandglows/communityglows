@@ -582,7 +582,7 @@
     "feature_privacy": "Private sessions",
     "feature_privacy_desc": "Each profile keeps separate sessions to separate your sign-ins across networks.",
     "finish_button": "Let's go!",
-    "access_title": "Your CommunityGlows access",
+    "access_confirmation_title": "Your CommunityGlows access",
     "restored_account": "You are signed in with {email}. Continue with this account or use another one.",
     "restored_anonymous": "A previous session was restored. It is not an email account. Create an account to recover your space on another device, or continue this session.",
     "continue_account": "Continue with this account",

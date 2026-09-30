@@ -280,7 +280,7 @@
         v-if="step === 7"
         class="onboarding-step"
       >
-        <h2 class="step-title">{{ $t('onboarding.access_title') }}</h2>
+        <h2 class="step-title">{{ $t('onboarding.access_confirmation_title') }}</h2>
         <p
           v-if="onboardingStore.localOnly"
           class="step-desc"

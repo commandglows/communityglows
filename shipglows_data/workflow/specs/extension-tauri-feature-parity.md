@@ -500,3 +500,9 @@ Receipt de vérification de la tranche : 52 tests ciblés réussis (6 fichiers),
 Le scan global de dérive visuelle trouve 23 défauts dans l'ensemble des modifications locales préexistantes ; aucune occurrence n'est attribuée à ManagedNetworkTabs.vue ou ExtensionParitySurface.vue. Ce résultat ne constitue pas un audit vert de tout le dépôt.
 
 Execution batches / receipt : un sous-agent a revu le manager en lecture seule puis écrit exclusivement networkTabGroup.test.ts et networkTabMessages.test.ts. L'agent principal a conservé les sources runtime/UI, le scénario Chromium et l'intégration. Agents: 1 ; topology: write-batch parallel ; integration: tests ciblés passés. Aucun staging/commit/push.
+
+## Git delivery validation — 2026-09-07
+
+The delivery branch was assembled from origin/main with the Chrome tab-group companion and the bounded extension audit/guidance changes. Unrelated desktop, Kanban, backend and site edits were excluded. A shared catalogue and group header are included because the extension consumes them.
+
+Independent checkout: 41 Vitest files / 256 tests passed; extension typecheck passed; Chrome and Firefox packages built. Both Chromium scenarios passed (general extension and managed tabs, including worker/browser restart). These tests exercise the existing local-data extension surface: authentication is not initialized there and no protected remote data is accessed. They do not prove native account login, protected social access, Chrome personal-profile interaction, Firefox runtime or store publication.

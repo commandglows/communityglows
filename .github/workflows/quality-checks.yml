@@ -116,3 +116,11 @@ jobs:
       - run: pnpm lint:manifest
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:extension
+      - run: node scripts/verifyManagedNetworkTabs.mjs
+      - name: Upload validated browser packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: communityglows-browser-extensions
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 14
