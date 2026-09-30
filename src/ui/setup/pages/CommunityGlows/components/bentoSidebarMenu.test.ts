@@ -72,6 +72,7 @@ describe("Bento sidebar scene menu", () => {
     )
     expect(app).toContain('@open-tasks="openSidebarTasks"')
     expect(app).toContain("desktopBentoActive.value = false")
+    expect(app).toContain('route.path === "/local-kanban" ||')
     expect(app).toMatch(/\? ["']\/local-kanban["'] : ["']\/tasks["']/)
     expect(app).not.toMatch(/webviewStore\.selectNetwork\(["']tasks["']\)/)
   })

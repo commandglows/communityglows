@@ -43,12 +43,13 @@
                   aria-label="Toggle left sidebar"
                   @click="toggleSidebar"
                 />
-                <h1
+                <div
                   v-if="!iconsOnly"
-                  class="app-title"
+                  class="app-brand"
                 >
-                  CommunityGlows
-                </h1>
+                  <img class="app-logo" :src="logoUrl" alt="" />
+                  <h1 class="app-title">CommunityGlows</h1>
+                </div>
               </div>
 
               <ProfileSwitcher
@@ -406,12 +407,20 @@
                       class="menu-items"
                     >
                       <div
-                        v-for="item in group.items"
+                        v-for="(item, itemIndex) in group.items"
                         :key="item.id"
                         class="menu-item-group"
                       >
                         <div
                           class="network-row"
+                          :data-group-surface-end="
+                            itemIndex === group.items.length - 1 &&
+                            sidebarGroupSurfaces
+                              .get(group.renderKey)
+                              ?.layers.some((layer) => layer.end)
+                              ? ''
+                              : undefined
+                          "
                           :data-keyboard-node="`network:${item.id}`"
                           :data-keyboard-parent="
                             group.id === 'other'
@@ -909,6 +918,7 @@
 </template>
 
 <script setup lang="ts">
+import logoUrl from '@/assets/logo.png'
 import { navigateHierarchy } from "../utils/keyboardHierarchy"
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from "vue"
 import {
@@ -2653,6 +2663,19 @@ onUnmounted(() => {
   width: calc(var(--sg-sidebar-effective-icon-size) + 2 * var(--sg-space-1));
 }
 
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sg-space-0d5rem);
+}
+
+.app-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
 .app-title {
   margin: 0;
   color: var(--sg-color-text);
@@ -2688,6 +2711,13 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   position: relative;
+  margin-inline-start: var(--sg-space-2);
+  border-radius: var(--sg-radius-sm);
+}
+
+.network-row :deep(.sidebar-nav-button),
+.network-row :deep(.sidebar-nav-button .sg-button) {
+  width: 100%;
 }
 
 .network-row--editing {
@@ -2707,6 +2737,20 @@ onUnmounted(() => {
 
 .network-row:hover {
   background-color: var(--sg-color-surface-hover);
+}
+
+.network-row[data-group-surface-end]:hover,
+.network-row[data-group-surface-end]:has(.sidebar-nav-button--active) {
+  border-end-start-radius: var(--sg-radius-sm);
+  border-end-end-radius: var(--sg-radius-sm);
+}
+
+.network-row[data-group-surface-end]:hover
+  :deep(.sidebar-nav-button .sg-button),
+.network-row[data-group-surface-end]:has(.sidebar-nav-button--active)
+  :deep(.sidebar-nav-button .sg-button) {
+  border-end-start-radius: var(--sg-radius-sm);
+  border-end-end-radius: var(--sg-radius-sm);
 }
 
 .menu-section {

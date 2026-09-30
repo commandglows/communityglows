@@ -41,7 +41,7 @@
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
-                  :aria-label="`Supprimer ${item.title}`"
+                  :aria-label="`${$t('tasks.delete_task')}: ${item.title}`"
                   text
                   rounded
                   size="small"

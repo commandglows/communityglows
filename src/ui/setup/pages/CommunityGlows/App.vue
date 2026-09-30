@@ -863,7 +863,7 @@ function openSidebarTasks(target: KanbanDropdownTarget | 'task' | 'contact' = {}
   desktopBentoActive.value = false
   void router.push(
     {
-      path: !isAuthenticated.value && prefersLocalKanban() ? "/local-kanban" : "/tasks",
+      path: route.path === "/local-kanban" || (!isAuthenticated.value && prefersLocalKanban()) ? "/local-kanban" : "/tasks",
       query: destination.action ? { create: destination.action } : destination.taskId ? { task: destination.taskId } : destination.contactId ? { contact: destination.contactId } : {},
     },
   )
@@ -1473,6 +1473,13 @@ body {
   font-family: var(--sg-font-family);
   color: var(--sg-color-text);
   background: var(--sg-color-background);
+}
+
+:global(button),
+:global(input),
+:global(select),
+:global(textarea) {
+  font: inherit;
 }
 
 html.dark body {

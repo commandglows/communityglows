@@ -8,7 +8,7 @@
         icon="pi pi-spin pi-spinner"
         style="font-size: var(--sg-font-size-2rem)"
       />
-      <p>Chargement du Kanban...</p>
+      <p>{{ $t('kanban.loading') }}</p>
     </div>
 
     <div
@@ -49,7 +49,7 @@
                 <span class="item-title">{{ item.title }}</span>
                 <Button
                   icon="pi pi-times"
-                  :aria-label="`Supprimer ${item.title}`"
+                  :aria-label="`${$t('tasks.delete_task')}: ${item.title}`"
                   text
                   rounded
                   severity="danger"

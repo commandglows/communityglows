@@ -885,6 +885,7 @@
     }
   },
   "kanban": {
+    "loading": "Chargement du Kanban...",
     "todo": "À faire",
     "in_progress": "En cours",
     "done": "Terminé",

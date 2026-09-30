@@ -1,4 +1,6 @@
 https://ntfy.sh/
+https://getdex.com/
+
 Oui. **On revient au lancement de CommunityGlows, Windows-first**, avec AppSumo et les groupes privés comme canaux commerciaux.
 
 Deux chantiers sont désormais suivis dans CommandGlows :

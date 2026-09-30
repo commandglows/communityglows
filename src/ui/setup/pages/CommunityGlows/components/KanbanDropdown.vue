@@ -65,7 +65,7 @@ onUnmounted(() => { close(); document.removeEventListener('pointerdown', outside
       <template #icon><SgIcon icon="pi pi-check-square" /></template>
     </SidebarNavButton>
     <SidebarDropdownPanel v-if="open" role="menu" aria-label="Kanban">
-      <div v-if="upcomingTasks.length || pinnedContacts.length" class="kanban-dropdown__overview" aria-label="À suivre">
+      <div v-if="upcomingTasks.length || pinnedContacts.length" class="kanban-dropdown__overview" :aria-label="$t('tasks.upcoming')">
         <p v-if="upcomingTasks.length" class="kanban-dropdown__label">{{ $t('tasks.upcoming') }}</p>
         <button v-for="task in upcomingTasks" :key="task.id" type="button" role="menuitem" @click="choose({ taskId: task.id })"><SgIcon icon="pi pi-calendar" /><span class="kanban-dropdown__item-label">{{ task.title }}</span><time :datetime="task.dueDate">{{ task.dueDate }}</time></button>
         <p v-if="pinnedContacts.length" class="kanban-dropdown__label">{{ $t('crm.pinned_contacts') }}</p>
@@ -82,8 +82,8 @@ onUnmounted(() => { close(); document.removeEventListener('pointerdown', outside
           <time v-if="contact.nextFollowUp" :datetime="contact.nextFollowUp">{{ contact.nextFollowUp }}</time>
         </button>
       </div>
-      <button type="button" role="menuitem" @click="choose({ action: 'task' })"><SgIcon icon="pi pi-plus" />Ajouter une tâche</button>
-      <button type="button" role="menuitem" @click="choose({ action: 'contact' })"><SgIcon icon="pi pi-users" />Ajouter un contact</button>
+      <button type="button" role="menuitem" @click="choose({ action: 'task' })"><SgIcon icon="pi pi-plus" />{{ $t('tasks.new_task') }}</button>
+      <button type="button" role="menuitem" @click="choose({ action: 'contact' })"><SgIcon icon="pi pi-users" />{{ $t('crm.new_contact') }}</button>
     </SidebarDropdownPanel>
   </div>
 </template>
