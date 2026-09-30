@@ -34,4 +34,3 @@ try {
   const originBox=await group.boundingBox();await fixture.mouse.move(originBox.x+80,originBox.y+15);await fixture.mouse.down();await fixture.mouse.move(originBox.x+110,originBox.y+55,{steps:8});await ghost.waitFor();if(!await ghost.getByText('Réseaux sociaux',{exact:true}).count())throw new Error('Missing group ghost');await fixture.screenshot({path:'.playwright-mcp/group-drag-ghost.png'});await fixture.mouse.up();if(await ghost.count())throw new Error('Ghost remains after release');
   if(errors.length)throw new Error(JSON.stringify(errors));console.log(JSON.stringify({ring,errors}));
 }finally{await browser.close()}
-

@@ -42,6 +42,7 @@
 
       <div class="product-access-actions">
         <button
+          v-if="isPurchaseDecision"
           class="product-access-primary"
           type="button"
           :disabled="!canStartCheckout"
@@ -61,13 +62,28 @@
           {{ isRestarting ? $t('billing.restarting_trial') : $t('billing.restart_trial') }}
         </button>
         <button
-          class="product-access-secondary"
+          :class="isPurchaseDecision ? 'product-access-secondary' : 'product-access-primary'"
           type="button"
           :disabled="isLoading"
           @click="retry"
         >
           <SgIcon :icon="isLoading ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'" />
           {{ $t('billing.retry_access') }}
+        </button>
+        <button
+          class="product-access-secondary"
+          type="button"
+          :disabled="isReconnecting"
+          @click="reconnect"
+        >
+          {{ $t('billing.reconnect_account') }}
+        </button>
+        <button
+          class="product-access-secondary"
+          type="button"
+          @click="emit('open-recovery')"
+        >
+          {{ $t('billing.open_recovery_settings') }}
         </button>
         <a
           class="product-access-secondary"
@@ -95,12 +111,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useBillingAccess } from '@/composables/useBillingAccess'
+import { useRouter } from 'vue-router'
+import { isLifetimePurchaseDecision, useBillingAccess } from '@/composables/useBillingAccess'
+import { signOut } from '@/lib/convexAuth'
 import SectionEyebrow from './ui/SectionEyebrow.vue'
 
 const { t } = useI18n()
+const router = useRouter()
+const emit = defineEmits<{ 'open-recovery': [] }>()
+const isReconnecting = ref(false)
 const {
   canRestartTrial,
   canStartCheckout,
@@ -117,14 +138,19 @@ const {
 } = useBillingAccess()
 const isTrialDecision = computed(() =>
   status.value === 'trial_expired' || status.value === 'trial_exhausted')
-const titleKey = computed(() => status.value === 'trial_expired'
+const isPurchaseDecision = computed(() => isLifetimePurchaseDecision(status.value))
+const titleKey = computed(() => status.value === 'loading'
+  ? 'common.loading'
+  : status.value === 'trial_expired'
   ? 'billing.gate_trial_expired_title'
   : status.value === 'trial_exhausted'
     ? 'billing.gate_trial_exhausted_title'
   : status.value === 'free'
     ? 'billing.gate_access_required_title'
   : 'billing.gate_unverified_title')
-const messageKey = computed(() => status.value === 'trial_expired'
+const messageKey = computed(() => status.value === 'loading'
+  ? 'login.access_loading'
+  : status.value === 'trial_expired'
   ? 'billing.gate_trial_expired_message'
   : status.value === 'trial_exhausted'
     ? 'billing.gate_trial_exhausted_message'
@@ -145,6 +171,17 @@ function restart() {
 
 function purchase() {
   void startPurchase()
+}
+
+async function reconnect() {
+  if (isReconnecting.value) return
+  isReconnecting.value = true
+  try {
+    await signOut()
+    await router.replace({ path: '/login', query: { access: 'reconnect' } })
+  } finally {
+    isReconnecting.value = false
+  }
 }
 </script>
 

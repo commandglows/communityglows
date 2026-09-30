@@ -6,17 +6,23 @@ import { compileScript, compileTemplate, parse } from "@vue/compiler-sfc"
 import { createRenderer, nextTick, ssrContextKey } from "vue"
 import { builtInSocialNetworks } from "@/config/socialNetworks"
 
-const { profile, profilesStore, onboardingStore, setLocale } = vi.hoisted(() => {
-  const profile = { id: "onboarding-profile", name: "Profil actuel", emoji: "🟦" }
+const { profile, profilesStore, onboardingStore, setLocale, router } = vi.hoisted(() => {
+  const profile = { id: "onboarding-profile", name: "Profil actuel", emoji: "🟦", hiddenNetworks: [] as string[] }
   return {
     profile,
     profilesStore: {
       ensureDefault: vi.fn(() => profile),
       activeProfile: profile,
-      applyOnboardingSetup: vi.fn(),
+      update: vi.fn(),
     },
-    onboardingStore: { complete: vi.fn() },
+    onboardingStore: {
+      complete: vi.fn(), finishSetup: vi.fn(), selectLanguage: vi.fn(),
+      languageSelected: false, setupCompleted: false, accountConfirmed: false,
+      scopeReady: true, localOnly: false, confirmedAccountId: null,
+      confirmAccount: vi.fn(),
+    },
     setLocale: vi.fn(),
+    router: { push: vi.fn().mockResolvedValue(undefined) },
   }
 })
 
@@ -24,6 +30,27 @@ vi.mock("@/stores/profiles", () => ({ useProfilesStore: () => profilesStore }))
 vi.mock("@/stores/onboarding", () => ({ useOnboardingStore: () => onboardingStore }))
 vi.mock("@/utils/i18n", () => ({ setLocale }))
 vi.mock("./NetworkGroupHeader.vue", () => ({ default: { render: () => null } }))
+vi.mock("vue-router", () => ({ useRouter: () => router }))
+vi.mock("vue-i18n", async () => {
+  const { ref } = await import("vue")
+  return { useI18n: () => ({ locale: ref("fr") }) }
+})
+vi.mock("@/composables/useBillingAccess", () => ({
+  useBillingAccess: () => ({ status: { value: "trial_active" }, canAccessProtected: { value: true } }),
+  canAcknowledgeBillingAccess: () => true,
+}))
+vi.mock("@/lib/convexAuth", () => ({ isAuthLoading: { value: false } }))
+vi.mock("@/lib/cloudSync", () => ({ currentCloudAccount: { value: null } }))
+vi.mock("./BillingAccessPanel.vue", () => ({ default: { render: () => null } }))
+vi.mock("../views/LoginView.vue", async () => {
+  const { h } = await import("vue")
+  return { default: {
+    emits: ["local-selected"],
+    setup(_props: unknown, { emit }: { emit: (event: "local-selected") => void }) {
+      return () => h("button", { onClick: () => emit("local-selected") }, "local-selection")
+    },
+  } }
+})
 
 import OnboardingFlow from "./OnboardingFlow.vue"
 
@@ -127,30 +154,36 @@ async function clickButton(root: TestNode, label: string) {
   expect(button, `button containing ${label}`).toBeDefined()
   const handler = button!.props.onClick as ((event: Event) => void) | undefined
   expect(handler).toBeTypeOf("function")
-  handler!(new Event("click"))
+  await handler!(new Event("click"))
   await nextTick()
 }
 
 describe("OnboardingFlow save paths", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    profile.hiddenNetworks = builtInSocialNetworks
+      .filter((network) => network.onboarding && !network.defaultSelected)
+      .map((network) => network.id)
+    onboardingStore.accountConfirmed = false
+    onboardingStore.localOnly = false
+    onboardingStore.confirmAccount.mockImplementation(() => {
+      onboardingStore.accountConfirmed = true
+      onboardingStore.localOnly = true
+    })
   })
 
-  it("saves the default network selection when the user skips from the welcome step", async () => {
+  it("preserves the existing profile when skipping setup and requires an explicit account choice", async () => {
     const view = mountOnboarding()
     try {
       await clickButton(view.root, "Français")
       await clickButton(view.root, "onboarding.skip")
 
-      expect(profilesStore.applyOnboardingSetup).toHaveBeenCalledTimes(1)
-      expect(profilesStore.applyOnboardingSetup).toHaveBeenCalledWith(profile.id, {
-        name: undefined,
-        emoji: "🟦",
-        networkIds: builtInSocialNetworks.filter((network) => network.onboarding).map((network) => network.id),
-        selectedNetworkIds: builtInSocialNetworks
-          .filter((network) => network.onboarding && network.defaultSelected)
-          .map((network) => network.id),
-      })
+      expect(profilesStore.update).not.toHaveBeenCalled()
+      expect(onboardingStore.finishSetup).toHaveBeenCalledTimes(1)
+      expect(onboardingStore.complete).not.toHaveBeenCalled()
+      await clickButton(view.root, "local-selection")
+      await clickButton(view.root, "onboarding.finish_local")
+      expect(router.push).toHaveBeenCalledWith("/local-kanban")
       expect(onboardingStore.complete).toHaveBeenCalledTimes(1)
     } finally {
       view.unmount()
@@ -174,15 +207,19 @@ describe("OnboardingFlow save paths", () => {
       await nextTick()
 
       await clickButton(view.root, "onboarding.next")
-      await clickButton(view.root, "onboarding.finish_button")
+      await clickButton(view.root, "onboarding.next")
 
-      expect(profilesStore.applyOnboardingSetup).toHaveBeenCalledTimes(1)
-      expect(profilesStore.applyOnboardingSetup).toHaveBeenCalledWith(profile.id, expect.objectContaining({
-        networkIds: builtInSocialNetworks.filter((network) => network.onboarding).map((network) => network.id),
-        selectedNetworkIds: expect.arrayContaining(["twitter", "instagram", "tiktok", "linkedin", "discord"]),
+      expect(profilesStore.update).toHaveBeenCalledTimes(1)
+      expect(profilesStore.update).toHaveBeenCalledWith(profile.id, expect.objectContaining({
+        name: profile.name,
+        emoji: profile.emoji,
+        hiddenNetworks: expect.arrayContaining(["facebook"]),
       }))
-      const savedSelection = profilesStore.applyOnboardingSetup.mock.calls[0][1].selectedNetworkIds
-      expect(savedSelection).not.toContain("facebook")
+      const hiddenNetworks = profilesStore.update.mock.calls[0][1].hiddenNetworks
+      expect(hiddenNetworks).not.toContain("discord")
+      expect(onboardingStore.complete).not.toHaveBeenCalled()
+      await clickButton(view.root, "local-selection")
+      await clickButton(view.root, "onboarding.finish_local")
       expect(onboardingStore.complete).toHaveBeenCalledTimes(1)
     } finally {
       view.unmount()

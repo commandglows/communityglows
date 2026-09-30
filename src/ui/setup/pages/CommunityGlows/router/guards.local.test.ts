@@ -34,4 +34,10 @@ describe('guest route boundary',()=>{
   auth.isAuthLoading.value=true;auth.authBootstrapError.value=new Error('unavailable');const next=vi.fn()
   await authGuard({path:'/local-kanban',meta:{}} as never,{} as never,next);expect(next).toHaveBeenCalledWith()
  })
+ it.each(['reconnect', 'unavailable'])('keeps explicit %s login recovery reachable for a restored session', async (access) => {
+  auth.isAuthenticated.value = true
+  const next = vi.fn()
+  await authGuard({ path: '/login', query: { access }, meta: {} } as never, {} as never, next)
+  expect(next).toHaveBeenCalledExactlyOnceWith()
+ })
 })

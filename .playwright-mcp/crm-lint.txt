@@ -72,4 +72,3 @@ C:\Users\Diane\ShipGlows\communityglows\src\ui\setup\pages\CommunityGlows\views\
 
 ✖ 62 problems (0 errors, 62 warnings)
   0 errors and 40 warnings potentially fixable with the `--fix` option.
-

@@ -41,4 +41,3 @@ try {
   await fixture.setViewportSize({width:850,height:900});if(!await card.isVisible())throw new Error('card hidden');
   if(errors.length)throw new Error(JSON.stringify(errors));console.log(JSON.stringify({leftClick:true,rightClick:true,plannedState:true,reusedCard:true,errors}));
 }finally{await browser.close()}
-

@@ -42,7 +42,12 @@ jobs:
       - name: Build Windows installers
         run: pnpm tauri:bundle
 
+      - name: Verify Windows onboarding installation lifecycle
+        shell: pwsh
+        run: ./scripts/verifyWindowsOnboardingInstallation.ps1
+
       - name: Publish stable Windows test installer
+        if: github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

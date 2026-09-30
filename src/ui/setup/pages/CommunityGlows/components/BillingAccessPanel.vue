@@ -291,7 +291,7 @@ import { useMediaQuery } from '@/composables/useMediaQuery'
 import { RESPONSIVE_BREAKPOINTS } from '@/design-tokens'
 import SgStatusPill from './ui/SgStatusPill.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const redemptionCode = ref('')
 const {
   access,
@@ -365,6 +365,7 @@ const helperText = computed(() => {
   if (status.value === 'signed_out') return t('billing.signed_out_hint')
   if (status.value === 'loading') return t('billing.loading_hint')
   if (status.value === 'bridge_unavailable') return t('billing.bridge_unavailable_hint')
+  if (status.value === 'error') return t('billing.errors.access_check_failed')
   if (status.value === 'trial_active') return t('billing.trial_active_hint')
   if (status.value === 'trial_expired') return t('billing.trial_expired_hint')
   if (status.value === 'trial_exhausted') return t('billing.trial_exhausted_hint')
@@ -416,11 +417,12 @@ async function submitRedeem() {
 
 const trialDaysRemaining = computed(() => {
   const trialEndsAt = access.value?.trialEndsAt
-  if (typeof trialEndsAt !== 'number') return 0
+  if (typeof trialEndsAt !== 'number') return null
   return Math.max(0, Math.ceil((trialEndsAt - Date.now()) / DAY_MS))
 })
 
-const trialTimeLabel = computed(() => t('billing.trial_days_remaining', {
+const trialTimeLabel = computed(() => trialDaysRemaining.value === null
+  ? t('billing.license_date_unavailable') : t('billing.trial_days_remaining', {
   count: trialDaysRemaining.value,
 }))
 
@@ -430,9 +432,9 @@ const restartAllowanceLabel = computed(() => trialRestartsRemaining.value > 0
 
 const trialEndLabel = computed(() => {
   const trialEndsAt = access.value?.trialEndsAt
-  if (typeof trialEndsAt !== 'number') return ''
+  if (typeof trialEndsAt !== 'number') return t('billing.license_date_unavailable')
   return t('billing.trial_ends_on', {
-    date: new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(trialEndsAt),
+    date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(trialEndsAt),
   })
 })
 
@@ -451,7 +453,7 @@ const licenseTimestamp = computed(() => {
 const licenseDateValue = computed(() => {
   const timestamp = licenseTimestamp.value
   if (typeof timestamp !== 'number') return t('billing.license_date_unavailable')
-  return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(timestamp)
+  return new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(timestamp)
 })
 
 const licenseDateTime = computed(() =>

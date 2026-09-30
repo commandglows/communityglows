@@ -1,10 +1,10 @@
 ---
 artifact: documentation
 metadata_schema_version: "1.0"
-artifact_version: "1.8.1"
+artifact_version: "1.8.3"
 project: "communityglows"
 created: "2026-04-26"
-updated: "2026-09-28"
+updated: "2026-09-29"
 status: reviewed
 source_skill: 300-sg-docs
 scope: context
@@ -84,6 +84,8 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 - `src/ui/setup/pages/CommunityGlows/main.ts` : bootstrap front Windows/Tauri (Vue, Pinia, i18n, router, Notivue, directive tooltip CommunityGlows et Convex conditionnel).
 - `src/ui/setup/pages/CommunityGlows/App.vue` : shell desktop/mobile principal et orchestration.
 - `src/ui/setup/pages/CommunityGlows/components/ui/` : wrappers visuels CommunityGlows; Reka UI porte les comportements clavier/focus des contrôles composites.
+- Bento : après validation ou annulation du renommage d'un groupe, `workspacePanelFocus.ts` rend le focus à l'onglet d'origine après le rendu Vue. Si l'onglet a été fermé ou qu'un autre panneau est devenu actif, il ne déplace pas le focus. Le nom et l'icône du Bento restent dans la sidebar ; les actions d'onglet sont accessibles au clavier dans les menus contextuels.
+- Distribution Windows : le workflow manuel construit un artefact de recette sur une branche de travail, sans remplacer le téléchargement public. La publication de `windows-latest` est réservée à `main`, après validation de la version candidate. Le runtime EU est vérifié à partir de Doppler avant compilation.
 - `design/tokens/reference.json` : autorité éditable des rôles sémantiques partagés, fondée sur le langage visuel dark-first du site.
 - `src/ui/setup/pages/CommunityGlows/assets/main.css` : styles consommateurs et compatibilité Windows/Tauri; les valeurs canoniques viennent du carrier généré.
 - `src/ui/*` : pages de shell navigateur (setup popup panel options).
@@ -98,9 +100,10 @@ CommunityGlows est une application social multi-canaux avec une base Vue 3 commu
 
 1. Vite démarre une entrée UI.
 2. `src/ui/setup/pages/CommunityGlows/main.ts` initialise Pinia, i18n, router, Notivue et `v-sg-tooltip`; PrimeVue, Aura et les services/directives PrimeVue ne sont plus chargés par cette entrée.
-3. Si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` chargent les jetons persistés avant de configurer Convex Auth.
+3. L'application est montée avant la restauration de session. `OnboardingFlow.vue` demande d'abord une langue explicite, même si l'ancien booléen local/cloud `completed` est vrai. Une fois ce choix enregistré, si `VITE_CONVEX_URL` est présent, `getConvexClient()` et `setupConvexAuth()` restaurent les jetons existants; les contrôles de confirmation et de verrouillage restent obligatoires.
 4. Après une connexion par mot de passe, `signIn` et `signOut` passent par le client Convex temps réel comme dans l'adaptateur officiel; seul le renouvellement du jeton utilise un client HTTP non authentifié avec retry réseau. Le client attend ensuite la confirmation de session Convex avant d'exposer l'état authentifié et d'hydrater les données cloud. L'action d'authentification et chaque lecture cloud ont un délai terminal de 15 secondes et une étape diagnostique dédiée; un utilisateur cloud absent ou une lecture bloquée devient une erreur visible et aucun rechargement n'est lancé.
-5. App bootstrap puis montage de l'application.
+5. Le parcours reprend les étapes existantes de profil/réseaux/features, puis `LoginView.vue` pour proposer création/connexion ou continuation de la session restaurée, et `BillingAccessPanel.vue` pour expliquer les seuls droits et dates réels. Les préférences non modifiées sont conservées. Le mode tâches locales annonce qu'il n'accorde ni essai ni réseaux protégés.
+6. Des marqueurs locaux versionnés (`selectedLanguage`, `setupCompleted`, `accountConfirmed`, `confirmedAccountId`, `localOnly`, `accessConfirmed`, `completionVersion`) acquittent ce parcours; le booléen cloud historique ne suffit plus. Une identité hydratée identique au compte confirmé, puis les contrôles auth/lock/droits existants sont nécessaires avant workspace, deep links et préchargement natif. Un changement de compte invalide seulement l'acquittement compte/accès. Les réponses cloud/billing d'une ancienne session ne peuvent pas s'appliquer à la nouvelle; le choix de compte attend la fin d'une hydratation active et reste récupérable après échec terminal.
 
 #### Couche UI Windows/Tauri
 

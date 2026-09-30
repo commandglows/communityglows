@@ -102,4 +102,3 @@ onUnmounted(() => { close(); document.removeEventListener('pointerdown', outside
 time { color: var(--sg-color-text-muted); font-size: var(--sg-font-size-0d85rem); }
 @media (prefers-reduced-motion: reduce) { [role='menuitem'] { transition: none; } }
 </style>
-

@@ -44,4 +44,3 @@ try {
   const before=JSON.stringify(await state());await begin(group('c'),twitter);await fixture.mouse.move(800,10);await fixture.keyboard.press('Escape');await fixture.mouse.up();assert(JSON.stringify(await state())===before,'Escape committed retained target');
   assert(errors.length===0,JSON.stringify(errors));console.log('Last insertion boundary and group highlight retained outside valid space; release commits, Escape cancels.');
 }finally{await browser.close()}
-

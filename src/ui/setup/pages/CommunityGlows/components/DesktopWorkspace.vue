@@ -1,5 +1,6 @@
 <template>
   <section
+    ref="workspaceElement"
     class="desktop-workspace"
     aria-label="Workspace multi-réseaux"
     @keydown="handleWorkspaceKeyboard"
@@ -306,6 +307,7 @@ import {
   type TabDragEvent,
 } from "dockview-vue"
 import { builtInSocialNetworks } from "@/config/socialNetworks"
+import { focusWorkspacePanelTab } from "@/lib/workspacePanelFocus"
 import { getNetworkGroupId, networkGroups } from "@/config/socialNetworkGroups"
 import {
   BENTO_CATALOG_GROUP_KEY,
@@ -483,11 +485,13 @@ defineExpose({
   duplicateNetworkInstance,
 })
 const groupRenameVisible = ref(false)
+const workspaceElement = ref<HTMLElement | null>(null)
 const groupName = ref("")
 const groupRenameTarget = ref<
   | {
       groupId: string
       tabGroupId: string
+      panelId: string
     }
   | undefined
 >()
@@ -813,6 +817,7 @@ async function startGroupRename(panelId?: string) {
   groupRenameTarget.value = {
     groupId: panel.group.id,
     tabGroupId: group.id,
+    panelId: panel.id,
   }
   sceneEditorVisible.value = false
   groupName.value = group.label
@@ -824,8 +829,13 @@ async function startGroupRename(panelId?: string) {
 }
 
 function cancelGroupRename() {
+  const panelId = groupRenameTarget.value?.panelId
   groupRenameVisible.value = false
   groupRenameTarget.value = undefined
+  void nextTick(() => {
+    if (panelId && dockviewApi.value?.activePanel?.id === panelId)
+      focusWorkspacePanelTab(workspaceElement.value, panelId)
+  })
 }
 
 function activePanelMatchesGroupRenameTarget() {
@@ -847,8 +857,7 @@ function commitGroupRename() {
   const group = renamedTabGroup()
   if (!name || !group) return
   group.setLabel(name)
-  groupRenameVisible.value = false
-  groupRenameTarget.value = undefined
+  cancelGroupRename()
   organizationRevision.value += 1
   scheduleAutosave()
 }

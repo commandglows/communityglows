@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccountDeletionDialog: typeof import('./../components/AccountDeletionDialog.vue')['default']
     AppFooter: typeof import('./../../../../../components/AppFooter.vue')['default']
     AppHeader: typeof import('./../components/AppHeader.vue')['default']
     AppRightSidebar: typeof import('./../components/AppRightSidebar.vue')['default']

@@ -57,6 +57,3 @@ try {
   await group('b').locator('.network-group-header__main').click();assert(!await twitter.isVisible(),'Nested collapse failed');await group('b').locator('.network-group-header__main').click();assert(await twitter.isVisible(),'Nested expand failed');
   assert(errors.length===0,JSON.stringify(errors));console.log(JSON.stringify({results,errors}));
 }finally{await browser.close()}
-
-
-

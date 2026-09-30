@@ -67,11 +67,11 @@ dist/tauri/assets/index-DH-md_en.js                    572.55 kB │ gzip: 166.1
     ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:81:30 ]
     │
  81 │     const v1Sign = (v1Bits & 0x8000000000000000n) !== 0n;
-    │                              ─────────┬─────────  
-    │                                       ╰─────────── 
+    │                              ─────────┬─────────
+    │                                       ╰───────────
 ────╯
 
-[plugin builtin:vite-reporter] 
+[plugin builtin:vite-reporter]
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
@@ -80,24 +80,24 @@ dist/tauri/assets/index-DH-md_en.js                    572.55 kB │ gzip: 166.1
     ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:81:55 ]
     │
  81 │     const v1Sign = (v1Bits & 0x8000000000000000n) !== 0n;
-    │                                                       ─┬  
-    │                                                        ╰── 
+    │                                                       ─┬
+    │                                                        ╰──
 ────╯
 
 [TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
     ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:82:30 ]
     │
  82 │     const v2Sign = (v2Bits & 0x8000000000000000n) !== 0n;
-    │                              ─────────┬─────────  
-    │                                       ╰─────────── 
+    │                              ─────────┬─────────
+    │                                       ╰───────────
 ────╯
 
 [TOLERATED_TRANSFORM] Big integer literals are not available in the configured target environment.
     ╭─[ node_modules/.pnpm/convex@1.45.0/node_modules/convex/dist/esm/values/compare.js:82:55 ]
     │
  82 │     const v2Sign = (v2Bits & 0x8000000000000000n) !== 0n;
-    │                                                       ─┬  
-    │                                                        ╰── 
+    │                                                       ─┬
+    │                                                        ╰──
 ────╯
 
 [INEFFECTIVE_DYNAMIC_IMPORT] node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/event.js is dynamically imported by src/ui/setup/pages/CommunityGlows/App.vue?vue&type=script&setup=true&lang.ts but also statically imported by node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/webview.js, node_modules/.pnpm/@tauri-apps+api@2.11.1/node_modules/@tauri-apps/api/window.js, src/ui/setup/pages/CommunityGlows/main.ts, dynamic import will not move module into another chunk.
@@ -112,4 +112,3 @@ Not measurable — 4 hooks whose calls overlap, so elapsed time covers work othe
   - unplugin-vue-i18n:resource load (1130 calls)
   … and 1 more
 See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
-

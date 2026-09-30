@@ -31,4 +31,3 @@ try {
   await fixture.screenshot({path:'C:/Users/Diane/ShipGlows/communityglows/.playwright-mcp/duplicate-sidebar.png'})
   console.log(JSON.stringify({sidebar:{...result,persisted:true,independentClose:true},errors}))
 } finally {await browser.close()}
-

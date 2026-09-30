@@ -27,7 +27,8 @@ export const authGuard: NavigationGuard = async (to, _from, next) => {
   // Public routes — always allow
   if (to.path === "/login" || to.path === "/sign-up") {
     // If already signed in, skip the login page
-    if (isAuthenticated.value && !isAuthLoading.value && !isSessionLocked.value) {
+    const recoveryRequested = to.query?.access === 'reconnect' || to.query?.access === 'unavailable';
+    if (isAuthenticated.value && !isAuthLoading.value && !isSessionLocked.value && !recoveryRequested) {
       return next("/twitter");
     }
     return next();

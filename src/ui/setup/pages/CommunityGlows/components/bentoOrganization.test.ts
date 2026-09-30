@@ -27,8 +27,9 @@ describe("Bento browser-style organisation", () => {
     expect(workspace).toContain('event.key === "Enter"')
   })
 
-  it("keeps scene controls and editors in responsive toolbar rows", () => {
+  it("keeps editing controls responsive and hides the toolbar outside editing", () => {
     expect(workspace).toContain("desktop-workspace__primary-controls")
+    expect(workspace).toContain('v-if="sceneEditorVisible || groupRenameVisible"')
     expect(workspace).toContain("desktop-workspace__editor")
     expect(workspace).toContain("flex: 1 1 var(--sg-size-200px)")
     expect(workspace).toContain("flex-wrap: wrap")
@@ -45,6 +46,7 @@ describe("Bento browser-style organisation", () => {
     expect(workspace).toContain('ref="groupNameInput"')
     expect(workspace).toContain("input?.focus()")
     expect(workspace).toContain("input?.select()")
+    expect(workspace).toContain("focusWorkspacePanelTab(workspaceElement.value, panelId)")
     expect(workspace).toContain('@keydown.esc="cancelGroupRename"')
     expect(workspace).toContain("groupRenameVisible.value = false")
     expect(workspace).toContain("groupNameInput.value?.$el")
@@ -56,6 +58,7 @@ describe("Bento browser-style organisation", () => {
     expect(workspace).toContain('@select="removeActivePanelFromGroup"')
     expect(workspace).toContain("Sortir du groupe")
     expect(workspace).toContain("function removeActivePanelFromGroup()")
+    expect(workspace).not.toContain('DropdownMenuRoot v-if="activeTabGroup"')
   })
 
   it("opens the existing group and tab action menus from right click or Shift+F10", () => {

@@ -52,5 +52,3 @@ try {
   await fixture.keyboard.press('Escape');await bento.hover();await fixture.waitForTimeout(180);await fixture.screenshot({path:'.playwright-mcp/bento-submenu-content.png'});
   assert(errors.length===0,JSON.stringify(errors));console.log(JSON.stringify({sharedPanel:true,hover:true,outside:true,keyboard:true,contextActions:true,errors}));
 }finally{await browser.close()}
-
-

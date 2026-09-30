@@ -1,4 +1,4 @@
-async (page) => {
+module.exports = async (page) => {
   const origin = 'http://127.0.0.1:3006';
   const source = await (await page.request.get(origin + '/components/DesktopWorkspace.vue')).text();
   const dep = name => source.match(new RegExp('"([^"\\n]*/' + name + '\\.js\\?[^"\\n]+)"'))[1];

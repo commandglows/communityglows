@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <!-- Linked through this directory component; it contains no user/AppData files. -->
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="OnboardingInstallationWitness" Guid="A410A609-F06C-4DC8-BA37-642B376BC0B9" KeyPath="yes">
+        <CreateFolder />
+        <RemoveFile Id="RemoveOnboardingInstallationWitness" Name="communityglows-onboarding-installation-v1" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+    <!-- Commit actions run only after InstallFinalize succeeds. Never launch the UI. -->
+    <CustomAction Id="RecordOnboardingInstallation" FileKey="Path" ExeCommand="--record-onboarding-installation" Execute="commit" Impersonate="no" Return="check" />
+    <InstallExecuteSequence>
+      <Custom Action="RecordOnboardingInstallation" After="InstallFiles">NOT REMOVE="ALL"</Custom>
+    </InstallExecuteSequence>
+    <!-- Windows skips commit actions when rollback is disabled; fail visibly instead. -->
+    <Condition Message="CommunityGlows requires Windows Installer rollback support to confirm this installation.">NOT RollbackDisabled OR REMOVE="ALL"</Condition>
+  </Fragment>
+</Wix>

@@ -66,4 +66,3 @@ try {
   assert(errors.length===0,JSON.stringify(errors))
   console.log(JSON.stringify({nested:true,depthLimit:true,cycleRejected:true,fold:true,rootTabs:true,persisted:true,ungroup:true,dissolve:true,responsive:true,noNativeDrag:true,escapeCancels:true,errors}))
 } finally {await browser.close()}
-
