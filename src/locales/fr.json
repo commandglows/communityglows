@@ -659,12 +659,15 @@
     "delete_cloud_data": "Vos profils, réglages, liens et données synchronisées seront supprimés.",
     "delete_social_accounts_untouched": "Vos comptes et sessions sur les réseaux sociaux ne seront pas supprimés.",
     "delete_license_retention": "Une preuve commerciale pseudonymisée minimale peut être conservée pour restituer une licence valide et respecter nos obligations.",
+    "delete_trial_policy": "Supprimer puis recréer un compte ne réinitialise pas vos droits à l’essai gratuit. Plusieurs vérifications d’identité permettent d’appliquer les durées et limites prévues dans nos conditions d’utilisation.",
     "delete_confirmation_label": "Pour confirmer, saisissez {email}",
     "delete_confirm": "Supprimer définitivement",
     "delete_loading": "Suppression…",
     "delete_confirmation_error": "L’adresse saisie ne correspond pas à votre compte.",
     "delete_error": "La suppression n’a pas abouti. Vos données restent intactes ; réessayez.",
-    "delete_success": "Votre compte CommunityGlows a été supprimé."
+    "delete_success": "Votre compte CommunityGlows a été supprimé.",
+    "delete_success_details": "Vos profils, réglages, liens et données synchronisées ont été supprimés du cloud. Vous êtes maintenant déconnecté.",
+    "delete_return_home": "Retour à l’accueil"
   },
   "extension": {
     "managed": {

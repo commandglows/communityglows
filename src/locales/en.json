@@ -659,12 +659,15 @@
     "delete_cloud_data": "Your profiles, settings, links, and synced data will be deleted.",
     "delete_social_accounts_untouched": "Your third-party social accounts and sessions will not be deleted.",
     "delete_license_retention": "Minimal pseudonymized commercial proof may be retained to restore a valid license and meet legal obligations.",
+    "delete_trial_policy": "Deleting and recreating an account does not reset your free-trial eligibility. Several identity checks enforce the durations and limits set out in our Terms of Use.",
     "delete_confirmation_label": "To confirm, enter {email}",
     "delete_confirm": "Delete permanently",
     "delete_loading": "Deleting…",
     "delete_confirmation_error": "The email entered does not match your account.",
     "delete_error": "Deletion did not complete. Your data remains intact; please try again.",
-    "delete_success": "Your CommunityGlows account has been deleted."
+    "delete_success": "Your CommunityGlows account has been deleted.",
+    "delete_success_details": "Your profiles, settings, links, and synced data have been deleted from the cloud. You are now signed out.",
+    "delete_return_home": "Back to home"
   },
   "extension": {
     "managed": {

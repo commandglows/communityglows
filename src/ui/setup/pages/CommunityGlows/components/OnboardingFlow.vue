@@ -31,8 +31,8 @@
         lang="en"
       >
         <SgIcon icon="pi pi-globe language-icon" />
-        <h1 class="step-title">{{ englishLocale.onboarding.language_title }}</h1>
-        <p class="step-desc">{{ englishLocale.onboarding.language_desc }}</p>
+        <h1 class="step-title">{{ $t('onboarding.language_title', {}, { locale: 'en' }) }}</h1>
+        <p class="step-desc">{{ $t('onboarding.language_desc', {}, { locale: 'en' }) }}</p>
         <div class="language-options">
           <button
             class="language-btn"
@@ -318,7 +318,6 @@ import { canAcknowledgeBillingAccess, useBillingAccess } from '@/composables/use
 import { isAuthLoading } from '@/lib/convexAuth'
 import { currentCloudAccount } from '@/lib/cloudSync'
 import { setLocale } from '@/utils/i18n'
-import englishLocale from '@/locales/en.json'
 import logoUrl from '@/assets/logo.png'
 
 const profilesStore = useProfilesStore()

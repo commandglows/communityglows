@@ -89,7 +89,7 @@ const resolvedAriaLabel = computed(() => {
 .sg-button--success:not(.sg-button--text, .sg-button--outlined) { border-color: var(--sg-color-success); background: var(--sg-color-success); }
 .sg-button--info:not(.sg-button--text, .sg-button--outlined) { border-color: var(--sg-color-info); background: var(--sg-color-info); }
 .sg-button--warning:not(.sg-button--text, .sg-button--outlined) { border-color: var(--sg-color-warning); background: var(--sg-color-warning); }
-.sg-button--danger:not(.sg-button--text, .sg-button--outlined) { border-color: var(--sg-color-danger); background: var(--sg-color-danger); }
+.sg-button--danger:not(.sg-button--text, .sg-button--outlined) { border-color: var(--sg-color-danger); background: var(--sg-color-danger); color: var(--sg-color-white); }
 .sg-button--success:is(.sg-button--text, .sg-button--outlined) { color: var(--sg-color-success); }
 .sg-button--info:is(.sg-button--text, .sg-button--outlined) { color: var(--sg-color-info); }
 .sg-button--warning:is(.sg-button--text, .sg-button--outlined) { color: var(--sg-color-warning); }

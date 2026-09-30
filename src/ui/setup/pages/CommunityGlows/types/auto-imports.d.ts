@@ -26,6 +26,7 @@ declare global {
   const applyPalette: typeof import('../../../../../utils/themePalette').applyPalette
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
+  const canAcknowledgeBillingAccess: typeof import('../../../../../composables/useBillingAccess').canAcknowledgeBillingAccess
   const computed: typeof import('vue').computed
   const computedAsync: typeof import('@vueuse/core').computedAsync
   const computedEager: typeof import('@vueuse/core').computedEager
@@ -72,6 +73,7 @@ declare global {
   const isAccessWithinGrace: typeof import('../../../../../composables/useBillingAccess').isAccessWithinGrace
   const isDefined: typeof import('@vueuse/core').isDefined
   const isEditableShortcutTarget: typeof import('../../../../../stores/shortcuts').isEditableShortcutTarget
+  const isLifetimePurchaseDecision: typeof import('../../../../../composables/useBillingAccess').isLifetimePurchaseDecision
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
   const isReadonly: typeof import('vue').isReadonly
@@ -462,6 +464,7 @@ declare module 'vue' {
     readonly applyPalette: UnwrapRef<typeof import('../../../../../utils/themePalette')['applyPalette']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
+    readonly canAcknowledgeBillingAccess: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['canAcknowledgeBillingAccess']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -508,6 +511,7 @@ declare module 'vue' {
     readonly isAccessWithinGrace: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['isAccessWithinGrace']>
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isEditableShortcutTarget: UnwrapRef<typeof import('../../../../../stores/shortcuts')['isEditableShortcutTarget']>
+    readonly isLifetimePurchaseDecision: UnwrapRef<typeof import('../../../../../composables/useBillingAccess')['isLifetimePurchaseDecision']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>

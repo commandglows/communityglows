@@ -3,6 +3,7 @@
     <Notivue v-slot="item">
       <Notification :item="item" />
     </Notivue>
+    <AccountDeletionSuccessDialog @continue="router.replace('/')" />
     <!-- Onboarding (first launch) -->
     <OnboardingFlow v-if="appAccessSurface === 'onboarding'" />
 
@@ -226,6 +227,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from "vue"
 import { Notification, Notivue, push } from "notivue"
+import AccountDeletionSuccessDialog from "./components/AccountDeletionSuccessDialog.vue"
 import { useI18n } from "vue-i18n"
 import { useMediaQuery } from "@/composables/useMediaQuery"
 import { RESPONSIVE_BREAKPOINTS } from "@/design-tokens"
