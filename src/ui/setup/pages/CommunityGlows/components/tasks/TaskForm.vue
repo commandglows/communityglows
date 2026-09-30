@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
   submitLabel?: string
 }>(), {
   initialUrl: '',
+  submitLabel: undefined,
 })
 
 const { t } = useI18n()

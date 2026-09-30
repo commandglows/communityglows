@@ -43,16 +43,16 @@
       <fieldset class="avatar-editor__emojis">
         <legend>Choisir un emoji</legend>
         <button
-          v-for="emoji in EMOJIS"
-          :key="emoji"
+          v-for="optionEmoji in EMOJIS"
+          :key="optionEmoji"
           type="button"
           class="avatar-editor__emoji"
-          :class="{ 'avatar-editor__emoji--selected': !draftAvatar && draftEmoji === emoji }"
-          :aria-label="`Utiliser l’emoji ${emoji}`"
-          :aria-pressed="String(!draftAvatar && draftEmoji === emoji)"
-          @click="selectEmoji(emoji)"
+          :class="{ 'avatar-editor__emoji--selected': !draftAvatar && draftEmoji === optionEmoji }"
+          :aria-label="`Utiliser l’emoji ${optionEmoji}`"
+          :aria-pressed="String(!draftAvatar && draftEmoji === optionEmoji)"
+          @click="selectEmoji(optionEmoji)"
         >
-          {{ emoji }}
+          {{ optionEmoji }}
         </button>
       </fieldset>
 
@@ -74,7 +74,7 @@ import Button from "./ui/SgButton.vue"
 
 const props = withDefaults(
   defineProps<{ avatar?: string; emoji: string; compact?: boolean }>(),
-  { compact: false },
+  { avatar: undefined, compact: false },
 )
 const emit = defineEmits<{ change: [value: { avatar?: string; emoji: string }] }>()
 

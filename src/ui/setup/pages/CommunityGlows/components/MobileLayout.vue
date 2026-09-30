@@ -54,7 +54,6 @@
         <span class="quick-action-label">{{ $t('common.notifications') }}</span>
         <SgIcon icon="pi pi-chevron-right quick-action-arrow" />
       </button>
-
     </div>
 
     <!-- Notifications panel -->
